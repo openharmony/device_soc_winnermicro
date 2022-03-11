@@ -58,6 +58,7 @@ if (ohos_kernel_type == "liteos_m") {
       "//utils/native/lite/include",
       "//third_party/musl/porting/liteos_m/kernel/src/include",
       "//third_party/musl/porting/liteos_m/kernel/src/internal",
+      "//third_party/wpa_supplicant/wpa_supplicant-2.9/src/utils",
       "//drivers/framework/core/common/include/manager",
       "//drivers/framework/include/platform",
       "//drivers/framework/include/utils",
