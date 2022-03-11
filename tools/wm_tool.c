@@ -3571,9 +3571,15 @@ static int wm_tool_gzip_bin(const char *binary, const char *gzbin)
     char buf[1024];
 
     bfp = fopen(binary, "rb");
+    if (!bfp)
+    {
+        wm_tool_printf("can not open binary.\r\n");
+        return -1;
+    }
+	
     gzfp = gzopen((char *)gzbin, "wb+");
 
-    if (!bfp || !gzfp)
+    if (!gzfp)
     {
         wm_tool_printf("can not gzip binary.\r\n");
         return -1;
@@ -3674,7 +3680,11 @@ static int wm_tool_pack_firmware(void)
 
         ret = wm_tool_gzip_bin(wm_tool_input_binary, gzbin);
         if (ret)
-            return ret;
+		{
+            free(gzbin);
+            free(gzimg);
+			return ret;
+		}
 
         ret = wm_tool_pack_gz_image(gzbin, gzimg);
         free(gzbin);
