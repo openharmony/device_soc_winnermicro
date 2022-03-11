@@ -3574,7 +3574,7 @@ static int wm_tool_gzip_bin(const char *binary, const char *gzbin)
     if (!bfp)
     {
         wm_tool_printf("can not open binary.\r\n");
-        return -1;
+		return -1;
     }
 	
     gzfp = gzopen((char *)gzbin, "wb+");
@@ -3582,7 +3582,8 @@ static int wm_tool_gzip_bin(const char *binary, const char *gzbin)
     if (!gzfp)
     {
         wm_tool_printf("can not gzip binary.\r\n");
-        return -1;
+        fclose(bfp);
+		return -1;
     }
 
     do {
