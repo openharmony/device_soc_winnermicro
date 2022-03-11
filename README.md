@@ -185,14 +185,15 @@ hb build -f
 ## 烧录打印
 
 windows下：
-1. 下载PC端固件烧录工具并安装(HW Upgrade Tools) [w800串口烧录工具](https://www.winnermicro.com/html/1/156/158/558.html)。
-2. 在代码根目录下执行脚本 ./device/soc/winnermicro/tools/aft_build_project.sh,会在out目录下生成 .fls文件。
+1. 下载PC端固件烧录工具并安装(HW Upgrade Tools) [w800串口烧录工具下载参考](https://www.winnermicro.com/html/1/156/158/558.html)。
+2. 在代码根目录下执行编译命令hb build -f，编译成功会在out/neptune100/neptune100/bin目录下生成 .fls文件。
 3. 通过USB转接线连接PC和w800开发板,在PC的设备管理器中确认与w800连接所用的COM口。
-4. 打开烧录工具(HW Upgrade Tools)，选定COM口并选择打开串口,选择固件为out目录下生成的 OHOS_Image.fls文件，勾选擦除Flash(波特率:115200,型号:W80X)。
+4. 打开烧录工具(Upgrade_Tools)，选定COM口并选择打开串口,选择固件为hihope_neptune100.fls文件，勾选擦除Flash(波特率:115200,型号:W80X)。
 5. 点击下载键等待烧录。
-6. 烧录成功图形界面会显示 file success以及烧录成功之后的启动log,反之显示fail。
-7. 打开烧录工具(HW Upgrade Tools),选择复位，可在图形界面看到板子启动log;或打开串口调试工具,RST按键启动板子,查看log。
+6. 烧录成功图形界面会显示file success以及烧录成功之后的启动log,反之显示fail。
+7. 打开烧录工具(Upgrade_Tools),选择复位，可在图形界面看到板子启动log;或打开串口调试工具,RST按键启动板子,查看log。
 
 # 相关仓
 
-* [device/soc/winnermicro](https://gitee.com/openharmony/device_soc_winnermicro)
+* [device/board/hihope](https://gitee.com/openharmony-sig/device_board_hihope)
+* [vendor/hihope](https://gitee.com/openharmony-sig/vendor_hihope)
