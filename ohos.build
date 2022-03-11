@@ -1,0 +1,10 @@
+{
+  "parts": {
+    "device_winnermicro": {
+      "module_list": [
+        "//device/soc/winnermicro:winnermicro"
+      ]
+    }
+  },
+  "subsystem": "device_winnermicro"
+}

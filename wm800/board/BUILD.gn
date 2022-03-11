@@ -1,0 +1,75 @@
+# Copyright (C) 2022 HiHope Open Source Organization .
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+if (ohos_kernel_type == "liteos_m") {
+  import("//kernel/liteos_m/liteos.gni")
+  module_name = get_path_info(rebase_path("."), "name")
+  config("board_config") {
+    ldflags = [
+      "-mcpu=ck804ef",
+      "-mhard-float",
+      "-Wl,--gc-sections",
+      "-Wl,-zmax-page-size=1024",
+      "-Wl,-T" + rebase_path("ld/w800/gcc_csky.ld"),
+      "-Wl,--start-group",
+      "-Wl,--end-group",
+      "-nostartfiles",
+      "-nodefaultlibs",
+      "-L" + rebase_path("./lib/w800"),
+    ]
+    
+    libs = [
+      "gcc",
+      #"c",
+      "btcontroller",
+      "wlan",
+      "dsp",
+    ]
+    
+    include_dirs = [
+      ".",
+      "include",
+      "include/app",
+      "include/arch/xt804",
+      "include/arch/xt804/csi_core",
+      "include/arch/xt804/csi_dsp",
+      "include/bt",
+      "include/driver",
+      "include/net",
+      "include/os",
+      "include/platform",
+      "include/wifi",
+      "platform/common/params",
+      "platform/drivers/spi",
+      "platform/inc",
+      "platform/sys",
+      "src/os/liteos/include",
+      "src/os/liteos/include_standrd",
+      "//utils/native/lite/include",
+      "//third_party/musl/porting/liteos_m/kernel/src/include",
+      "//third_party/musl/porting/liteos_m/kernel/src/internal",
+      "//drivers/framework/core/common/include/manager",
+      "//drivers/framework/include/platform",
+      "//drivers/framework/include/utils",
+      "//drivers/adapter/khdf/liteos_m/osal/include",
+    ]
+  }
+  module_group(module_name) {
+    modules = [
+      "platform",
+      "app",
+      "src",
+    ]
+    configs = [ ":board_config" ]
+  }
+}

@@ -1,0 +1,20 @@
+#include "device_info.hcs"
+root {
+    platform {
+        watchdog_config {
+            match_attr = "watchdog_config";
+            watchdogId = 0;
+        }
+        gpio_config {
+            match_attr = "gpio_config";
+            groupNum = 1;
+            pinNum = 48;
+            config = [5, 2];
+        }
+        pwm_config {
+            match_attr = "pwm_config";
+            channel = 0;
+            freq = 156250;
+        }
+    }
+}

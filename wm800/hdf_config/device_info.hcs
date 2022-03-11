@@ -1,0 +1,93 @@
+root {
+    module = "winnermicro,wm800";
+    device_info {
+        match_attr = "hdf_manager";
+        template host {
+            hostName = "";
+            priority = 100;
+            template device {
+                template deviceNode {
+                    policy = 0;
+                    priority = 100;
+                    preload = 0;
+                    permission = 0664;
+                    moduleName = "";
+                    serviceName = "";
+                    deviceMatchAttr = "";
+                }
+            }
+        }
+        platform :: host {
+            hostName = "platform_host";
+            priority = 50;
+            device_gpio :: device {
+                gpio0 :: deviceNode {
+                    policy = 2;
+                    priority = 45;
+                    moduleName = "WM_GPIO_MODULE_HDF";
+                    serviceName = "HDF_PLATFORM_GPIO";
+                    deviceMatchAttr = "gpio_config";
+                }
+            }
+            device_watchdog :: device {
+                watchdog0 :: deviceNode {
+                    policy = 2;
+                    priority = 50;
+                    moduleName = "WM_WATCHDOG_MODULE_HDF";
+                    serviceName = "HDF_PLATFORM_WATCHDOG";
+                    deviceMatchAttr = "watchdog_config";
+                }
+            }
+            device_pwm :: device {
+                pwm0 :: deviceNode {
+                    policy = 2;
+                    priority = 100;
+                    moduleName = "WM_PWM_MODULE_HDF";
+                    serviceName = "HDF_PLATFORM_PWM";
+                    deviceMatchAttr = "pwm_config";
+                }
+            }
+            device_i2c :: device {
+                i2c_manager :: deviceNode {
+                    policy = 2;
+                    priority = 50;
+                    moduleName = "HDF_PLATFORM_I2C_MANAGER";
+                    serviceName = "HDF_PLATFORM_I2C_MANAGER";
+                }
+                i2c0 :: deviceNode {
+                    policy = 0;
+                    priority = 100;
+                    moduleName = "W800_I2C_MODULE_HDF";
+                    serviceName = "";
+                    deviceMatchAttr = "i2c0_config";
+                }
+            }
+            device_uart :: device {
+                /*uart0 :: deviceNode {
+                    policy = 1;
+                    priority = 40;
+                    moduleName = "W800_UART_MODULE_HDF";
+                    serviceName = "HDF_PLATFORM_UART_0";
+                    deviceMatchAttr = "uart0_config";
+                }*/
+                uart1 :: deviceNode {
+                    policy = 1;
+                    priority = 50;
+                    moduleName = "W800_UART_MODULE_HDF";
+                    serviceName = "HDF_PLATFORM_UART_1";
+                    deviceMatchAttr = "uart1_config";
+                }
+            }
+            device_spi :: device {
+                device0 :: deviceNode {
+                    policy = 1;
+                    priority = 60;
+                    permission = 0644;
+                    moduleName = "W800_SPI_MODULE_HDF";
+                    serviceName = "HDF_PLATFORM_SPI_0";
+                    deviceMatchAttr = "spi0_config";
+                }
+            }
+        }
+    }
+}

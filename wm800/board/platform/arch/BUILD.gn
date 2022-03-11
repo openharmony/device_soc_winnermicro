@@ -1,0 +1,42 @@
+# Copyright (C) 2022 HiHope Open Source Organization .
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//kernel/liteos_m/liteos.gni")
+module_name = get_path_info(rebase_path("."), "name")
+kernel_module(module_name) {
+  sources = [
+    "xt804/bsp/board_init.c",
+    "xt804/bsp/isr.c",
+    "xt804/bsp/startup.S",
+    "xt804/bsp/system.c",
+    "xt804/bsp/trap_c.c",
+    "xt804/bsp/vectors.S",
+    "xt804/libc/libc_port.c",
+    "xt804/libc/liteos/stdio/puts.c",
+    "xt804/libc/liteos/stdio/sprintf.c",
+    "xt804/libc/liteos/stdio/vprintf.c",
+    "xt804/libc/liteos/math/copysign.c",
+    "xt804/libc/liteos/math/copysignl.c",
+    "xt804/libc/liteos/math/fabsl.c",
+    "xt804/libc/liteos/math/fmod.c",
+    "xt804/libc/liteos/math/fmodl.c",
+    "xt804/libc/liteos/math/scalbn.c",
+    "xt804/libc/liteos/math/scalbnl.c",
+    "xt804/gcc/los_context.c",
+    "xt804/gcc/los_dispatch.S",
+    "xt804/gcc/los_interrupt.c",
+    "xt804/gcc/los_timer.c",
+  ]
+  include_dirs = [ "xt804/gcc/" ]
+}
+
