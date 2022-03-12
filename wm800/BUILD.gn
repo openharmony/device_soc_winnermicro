@@ -1,0 +1,90 @@
+# Copyright (C) 2022 HiHope Open Source Organization .
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+if (ohos_kernel_type == "liteos_m") {
+  import("//build/lite/config/component/lite_component.gni")
+  import("//build/lite/config/subsystem/lite_subsystem.gni")
+  import("//kernel/liteos_m/liteos.gni")
+  module_name = get_path_info(rebase_path("."), "name")
+  module_group(module_name) {
+    modules = [
+        "board",
+    ]
+  }
+  
+  # global config
+  out_product_path = "${ohos_root_path}out/${board_name}/${product_name}"
+
+  # config bin from vendor/<board_name>/<product_name>/config.json
+  foreach(bin_file, bin_list) {
+    build_enable = bin_file.enable
+    out_bin_path = "${out_product_path}/bin/"
+
+    exe_bin = "${bin_file.elf_name}_${board_name}"
+    print("build", exe_bin, ":", build_enable)
+
+    # generate execute bin
+    executable(exe_bin) {
+      output_name = exe_bin
+      output_extension = "elf"
+
+      ldflags = [
+        "-Wl,--gc-sections",
+        "-Wl,-Map=bin/$output_name.map",
+      ]
+
+      deps = [ ]
+
+      if (build_enable == "true") {
+        # force link invisible function ,which ar to lib
+        ldflags += [
+          "-L" + "${out_product_path}/libs",
+          "-Wl,--whole-archive",
+        ]
+        foreach(force_link_lib, bin_file.force_link_libs) {
+          ldflags += [ "-l${force_link_lib}" ]
+        }
+        ldflags += [ "-Wl,--no-whole-archive" ]
+
+        deps += [ "//test/xts/tools/lite:tools" ]
+        deps += [ "//test/xts/acts/build_lite:acts" ]
+      }
+      deps += [ "//build/lite:ohos" ]
+      deps += [ "//build/lite:product" ]
+    }
+
+    build_ext_component("build_kernel_image") {
+      deps = [ ":${exe_bin}" ]
+
+      output_name = exe_bin
+      exec_path = out_bin_path
+
+      objcopy = "${compile_prefix}objcopy$toolchain_cmd_suffix"
+      objdump = "${compile_prefix}objdump$toolchain_cmd_suffix"
+
+      command = "$objcopy -O binary $output_name.elf $output_name.bin"
+      command +=
+            " && sh -c '$objdump -t $output_name.elf | sort >$output_name.sym.sorted'"
+      command += " && sh -c '$objdump -d $output_name.elf >$output_name.asm'"
+    }
+
+    build_ext_component("build_image") {
+      deps = [ ":build_kernel_image" ]
+
+      exec_path = "${ohos_root_path}${ohos_vendor_adapter_dir}"
+
+      print("out_bin_path:", out_bin_path)
+      command = "./tools/aft_build_project.sh ${exe_bin} ${out_bin_path}"
+    }
+  }
+}
