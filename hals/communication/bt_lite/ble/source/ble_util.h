@@ -1,13 +1,8 @@
 #ifndef __BLE_UTIL_H__
 #define __BLE_UTIL_H__
 #include <stdio.h>
-#include <stdbool.h>
 #include <stdint.h>
-#include <string.h>
 
-// #include "harmony_bt_def.h"
-#include "bt_def.h"
-#include "wm_bt_def.h"
 
 #define BLE_IF_DBG 1
 
@@ -34,12 +29,8 @@
 #ifndef MIN
 #define MIN(a,b) (((a) < (b)) ? (a) : (b))
 #endif
+extern const char *tls_bt_gap_evt_2_str(uint32_t event);
+extern void tls_bt_dump_hexstring(const char *info, uint8_t *p, int length);
 
-extern void app_to_btif_uuid(tls_bt_uuid_t *p_dest, BtUuid *p_src);
-
-extern void btif_to_app_uuid(BtUuid *p_dest, tls_bt_uuid_t *p_src);
-
-extern uint16_t btif_uuid128_to_uuid16(tls_bt_uuid_t *uuid);
-tls_bt_uuid_t * btif_uuid16_to_uuid128(uint16_t uuid16);
 
 #endif

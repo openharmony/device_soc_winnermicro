@@ -24,7 +24,6 @@
 #include "core_804.h"
 #include "wm_pmu.h"
 
-#define  ATTRIBUTE_ISR __attribute__((isr))
 
 static struct tls_spi_port *spi_port = NULL;
 

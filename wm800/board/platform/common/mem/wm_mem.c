@@ -497,81 +497,10 @@ int is_safe_addr_debug(void* p, u32 len, char* file, int line)
 }
 
 #else /* WM_MEM_DEBUG */
-#if TLS_OS_FREERTOS
-u32 alloc_heap_mem_bytes = 0; 
-u32 alloc_heap_mem_blk_cnt = 0;
-u32 alloc_heap_mem_max_size = 0;
-#define OS_MEM_FLAG  (0x5AA5A55A)
-#define NON_OS_MEM_FLAG (0xA55A5A5A)
-#define MEM_HEAD_FLAG (0xBB55B55B)
-#endif
-
-#define USING_ADD_HEADER   1
-extern u32 total_mem_size;
 void * mem_alloc_debug(u32 size)
 {
-//    u32 cpu_sr = 0;
     u32 *buffer = NULL;
-	u32 length = size;
-
-
-	//printf("size:%d\n", size);
-    if (!memory_manager_initialized) {
-        tls_os_status_t os_status;
-        memory_manager_initialized = true;
-        //
-        // NOTE: If two thread allocate the very first allocation simultaneously
-        // it could cause double initialization of the memory manager. This is a
-        // highly unlikely scenario and will occur in debug versions only.
-        //
-        os_status = tls_os_sem_create(&mem_sem, 1);
-        if(os_status != TLS_OS_SUCCESS)
-            printf("mem_alloc_debug: tls_os_sem_create mem_sem error\r\n");
-    }
-
-#if USING_ADD_HEADER && TLS_OS_FREERTOS
-    length += 8;
-
-    if(tls_get_isr_count() > 0)
-    {
-        extern void *pvPortMalloc( size_t xWantedSize );
-        buffer = pvPortMalloc(length);
-		if(buffer) 
-		{
-			*buffer = OS_MEM_FLAG;
-			buffer++;
-			*buffer = length;
-			buffer++;
-		}
-    }
-    else
-    {
-    	tls_os_sem_acquire(mem_sem, 0);
-        //cpu_sr = tls_os_set_critical();
-        buffer = (u32*)malloc(length);
-	    if(buffer) 
-	    {
-	        *buffer = NON_OS_MEM_FLAG;
-	        buffer++;
-			*buffer = length;
-			buffer++;
-			total_mem_size -= length;
-	    }
-	    //if(tls_get_isr_count() == 0)
-	   // {
-	      //  tls_os_release_critical(cpu_sr);	
-			tls_os_sem_release(mem_sem);
-	   // }
-    }
-#elif TLS_OS_LITEOS
     buffer = LOS_MemAlloc(OS_SYS_MEM_ADDR, size);
-#else   //UCOSII
-	tls_os_sem_acquire(mem_sem, 0);
-    cpu_sr = tls_os_set_critical();
-    buffer = (u32*)malloc(length);
-    tls_os_release_critical(cpu_sr); 
-	tls_os_sem_release(mem_sem);
-#endif
 	if(buffer == NULL)
 		printf("malloc error \n");
 
@@ -581,304 +510,43 @@ void * mem_alloc_debug(u32 size)
 
 void mem_free_debug(void *p)
 {
-//    u32 cpu_sr = 0;
-//	u32 len = 0;
-#if USING_ADD_HEADER && TLS_OS_FREERTOS
-    u32* intMemPtr = NULL;
-	u8 isrstatus = 0;
-
-	isrstatus = tls_get_isr_count();
-    if(isrstatus == 0)
-    {
-    	tls_os_sem_acquire(mem_sem, 0);
-       // cpu_sr = tls_os_set_critical();
-    }
-	
-	intMemPtr = (u32*)p;
-    if(p)
-    {
-		intMemPtr -= 2;    
-		if (*intMemPtr == OS_MEM_FLAG)
-        {
-			extern void vPortFree( void *pv );
-			vPortFree(intMemPtr);
-			intMemPtr = NULL;
-        }
-		else if (*intMemPtr == NON_OS_MEM_FLAG)
-        {
-			total_mem_size += *(intMemPtr + 1);
-			free(intMemPtr);
-			intMemPtr = NULL;
-        }
-        else
-        {
-			printf("mem_free_debug ptr error!!!!!\r\n");
-		}
-    }
-
-    if(isrstatus == 0)
-    {
-   //     tls_os_release_critical(cpu_sr);	
-		tls_os_sem_release(mem_sem);
-    }
-#elif TLS_OS_LITEOS
     int ret = LOS_MemFree(OS_SYS_MEM_ADDR, p);
 	if(ret)
 	{
 		printf("mem free error\n");
 	}
-#else //UCOSII
-	tls_os_sem_acquire(mem_sem, 0);
-	cpu_sr = tls_os_set_critical();
-	free(p);
-	tls_os_release_critical(cpu_sr);	
-	tls_os_sem_release(mem_sem);
-#endif
 }
 
 
 void * mem_realloc_debug(void *mem_address, u32 size)
 {
     u32 * mem_re_addr = NULL;
-//    u32 cpu_sr = 0;
-	u32 length = size;
 
-#if USING_ADD_HEADER && TLS_OS_FREERTOS
-    length = size + 2*4;
-
-    if(tls_get_isr_count() > 0)
-    {
-		extern void *pvPortMalloc( size_t xWantedSize );
-		mem_re_addr = pvPortMalloc(length);
-		if (mem_re_addr)
-		{
-			return NULL;
-		}
-		if(mem_address != NULL)
-		{
-			if (*((u32 *)mem_address-1)> size)
-			{
-				memcpy((u8 *)(mem_re_addr + 2), (u8 *)mem_address, size);
-			}
-			else
-			{
-				memcpy((u8 *)(mem_re_addr + 2), (u8 *)mem_address, *((u32 *)mem_address-1));
-			}
-			mem_free_debug(mem_address);
-			mem_address = NULL;
-    	}
-		if(mem_re_addr) 
-		{
-			*mem_re_addr = OS_MEM_FLAG;
-			mem_re_addr ++;
-			*mem_re_addr = length;
-			mem_re_addr ++;
-		}
-    }
-    else
-    {
-    	tls_os_sem_acquire(mem_sem, 0);
-       // cpu_sr = tls_os_set_critical();
-		mem_re_addr = (u32*)malloc(length);
-		if(mem_re_addr && mem_address) 
-		{
-			if (*((u32 *)mem_address-1)> size)
-			{
-				memcpy((u8 *)(mem_re_addr + 2), (u8 *)mem_address, size);
-			}
-			else
-			{
-				memcpy((u8 *)(mem_re_addr + 2), (u8 *)mem_address, *((u32 *)mem_address-1));
-			}
-			*mem_re_addr = NON_OS_MEM_FLAG;
-			mem_re_addr ++;
-			*mem_re_addr = length;
-			mem_re_addr ++;
-			total_mem_size -= length;
-		}
-       // tls_os_release_critical(cpu_sr);	
-		tls_os_sem_release(mem_sem);
-
-		mem_free_debug(mem_address);
-    }
-#elif TLS_OS_LITEOS
     mem_re_addr = LOS_MemRealloc(OS_SYS_MEM_ADDR, mem_address, size);
-#else
-	tls_os_sem_acquire(mem_sem, 0);
-	cpu_sr = tls_os_set_critical();
-	mem_re_addr = realloc(mem_address, length);
-	tls_os_release_critical(cpu_sr);
-	tls_os_sem_release(mem_sem);
-#endif	
-	//if(mem_re_addr == NULL)
-	//{
-	//	printf("realloc error \r\n");
-	//}
 	return mem_re_addr;
 }
 
 void *mem_calloc_debug(u32 n, u32 size)
 {
-//    u32 cpu_sr = 0;
     u32 *buffer = NULL;
-	u32 length = 0;
 
-#if USING_ADD_HEADER && TLS_OS_FREERTOS
-	length = n*size;
-    length += 2*4;
-
-    if(tls_get_isr_count() > 0)
-    {
-        extern void *pvPortMalloc( size_t xWantedSize );
-        buffer = pvPortMalloc(length);
-		if(buffer) 
-		{
-			memset(buffer, 0, length);
-			*buffer = OS_MEM_FLAG;
-			buffer ++;
-			*buffer = length;
-			buffer ++;
-		}
-    }
-    else
-    {
-    	tls_os_sem_acquire(mem_sem, 0);
-       // cpu_sr = tls_os_set_critical();
-        buffer = (u32*)malloc(length);
-		if(buffer) 
-		{
-			memset(buffer, 0, length);
-			*buffer = NON_OS_MEM_FLAG;
-			buffer ++;
-			*buffer = length;
-			buffer ++;
-			total_mem_size -= length;
-		}
-
-      //  tls_os_release_critical(cpu_sr);	
-		tls_os_sem_release(mem_sem);
-    }
-#elif TLS_OS_LITEOS
     buffer = LOS_MemAlloc(OS_SYS_MEM_ADDR, n*size);
 	if(buffer) 
 	{
 		memset(buffer, 0, n*size);
 	}
-#else   //UCOSII
-	tls_os_sem_acquire(mem_sem, 0);
-    cpu_sr = tls_os_set_critical();
-    buffer = (u32*)calloc(n,size);
-    tls_os_release_critical(cpu_sr); 
-	tls_os_sem_release(mem_sem);
-#endif
-	//if(buffer == NULL)
-	//{
-	//	printf("calloc error \r\n");
-	//}
+
 	return buffer;
 }
 #endif /* WM_MEM_DEBUG */
 
-extern u32 __heap_end;
-extern u32 __heap_start;
-
 u32 tls_mem_get_avail_heapsize(void)
 {
-#if TLS_OS_FREERTOS
-#if USING_ADD_HEADER
-	u32 availablemem = 0;
-//	u32 cpu_sr;
-
-	tls_os_sem_acquire(mem_sem, 0);
-	//cpu_sr = tls_os_set_critical();
-	availablemem = total_mem_size;
-   // tls_os_release_critical(cpu_sr);	
-	tls_os_sem_release(mem_sem);
-
-	return availablemem&0xFFFFF000;
-#else
-	u8 *p = NULL;
-	u32 startpos = 0;
-	u32 stoppos = 0;
-	u32 laststartpos = 0;
-	static u32 last_avail_heapsize = 0;
-	u32 cpu_sr = 0;
-
-    if (!memory_manager_initialized) {
-        tls_os_status_t os_status;
-        memory_manager_initialized = true;
-        //
-        // NOTE: If two thread allocate the very first allocation simultaneously
-        // it could cause double initialization of the memory manager. This is a
-        // highly unlikely scenario and will occur in debug versions only.
-        //
-        os_status = tls_os_sem_create(&mem_sem, 1);
-        if(os_status != TLS_OS_SUCCESS)
-            printf("mem_alloc_debug: tls_os_sem_create mem_sem error\n");
-    }
-
-	tls_os_sem_acquire(mem_sem, 0);
-    cpu_sr = tls_os_set_critical();	
-	if (last_avail_heapsize)
-	{
-		startpos = last_avail_heapsize;
-		stoppos = last_avail_heapsize*2;
-		if (startpos > ((u32)&__heap_end - (u32)&__heap_start))
-		{
-			startpos = (u32)&__heap_end - (u32)&__heap_start;
-		}
-	}
-	else
-	{
-		startpos = (u32)&__heap_end - (u32)&__heap_start;
-		stoppos = (u32)&__heap_end - (u32)&__heap_start;
-	}
-
-	for (;startpos <= stoppos;)
-	{
-		p = malloc(startpos);
-		if (p)
-		{
-			free(p);
-			if (startpos < 1024 || (stoppos - startpos) < 1024
-				|| (startpos == ((u32)&__heap_end - (u32)&__heap_start)))
-			{
-				last_avail_heapsize = startpos;
-				goto END;
-			}
-			laststartpos = startpos;
-			startpos = (stoppos + startpos)>>1;
-		}
-		else
-		{
-			stoppos = startpos;
-			if (laststartpos)
-			{
-				startpos = (laststartpos + stoppos)/2;
-			}
-			else
-			{
-				startpos = startpos>>1;
-			}
-			if (startpos < 1024 || (stoppos - startpos) < 1024)
-			{
-				last_avail_heapsize = startpos;
-				goto END;
-			}
-		}
-	}
-END:
-    tls_os_release_critical(cpu_sr); 
-	tls_os_sem_release(mem_sem);	
-	return startpos;
-#endif	
-#elif TLS_OS_LITEOS
 	LOS_MEM_POOL_STATUS status = {0};
 	if (LOS_MemInfoGet(OS_SYS_MEM_ADDR, &status) == LOS_NOK) {
         return 0;
     }
 	return status.totalFreeSize;
-#endif
 }
 
 

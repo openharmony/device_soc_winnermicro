@@ -76,8 +76,6 @@ void mdelay(uint32_t ms)
   */
 void SystemInit(void)
 {
-    __set_VBR((uint32_t) & (irq_vectors));
-
 #if defined(CONFIG_SEPARATE_IRQ_SP) && !defined(CONFIG_KERNEL_NONE)
     /* 801 not supported */
     __set_Int_SP((uint32_t)&g_top_irqstack);
@@ -97,6 +95,5 @@ void SystemInit(void)
 
     //csi_coret_config(g_system_clock / CONFIG_SYSTICK_HZ, SYS_TICK_IRQn);    //10ms
 //#ifndef CONFIG_KERNEL_NONE
-    csi_vic_enable_irq(SYS_TICK_IRQn);
 //#endif
 }

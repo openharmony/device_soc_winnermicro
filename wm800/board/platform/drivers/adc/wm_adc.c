@@ -22,8 +22,6 @@
 #include "wm_irq.h"
 #include "wm_mem.h"
 
-#define  ATTRIBUTE_ISR __attribute__((isr))
-
 
 //TODO
 #define HR_SD_ADC_CONFIG_REG 0
@@ -504,8 +502,6 @@ u32 adc_get_interVolt(void)
 	}
 	voltValue = voltValue/10;
 	code = voltValue;
-	voltValue = voltValue;
-	adc_offset = adc_offset;
 	tls_adc_stop(0);
 	voltValue = ((voltValue - adc_offset)*685/20+1200000)*2;
 	value = voltValue - voltValue*10/100;

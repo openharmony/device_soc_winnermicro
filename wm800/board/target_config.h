@@ -60,7 +60,7 @@ extern "C" {
 /*=============================================================================
                                        Task module configuration
 =============================================================================*/
-#define LOSCFG_BASE_CORE_TSK_LIMIT                          16
+#define LOSCFG_BASE_CORE_TSK_LIMIT                          32
 #define LOSCFG_BASE_CORE_TSK_IDLE_STACK_SIZE                (0x600U)
 #define LOSCFG_BASE_CORE_TSK_DEFAULT_STACK_SIZE             (0x800U)
 #define LOSCFG_BASE_CORE_TSK_MIN_STACK_SIZE                 (0x40U)
@@ -117,6 +117,11 @@ extern unsigned int __heap_end;
 #define LOSCFG_KERNEL_PRINTF                                1
 
 #define LOSCFG_SUPPORT_LITTLEFS                             1
+
+#define  PendSV_IRQn  22 // Pend SV Interrupt
+
+extern void tspend_handler(void);
+extern uint32_t irq_vectors[];
 
 #ifdef __cplusplus
 #if __cplusplus

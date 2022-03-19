@@ -921,9 +921,7 @@ __STATIC_INLINE uint32_t csi_vic_get_prio(int32_t IRQn)
  */
 __STATIC_INLINE void csi_vic_set_vector(int32_t IRQn, uint32_t handler)
 {
-    if (IRQn >= 0 && IRQn < 128) {
-    	irq_vectors[32 + IRQn] = handler;
-    }
+	OsSetVector(IRQn, handler);
 
     csi_icache_invalid();
 }
