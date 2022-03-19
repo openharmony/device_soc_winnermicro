@@ -39,7 +39,9 @@
 static struct tls_fwup *fwup = NULL;
 static tls_os_queue_t *fwup_msg_queue = NULL;
 
+#if TLS_OS_FREERTOS
 static u32 *fwup_task_stk = NULL;
+#endif
 static u8 oneshotback = 0;
 
 extern int tls_fls_fast_write_init(void);
@@ -675,13 +677,19 @@ int tls_fwup_init(void)
 		tls_mem_free(fwup);
 		return TLS_FWUP_STATUS_EMEM;
 	}
+#if TLS_OS_FREERTOS
 	fwup_task_stk = (u32 *)tls_mem_alloc(FWUP_TASK_STK_SIZE * sizeof(u32));
 	if (fwup_task_stk)
 	{
+#endif
 		err = tls_os_task_create(NULL, "fwup",
 							fwup_scheduler,
 							(void *)fwup,
+#if TLS_OS_FREERTOS
 							(void *)fwup_task_stk,
+#else
+							NULL,
+#endif
 							FWUP_TASK_STK_SIZE * sizeof(u32),
 							TLS_FWUP_TASK_PRIO,
 							0);
@@ -695,10 +703,13 @@ int tls_fwup_init(void)
 			fwup->list_lock = NULL;
 			tls_mem_free(fwup);
 			fwup = NULL;
+#if TLS_OS_FREERTOS
 			tls_mem_free(fwup_task_stk);
 			fwup_task_stk = NULL;
+#endif
 			return TLS_FWUP_STATUS_EMEM;
 		}
+#if TLS_OS_FREERTOS
 	}
 	else
 	{
@@ -709,6 +720,7 @@ int tls_fwup_init(void)
 		tls_mem_free(fwup);
 		return TLS_FWUP_STATUS_EMEM;
 	}
+#endif
 
 	return TLS_FWUP_STATUS_OK;
 }

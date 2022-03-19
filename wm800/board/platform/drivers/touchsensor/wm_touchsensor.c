@@ -13,8 +13,6 @@
 #include "wm_cpu.h"
 #include "wm_gpio.h"
 
-#define  ATTRIBUTE_ISR __attribute__((isr))
-
 typedef void (*touchsensor_cb)(u32 status);
 touchsensor_cb tc_callback = NULL;
 /**

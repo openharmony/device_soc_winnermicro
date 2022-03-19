@@ -32,11 +32,7 @@ kernel_module(module_name) {
     "xt804/libc/liteos/math/fmodl.c",
     "xt804/libc/liteos/math/scalbn.c",
     "xt804/libc/liteos/math/scalbnl.c",
-    "xt804/gcc/los_context.c",
-    "xt804/gcc/los_dispatch.S",
-    "xt804/gcc/los_interrupt.c",
-    "xt804/gcc/los_timer.c",
   ]
-  include_dirs = [ "xt804/gcc/" ]
+  include_dirs = []
 }
 

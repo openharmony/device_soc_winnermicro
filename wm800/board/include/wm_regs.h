@@ -10,21 +10,21 @@
 #ifndef WM_REGS_H
 #define WM_REGS_H
 
-typedef volatile unsigned char		vu8;
-typedef volatile unsigned short		vu16;
-typedef volatile unsigned long		vu32;
+typedef volatile unsigned char        vu8;
+typedef volatile unsigned short        vu16;
+typedef volatile unsigned long        vu32;
 
-#define M8(adr)		(*((vu8 *) (adr)))
-#define M16(adr)	(*((vu16*) (adr)))
-#define M32(adr)	(*((vu32*) (adr)))
+#define M8(adr)        (*((vu8 *) (adr)))
+#define M16(adr)    (*((vu16*) (adr)))
+#define M32(adr)    (*((vu32*) (adr)))
 
-#define  ATTRIBUTE_ISR __attribute__((isr))
+#define  ATTRIBUTE_ISR  //__attribute__((isr))
 
 typedef enum IRQn
 {
 /******  W800 specific Interrupt Numbers *********************************************************/
   SDIO_IRQn                   = 0,      /*!< SDIO Receiver/Transmit/Command Receiver/SDIO Command Transmit Interrupt */
-  MAC_IRQn                 	  = 1,      /*!< MAC Interrupt                                        */
+  MAC_IRQn                       = 1,      /*!< MAC Interrupt                                        */
   RF_CFG_IRQn                 = 2,      /*!< RF_CFG Interrupt                                        */
   SEC_IRQn                     = 3,      /*!< SEC RX/TX_MNGT/TX_DATA Interrupt                     */
   DMA_Channel0_IRQn           = 4,      /*!< DMA  Channel 0 global Interrupt                      */
@@ -33,20 +33,20 @@ typedef enum IRQn
   DMA_Channel3_IRQn           = 7,      /*!< DMA  Channel 3 global Interrupt                      */
   DMA_Channel4_7_IRQn         = 8,      /*!< DMA  Channel 4~7 global Interrupt                    */
   DMA_BRUST_IRQn              = 9,      /*!< DMA Burst global Interrupt                           */
-  I2C_IRQn         			  = 10,     /*!< I2C Interrupts                                       */
-  ADC_IRQn        			  = 11,     /*!< ADC Convert Interrupts                               */
+  I2C_IRQn                       = 10,     /*!< I2C Interrupts                                       */
+  ADC_IRQn                      = 11,     /*!< ADC Convert Interrupts                               */
   SPI_LS_IRQn                 = 12,     /*!< Low Speed SPI Interrupt                              */
   SPI_HS_IRQn                 = 13,     /*!< High Speed SPI Interrupt                             */
   GPIOA_IRQn                  = 14,     /*!< GPIO A Interrupt                                     */
   GPIOB_IRQn                  = 15,     /*!< GPIO B Interrupt                                     */
   UART0_IRQn                  = 16,     /*!< UART0 Interrupts                                     */
-  UART1_IRQn               	  = 17,     /*!< UART1 Interrupt                                      */
+  UART1_IRQn                     = 17,     /*!< UART1 Interrupt                                      */
   TOUCH_IRQn                  = 18,     /*!< Touch Sensor Iterrupt                                */
   UART24_IRQn                 = 19,     /*!< UART2/3/4/5 Interrupt                                  */
   BLE_IRQn                    = 20,     /*!< BLE Interrupt                                        */
   BT_IRQn                     = 21,     /*!< BT Interrupt                                         */
-  PWM_IRQn                 	  = 22,     /*!< PWM Interrupt                                        */
-  I2S_IRQn              	  = 23,     /*!< I2S  Interrupts                                      */
+  PWM_IRQn                       = 22,     /*!< PWM Interrupt                                        */
+  I2S_IRQn                    = 23,     /*!< I2S  Interrupts                                      */
   SIDO_HOST_IRQn              = 24,     /*!< SDIO Host Interrupts                                 */
   SYS_TICK_IRQn               = 25,     /*!< SYS Tick Interrupts                                  */
   RSA_IRQn                    = 26,     /*!< RSA Interrupts                                       */
@@ -54,7 +54,7 @@ typedef enum IRQn
   FLASH_IRQn                  = 28,     /*!< Flash Interrupt                                      */
   PMU_IRQn                    = 29,     /*!< PMU Interrupt                                        */
   TIMER_IRQn                  = 30,     /*!< Timer0~5 Trigger                                     */
-  WDG_IRQn                	  = 31,     /*!< Watch Dog Interrupt                                  */
+  WDG_IRQn                      = 31,     /*!< Watch Dog Interrupt                                  */
 } IRQn_Type;
 
 //#include "core_cm3.h"
@@ -151,7 +151,7 @@ typedef volatile unsigned int TLS_REG;    /* Hardware register definition */
 #define HR_DMA_BASE_ADDR                (DEVICE_BASE_ADDR + 0x800)
 #define HR_DMA_INT_MASK                 (HR_DMA_BASE_ADDR + 0x0)
 #define HR_DMA_INT_SRC                  (HR_DMA_BASE_ADDR + 0x4)
-#define HR_DMA_CHNL_SEL					(HR_DMA_BASE_ADDR + 0x08)
+#define HR_DMA_CHNL_SEL                    (HR_DMA_BASE_ADDR + 0x08)
 #define HR_DMA_CHNL0_SRC_ADDR           (HR_DMA_BASE_ADDR + 0x10)
 #define HR_DMA_CHNL0_DEST_ADDR          (HR_DMA_BASE_ADDR + 0x14)
 #define HR_DMA_CHNL0_SRC_WRAP_ADDR      (HR_DMA_BASE_ADDR + 0x18)
@@ -164,22 +164,22 @@ typedef volatile unsigned int TLS_REG;    /* Hardware register definition */
 #define HR_DMA_CHNL0_LINK_DEST_ADDR     (HR_DMA_BASE_ADDR + 0x34)
 #define HR_DMA_CHNL0_CURRENT_DEST_ADDR  (HR_DMA_BASE_ADDR + 0x38)
 
-#define DMA_STARTADDRESS        			HR_DMA_BASE_ADDR
-#define DMA_INTMASK_REG      	  			(*(volatile unsigned int*)(DMA_STARTADDRESS+0x000))
-#define DMA_INTSRC_REG      	  			(*(volatile unsigned int*)(DMA_STARTADDRESS+0x004))
-#define DMA_CHANNEL_SEL						(*(volatile unsigned int*)(DMA_STARTADDRESS+0x008))
-#define DMA_CHNL_REG_BASE             		(DMA_STARTADDRESS+0x010)
-#define DMA_SRCADDR_REG(ch)      	  		(*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /*- 1*/) +0x00))
-#define DMA_DESTADDR_REG(ch)      	  		(*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /*- 1*/) +0x04))
-#define DMA_SRCWRAPADDR_REG(ch)				(*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /*- 1*/) +0x08))
-#define DMA_DESTWRAPADDR_REG(ch)			(*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /*- 1*/) +0x0C))
-#define DMA_WRAPSIZE_REG(ch)				(*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /*- 1*/) +0x10))
-#define DMA_CHNLCTRL_REG(ch)      	  		(*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /*- 1*/) +0x14))
-#define DMA_MODE_REG(ch)      	  			(*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /*- 1*/) +0x18))
-#define DMA_CTRL_REG(ch)      	  			(*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /*- 1*/) +0x1C))
-#define DMA_STATUS_REG(ch)      	  		(*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /*- 1*/) +0x20))
-#define DMA_DESC_ADDR_REG(ch)      	    	(*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /*- 1*/) +0x24))
-#define DMA_CURRDESTADDR_REG(ch)      		(*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /*- 1*/) +0x28))
+#define DMA_STARTADDRESS                    HR_DMA_BASE_ADDR
+#define DMA_INTMASK_REG                        (*(volatile unsigned int*)(DMA_STARTADDRESS+0x000))
+#define DMA_INTSRC_REG                        (*(volatile unsigned int*)(DMA_STARTADDRESS+0x004))
+#define DMA_CHANNEL_SEL                        (*(volatile unsigned int*)(DMA_STARTADDRESS+0x008))
+#define DMA_CHNL_REG_BASE                     (DMA_STARTADDRESS+0x010)
+#define DMA_SRCADDR_REG(ch)                    (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /*- 1*/) +0x00))
+#define DMA_DESTADDR_REG(ch)                    (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /*- 1*/) +0x04))
+#define DMA_SRCWRAPADDR_REG(ch)                (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /*- 1*/) +0x08))
+#define DMA_DESTWRAPADDR_REG(ch)            (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /*- 1*/) +0x0C))
+#define DMA_WRAPSIZE_REG(ch)                (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /*- 1*/) +0x10))
+#define DMA_CHNLCTRL_REG(ch)                    (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /*- 1*/) +0x14))
+#define DMA_MODE_REG(ch)                        (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /*- 1*/) +0x18))
+#define DMA_CTRL_REG(ch)                        (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /*- 1*/) +0x1C))
+#define DMA_STATUS_REG(ch)                    (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /*- 1*/) +0x20))
+#define DMA_DESC_ADDR_REG(ch)                  (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /*- 1*/) +0x24))
+#define DMA_CURRDESTADDR_REG(ch)              (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /*- 1*/) +0x28))
 
 #define DMA_CHNL_CTRL_CHNL_ON           (1<<0)
 #define DMA_CHNL_CTRL_CHNL_OFF          (1<<1)
@@ -187,35 +187,35 @@ typedef volatile unsigned int TLS_REG;    /* Hardware register definition */
 #define DMA_MODE_HARD_MODE                  (1<<0)
 #define DMA_MODE_CHAIN_MODE                 (1<<1)
 
-#define DMA_MODE_SEL_MASK										(0xF<<2)
+#define DMA_MODE_SEL_MASK                                        (0xF<<2)
 #define DMA_MODE_SEL_UART_RX               (0<<2)
 #define DMA_MODE_SEL_UART_TX               (1<<2)
-#define DMA_MODE_SEL_PWM0				(2<<2)
-#define DMA_DODE_SEL_PWM1				(3<<2)
+#define DMA_MODE_SEL_PWM0                (2<<2)
+#define DMA_DODE_SEL_PWM1                (3<<2)
 #define DMA_MODE_SEL_LSSPI_RX                 (4<<2)
 #define DMA_MODE_SEL_LSSPI_TX                 (5<<2)
 #define DMA_MODE_SEL_SDADC_CH0             (6<<2)
 #define DMA_MODE_SEL_SDADC_CH1             (7<<2)
 #define DMA_MODE_SEL_SDADC_CH2            (8<<2)
 #define DMA_MODE_SEL_SDADC_CH3            (9<<2)
-#define DMA_MODE_SEL_I2S_RX								(10<<2)
-#define DMA_MODE_SEL_I2S_TX								(11<<2)
-#define DMA_MODE_SEL_SDIOHOST							(12<<2)
+#define DMA_MODE_SEL_I2S_RX                                (10<<2)
+#define DMA_MODE_SEL_I2S_TX                                (11<<2)
+#define DMA_MODE_SEL_SDIOHOST                            (12<<2)
 
 #define DMA_MODE_CHAIN_LINK_EN             (1<<6)
 
 #define DMA_CTRL_AUTO_RELOAD                 (1<<0)
 #define DMA_CTRL_SRC_ADDR_INC                (1<<1)
-#define DMA_CTRL_SRC_ADDR_CIR								 (3<<1)
+#define DMA_CTRL_SRC_ADDR_CIR                                 (3<<1)
 #define DMA_CTRL_DEST_ADDR_INC              (1<<3)
-#define DMA_CTRL_DEST_ADDR_CIR							(3<<3)
+#define DMA_CTRL_DEST_ADDR_CIR                            (3<<3)
 #define DMA_CTRL_DATA_SIZE_BYTE            (0<<5)
 #define DMA_CTRL_DATA_SIZE_SHORT          (1<<5)
 #define DMA_CTRL_DATA_SIZE_WORD           (2<<5)
 #define DMA_CTRL_BURST_SIZE1                   (0<<7)
 #define DMA_CTRL_BURST_SIZE4                   (1<<7)
 
-#define DMA_CTRL_TOTAL_MASK									 (0xFFF<<8)
+#define DMA_CTRL_TOTAL_MASK                                     (0xFFF<<8)
 #define DMA_CTRL_TOTAL_SIZE(n)               (n<<8)
 
 /***************************************************************
@@ -225,10 +225,10 @@ typedef volatile unsigned int TLS_REG;    /* Hardware register definition */
 #define HR_PMU_PS_CR                    (HR_PMU_BASE_ADDR + 0x00)
 #define HR_PMU_TIMER0                   (HR_PMU_BASE_ADDR + 0x04)
 #define HR_PMU_TIMER1                   (HR_PMU_BASE_ADDR + 0x08)
-#define HR_PMU_RTC_CTRL1               	(HR_PMU_BASE_ADDR + 0x0C)
+#define HR_PMU_RTC_CTRL1                   (HR_PMU_BASE_ADDR + 0x0C)
 #define HR_PMU_RTC_CTRL2                (HR_PMU_BASE_ADDR + 0x10)
 #define HR_PMU_INTERRUPT_SRC            (HR_PMU_BASE_ADDR + 0x14)
-#define HR_PMU_INTERRUPT_MASK          	(HR_PMU_BASE_ADDR + 0x18)
+#define HR_PMU_INTERRUPT_MASK              (HR_PMU_BASE_ADDR + 0x18)
 #define HR_PMU_WLAN_STTS                (HR_PMU_BASE_ADDR + 0x1C)
 #define HR_PMU_BK_REG                   (HR_PMU_BASE_ADDR + 0x20)
 
@@ -244,17 +244,17 @@ typedef volatile unsigned int TLS_REG;    /* Hardware register definition */
 #define HR_CLK_GATE_EN           HR_CLK_BASE_ADDR
 #define HR_CLK_SOFT_CLK_MASK    (HR_CLK_BASE_ADDR + 0x04) 
 #define HR_CLK_BBP_CLT_CTRL     (HR_CLK_BASE_ADDR + 0x08)
-#define HR_CLK_RST_CTL         	(HR_CLK_BASE_ADDR + 0x0c)
-#define HR_CLK_DIV_CTL			(HR_CLK_BASE_ADDR + 0x10)
-#define HR_CLK_SEL_CTL			(HR_CLK_BASE_ADDR + 0x14)
-#define HR_OSC_32K_REG			(HR_CLK_BASE_ADDR + 0x14)
-#define HR_CLK_I2S_CTL			(HR_CLK_BASE_ADDR + 0x18)
-#define HR_CLK_RST_STA			(HR_CLK_BASE_ADDR + 0x1C)
+#define HR_CLK_RST_CTL             (HR_CLK_BASE_ADDR + 0x0c)
+#define HR_CLK_DIV_CTL            (HR_CLK_BASE_ADDR + 0x10)
+#define HR_CLK_SEL_CTL            (HR_CLK_BASE_ADDR + 0x14)
+#define HR_OSC_32K_REG            (HR_CLK_BASE_ADDR + 0x14)
+#define HR_CLK_I2S_CTL            (HR_CLK_BASE_ADDR + 0x18)
+#define HR_CLK_RST_STA            (HR_CLK_BASE_ADDR + 0x1C)
 
 /***************************************************************
  * 内存模块寄存器定义
  ***************************************************************/
-#define HR_MEM_BASE_ADDR        	(DEVICE_BASE_ADDR + 0xF00)
+#define HR_MEM_BASE_ADDR            (DEVICE_BASE_ADDR + 0xF00)
 #define HR_MEM_TXBUF_BASE_ADDR      (HR_MEM_BASE_ADDR + 0x00)
 #define HR_MEM_RXBUF_BASE_ADDR      (HR_MEM_BASE_ADDR + 0x04)
 #define HR_MEM_BUF_NUM_CFG          (HR_MEM_BASE_ADDR + 0x08)
@@ -285,65 +285,65 @@ typedef volatile unsigned int TLS_REG;    /* Hardware register definition */
 #define HR_I2C_CR               (HR_I2C_BASE_ADDR + 0x18)
 
 
-#define I2C_CTRL_INT_DISABLE	(0x1UL<<6)
-#define I2C_CTRL_ENABLE			(0x1UL<<7)
+#define I2C_CTRL_INT_DISABLE    (0x1UL<<6)
+#define I2C_CTRL_ENABLE            (0x1UL<<7)
 
-#define I2C_CR_STA				(0x1UL<<7)
-#define I2C_CR_STO				(0x1UL<<6)
-#define I2C_CR_RD				(0x1UL<<5)
-#define I2C_CR_WR				(0x1UL<<4)
-#define I2C_CR_NAK				(0x1UL<<3)
-#define I2C_CR_IACK				(0x1UL)
+#define I2C_CR_STA                (0x1UL<<7)
+#define I2C_CR_STO                (0x1UL<<6)
+#define I2C_CR_RD                (0x1UL<<5)
+#define I2C_CR_WR                (0x1UL<<4)
+#define I2C_CR_NAK                (0x1UL<<3)
+#define I2C_CR_IACK                (0x1UL)
 
-#define I2C_SR_NAK				(0x1UL<<7)
-#define I2C_SR_BUSY					(0x1UL<<6)
-#define I2C_SR_TIP				(0x1UL<<1)
-#define I2C_SR_IF				(0x1UL)
+#define I2C_SR_NAK                (0x1UL<<7)
+#define I2C_SR_BUSY                    (0x1UL<<6)
+#define I2C_SR_TIP                (0x1UL<<1)
+#define I2C_SR_IF                (0x1UL)
 
 
 /***************************************************************
  * SD ADC Reg
  ***************************************************************/
 #define HR_SD_ADC_BASE_ADDR         (HR_APB_BASE_ADDR + 0x200)
-#define HR_SD_ADC_RESULT_REG     	((HR_SD_ADC_BASE_ADDR+0x000))
-#define HR_SD_ADC_ANA_CTRL        	((HR_SD_ADC_BASE_ADDR+0x004))
-#define HR_SD_ADC_PGA_CTRL	       ((HR_SD_ADC_BASE_ADDR+0x008))
-#define HR_SD_ADC_TEMP_CTRL	       ((HR_SD_ADC_BASE_ADDR+0x00C))
-#define HR_SD_ADC_CTRL        	   ((HR_SD_ADC_BASE_ADDR+0x010))
-#define HR_SD_ADC_INT_STATUS   	   ((HR_SD_ADC_BASE_ADDR+0x014))
-#define HR_SD_ADC_CMP_VALUE    	   ((HR_SD_ADC_BASE_ADDR+0x018))
+#define HR_SD_ADC_RESULT_REG         ((HR_SD_ADC_BASE_ADDR+0x000))
+#define HR_SD_ADC_ANA_CTRL            ((HR_SD_ADC_BASE_ADDR+0x004))
+#define HR_SD_ADC_PGA_CTRL           ((HR_SD_ADC_BASE_ADDR+0x008))
+#define HR_SD_ADC_TEMP_CTRL           ((HR_SD_ADC_BASE_ADDR+0x00C))
+#define HR_SD_ADC_CTRL               ((HR_SD_ADC_BASE_ADDR+0x010))
+#define HR_SD_ADC_INT_STATUS          ((HR_SD_ADC_BASE_ADDR+0x014))
+#define HR_SD_ADC_CMP_VALUE           ((HR_SD_ADC_BASE_ADDR+0x018))
 
 
 /***************************************************************
  *Low Speed SPI Reg
  ***************************************************************/
 #define HR_SPI_BASE_ADDR            (HR_APB_BASE_ADDR + 0x400)
-#define HR_SPI_CHCFG_REG		   		(HR_SPI_BASE_ADDR + 0x000)
-#define HR_SPI_SPICFG_REG		   		(HR_SPI_BASE_ADDR + 0x004)
-#define HR_SPI_CLKCFG_REG		   		(HR_SPI_BASE_ADDR + 0x008)
-#define HR_SPI_MODECFG_REG		   	(HR_SPI_BASE_ADDR + 0x00C)
-#define HR_SPI_INT_MASK_REG		   		(HR_SPI_BASE_ADDR + 0x010)
-#define HR_SPI_INT_STATUS_REG		   		(HR_SPI_BASE_ADDR + 0x014)
-#define HR_SPI_STATUS_REG		   	(HR_SPI_BASE_ADDR + 0x018)
-#define HR_SPI_TIMEOUT_REG		   	(HR_SPI_BASE_ADDR + 0x01C)
-#define HR_SPI_TXDATA_REG		   		(HR_SPI_BASE_ADDR + 0x020)
-#define HR_SPI_TRANSLEN_REG		   	(HR_SPI_BASE_ADDR + 0x024)
-#define HR_SPI_SLV_XMIT_LEN_REG		   	(HR_SPI_BASE_ADDR + 0x028)
-#define HR_SPI_RXDATA_REG		   		(HR_SPI_BASE_ADDR + 0x030)
+#define HR_SPI_CHCFG_REG                   (HR_SPI_BASE_ADDR + 0x000)
+#define HR_SPI_SPICFG_REG                   (HR_SPI_BASE_ADDR + 0x004)
+#define HR_SPI_CLKCFG_REG                   (HR_SPI_BASE_ADDR + 0x008)
+#define HR_SPI_MODECFG_REG               (HR_SPI_BASE_ADDR + 0x00C)
+#define HR_SPI_INT_MASK_REG                   (HR_SPI_BASE_ADDR + 0x010)
+#define HR_SPI_INT_STATUS_REG                   (HR_SPI_BASE_ADDR + 0x014)
+#define HR_SPI_STATUS_REG               (HR_SPI_BASE_ADDR + 0x018)
+#define HR_SPI_TIMEOUT_REG               (HR_SPI_BASE_ADDR + 0x01C)
+#define HR_SPI_TXDATA_REG                   (HR_SPI_BASE_ADDR + 0x020)
+#define HR_SPI_TRANSLEN_REG               (HR_SPI_BASE_ADDR + 0x024)
+#define HR_SPI_SLV_XMIT_LEN_REG               (HR_SPI_BASE_ADDR + 0x028)
+#define HR_SPI_RXDATA_REG                   (HR_SPI_BASE_ADDR + 0x030)
 
 
-#define SPIM_STARTADDRESS 		  		(HR_APB_BASE_ADDR + 0x400)
-#define SPIM_CHCFG_REG		   			(*(volatile unsigned int*)(SPIM_STARTADDRESS+0x000))
-#define SPIM_SPICFG_REG		   		(*(volatile unsigned int*)(SPIM_STARTADDRESS+0x004))
-#define SPIM_CLKCFG_REG		   		(*(volatile unsigned int*)(SPIM_STARTADDRESS+0x008))
-#define SPIM_MODECFG_REG		   		(*(volatile unsigned int*)(SPIM_STARTADDRESS+0x00C))
-#define SPIM_INTEN_REG		   			(*(volatile unsigned int*)(SPIM_STARTADDRESS+0x010))
-#define SPIM_INTSRC_REG		   		(*(volatile unsigned int*)(SPIM_STARTADDRESS+0x014))
-#define SPIM_SPISTATUS_REG		   		(*(volatile unsigned int*)(SPIM_STARTADDRESS+0x018))
-#define SPIM_SPITIMEOUT_REG		   	(*(volatile unsigned int*)(SPIM_STARTADDRESS+0x01C))
-#define SPIM_TXDATA_REG		   		(*(volatile unsigned int*)(SPIM_STARTADDRESS+0x020))
-#define SPIM_TRANSLEN_REG		   		(*(volatile unsigned int*)(SPIM_STARTADDRESS+0x024))
-#define SPIM_RXDATA_REG		   		(*(volatile unsigned int*)(SPIM_STARTADDRESS+0x030))
+#define SPIM_STARTADDRESS                   (HR_APB_BASE_ADDR + 0x400)
+#define SPIM_CHCFG_REG                       (*(volatile unsigned int*)(SPIM_STARTADDRESS+0x000))
+#define SPIM_SPICFG_REG                   (*(volatile unsigned int*)(SPIM_STARTADDRESS+0x004))
+#define SPIM_CLKCFG_REG                   (*(volatile unsigned int*)(SPIM_STARTADDRESS+0x008))
+#define SPIM_MODECFG_REG                   (*(volatile unsigned int*)(SPIM_STARTADDRESS+0x00C))
+#define SPIM_INTEN_REG                       (*(volatile unsigned int*)(SPIM_STARTADDRESS+0x010))
+#define SPIM_INTSRC_REG                   (*(volatile unsigned int*)(SPIM_STARTADDRESS+0x014))
+#define SPIM_SPISTATUS_REG                   (*(volatile unsigned int*)(SPIM_STARTADDRESS+0x018))
+#define SPIM_SPITIMEOUT_REG               (*(volatile unsigned int*)(SPIM_STARTADDRESS+0x01C))
+#define SPIM_TXDATA_REG                   (*(volatile unsigned int*)(SPIM_STARTADDRESS+0x020))
+#define SPIM_TRANSLEN_REG                   (*(volatile unsigned int*)(SPIM_STARTADDRESS+0x024))
+#define SPIM_RXDATA_REG                   (*(volatile unsigned int*)(SPIM_STARTADDRESS+0x030))
 
 
 /*RSA Reg*/
@@ -455,9 +455,9 @@ typedef volatile unsigned int TLS_REG;    /* Hardware register definition */
  ***************************************************************/
 #define HR_UART0_BASE_ADDR          (HR_APB_BASE_ADDR + 0x600)
 #define HR_UART1_BASE_ADDR          (HR_APB_BASE_ADDR + 0x800)
-#define HR_UART2_BASE_ADDR			(HR_APB_BASE_ADDR + 0xA00)
-#define HR_UART3_BASE_ADDR			(HR_APB_BASE_ADDR + 0xC00)
-#define HR_UART4_BASE_ADDR			(HR_APB_BASE_ADDR + 0xE00)
+#define HR_UART2_BASE_ADDR            (HR_APB_BASE_ADDR + 0xA00)
+#define HR_UART3_BASE_ADDR            (HR_APB_BASE_ADDR + 0xC00)
+#define HR_UART4_BASE_ADDR            (HR_APB_BASE_ADDR + 0xE00)
 
 #define HR_UART0_LINE_CTRL          (HR_UART0_BASE_ADDR + 0x0)
 #define HR_UART0_FLOW_CTRL          (HR_UART0_BASE_ADDR + 0x04)
@@ -491,10 +491,10 @@ typedef volatile unsigned int TLS_REG;    /* Hardware register definition */
 #define HR_UART2_FIFO_STATUS        (HR_UART2_BASE_ADDR + 0x1C)
 #define HR_UART2_TX_WIN             (HR_UART2_BASE_ADDR + 0x20)
 #define HR_UART2_RX_WIN             (HR_UART2_BASE_ADDR + 0x30)
-#define HR_UART2_GUARD_TIME			(HR_UART2_BASE_ADDR + 0x40)
-#define HR_UART2_WAIT_TIME			(HR_UART2_BASE_ADDR + 0x44)
-#define HR_UART2_GT					(HR_UART2_BASE_ADDR + 0x40)
-#define HR_UART2_WT					(HR_UART2_BASE_ADDR + 0x44)
+#define HR_UART2_GUARD_TIME            (HR_UART2_BASE_ADDR + 0x40)
+#define HR_UART2_WAIT_TIME            (HR_UART2_BASE_ADDR + 0x44)
+#define HR_UART2_GT                    (HR_UART2_BASE_ADDR + 0x40)
+#define HR_UART2_WT                    (HR_UART2_BASE_ADDR + 0x44)
 
 #define HR_UART3_LINE_CTRL          (HR_UART3_BASE_ADDR + 0x0)
 #define HR_UART3_FLOW_CTRL          (HR_UART3_BASE_ADDR + 0x04)
@@ -615,72 +615,72 @@ typedef volatile unsigned int TLS_REG;    /* Hardware register definition */
 #define HR_GPIOA_BASE_ADDR           (HR_APB_BASE_ADDR + 0x1200)
 #define HR_GPIOA_DATA                (HR_GPIOA_BASE_ADDR + 0x0)
 #define HR_GPIOA_DATA_EN             (HR_GPIOA_BASE_ADDR + 0x04)
-#define HR_GPIOA_DATA_DIR			 (HR_GPIOA_BASE_ADDR + 0x08)
-#define HR_GPIOA_DATA_PULLEN		 (HR_GPIOA_BASE_ADDR + 0x0c)
-#define HR_GPIOA_AFSEL				 (HR_GPIOA_BASE_ADDR + 0x10)
-#define HR_GPIOA_AFS1				 (HR_GPIOA_BASE_ADDR + 0x14)
-#define HR_GPIOA_AFS0				 (HR_GPIOA_BASE_ADDR + 0x18)
-#define HR_GPIOA_IS					 (HR_GPIOA_BASE_ADDR + 0x20)
-#define HR_GPIOA_IBE				 (HR_GPIOA_BASE_ADDR + 0x24)
-#define HR_GPIOA_IEV				 (HR_GPIOA_BASE_ADDR + 0x28)
-#define HR_GPIOA_IE					 (HR_GPIOA_BASE_ADDR + 0x2C)
-#define HR_GPIOA_RIS				 (HR_GPIOA_BASE_ADDR + 0x30)
-#define HR_GPIOA_MIS				 (HR_GPIOA_BASE_ADDR + 0x34)
-#define HR_GPIOA_IC					 (HR_GPIOA_BASE_ADDR + 0x38)
+#define HR_GPIOA_DATA_DIR             (HR_GPIOA_BASE_ADDR + 0x08)
+#define HR_GPIOA_DATA_PULLEN         (HR_GPIOA_BASE_ADDR + 0x0c)
+#define HR_GPIOA_AFSEL                 (HR_GPIOA_BASE_ADDR + 0x10)
+#define HR_GPIOA_AFS1                 (HR_GPIOA_BASE_ADDR + 0x14)
+#define HR_GPIOA_AFS0                 (HR_GPIOA_BASE_ADDR + 0x18)
+#define HR_GPIOA_IS                     (HR_GPIOA_BASE_ADDR + 0x20)
+#define HR_GPIOA_IBE                 (HR_GPIOA_BASE_ADDR + 0x24)
+#define HR_GPIOA_IEV                 (HR_GPIOA_BASE_ADDR + 0x28)
+#define HR_GPIOA_IE                     (HR_GPIOA_BASE_ADDR + 0x2C)
+#define HR_GPIOA_RIS                 (HR_GPIOA_BASE_ADDR + 0x30)
+#define HR_GPIOA_MIS                 (HR_GPIOA_BASE_ADDR + 0x34)
+#define HR_GPIOA_IC                     (HR_GPIOA_BASE_ADDR + 0x38)
 
 #define HR_GPIOB_BASE_ADDR           (HR_APB_BASE_ADDR + 0x1400)
 #define HR_GPIOB_DATA                (HR_GPIOB_BASE_ADDR + 0x0)
 #define HR_GPIOB_DATA_EN             (HR_GPIOB_BASE_ADDR + 0x04)
-#define HR_GPIOB_DATA_DIR			 (HR_GPIOB_BASE_ADDR + 0x08)
-#define HR_GPIOB_DATA_PULLEN		 (HR_GPIOB_BASE_ADDR + 0x0c)
-#define HR_GPIOB_AFSEL				 (HR_GPIOB_BASE_ADDR + 0x10)
-#define HR_GPIOB_AFS1				 (HR_GPIOB_BASE_ADDR + 0x14)
-#define HR_GPIOB_AFS0				 (HR_GPIOB_BASE_ADDR + 0x18)
-#define HR_GPIOB_IS					 (HR_GPIOB_BASE_ADDR + 0x20)
-#define HR_GPIOB_IBE				 (HR_GPIOB_BASE_ADDR + 0x24)
-#define HR_GPIOB_IEV				 (HR_GPIOB_BASE_ADDR + 0x28)
-#define HR_GPIOB_IE					 (HR_GPIOB_BASE_ADDR + 0x2C)
-#define HR_GPIOB_RIS				 (HR_GPIOB_BASE_ADDR + 0x30)
-#define HR_GPIOB_MIS				 (HR_GPIOB_BASE_ADDR + 0x34)
-#define HR_GPIOB_IC					 (HR_GPIOB_BASE_ADDR + 0x38)
+#define HR_GPIOB_DATA_DIR             (HR_GPIOB_BASE_ADDR + 0x08)
+#define HR_GPIOB_DATA_PULLEN         (HR_GPIOB_BASE_ADDR + 0x0c)
+#define HR_GPIOB_AFSEL                 (HR_GPIOB_BASE_ADDR + 0x10)
+#define HR_GPIOB_AFS1                 (HR_GPIOB_BASE_ADDR + 0x14)
+#define HR_GPIOB_AFS0                 (HR_GPIOB_BASE_ADDR + 0x18)
+#define HR_GPIOB_IS                     (HR_GPIOB_BASE_ADDR + 0x20)
+#define HR_GPIOB_IBE                 (HR_GPIOB_BASE_ADDR + 0x24)
+#define HR_GPIOB_IEV                 (HR_GPIOB_BASE_ADDR + 0x28)
+#define HR_GPIOB_IE                     (HR_GPIOB_BASE_ADDR + 0x2C)
+#define HR_GPIOB_RIS                 (HR_GPIOB_BASE_ADDR + 0x30)
+#define HR_GPIOB_MIS                 (HR_GPIOB_BASE_ADDR + 0x34)
+#define HR_GPIOB_IC                     (HR_GPIOB_BASE_ADDR + 0x38)
 
 
-#define IO_PA_BASE_ADDR			(HR_APB_BASE_ADDR + 0x1200)
-#define IO_PA_DATA				(*(volatile unsigned int*)(IO_PA_BASE_ADDR + 0x0))
-#define IO_PA_EN				(*(volatile unsigned int*)(IO_PA_BASE_ADDR + 0x4))
-#define IO_PA_DIR				(*(volatile unsigned int*)(IO_PA_BASE_ADDR + 0x8))
-#define IO_PA_REN				(*(volatile unsigned int*)(IO_PA_BASE_ADDR + 0xC))
-#define IO_PA_AFSEL				(*(volatile unsigned int*)(IO_PA_BASE_ADDR + 0x10))
-#define IO_PA_AFS1				(*(volatile unsigned int*)(IO_PA_BASE_ADDR + 0x14))
-#define IO_PA_AFS0				(*(volatile unsigned int*)(IO_PA_BASE_ADDR + 0x18))
+#define IO_PA_BASE_ADDR            (HR_APB_BASE_ADDR + 0x1200)
+#define IO_PA_DATA                (*(volatile unsigned int*)(IO_PA_BASE_ADDR + 0x0))
+#define IO_PA_EN                (*(volatile unsigned int*)(IO_PA_BASE_ADDR + 0x4))
+#define IO_PA_DIR                (*(volatile unsigned int*)(IO_PA_BASE_ADDR + 0x8))
+#define IO_PA_REN                (*(volatile unsigned int*)(IO_PA_BASE_ADDR + 0xC))
+#define IO_PA_AFSEL                (*(volatile unsigned int*)(IO_PA_BASE_ADDR + 0x10))
+#define IO_PA_AFS1                (*(volatile unsigned int*)(IO_PA_BASE_ADDR + 0x14))
+#define IO_PA_AFS0                (*(volatile unsigned int*)(IO_PA_BASE_ADDR + 0x18))
 
-#define IO_PB_BASE_ADDR		(HR_APB_BASE_ADDR + 0x1400)
-#define IO_PB_DATA				(*(volatile unsigned int*)(IO_PB_BASE_ADDR + 0x0))
-#define IO_PB_EN				(*(volatile unsigned int*)(IO_PB_BASE_ADDR + 0x4))
-#define IO_PB_DIR				(*(volatile unsigned int*)(IO_PB_BASE_ADDR + 0x8))
-#define IO_PB_REN				(*(volatile unsigned int*)(IO_PB_BASE_ADDR + 0xC))
-#define IO_PB_AFSEL				(*(volatile unsigned int*)(IO_PB_BASE_ADDR + 0x10))
-#define IO_PB_AFS1				(*(volatile unsigned int*)(IO_PB_BASE_ADDR + 0x14))
-#define IO_PB_AFS0				(*(volatile unsigned int*)(IO_PB_BASE_ADDR + 0x18))
+#define IO_PB_BASE_ADDR        (HR_APB_BASE_ADDR + 0x1400)
+#define IO_PB_DATA                (*(volatile unsigned int*)(IO_PB_BASE_ADDR + 0x0))
+#define IO_PB_EN                (*(volatile unsigned int*)(IO_PB_BASE_ADDR + 0x4))
+#define IO_PB_DIR                (*(volatile unsigned int*)(IO_PB_BASE_ADDR + 0x8))
+#define IO_PB_REN                (*(volatile unsigned int*)(IO_PB_BASE_ADDR + 0xC))
+#define IO_PB_AFSEL                (*(volatile unsigned int*)(IO_PB_BASE_ADDR + 0x10))
+#define IO_PB_AFS1                (*(volatile unsigned int*)(IO_PB_BASE_ADDR + 0x14))
+#define IO_PB_AFS0                (*(volatile unsigned int*)(IO_PB_BASE_ADDR + 0x18))
 
 /***************************************************************
  * TIMER Reg
  ***************************************************************/
 #define HR_TIMER_BASE_ADDR          (HR_APB_BASE_ADDR + 0x1800)
 #define HR_TIMER_CFG                (HR_TIMER_BASE_ADDR + 0x0)
-#define HR_TIMER0_5_CSR				(HR_TIMER_BASE_ADDR + 0x04)
-#define HR_TIMER0_PRD				(HR_TIMER_BASE_ADDR + 0x08)
-#define HR_TIMER1_PRD				(HR_TIMER_BASE_ADDR + 0x0C)
-#define HR_TIMER2_PRD				(HR_TIMER_BASE_ADDR + 0x10)
-#define HR_TIMER3_PRD				(HR_TIMER_BASE_ADDR + 0x14)
-#define HR_TIMER4_PRD				(HR_TIMER_BASE_ADDR + 0x18)
-#define HR_TIMER5_PRD				(HR_TIMER_BASE_ADDR + 0x1C)
-#define HR_TIMER0_CNT				(HR_TIMER_BASE_ADDR + 0x20)
-#define HR_TIMER1_CNT				(HR_TIMER_BASE_ADDR + 0x24)
-#define HR_TIMER2_CNT				(HR_TIMER_BASE_ADDR + 0x28)
-#define HR_TIMER3_CNT				(HR_TIMER_BASE_ADDR + 0x2C)
-#define HR_TIMER4_CNT				(HR_TIMER_BASE_ADDR + 0x30)
-#define HR_TIMER5_CNT				(HR_TIMER_BASE_ADDR + 0x34)
+#define HR_TIMER0_5_CSR                (HR_TIMER_BASE_ADDR + 0x04)
+#define HR_TIMER0_PRD                (HR_TIMER_BASE_ADDR + 0x08)
+#define HR_TIMER1_PRD                (HR_TIMER_BASE_ADDR + 0x0C)
+#define HR_TIMER2_PRD                (HR_TIMER_BASE_ADDR + 0x10)
+#define HR_TIMER3_PRD                (HR_TIMER_BASE_ADDR + 0x14)
+#define HR_TIMER4_PRD                (HR_TIMER_BASE_ADDR + 0x18)
+#define HR_TIMER5_PRD                (HR_TIMER_BASE_ADDR + 0x1C)
+#define HR_TIMER0_CNT                (HR_TIMER_BASE_ADDR + 0x20)
+#define HR_TIMER1_CNT                (HR_TIMER_BASE_ADDR + 0x24)
+#define HR_TIMER2_CNT                (HR_TIMER_BASE_ADDR + 0x28)
+#define HR_TIMER3_CNT                (HR_TIMER_BASE_ADDR + 0x2C)
+#define HR_TIMER4_CNT                (HR_TIMER_BASE_ADDR + 0x30)
+#define HR_TIMER5_CNT                (HR_TIMER_BASE_ADDR + 0x34)
 
 /* timer csr bits defintion */
 #define TLS_TIMER_MS_UNIT(n)               (1UL<<(0+5*n))
@@ -696,77 +696,77 @@ typedef volatile unsigned int TLS_REG;    /* Hardware register definition */
 #define HR_WDG_LOAD_VALUE           (HR_WDG_BASE_ADDR + 0x00)
 #define HR_WDG_CUR_VALUE            (HR_WDG_BASE_ADDR + 0x04)
 #define HR_WDG_CTRL                 (HR_WDG_BASE_ADDR + 0x08)
-#define HR_WDG_INT_CLR             	(HR_WDG_BASE_ADDR + 0x0C)
+#define HR_WDG_INT_CLR                 (HR_WDG_BASE_ADDR + 0x0C)
 #define HR_WDG_INT_SRC              (HR_WDG_BASE_ADDR + 0x10)
 #define HR_WDG_INT_MIS              (HR_WDG_BASE_ADDR + 0x14)
 #define HR_WDG_LOCK                 (HR_WDG_BASE_ADDR + 0x40)
 
 /** bit field of the lcd gate control in CLK gating register */
-#define HR_CLK_LCD_GATE_Pos			(14)
+#define HR_CLK_LCD_GATE_Pos            (14)
 
 /***********************************************************//**
  * LCD Reg
  ***************************************************************/
 
-#define HR_LCD_REG_BASE     		 (HR_APB_BASE_ADDR + 0x1C00) //(0x4001 1C00)
-#define HR_LCD_CR				     (HR_LCD_REG_BASE+0x000)
-#define HR_LCD_FRAME_CNT     		 (HR_LCD_REG_BASE+0x004)
-#define HR_LCD_COM0_SEG     	     (HR_LCD_REG_BASE+0x008)
-#define HR_LCD_COM1_SEG     	     (HR_LCD_REG_BASE+0x00C)
-#define HR_LCD_COM2_SEG     	     (HR_LCD_REG_BASE+0x010)
-#define HR_LCD_COM3_SEG     	     (HR_LCD_REG_BASE+0x014)
-#define HR_LCD_COM4_SEG     	     (HR_LCD_REG_BASE+0x018)
-#define HR_LCD_COM5_SEG     	     (HR_LCD_REG_BASE+0x01C)
-#define HR_LCD_COM6_SEG     	     (HR_LCD_REG_BASE+0x020)
-#define HR_LCD_COM7_SEG     	     (HR_LCD_REG_BASE+0x024)
-#define HR_LCD_COM_EN			     (HR_LCD_REG_BASE+0x028)
-#define HR_LCD_SEG_EN			     (HR_LCD_REG_BASE+0x02C)
+#define HR_LCD_REG_BASE              (HR_APB_BASE_ADDR + 0x1C00) //(0x4001 1C00)
+#define HR_LCD_CR                     (HR_LCD_REG_BASE+0x000)
+#define HR_LCD_FRAME_CNT              (HR_LCD_REG_BASE+0x004)
+#define HR_LCD_COM0_SEG              (HR_LCD_REG_BASE+0x008)
+#define HR_LCD_COM1_SEG              (HR_LCD_REG_BASE+0x00C)
+#define HR_LCD_COM2_SEG              (HR_LCD_REG_BASE+0x010)
+#define HR_LCD_COM3_SEG              (HR_LCD_REG_BASE+0x014)
+#define HR_LCD_COM4_SEG              (HR_LCD_REG_BASE+0x018)
+#define HR_LCD_COM5_SEG              (HR_LCD_REG_BASE+0x01C)
+#define HR_LCD_COM6_SEG              (HR_LCD_REG_BASE+0x020)
+#define HR_LCD_COM7_SEG              (HR_LCD_REG_BASE+0x024)
+#define HR_LCD_COM_EN                 (HR_LCD_REG_BASE+0x028)
+#define HR_LCD_SEG_EN                 (HR_LCD_REG_BASE+0x02C)
 
-#define LCD_CR_EN_Pos				 (8)
-#define LCD_CR_PD_Pos				 (9)
+#define LCD_CR_EN_Pos                 (8)
+#define LCD_CR_PD_Pos                 (9)
 
-#define LCD_VDD_ON				     (1UL<<9)
-#define LCD_VDD_OFF				     (0UL<<9)
-#define LCD_EN						 (1UL<<8)
+#define LCD_VDD_ON                     (1UL<<9)
+#define LCD_VDD_OFF                     (0UL<<9)
+#define LCD_EN                         (1UL<<8)
 
-#define LCD_BIAS_MASK				 (3UL<<6)
-#define LCD_BIAS_MASK_Pos			 (6)
-#define LCD_BIAS_ONEFOURTH			 (0UL<<6)
-#define LCD_BIAS_ONEHALF			 (1UL<<6)
-#define LCD_BIAS_ONETHIRD			 (2UL<<6)
-#define LCD_BIAS_STATIC				 (3UL<<6)
+#define LCD_BIAS_MASK                 (3UL<<6)
+#define LCD_BIAS_MASK_Pos             (6)
+#define LCD_BIAS_ONEFOURTH             (0UL<<6)
+#define LCD_BIAS_ONEHALF             (1UL<<6)
+#define LCD_BIAS_ONETHIRD             (2UL<<6)
+#define LCD_BIAS_STATIC                 (3UL<<6)
 
-#define LCD_VLCD_MASK				 (7UL<<3)
-#define LCD_VLCD_MASK_Pos			 (3)
-#define LCD_VLCD_27					 (0UL<<3)
-#define LCD_VLCD_29					 (1UL<<3)
-#define LCD_VLCD_31					 (2UL<<3)
-#define LCD_VLCD_33					 (3UL<<3)
+#define LCD_VLCD_MASK                 (7UL<<3)
+#define LCD_VLCD_MASK_Pos             (3)
+#define LCD_VLCD_27                     (0UL<<3)
+#define LCD_VLCD_29                     (1UL<<3)
+#define LCD_VLCD_31                     (2UL<<3)
+#define LCD_VLCD_33                     (3UL<<3)
 
-#define LCD_DUTY_MASK				 (7UL<<0)
-#define LCD_DUTY_MASK_Pos			 (0)
-#define LCD_DUTY_STATIC				 (0UL<<0)
-#define LCD_DUTY_ONEHALF			 (1UL<<0)
-#define LCD_DUTY_ONETHIRD			 (2UL<<0)
-#define LCD_DUTY_ONEFOURTH			 (3UL<<0)
-#define LCD_DUTY_ONEFIFTH			 (4UL<<0)
-#define LCD_DUTY_ONESIXTH			 (5UL<<0)
-#define LCD_DUTY_ONESEVENTH			 (6UL<<0)
-#define LCD_DUTY_ONEEIGHTH			 (7UL<<0)
+#define LCD_DUTY_MASK                 (7UL<<0)
+#define LCD_DUTY_MASK_Pos             (0)
+#define LCD_DUTY_STATIC                 (0UL<<0)
+#define LCD_DUTY_ONEHALF             (1UL<<0)
+#define LCD_DUTY_ONETHIRD             (2UL<<0)
+#define LCD_DUTY_ONEFOURTH             (3UL<<0)
+#define LCD_DUTY_ONEFIFTH             (4UL<<0)
+#define LCD_DUTY_ONESIXTH             (5UL<<0)
+#define LCD_DUTY_ONESEVENTH             (6UL<<0)
+#define LCD_DUTY_ONEEIGHTH             (7UL<<0)
 
 /***********************************************************//**
  * I2S Reg
  ***************************************************************/
-#define HR_CLK_I2S_GATE_Pos						(10)
+#define HR_CLK_I2S_GATE_Pos                        (10)
 
 
-#define HR_I2S_REG_BASE					 (HR_APB_BASE_ADDR+0x2000)
-#define HR_I2S_CTRL			      	 (HR_I2S_REG_BASE+0x000)
-#define HR_I2S_INT_MASK     		 (HR_I2S_REG_BASE+0x004)
-#define HR_I2S_INT_SRC		     	 (HR_I2S_REG_BASE+0x008)
-#define HR_I2S_STATUS			   		 (HR_I2S_REG_BASE+0x00C)
-#define HR_I2S_TX					  		 (HR_I2S_REG_BASE+0x010)
-#define HR_I2S_RX					  		 (HR_I2S_REG_BASE+0x014)
+#define HR_I2S_REG_BASE                     (HR_APB_BASE_ADDR+0x2000)
+#define HR_I2S_CTRL                       (HR_I2S_REG_BASE+0x000)
+#define HR_I2S_INT_MASK              (HR_I2S_REG_BASE+0x004)
+#define HR_I2S_INT_SRC                  (HR_I2S_REG_BASE+0x008)
+#define HR_I2S_STATUS                        (HR_I2S_REG_BASE+0x00C)
+#define HR_I2S_TX                               (HR_I2S_REG_BASE+0x010)
+#define HR_I2S_RX                               (HR_I2S_REG_BASE+0x014)
 
 /*****************************************************************/
 /* APB2SPI modem spi access register definition(BT)              */
@@ -861,7 +861,7 @@ typedef volatile unsigned int TLS_REG;    /* Hardware register definition */
 #define HR_TC16_TRESHOLD_REG             (HR_TC_REG_BASE+0x0040)
 #define HR_TC16_COUNT_REG                (HR_TC_REG_BASE+0x0040)
 
-#define HR_TC_INT_EN	                 (HR_TC_REG_BASE+0x0044) /*bit 31:16*/
+#define HR_TC_INT_EN                     (HR_TC_REG_BASE+0x0044) /*bit 31:16*/
 #define HR_TC_INT_STATUS                 (HR_TC_REG_BASE+0x0044) /*bit 15:0*/ 
 
 
@@ -931,11 +931,11 @@ static __inline unsigned int tls_reg_read32(unsigned int reg)
  */
 static __inline void tls_bitband_write(volatile unsigned int addr, unsigned int bit, unsigned int val)
 {
-	unsigned int temp;
+    unsigned int temp;
 
-	temp = (M32(addr) & ~(1 << bit)) | (val << bit);
+    temp = (M32(addr) & ~(1 << bit)) | (val << bit);
 
-	*((volatile unsigned int * )addr) = temp;
+    *((volatile unsigned int * )addr) = temp;
 }
 
 /**
@@ -951,11 +951,11 @@ static __inline void tls_bitband_write(volatile unsigned int addr, unsigned int 
  */
 static __inline unsigned int tls_bitband_read(volatile unsigned int addr, unsigned int bit)
 {
-	unsigned int temp;
+    unsigned int temp;
 
-	temp = (M32(addr) >> bit) & 0x1;
+    temp = (M32(addr) >> bit) & 0x1;
 
-	return *((volatile unsigned int *)temp);
+    return *((volatile unsigned int *)temp);
 }
 
 

@@ -33,6 +33,14 @@ extern ATTRIBUTE_ISR void DMA_Channel2_IRQHandler(void);
 extern ATTRIBUTE_ISR void DMA_Channel3_IRQHandler(void);
 extern ATTRIBUTE_ISR void DMA_Channel4_7_IRQHandler(void);
 extern ATTRIBUTE_ISR void ADC_IRQHandler(void);
+//extern ATTRIBUTE_ISR void tls_touchsensor_irq_handler(void);
+extern ATTRIBUTE_ISR void GPSEC_IRQ_Handler(void);
+extern ATTRIBUTE_ISR void RSA_IRQ_Handler(void);
+extern ATTRIBUTE_ISR void TIM0_5_IRQ_Handler(void);
+extern ATTRIBUTE_ISR void SPI_HS_IRQ_Handler(void);
+extern ATTRIBUTE_ISR void MAC_IRQ_Handler(void);
+extern ATTRIBUTE_ISR void SEC_IRQ_Handler(void);
+extern ATTRIBUTE_ISR void PMU_IRQ_Handler(void);
 
 static u32 irqen_status = 0;
 
@@ -71,6 +79,14 @@ void tls_irq_init(void)
 	csi_vic_set_vector(DMA_Channel2_IRQn, (uint32_t)DMA_Channel2_IRQHandler);
 	csi_vic_set_vector(DMA_Channel3_IRQn, (uint32_t)DMA_Channel3_IRQHandler);
 	csi_vic_set_vector(DMA_Channel4_7_IRQn, (uint32_t)DMA_Channel4_7_IRQHandler);
+	//csi_vic_set_vector(TOUCH_IRQn, (uint32_t)tls_touchsensor_irq_handler);
+	csi_vic_set_vector(RSA_IRQn, (uint32_t)RSA_IRQ_Handler);
+	csi_vic_set_vector(CRYPTION_IRQn, (uint32_t)GPSEC_IRQ_Handler);
+	csi_vic_set_vector(TIMER_IRQn, (uint32_t)TIM0_5_IRQ_Handler);
+	csi_vic_set_vector(SPI_HS_IRQn, (uint32_t)SPI_HS_IRQ_Handler);
+	csi_vic_set_vector(MAC_IRQn, (uint32_t)MAC_IRQ_Handler);
+	csi_vic_set_vector(SEC_IRQn, (uint32_t)SEC_IRQ_Handler);
+	csi_vic_set_vector(PMU_IRQn, (uint32_t)PMU_IRQ_Handler);
 }
 
 

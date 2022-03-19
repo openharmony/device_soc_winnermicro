@@ -20,7 +20,6 @@
 #include "wm_pmu.h"
 
 
-#define  ATTRIBUTE_ISR __attribute__((isr))
 static u16 dma_used_bit = 0;
 struct tls_dma_channels {
 	unsigned char	channels[8];	/* list of channels */

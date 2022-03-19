@@ -13,8 +13,6 @@
 *****************************************************************************/
 #include <string.h>
 #include "wm_irq.h"
-#include "tls_sys.h"
-
 #include "wm_regs.h"
 #include "wm_type_def.h"
 #include "wm_timer.h"
@@ -26,13 +24,9 @@
 #include "wm_internal_flash.h"
 #include "wm_efuse.h"
 #include "wm_debug.h"
-#include "wm_netif.h"
-#include "wm_at_ri_init.h"
 #include "wm_config.h"
 #include "wm_osal.h"
-//#include "wm_http_client.h"
 #include "wm_cpu.h"
-#include "wm_webserver.h"
 #include "wm_io.h"
 #include "wm_mem.h"
 #include "wm_wl_task.h"
@@ -45,54 +39,14 @@
 #include "wm_ram_config.h"
 #include "wm_uart.h"
 #include "los_task.h"
-#if TLS_CONFIG_ONLY_FACTORY_ATCMD
-#include "factory_atcmd.h"
-#endif
 
-#if !defined(__MICROLIB) && TLS_OS_FREERTOS
-
-/* c librayr mutex */
-tls_os_sem_t    *libc_sem;
-/*----------------------------------------------------------------------------
- *      Standard Library multithreading interface
- *---------------------------------------------------------------------------*/
-
-/*--------------------------- _mutex_initialize -----------------------------*/
-
-int _mutex_initialize (u32 *mutex)
-{
-    /* Allocate and initialize a system mutex. */
-    //tls_os_sem_create(&libc_sem, 1);
-    //mutex = (u32 *)libc_sem;
-    return(1);
-}
-
-
-/*--------------------------- _mutex_acquire --------------------------------*/
-
-void _mutex_acquire (u32 *mutex)
-{
-    //u8 err;
-    /* Acquire a system mutex, lock stdlib resources. */
-    tls_os_sem_acquire(libc_sem, 0);
-}
-
-
-/*--------------------------- _mutex_release --------------------------------*/
-
-void _mutex_release (u32 *mutex)
-{
-    /* Release a system mutex, unlock stdlib resources. */
-    tls_os_sem_release(libc_sem);
-}
-
-#endif
 
 #define     TASK_START_STK_SIZE         640     /* Size of each task's stacks (# of WORDs)  */
 /*If you want to delete main task after it works, you can open this MACRO below*/
 #define MAIN_TASK_DELETE_AFTER_START_FTR  0
-
+#if !TLS_OS_LITEOS
 u8 *TaskStartStk = NULL;
+#endif
 tls_os_task_t tststarthdl = NULL;
 
 #define FW_MAJOR_VER           0x1
@@ -137,47 +91,11 @@ void vApplicationIdleHook( void )
 
 void wm_gpio_config()
 {
-#if (TLS_CONFIG_HOSTIF&&TLS_CONFIG_UART)
-	int at_port = tls_uart_get_at_cmd_port();
-#endif	
     /* must call first */
     wm_gpio_af_disable();
 
     wm_uart0_tx_config(WM_IO_PB_19);
     wm_uart0_rx_config(WM_IO_PB_20);
-
-	/*Please Attention, only one IO's multiplex can be used at one times' configuration. */
-
-	/*AT command's port multiplex*/
-#if (TLS_CONFIG_HOSTIF&&TLS_CONFIG_UART)
-	switch(at_port)
-	{
-		case TLS_UART_1:
-		    wm_uart1_rx_config(WM_IO_PB_07);
-		    wm_uart1_tx_config(WM_IO_PB_06);
-		break;
-		case TLS_UART_2:
-			wm_uart2_rx_config(WM_IO_PA_03);
-			wm_uart2_tx_scio_config(WM_IO_PA_02);
-		break;
-		case TLS_UART_3:
-		    wm_uart3_rx_config(WM_IO_PB_01);
-		    wm_uart3_tx_config(WM_IO_PB_00);
-		break;
-		case TLS_UART_4:
-			wm_uart4_rx_config(WM_IO_PA_09);
-			wm_uart4_tx_config(WM_IO_PA_08);
-		break;
-		case TLS_UART_5:
-		    wm_uart5_rx_config(WM_IO_PA_13);
-		    wm_uart5_tx_config(WM_IO_PA_12);
-		break;
-		default:
-		    wm_uart1_rx_config(WM_IO_PB_07);
-		    wm_uart1_tx_config(WM_IO_PB_06);
-		break;
-	}
-#endif
 
 #if (TLS_CONFIG_LS_SPI)	
 	wm_spi_cs_config(WM_IO_PB_04);
@@ -186,25 +104,11 @@ void wm_gpio_config()
 	wm_spi_do_config(WM_IO_PB_05);
 #endif
 }
-#if MAIN_TASK_DELETE_AFTER_START_FTR
-void task_start_free()
-{
-	if (TaskStartStk)
-	{
-		tls_mem_free(TaskStartStk);
-		TaskStartStk = NULL;
-	}
-}
-#endif
 int main(void)
 {
     u32 value = 0;
     /*32K switch to use RC circuit & calibration*/
     tls_pmu_clk_select(0);
-#if (TLS_CONFIG_HOSTIF&&TLS_CONFIG_UART)
-	/*Configure uart port for user's AT Command*/
-	tls_uart_set_at_cmd_port(TLS_UART_1);
-#endif
     /*Switch to DBG*/
     value = tls_reg_read32(HR_PMU_BK_REG);
     value &= ~(BIT(19));
@@ -222,10 +126,6 @@ int main(void)
 
     tls_sys_clk_set(CPU_CLK_80M);
     tls_os_init(NULL);
-#if !defined(__MICROLIB) && TLS_OS_FREERTOS
-    /* before use malloc() function, must create mutex used by c_lib */
-    tls_os_sem_create(&libc_sem, 1);
-#endif
 
     /*configure wake up source begin*/
 	csi_vic_set_wakeup_irq(SDIO_IRQn);
@@ -258,6 +158,16 @@ int main(void)
     csi_vic_set_wakeup_irq(TIMER_IRQn);
     csi_vic_set_wakeup_irq(WDG_IRQn);
     /*configure wake up source end*/
+#if TLS_OS_LITEOS
+	tls_os_task_create(&tststarthdl, "firstThr",
+                       task_start,
+                       (void *)0,
+                       (void *)NULL,
+                       TASK_START_STK_SIZE * sizeof(u32), /* 任务栈的大小     */
+                       1,
+                       0);
+   tls_os_start_scheduler();
+#else
 	TaskStartStk = tls_mem_alloc(sizeof(u32)*TASK_START_STK_SIZE);
 	if (TaskStartStk)
     {
@@ -274,6 +184,7 @@ int main(void)
 	{
 		while(1);
 	}	
+#endif
 
     return 0;
 }
@@ -300,25 +211,6 @@ void disp_version_info(void)
     TLS_DBGPRT_INFO("****************************************************************\n");
 }
 
-#if TLS_OS_FREERTOS
-unsigned int total_mem_size;
-void tls_mem_get_init_available_size(void)
-{
-	u8 *p = NULL;
-	total_mem_size = (unsigned int)&__heap_end - (unsigned int)&__heap_start;
-	while(total_mem_size > 512)
-	{
-		p = malloc(total_mem_size);
-		if (p)
-		{
-			free(p);
-			p = NULL;
-			break;
-		}
-		total_mem_size = total_mem_size - 512;
-	}
-}
-#endif
 
 void tls_pmu_chipsleep_callback(int sleeptime)
 {
@@ -341,15 +233,11 @@ void tls_pmu_chipsleep_callback(int sleeptime)
 void task_start (void *data)
 {
 	u8 enable = 0;
-    u8 mac_addr[6] = {0x00, 0x25, 0x08, 0x09, 0x01, 0x0F};
 
 #if TLS_CONFIG_CRYSTAL_24M
     tls_wl_hw_using_24m_crystal();
 #endif
 
-#if TLS_OS_FREERTOS
-	tls_mem_get_init_available_size();
-#endif
     /* must call first to configure gpio Alternate functions according the hardware design */
     wm_gpio_config();
 
@@ -372,63 +260,7 @@ void task_start (void *data)
     tls_param_load_factory_default();
     tls_param_init(); /*add param to init sysparam_lock sem*/
 
-    //extern void HalFlashFileInit(void);
-    //HalFlashFileInit();
-
-    //void testHalFlashFile(void);
-    //testHalFlashFile();
-#if TLS_OS_FREERTOS
-    tls_get_tx_gain(&tx_gain_group[0]);
-    TLS_DBGPRT_INFO("tx gain ");
-    TLS_DBGPRT_DUMP((char *)(&tx_gain_group[0]), 27);
-    if (tls_wifi_mem_cfg(WIFI_MEM_START_ADDR, 7, 7)) /*wifi tx&rx mem customized interface*/
-    {
-        TLS_DBGPRT_INFO("wl mem initial failured\n");
-    }
-
-    tls_get_mac_addr(&mac_addr[0]);
-    TLS_DBGPRT_INFO("mac addr ");
-    TLS_DBGPRT_DUMP((char *)(&mac_addr[0]), 6);
-    if(tls_wl_init(NULL, &mac_addr[0], NULL) == NULL)
-    {
-        TLS_DBGPRT_INFO("wl driver initial failured\n");
-    }
-    if (wpa_supplicant_init(mac_addr))
-    {
-        TLS_DBGPRT_INFO("supplicant initial failured\n");
-    }
-	/*wifi-temperature compensation,default:open*/
-	tls_wifi_set_tempcomp_flag(0);
-	tls_wifi_set_psm_chipsleep_flag(0);
-	tls_wifi_psm_chipsleep_cb_register(tls_pmu_chipsleep_callback, NULL, NULL);
-    tls_ethernet_init();
-
-#if TLS_CONFIG_BT
-    tls_bt_entry();
-#endif
-
-    tls_sys_init();
-#endif
-#if TLS_CONFIG_ONLY_FACTORY_ATCMD
-	factory_atcmd_init();
-#else
-    /*HOSTIF&UART*/
-#if TLS_CONFIG_HOSTIF
-    tls_hostif_init();
-
-#if (TLS_CONFIG_HS_SPI)
-    tls_hspi_init();
-#endif
-
-#if TLS_CONFIG_UART
-    tls_uart_init();
-#endif
-
-#if TLS_CONFIG_HTTP_CLIENT_TASK
-    http_client_task_init();
-#endif
-
-#endif
+	tls_wifi_netif_event_init();	
 
 	tls_param_get(TLS_PARAM_ID_PSM, &enable, TRUE);	
 	if (enable != TRUE)
@@ -438,22 +270,12 @@ void task_start (void *data)
 	}
 
     UserMain();
-#if TLS_OS_FREERTOS
-    tls_sys_auto_mode_run();
-#endif
-#endif
+
     extern void OHOS_SystemInit();
     OHOS_SystemInit();
 
     for (;;)
     {
-#if MAIN_TASK_DELETE_AFTER_START_FTR
-		if (tststarthdl)
-		{
-    		tls_os_task_del_by_task_handle(tststarthdl,task_start_free);
-		}
-        tls_os_time_delay(0x10000000);
-#else
 #if 1
 		tls_os_time_delay(0x10000000);
 #else
@@ -462,7 +284,6 @@ void task_start (void *data)
         tls_os_disp_task_stat_info();
         tls_os_time_delay(1000);
 #endif		
-#endif
     }
 }
 
