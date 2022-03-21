@@ -1,4 +1,4 @@
-# Copyright (c) 2020, HiHope Community.
+# Copyright (c) 2020 HiHope Community.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -27,7 +27,7 @@
 
 import("//kernel/liteos_m/liteos.gni")
 
-module_switch = defined(LOSCFG_HALS_COMMUCATION_BT_LITE)
+module_switch = defined(LOSCFG_HALS_COMMUCATION_WIFI_LITE)
 
 module_name = get_path_info(rebase_path("."), "name")
 
@@ -35,18 +35,18 @@ kernel_module(module_name) {
     sources = [
       "source/nble.c",
       "source/nble_server.c",
-      "source/ble_util.c",
+      "source/ble_util.c"
     ]
-  deps = [ "//foundation/communication/bt_lite:bt" ]
+  deps = [ "//foundation/communication/wifi_lite:wifi" ]
     visibility += [ "../../.." ]
     include_dirs = [
         "//utils/native/lite/include",
-        "//device/soc/winnermicro/w800/board/include/",
-        "//foundation/communication/bt_lite/interfaces/ble",
-        "//device/soc/winnermicro/w800/board/src/bt/blehost/nimble",
-        "//device/soc/winnermicro/w800/board/src/bt/blehost/nimble/include",
-        "//device/soc/winnermicro/w800/board/src/bt/blehost/nimble/host/include",
-        "//device/soc/winnermicro/w800/board/src/bt/blehost/porting/w800/include",
-        "//device/soc/winnermicro/w800/board/src/bt/blehost/nimble/host/util/include",
+        "//device/soc/winnermicro/wm800/board/include/",
+        "//foundation/communication/bluetooth/interfaces/innerkits/native_c/include",
+        "//device/soc/winnermicro/wm800/board/src/bt/blehost/nimble",
+        "//device/soc/winnermicro/wm800/board/src/bt/blehost/nimble/include",
+        "//device/soc/winnermicro/wm800/board/src/bt/blehost/nimble/host/include",
+        "//device/soc/winnermicro/wm800/board/src/bt/blehost/porting/w800/include",
+        "//device/soc/winnermicro/wm800/board/src/bt/blehost/nimble/host/util/include",
     ]
 }

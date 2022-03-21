@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, HiHope Community.
+ * Copyright (c) 2020 HiHope Community.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -33,7 +33,7 @@
 #include "wm_params.h"
 #include "wm_mem.h"
 #include "wm_efuse.h"
-#include "wm_netif.h"
+#include "kv_store.h"
 
 /* Why we doing this?
  * Symbol @WIFI_DISCONNECTED conflict with OHOS wifiservice,
@@ -67,11 +67,19 @@ u8 g_hasConnected = 0;
 /* Store Scanned AP count
  * TODO: Use lock to protect Scan result.
  */
-
+#define KV_FILE_NAME  "/data"
 #define WIFI_CFG_INFO   "wifi_cfg_info"
 
 static int gScannedAPCount;
 static u8* gScannedBuffer;
+
+#define MAX_WIFI_KV_NAME_LEN  (32)
+
+#define MAX_WIFI_KV_STRING_LEN  (160)
+static u8 kvstring[MAX_WIFI_KV_STRING_LEN];
+static u8 keystring[MAX_WIFI_KV_NAME_LEN];
+static u8 keynew = 0;
+static u8 keyold  = 0;
 
 //#ifndef DEBUG
 #define DEBUG (1)
@@ -100,7 +108,7 @@ WifiErrorCode EnableWifi(void)
         }
         return ERROR_WIFI_BUSY;
     }
-
+	tls_wifi_init();
     gWifiStaStatus = WIFI_STA_ACTIVE;
 
     if (UnlockWifiGlobalLock() != WIFI_SUCCESS) {
@@ -218,9 +226,7 @@ static void WifiScanHandler(void)
     if (gScannedBuffer == NULL) {
         printf("[wifi_device]: scan buffer is NULL!\n");
 		
-#if defined(OHOS_XTS_WITH_W800)
 		gWifiScanDone = TRUE;
-#endif
         return;
     }
 
@@ -230,9 +236,7 @@ static void WifiScanHandler(void)
         tls_mem_free(gScannedBuffer);
         gScannedBuffer = NULL;
 		
-#if defined(OHOS_XTS_WITH_W800)
 		gWifiScanDone = TRUE;
-#endif
         return;
     }
 
@@ -330,9 +334,6 @@ static void WifiEventCallback(u8 status)
             debug_wifi("WifiEventCallback status = WIFI_DISCONNECTED\n");
             DispatchConnectEvent(WIFI_STATE_NOT_AVALIABLE, NULL);
             break;
-        case NETIF_IP_NET_UP:
-            debug_wifi("WifiEventCallback status = NETIF_IP_NET_UP\n");
-            break;
         case NETIF_WIFI_SOFTAP_SUCCESS: /* ap */
             debug_wifi("WifiEventCallback status = WIFI_SOFTAP_SUCCESS\n");
             DispatchHotspotStateChangedEvent(WIFI_HOTSPOT_ACTIVE);
@@ -344,12 +345,6 @@ static void WifiEventCallback(u8 status)
         case NETIF_WIFI_SOFTAP_CLOSED:
             debug_wifi("WifiEventCallback status = WIFI_SOFTAP_CLOSED\n");
             DispatchHotspotStateChangedEvent(WIFI_HOTSPOT_NOT_ACTIVE);
-            break;
-        case NETIF_IP_NET2_UP:
-            debug_wifi("WifiEventCallback status = NETIF_IP_NET2_UP\n");
-            break;
-        case NETIF_IPV6_NET_UP:
-            debug_wifi("WifiEventCallback status = NETIF_IPV6_NET_UP\n");
             break;
         default:
             debug_wifi("WifiEventCallback invalid status: %d\n", status);
@@ -404,7 +399,7 @@ WifiErrorCode RegisterWifiEvent(WifiEvent* event)
         return ERROR_WIFI_UNKNOWN;
     }
 
-    err_t err = tls_netif_add_status_event(WifiEventCallback);
+    err_t err = tls_wifi_netif_add_status_event(WifiEventCallback);
     if (err != 0) {
         printf("[wifi_device]: tls_netif_add_status_event failed.\n");
         return ERROR_WIFI_UNKNOWN;
@@ -436,7 +431,7 @@ WifiErrorCode UnRegisterWifiEvent(const WifiEvent* event)
     }
     UnlockWifiEventLock();
 
-    err_t err = tls_netif_remove_status_event(WifiEventCallback);
+    err_t err = tls_wifi_netif_remove_status_event(WifiEventCallback);
     if (err != 0) {
         printf("[wifi_device]: tls_netif_add_status_event failed.\n");
         return ERROR_WIFI_UNKNOWN;
@@ -474,7 +469,6 @@ WifiErrorCode AdvanceScan(WifiScanParams *params)
 
     if (params->scanType < 0 || params->scanType > WIFI_BAND_SCAN) {
         printf("[wifi_service] scanType invalid!\n");
-        return WIFI_SUCCESS; // TODO: test case code logic error, but we follow it, need update when test code update.
     }
 
     if (LockWifiGlobalLock() != WIFI_SUCCESS) {
@@ -510,7 +504,6 @@ WifiErrorCode AdvanceScan(WifiScanParams *params)
 
 WifiErrorCode GetScanInfoList(WifiScanInfo* result, unsigned int* size)
 {
-    int ret;
     struct tls_scan_bss_t *scanRes = NULL;
     struct tls_bss_info_t *bssInfo;
     u32 scanCount, i;
@@ -544,9 +537,9 @@ WifiErrorCode GetScanInfoList(WifiScanInfo* result, unsigned int* size)
         scanCount = WIFI_SCAN_HOTSPOT_LIMIT;
     }
 
-    int cpyErr;
+
     for (i = 0; i < scanCount; ++i) {
-        cpyErr = memcpy_s(result[i].ssid, WIFI_MAX_SSID_LEN, bssInfo->ssid, bssInfo->ssid_len);
+        int cpyErr = memcpy_s(result[i].ssid, WIFI_MAX_SSID_LEN, bssInfo->ssid, bssInfo->ssid_len);
         if (cpyErr != EOK) {
             printf("[wifi_device]: copy ssid of scan result failed\n");
             return ERROR_WIFI_UNKNOWN;
@@ -604,6 +597,7 @@ WifiErrorCode AddDeviceConfig(const WifiDeviceConfig* config, int* result)
 {
     int netId = WIFI_CONFIG_INVALID;
     int i;
+	int ret = 0;
 
     if (config == NULL || result == NULL) {
         printf("[wifi_device]:add device config invalid argument.\n");
@@ -614,16 +608,7 @@ WifiErrorCode AddDeviceConfig(const WifiDeviceConfig* config, int* result)
         printf("[wifi_device]:Lock wifi global lock failed.\n");
         return ERROR_WIFI_UNKNOWN;
     }
-
-    int ret = WM_KvWrite(WIFI_CFG_INFO, config, sizeof(WifiDeviceConfig));
-    if (ret < 0 )  {
-        printf("\r\n save wifi cfg info fail\r\n");
-    } else {
-        printf("\r\n save wifi cfg info ok\r\n");
-    }
-    
-
-    for (i = 0; i < WIFI_MAX_CONFIG_SIZE; ++i) {
+    for (i = 0; i < WIFI_MAX_CONFIG_SIZE; i++) {
         if (gWifiConfigs[i].netId != i) {
             netId = i;
             break;
@@ -633,11 +618,22 @@ WifiErrorCode AddDeviceConfig(const WifiDeviceConfig* config, int* result)
     if (netId == WIFI_CONFIG_INVALID) {
         printf("[wifi_service]:AddDeviceConfig wifi config is full, delete one first\n");
         if (UnlockWifiGlobalLock() != WIFI_SUCCESS) {
-            printf("[wifi_device] Unlock wifi global lock failed.\n");
             return ERROR_WIFI_UNKNOWN;
         }
         return ERROR_WIFI_BUSY;
     }
+
+	UtilsSetEnv(KV_FILE_NAME);
+	memset(kvstring, 0, MAX_WIFI_KV_STRING_LEN);
+	memset(keystring, 0, MAX_WIFI_KV_NAME_LEN);
+	memcpy(kvstring, config, sizeof(WifiDeviceConfig));
+	kvstring[sizeof(WifiDeviceConfig)] = '\0';
+
+	sprintf(keystring, WIFI_CFG_INFO"_%d", netId);
+	ret = UtilsSetValue(keystring, kvstring);
+	if (ret < 0 )  {
+		return ERROR_WIFI_BUSY;
+	}
 
     int cpyErr = memcpy_s(&gWifiConfigs[netId], sizeof(WifiDeviceConfig), config, sizeof(WifiDeviceConfig));
     if (cpyErr != EOK) {
@@ -663,6 +659,8 @@ WifiErrorCode GetDeviceConfigs(WifiDeviceConfig* result, unsigned int* size)
     unsigned int retIndex = 0;
     int i = 0;
     int cpyErr;
+	int validflag = -1;
+
 
     if (result == NULL || size == NULL || *size == 0) {
         return ERROR_WIFI_INVALID_ARGS;
@@ -674,8 +672,19 @@ WifiErrorCode GetDeviceConfigs(WifiDeviceConfig* result, unsigned int* size)
         return ERROR_WIFI_UNKNOWN;
     }
 
-    int ret = WM_KvRead(WIFI_CFG_INFO, &gWifiConfigs[0], sizeof(WifiDeviceConfig));
-    if (ret <= 0 ) {
+	UtilsSetEnv(KV_FILE_NAME);
+	for (i = 0; i < WIFI_MAX_CONFIG_SIZE; i++)
+	{
+		memset(keystring, 0, MAX_WIFI_KV_NAME_LEN);
+		sprintf(keystring, WIFI_CFG_INFO"_%d", i);
+		int ret = UtilsGetValue(keystring, &gWifiConfigs[i], sizeof(WifiDeviceConfig));
+		if (ret == 0)
+		{
+			validflag = 1;
+		}			
+	}
+
+    if (validflag < 0 ) {
         printf("\r\n read wifi cfg info fail");
 	    if (UnlockWifiGlobalLock() != WIFI_SUCCESS) {
             printf("[wifi_device] Unlock wifi global lock failed in get device config.\n");
@@ -723,12 +732,12 @@ WifiErrorCode GetDeviceConfigs(WifiDeviceConfig* result, unsigned int* size)
 WifiErrorCode Disconnect(void)
 {
 	printf("\r\nDisconnect: g_connectStatus=%d", g_connectStatus);
-    if (g_connectStatus != NETIF_WIFI_JOIN_SUCCESS) {
-#if defined(OHOS_XTS_WITH_W800)
-        return ERROR_WIFI_UNKNOWN;
-#endif
-    }
+
     tls_wifi_disconnect();
+
+    if (g_connectStatus != NETIF_WIFI_JOIN_SUCCESS) {
+        return ERROR_WIFI_UNKNOWN;
+    }
     g_connectStatus = NETIF_WIFI_DISCONNECTED;
     return WIFI_SUCCESS;
 }
@@ -754,11 +763,13 @@ WifiErrorCode RemoveDevice(int networkId)
 	g_hasConnected = 0;
 
 #if 1
-    int ret = WM_KvDelete(WIFI_CFG_INFO);
+	UtilsSetEnv(KV_FILE_NAME);
+	memset(keystring, 0, MAX_WIFI_KV_NAME_LEN);
+	sprintf(keystring, WIFI_CFG_INFO"_%d", networkId);
+    int ret = UtilsDeleteValue(keystring);
     if (ret < 0 )  {
         printf("\r\n clear wifi cfg info fail");
     } else {
-        printf("\r\n clear wifi cfg info ok");
     }
 #else
 	extern void HalFlashFileDeInit(void);
@@ -806,14 +817,6 @@ WifiErrorCode GetLinkedInfo(WifiLinkedInfo* result)
         return ERROR_WIFI_UNKNOWN;
     }
 
-    struct tls_ethif *netif = tls_netif_get_ethif();
-    cpyErr = memcpy_s(&result->ipAddress, sizeof(ip_addr_t), &netif->ip_addr, sizeof(ip_addr_t));
-    if (cpyErr != EOK) {
-        printf("[wifi_device]: GetLinkedInfo copy ipaddr failed. err = %d.\n", cpyErr);
-        tls_mem_free(bss);
-        return ERROR_WIFI_UNKNOWN;
-    }
-
     switch(wifi_states) {
         case WM_WIFI_DISCONNECTED:
             result->connState = WIFI_DISCONNECTED;
@@ -853,7 +856,6 @@ static void InitWifiConfig(void)
         tls_param_set(TLS_PARAM_ID_WPROTOCOL, (void *) &wireless_protocol, TRUE);//FALSE
     }
 
-    tls_wifi_set_oneshot_flag(0);
     ip_param = tls_mem_alloc(sizeof(struct tls_param_ip));
     if (ip_param != NULL) {
         tls_param_get(TLS_PARAM_ID_IP, ip_param, FALSE);
@@ -917,7 +919,7 @@ WifiErrorCode ConnectTo(int networkId)
     }
 
     g_connectStatus = 0;
-    err_t err = tls_netif_add_status_event(WifiStatusHandler);
+    err_t err = tls_wifi_netif_add_status_event(WifiStatusHandler);
     if (err != 0) {
         printf("[wifi_device]: tls_netif_add_status_event for ConnectTo failed.\n");
         return ERROR_WIFI_UNKNOWN;
@@ -934,7 +936,7 @@ WifiErrorCode ConnectTo(int networkId)
         return WIFI_SUCCESS;
     }
 
-    err = tls_netif_remove_status_event(WifiStatusHandler);
+    err = tls_wifi_netif_remove_status_event(WifiStatusHandler);
     if (err != 0) {
         printf("[wifi_device]: tls_netif_remove_status_event for ConnectTo failed.\n");
         return ERROR_WIFI_UNKNOWN;

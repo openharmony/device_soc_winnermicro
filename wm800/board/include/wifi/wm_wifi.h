@@ -9,6 +9,24 @@
  */
 #ifndef TLS_WIFI_FUNC_H
 #define TLS_WIFI_FUNC_H
+#include "list.h"
+
+/** MACRO for callback EVENT to join AP or create soft-AP successfully  */
+#define	NETIF_WIFI_JOIN_SUCCESS         0x1
+/** MACRO for callback EVENT to fail to join AP */
+#define  NETIF_WIFI_JOIN_FAILED          0x2
+/** MACRO for callback EVENT to disconnect from AP or destroy soft-AP */
+#define	NETIF_WIFI_DISCONNECTED         0x3
+
+/** MACRO for callback EVNET to create AP successfully */
+#define	NETIF_WIFI_SOFTAP_SUCCESS    0x5
+/** MACRO for callback EVNET to create soft-AP failed */
+#define	NETIF_WIFI_SOFTAP_FAILED     0x6
+/** MACRO for callback EVNET to close soft-AP */
+#define	NETIF_WIFI_SOFTAP_CLOSED          0x7
+
+
+
 
 /* Return Error definition*/
 /** invalid SSID */
@@ -322,6 +340,14 @@ typedef int (*net_rx_data_cb)(const u8 *bssid, u8 *buf, u32 buf_len);
 
 /** callback function of receive Wi-Fi data with some information of the physical layer */
 typedef void (*tls_wifi_data_ext_recv_callback)(u8* data, u32 data_len, struct tls_wifi_ext_t *ext);
+
+/** wifi event status structure for user layer*/
+typedef void (*tls_wifi_netif_status_event_fn)(u8 status);
+struct tls_wifi_netif_status_event
+{
+    struct dl_list list;
+    tls_wifi_netif_status_event_fn status_callback;
+};
 
 /**
  * @defgroup Wi-Fi_APIs Wi-Fi APIs
@@ -914,7 +940,7 @@ int tls_wps_start_pbc(void);
  *
  * @return         None
  *
- * @note           None
+ * @note           register ip rx callback when user porting lwip.
  */
 void tls_ethernet_data_rx_callback(net_rx_data_cb callback);
 #if TLS_CONFIG_AP_OPT_FWD
@@ -1157,6 +1183,73 @@ u8 tls_wifi_get_tempcomp_flag(void);
  */
 
 int tls_wl_get_isr_count(void);
+
+/**
+ * @brief          This function is used to add wifi event function
+ *
+ * @param[in]      None
+ *
+ * @return         0-success
+ *
+ * @note           None
+ */
+int tls_wifi_netif_add_status_event(tls_wifi_netif_status_event_fn event_fn);
+
+/**
+ * @brief          This function is used to remove wifi event function
+ *
+ * @param[in]      None
+ *
+ * @return         0-success
+ *
+ * @note           None
+ */
+int tls_wifi_netif_remove_status_event(tls_wifi_netif_status_event_fn event_fn);
+
+/**
+ * @brief          This function is used to initialize wifi
+ *
+ * @param[in]      None
+ *
+ * @return         0-success
+ *
+ * @note           None
+ */
+int tls_wifi_init(void);
+
+/**
+ * @brief		   This function is used to initialize wifi netif event list
+ *
+ * @param[in]	   None
+ *
+ * @return		   0-success
+ *
+ * @note		   None
+ */
+void tls_wifi_netif_event_init(void);
+
+/**
+ * @brief	      This function is used to get wifi tx buffer when use tcp/ip tx
+ *
+ * @param[in]	   total_len:tx data len from tcp/ip output
+ *
+ * @return	       None-zero:available buffer, NULL:no buffer
+ *
+ * @note		   tls_wifi_buffer_acquire/tls_wifi_buffer_release must be used at pair
+ */
+u8* tls_wifi_buffer_acquire(int total_len);
+/**
+ * @brief		  This function is used to tx buffer when use tcp/ip tx
+ *
+ * @param[in]	  is_apsta: always false if ap and sta use the same network interface
+ * @param[in]	  buffer:   tx data's buffer from tcp/ip
+ * @return		  None
+ *
+ * @note		  tls_wifi_buffer_acquire/tls_wifi_buffer_release must be used at pair 
+ */
+void tls_wifi_buffer_release(bool is_apsta, u8* buffer);
+
+
 
 #endif /* TLS_WIFI_FUNC_H */
 

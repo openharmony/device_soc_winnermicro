@@ -16,7 +16,6 @@ module_name = get_path_info(rebase_path("."), "name")
 kernel_module(module_name) {
   sources = [
     "wm_main.c",
-    #"tls_sys.c",
   ]
   include_dirs = [
     ".",

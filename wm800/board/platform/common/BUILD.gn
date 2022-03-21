@@ -20,7 +20,6 @@ kernel_module(module_name) {
     "params/wm_param.c",
     "utils/utils.c",
     "crypto/wm_crypto_hard.c",
-    #"crypto/wm_crypto_hard_mbed.c",
   ]
   include_dirs = []
 }
