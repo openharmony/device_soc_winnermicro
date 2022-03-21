@@ -4,9 +4,10 @@
 /*Initialize the list for ble server*/
 extern void ble_server_init();
 
+/*Enable the all service stored in the servcie list one by one*/
 extern void ble_server_start_service();
 
-/*Free servcie*/
+/*Free servcie by server id*/
 extern int ble_server_free(int server_id);
 
 /*Register one service, and return server if*/

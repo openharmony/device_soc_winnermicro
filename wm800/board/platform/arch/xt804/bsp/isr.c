@@ -21,6 +21,7 @@
  * @date     02. June 2017
  ******************************************************************************/
 #include <csi_config.h>
+#include "wm_config.h"
 #include "wm_regs.h"
 
 extern void systick_handler(void);
@@ -45,7 +46,6 @@ extern void PMU_TIMER1_IRQHandler(void);
 extern void PMU_GPIO_WAKE_IRQHandler(void);
 extern void PMU_RTC_IRQHandler(void);
 
-#define  ATTRIBUTE_ISR __attribute__((isr))
 
 #define readl(addr) \
     ({ unsigned int __v = (*(volatile unsigned int *) (addr)); __v; })
@@ -58,8 +58,24 @@ extern void PMU_RTC_IRQHandler(void);
 #define  CSI_INTRPT_EXIT()
 #endif
 
+int csi_kernel_intrpt_enter(void)
+{
+	return 0;
+}
+int csi_kernel_intrpt_exit(void)
+{
+	return 0;
+}
+void HalPreInterruptHandler(uint32_t arg)
+{
+	if( arg == 57)
+	{
+		readl(0xE000E010);// clear tick irq
+	}
+}
+
 //static int tick_test = 0;
-ATTRIBUTE_ISR void CORET_IRQHandler(void)
+ATTRIBUTE_ISR void CORET_IRQ_Handler(void)
 {
 #ifndef CONFIG_KERNEL_FREERTOS
     CSI_INTRPT_ENTER();
@@ -82,7 +98,7 @@ ATTRIBUTE_ISR void CORET_IRQHandler(void)
 #endif
 }
 
-ATTRIBUTE_ISR void SDIO_IRQHandler(void)
+ATTRIBUTE_ISR void SDIO_IRQ_Handler(void)
 {
     CSI_INTRPT_ENTER();
 #ifndef WM_WIFI_SIMULATION_PROJECT
@@ -91,14 +107,14 @@ ATTRIBUTE_ISR void SDIO_IRQHandler(void)
     CSI_INTRPT_EXIT();
 }
 
-ATTRIBUTE_ISR void GPSEC_IRQHandler(void)
+ATTRIBUTE_ISR void GPSEC_IRQ_Handler(void)
 {
     CSI_INTRPT_ENTER();
     CRYPTION_IRQHandler();
     CSI_INTRPT_EXIT();
 }
 
-ATTRIBUTE_ISR void RSA_IRQHandler(void)
+ATTRIBUTE_ISR void RSA_IRQ_Handler(void)
 {
     CSI_INTRPT_ENTER();
     RSA_F_IRQHandler();
@@ -106,7 +122,7 @@ ATTRIBUTE_ISR void RSA_IRQHandler(void)
 }
 
 
-ATTRIBUTE_ISR void TIM0_5_IRQHandler(void)
+ATTRIBUTE_ISR void TIM0_5_IRQ_Handler(void)
 {
     CSI_INTRPT_ENTER();
     TIMER0_5_IRQHandler();
@@ -114,7 +130,7 @@ ATTRIBUTE_ISR void TIM0_5_IRQHandler(void)
 }
 
 
-ATTRIBUTE_ISR void SPI_HS_IRQHandler(void)
+ATTRIBUTE_ISR void SPI_HS_IRQ_Handler(void)
 {
     CSI_INTRPT_ENTER();
 #ifndef WM_WIFI_SIMULATION_PROJECT
@@ -123,7 +139,7 @@ ATTRIBUTE_ISR void SPI_HS_IRQHandler(void)
     CSI_INTRPT_EXIT();
 }
 
-ATTRIBUTE_ISR void MAC_IRQHandler(void)
+ATTRIBUTE_ISR void MAC_IRQ_Handler(void)
 {
     CSI_INTRPT_ENTER();
 #ifndef CONFIG_NO_WIFI
@@ -132,7 +148,7 @@ ATTRIBUTE_ISR void MAC_IRQHandler(void)
     CSI_INTRPT_EXIT();
 }
 
-ATTRIBUTE_ISR void SEC_IRQHandler(void)
+ATTRIBUTE_ISR void SEC_IRQ_Handler(void)
 {
     CSI_INTRPT_ENTER();
 #ifndef CONFIG_NO_WIFI
@@ -141,7 +157,7 @@ ATTRIBUTE_ISR void SEC_IRQHandler(void)
     CSI_INTRPT_EXIT();
 }
 
-ATTRIBUTE_ISR void PMU_IRQHandler(void)
+ATTRIBUTE_ISR void PMU_IRQ_Handler(void)
 {
     CSI_INTRPT_ENTER();
 #ifndef CONFIG_NO_WIFI

@@ -17,6 +17,10 @@ if (ohos_kernel_type == "liteos_m") {
   module_group(module_name) {
     modules = [
       "os\liteos",
+      "bt",
+      "wifi",
+      "components\fs",
+      "components\utils",
     ]
   }
 }

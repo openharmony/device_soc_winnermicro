@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, HiHope Community.
+ * Copyright (c) 2020 HiHope Community.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -133,8 +133,8 @@ tls_os_status_t tls_os_task_create(tls_os_task_t *task,
 	tls_os_handle_t *pHandle = NULL;
 
     if (stk_start != NULL) {
-        //printf(" --- task name %s\n", name);
-        //assert(stk_start == NULL);
+        printf(" --- task name %s\n", name);
+        assert(stk_start == NULL);
     }
 	pHandle = tls_mem_alloc(sizeof(tls_os_handle_t));
 	if(!pHandle)
@@ -160,9 +160,9 @@ tls_os_status_t tls_os_task_create(tls_os_task_t *task,
         stInitParam.pcName = tmp_name;
     }
     else
-		    stInitParam.pcName = name;
-	  stInitParam.uwResved = (u32)stk_start;
-  
+    {
+	    stInitParam.pcName = name;
+    }
     error = LOS_TaskCreate( &TskID, &stInitParam);
 
     //printf("configMAX_PRIORITIES - prio:%d name:%s size:0x%x entry:0x%x taskid:%d\n",   prio, stInitParam.pcName, stk_size, entry, TskID);

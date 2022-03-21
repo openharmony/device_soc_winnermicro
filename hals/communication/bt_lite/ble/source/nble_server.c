@@ -1,47 +1,38 @@
 /*
- * Copyright (c) 2020, HiHope Community.
+ * Copyright (c) 2021 WinnerMicro Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * 1. Redistributions of source code must retain the above copyright notice, this
- *    list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- *
- * 3. Neither the name of the copyright holder nor the names of its
- *    contributors may be used to endorse or promote products derived from
- *    this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 #include <string.h>
 #include <stdio.h>
 #include <stdint.h>
-#include <stdbool.h>
+
+#include "my_stdbool.h"
+#include "ohos_bt_gatt_server.h"
+
+#include "wm_mem.h"
 #include "wm_ble.h"
 #include "wm_bt_def.h"
-#include "bt_gatt.h"
-#include "wm_mem.h"
 #include "list.h"
 #include "ble_util.h"
 
 #include "host/ble_hs.h"
 #include "host/util/util.h"
-// #include "harmony_bt_def.h"
-// #include "harmony_bt_gatt.h"
 
+/*
+ * STRUCTURE DEFINITIONS
+ ****************************************************************************************
+ */
 
 typedef struct{
     struct dl_list list;
@@ -66,15 +57,23 @@ typedef struct{
     struct ble_gatt_svc_def *svc;
 } nim_service_t;
 
+/*
+ * GLOBAL VARIABLE DEFINITIONS
+ ****************************************************************************************
+ */
+
 static uint16_t g_server_id;
 static server_elem_t server_list;
-
 static nim_service_t nim_service_list;
 
+/*
+ * LOCAL FUNCTION DEFINITIONS
+ ****************************************************************************************
+ */
 
 void ble_server_gap_event(struct ble_gap_event *event, void *arg)
 {
-    int rc;
+
     BdAddr bdaddr;
     struct ble_gap_conn_desc desc;
     server_elem_t *svr_item = NULL;
@@ -85,7 +84,7 @@ void ble_server_gap_event(struct ble_gap_event *event, void *arg)
         case BLE_GAP_EVENT_CONNECT:
             if (event->connect.status == 0)
             {
-                rc = ble_gap_conn_find(event->connect.conn_handle, &desc);
+                int rc = ble_gap_conn_find(event->connect.conn_handle, &desc);
                 assert(rc == 0);
                 memcpy(bdaddr.addr, desc.peer_id_addr.val, 6);
 
@@ -178,25 +177,6 @@ void ble_server_update_svc_handle(ble_uuid_t *uuid, uint16_t attr_handle)
         }
     }
 }
-#if BLE_IF_DBG
-
-static void 
-ble_server_gatt_dump_hexstring(const char *info, uint8_t *p, int length)
-{
-    int i = 0, j = 0;
-    printf("%s\r\n", info);
-    for(i = 0; i<length; i++)
-    {
-        j++;
-        printf("%02x ", p[i]);
-        if((j % 16) == 0)
-        {
-            printf("\r\n");
-        }
-    }
-    printf("\r\n");
-}
-#endif
 
 void ble_server_func_by_attr_handle(uint16_t attr_handle ,uint8_t op, uint8_t *data, int *len)
 {
@@ -216,7 +196,7 @@ void ble_server_func_by_attr_handle(uint16_t attr_handle ,uint8_t op, uint8_t *d
                         if(svc_item->func.write)
                         {
                             #if BLE_IF_DBG
-                            //ble_server_gatt_dump_hexstring("TO   HILINK:", data, *len);
+                            //tls_bt_dump_hexstring("To   Local:", data, *len);
                             #endif
                             svc_item->func.write(data, (int)*len);
                         }
@@ -226,7 +206,7 @@ void ble_server_func_by_attr_handle(uint16_t attr_handle ,uint8_t op, uint8_t *d
                         {
                             svc_item->func.read(data, len);
                             #if BLE_IF_DBG
-                            ble_server_gatt_dump_hexstring("FROM HILINK:", data, *len);
+                            tls_bt_dump_hexstring("To  Remote:", data, *len);
                             #endif
                         }
                         break;
@@ -246,7 +226,7 @@ static int
 ble_server_gatt_svc_access_func(uint16_t conn_handle, uint16_t attr_handle,
                                struct ble_gatt_access_ctxt *ctxt, void *arg)
 {
-    int rc = 0;
+
     int length = 0;
     int offset = 0;
     struct os_mbuf *om = ctxt->om;
@@ -272,7 +252,7 @@ ble_server_gatt_svc_access_func(uint16_t conn_handle, uint16_t attr_handle,
                 ble_server_func_by_attr_handle(attr_handle, ctxt->op, cache_buffer, &length);
                 if(length>0)
                 { 
-                    rc = os_mbuf_append(ctxt->om, &cache_buffer[0],length);
+                    int rc = os_mbuf_append(ctxt->om, &cache_buffer[0],length);
                     return rc == 0 ? 0 : BLE_ATT_ERR_INSUFFICIENT_RES;
                 }
                 return 0;
@@ -303,11 +283,15 @@ ble_server_uuid_init_from_buf(ble_uuid_any_t *uuid, const void *buf, size_t len)
     return BLE_HS_EINVAL;
 }
 
+/*
+ * EXPORTED FUNCTION DEFINITIONS
+ ****************************************************************************************
+ */
 
 int ble_server_alloc(BleGattService *srvcinfo)
 {
-    int i = 0, rc = 0;
-    ble_uuid_t uuid;
+    int i = 0;
+
     uint8_t srvc_counter = 0;
     uint8_t char_counter = 0;
     uint8_t desc_counter = 0;
@@ -453,7 +437,7 @@ int ble_server_alloc(BleGattService *srvcinfo)
 
 int ble_server_free(int server_id)
 {
-    int c = 0, d = 0;
+    int d = 0;
     nim_service_t *nim_service_item = NULL;
     server_elem_t *svr_item = NULL;
     server_elem_t *svr_item_next = NULL;    
@@ -489,7 +473,7 @@ int ble_server_free(int server_id)
         {
             if(svc_array->characteristics != NULL)
             {
-                for (c = 0; svc_array->characteristics[c].uuid != NULL; c++)
+                for (int c = 0; svc_array->characteristics[c].uuid != NULL; c++)
                 {
                     chr_array = svc_array->characteristics + c;
 
@@ -514,11 +498,12 @@ int ble_server_free(int server_id)
 
 void ble_server_start_service()
 {
-    int rc;
+
     nim_service_t *svc_item = NULL;
   
     if(!dl_list_empty(&nim_service_list.list))
     {
+        int rc;		
         dl_list_for_each(svc_item, &nim_service_list.list, nim_service_t, list)
         {
             if(svc_item == NULL)
@@ -539,14 +524,11 @@ void ble_server_start_service()
     
 }
 
-
-
 void ble_server_init()
 {
     memset(&server_list, 0, sizeof(server_elem_t));
     dl_list_init(&server_list.list);
-    dl_list_init(&nim_service_list.list);
-    
+    dl_list_init(&nim_service_list.list); 
 }
 
 
