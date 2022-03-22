@@ -254,12 +254,11 @@ int ble_store_config_persist_peer_secs(bool flush)
         nv_idx  = btif_config_get_sec_index(&ble_store_config_peer_secs[i].peer_addr, &found);
 
         if(nv_idx < 0) {
-            BLE_HS_LOG(ERROR, "PEER SEC Full, impossible[i=%d][%d]addr=%s\r\n",i, ble_store_config_num_peer_secs,bt_hex(ble_store_config_peer_secs[i].peer_addr.val,6));
+            BLE_HS_LOG(ERROR, "PEER SEC Full, impossible[i=%d][%d]\r\n",i, ble_store_config_num_peer_secs);
             return -1;
         }
         if(found) nv_idx = i;
 
-        //printf("ble_store_config_persist_peer_secs,i=%d,found =%d, nv_idx=%d, addr=%s\r\n", i, found, nv_idx, bt_hex(ble_store_config_peer_secs[i].peer_addr.val, 6));
         btif_config_store_peer_sec(nv_idx, &ble_store_config_peer_secs[i].peer_addr,
                                    (void *)&ble_store_config_peer_secs[i], sizeof(ble_store_config_peer_secs[i]));
     }
@@ -282,7 +281,7 @@ int ble_store_config_persist_our_secs(bool flush)
         nv_idx  = btif_config_get_sec_index((void *)&ble_store_config_our_secs[i].peer_addr, &found);
 
         if(nv_idx < 0) {
-            BLE_HS_LOG(ERROR, "OUR SEC Full, impossible[i=%d][%d],addr=%s\r\n",i, ble_store_config_num_our_secs, bt_hex(ble_store_config_our_secs[i].peer_addr.val,6));
+            BLE_HS_LOG(ERROR, "OUR SEC Full, impossible[i=%d][%d]\r\n",i, ble_store_config_num_our_secs);
             return -1;
         }
         if(found) nv_idx = i;
@@ -308,6 +307,7 @@ void ble_store_config_persist_flush()
 int ble_store_config_delete_all()
 {
     btif_config_delete_all();
+    return 0;
 }
 
 void ble_store_config_conf_init()

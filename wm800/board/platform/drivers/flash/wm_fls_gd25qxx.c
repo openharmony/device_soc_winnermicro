@@ -69,13 +69,12 @@ static int tls_spifls_drv_wait_write_enable(void)
 {
     u8 cmd;
     u8 sr;
-    int err;
 
     cmd = EXSPIFLASH_READ_SR1;
     sr = 0;
     do
     {
-        err = tls_spi_read_with_cmd((const u8 *) &cmd, 1, &sr, 1);
+        int err = tls_spi_read_with_cmd((const u8 *) &cmd, 1, &sr, 1);
         if (err != TLS_SPI_STATUS_OK)
         {
             return TLS_FLS_STATUS_EIO;
@@ -95,13 +94,12 @@ static int tls_spifls_drv_wait_flash_ready(void)
 {
     u8 cmd;
     u8 sr;
-    int err;
 
     cmd = EXSPIFLASH_READ_SR1;
     sr = 0;
     do
     {
-        err = tls_spi_read_with_cmd((const u8 *) &cmd, 1, &sr, 1);
+        int err = tls_spi_read_with_cmd((const u8 *) &cmd, 1, &sr, 1);
         if (err != TLS_SPI_STATUS_OK)
         {
             return TLS_FLS_STATUS_EIO;

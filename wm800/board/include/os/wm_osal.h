@@ -116,6 +116,32 @@ void tls_os_timer_init(void);
 void tls_os_time_tick(void *p);
 
 /**
+ * @brief          This function is  query timer is avtive or not
+ *
+ * @param[in]      *p    argument
+ *
+ * @return         Boolean
+ *
+ * @note           None
+ */
+
+u8 tls_os_timer_active(tls_os_timer_t *timer);
+
+/**
+ * @brief          This function is  query left time reached to expected expire timer
+ *
+ * @param[in]      *p    argument
+ *
+ * @return         left time value;
+ *
+ * @note           None
+ */
+
+u32 tls_os_timer_expirytime(tls_os_timer_t *timer);
+
+
+
+/**
  * @brief          This function is used to initialize OS common resource
  *
  * @param[in]      *arg
@@ -232,6 +258,24 @@ tls_os_status_t tls_os_task_del(u8 prio, void (*freefun)(void));
  *
  */
 tls_os_status_t tls_os_task_del_by_task_handle(tls_os_task_t task, void (*freefun)(void));
+
+/**
+ * @brief          This function query current task id;
+ *
+ * @retval         tls_os_task_t 
+ *
+ */
+tls_os_task_t tls_os_task_id(void);
+
+/**
+ * @brief          This function query current task schedule state;
+ *
+ * @retval         task state value; 
+ *
+ */
+u8 tls_os_task_schedule_state();
+
+
 
 /**
  * @brief          This function creates a mutual exclusion semaphore
@@ -499,6 +543,19 @@ tls_os_status_t tls_os_queue_flush(tls_os_queue_t *queue);
         u32 wait_time);
 
 /**
+ * @brief          This function is used to query  the message queue is empty or not.
+ *
+ * @param[in]      *queue
+ *
+ * @retval         1                    empty;
+ * @retval         0                not empty;
+ *                 2         queue is damaged;
+ * @note           None
+ */        
+u8 tls_os_queue_is_empty(tls_os_queue_t *queue);
+
+
+/**
  * @brief          This function creates a message mailbox if free event
                    control blocks are available.
  *
@@ -649,7 +706,7 @@ tls_os_status_t tls_os_queue_flush(tls_os_queue_t *queue);
  *
  * @note           None
  */
- void tls_os_timer_start(tls_os_timer_t *timer);
+ tls_os_status_t tls_os_timer_start(tls_os_timer_t *timer);
 
 /*
 ************************************************************************************************************************
@@ -662,7 +719,7 @@ tls_os_status_t tls_os_queue_flush(tls_os_queue_t *queue);
 *			ticks			is the wait time
 ************************************************************************************************************************
 */
- void tls_os_timer_change(tls_os_timer_t *timer, u32 ticks);
+ tls_os_status_t tls_os_timer_change(tls_os_timer_t *timer, u32 ticks);
 
 /**
  * @brief          This function is called by your application code to stop
@@ -674,7 +731,7 @@ tls_os_status_t tls_os_queue_flush(tls_os_queue_t *queue);
  *
  * @note           None
  */
- void tls_os_timer_stop(tls_os_timer_t *timer);
+ tls_os_status_t tls_os_timer_stop(tls_os_timer_t *timer);
 
 /**
  * @brief          This function is called by your application code to delete
@@ -719,6 +776,32 @@ tls_os_status_t tls_os_timer_delete(tls_os_timer_t *timer);
  * @note           None
  */
 void tls_os_disp_task_stat_info(void);
+
+/**
+ * @brief          This function is used to exit critical state.
+ *
+ * @param[in]      None
+ *
+ * @return         None
+ *
+ * @note           None
+ */
+
+void vPortExitCritical( void );
+
+/**
+ * @brief          This function is used to enter critical state.
+ *
+ * @param[in]      None
+ *
+ * @return         None
+ *
+ * @note           None
+ */
+
+void vPortEnterCritical( void );
+
+
 
 /**
  * @}

@@ -135,7 +135,7 @@ static int
 ble_hs_hci_evt_disconn_complete(uint8_t event_code, const uint8_t *data,
                                 unsigned int len)
 {
-    const struct ble_hci_ev_disconn_cmp *ev = data;
+    const struct ble_hci_ev_disconn_cmp *ev = (const struct ble_hci_ev_disconn_cmp *)data;
     const struct ble_hs_conn *conn;
 
     if(len != sizeof(*ev)) {
@@ -163,7 +163,7 @@ static int
 ble_hs_hci_evt_encrypt_change(uint8_t event_code, const uint8_t *data,
                               unsigned int len)
 {
-    const struct ble_hci_ev_enrypt_chg *ev = data;
+    const struct ble_hci_ev_enrypt_chg *ev = (const struct ble_hci_ev_enrypt_chg *)data;
 
     if(len != sizeof(*ev)) {
         return BLE_HS_ECONTROLLER;
@@ -176,7 +176,7 @@ ble_hs_hci_evt_encrypt_change(uint8_t event_code, const uint8_t *data,
 static int
 ble_hs_hci_evt_hw_error(uint8_t event_code, const uint8_t *data, unsigned int len)
 {
-    const struct ble_hci_ev_hw_error *ev = data;
+    const struct ble_hci_ev_hw_error *ev = (const struct ble_hci_ev_hw_error *)data;
 
     if(len != sizeof(*ev)) {
         return BLE_HS_ECONTROLLER;
@@ -190,7 +190,7 @@ static int
 ble_hs_hci_evt_enc_key_refresh(uint8_t event_code, const uint8_t *data,
                                unsigned int len)
 {
-    const struct ble_hci_ev_enc_key_refresh *ev = data;
+    const struct ble_hci_ev_enc_key_refresh *ev = (const struct ble_hci_ev_enc_key_refresh *)data;
 
     if(len != sizeof(*ev)) {
         return BLE_HS_ECONTROLLER;
@@ -204,7 +204,7 @@ static int
 ble_hs_hci_evt_num_completed_pkts(uint8_t event_code, const uint8_t *data,
                                   unsigned int len)
 {
-    const struct ble_hci_ev_num_comp_pkts *ev = data;
+    const struct ble_hci_ev_num_comp_pkts *ev = (const struct ble_hci_ev_num_comp_pkts *)data;
     struct ble_hs_conn *conn;
     int i;
 
@@ -241,7 +241,7 @@ ble_hs_hci_evt_num_completed_pkts(uint8_t event_code, const uint8_t *data,
 static int
 ble_hs_hci_evt_le_meta(uint8_t event_code, const uint8_t *data, unsigned int len)
 {
-    const struct ble_hci_ev_le_meta *ev = data;
+    const struct ble_hci_ev_le_meta *ev = (const struct ble_hci_ev_le_meta *)data;
     ble_hs_hci_evt_le_fn *fn;
 
     if(len < sizeof(*ev)) {
@@ -265,7 +265,7 @@ static int
 ble_hs_hci_evt_le_enh_conn_complete(uint8_t subevent, const uint8_t *data,
                                     unsigned int len)
 {
-    const struct ble_hci_ev_le_subev_enh_conn_complete *ev = data;
+    const struct ble_hci_ev_le_subev_enh_conn_complete *ev = (const struct ble_hci_ev_le_subev_enh_conn_complete *)data;
     struct ble_gap_conn_complete evt;
 
     if(len != sizeof(*ev)) {
@@ -309,7 +309,7 @@ static int
 ble_hs_hci_evt_le_conn_complete(uint8_t subevent, const uint8_t *data,
                                 unsigned int len)
 {
-    const struct ble_hci_ev_le_subev_conn_complete *ev = data;
+    const struct ble_hci_ev_le_subev_conn_complete *ev = (const struct ble_hci_ev_le_subev_conn_complete *)data;
     struct ble_gap_conn_complete evt;
 
     if(len != sizeof(*ev)) {
@@ -350,7 +350,7 @@ ble_hs_hci_evt_le_conn_complete(uint8_t subevent, const uint8_t *data,
 static int
 ble_hs_hci_evt_le_adv_rpt_first_pass(const uint8_t *data, unsigned int len)
 {
-    const struct ble_hci_ev_le_subev_adv_rpt *ev = data;
+    const struct ble_hci_ev_le_subev_adv_rpt *ev = (const struct ble_hci_ev_le_subev_adv_rpt *)data;
     const struct adv_report *rpt;
     int i;
 
@@ -372,7 +372,7 @@ ble_hs_hci_evt_le_adv_rpt_first_pass(const uint8_t *data, unsigned int len)
             return BLE_HS_ECONTROLLER;
         }
 
-        rpt = data;
+        rpt = (const struct adv_report *)data;
         len -= sizeof(*rpt) + 1;
         data += sizeof(rpt) + 1;
 
@@ -395,7 +395,7 @@ ble_hs_hci_evt_le_adv_rpt_first_pass(const uint8_t *data, unsigned int len)
 static int
 ble_hs_hci_evt_le_adv_rpt(uint8_t subevent, const uint8_t *data, unsigned int len)
 {
-    const struct ble_hci_ev_le_subev_adv_rpt *ev = data;
+    const struct ble_hci_ev_le_subev_adv_rpt *ev = (const struct ble_hci_ev_le_subev_adv_rpt *)data;
     struct ble_gap_disc_desc desc = {0};
     const struct adv_report *rpt;
     int rc;
@@ -411,7 +411,7 @@ ble_hs_hci_evt_le_adv_rpt(uint8_t subevent, const uint8_t *data, unsigned int le
     desc.direct_addr = *BLE_ADDR_ANY;
 
     for(i = 0; i < ev->num_reports; i++) {
-        rpt = data;
+        rpt = (const struct adv_report *)data;
         data += sizeof(rpt) + rpt->data_len + 1;
         desc.event_type = rpt->type;
         desc.addr.type = rpt->addr_type;
@@ -428,7 +428,7 @@ ble_hs_hci_evt_le_adv_rpt(uint8_t subevent, const uint8_t *data, unsigned int le
 static int
 ble_hs_hci_evt_le_dir_adv_rpt(uint8_t subevent, const uint8_t *data, unsigned int len)
 {
-    const struct ble_hci_ev_le_subev_direct_adv_rpt *ev = data;
+    const struct ble_hci_ev_le_subev_direct_adv_rpt *ev = (const struct ble_hci_ev_le_subev_direct_adv_rpt *)data;
     struct ble_gap_disc_desc desc = {0};
     int i;
 
@@ -457,7 +457,7 @@ static int
 ble_hs_hci_evt_le_rd_rem_used_feat_complete(uint8_t subevent, const uint8_t *data,
         unsigned int len)
 {
-    const struct ble_hci_ev_le_subev_rd_rem_used_feat *ev = data;
+    const struct ble_hci_ev_le_subev_rd_rem_used_feat *ev = (const struct ble_hci_ev_le_subev_rd_rem_used_feat *)data;
 
     if(len != sizeof(*ev)) {
         return BLE_HS_ECONTROLLER;
@@ -498,7 +498,7 @@ ble_hs_hci_evt_le_ext_adv_rpt(uint8_t subevent, const uint8_t *data,
                               unsigned int len)
 {
 #if MYNEWT_VAL(BLE_EXT_ADV) && NIMBLE_BLE_SCAN
-    const struct ble_hci_ev_le_subev_ext_adv_rpt *ev = data;
+    const struct ble_hci_ev_le_subev_ext_adv_rpt *ev = (const struct ble_hci_ev_le_subev_ext_adv_rpt *)data;
     const struct ext_adv_report *report;
     struct ble_gap_ext_disc_desc desc;
     int i;
@@ -574,7 +574,7 @@ ble_hs_hci_evt_le_periodic_adv_sync_estab(uint8_t subevent, const uint8_t *data,
         unsigned int len)
 {
 #if MYNEWT_VAL(BLE_PERIODIC_ADV)
-    const struct ble_hci_ev_le_subev_periodic_adv_sync_estab *ev = data;
+    const struct ble_hci_ev_le_subev_periodic_adv_sync_estab *ev = (const struct ble_hci_ev_le_subev_periodic_adv_sync_estab *)data;
 
     if(len != sizeof(*ev)) {
         return BLE_HS_ECONTROLLER;
@@ -590,7 +590,7 @@ ble_hs_hci_evt_le_periodic_adv_rpt(uint8_t subevent, const uint8_t *data,
                                    unsigned int len)
 {
 #if MYNEWT_VAL(BLE_PERIODIC_ADV)
-    const struct ble_hci_ev_le_subev_periodic_adv_rpt *ev = data;
+    const struct ble_hci_ev_le_subev_periodic_adv_rpt *ev = (const struct ble_hci_ev_le_subev_periodic_adv_rpt *)data;
 
     if(len < sizeof(*ev) || len != (sizeof(*ev) + ev->data_len)) {
         return BLE_HS_EBADDATA;
@@ -606,7 +606,7 @@ ble_hs_hci_evt_le_periodic_adv_sync_lost(uint8_t subevent, const uint8_t *data,
         unsigned int len)
 {
 #if MYNEWT_VAL(BLE_PERIODIC_ADV)
-    const struct ble_hci_ev_le_subev_periodic_adv_sync_lost *ev = data;
+    const struct ble_hci_ev_le_subev_periodic_adv_sync_lost *ev = (const struct ble_hci_ev_le_subev_periodic_adv_sync_lost *)data;
 
     if(len != sizeof(*ev)) {
         return BLE_HS_EBADDATA;
@@ -622,7 +622,7 @@ ble_hs_hci_evt_le_periodic_adv_sync_transfer(uint8_t subevent, const uint8_t *da
         unsigned int len)
 {
 #if MYNEWT_VAL(BLE_PERIODIC_ADV_SYNC_TRANSFER)
-    const struct ble_hci_ev_le_subev_periodic_adv_sync_transfer *ev = data;
+    const struct ble_hci_ev_le_subev_periodic_adv_sync_transfer *ev = (const struct ble_hci_ev_le_subev_periodic_adv_sync_transfer *)data;
 
     if(len != sizeof(*ev)) {
         return BLE_HS_EBADDATA;
@@ -638,7 +638,7 @@ ble_hs_hci_evt_le_scan_timeout(uint8_t subevent, const uint8_t *data,
                                unsigned int len)
 {
 #if MYNEWT_VAL(BLE_EXT_ADV) && NIMBLE_BLE_SCAN
-    const struct ble_hci_ev_le_subev_scan_timeout *ev = data;
+    const struct ble_hci_ev_le_subev_scan_timeout *ev = (const struct ble_hci_ev_le_subev_scan_timeout *)data;
 
     if(len != sizeof(*ev)) {
         return BLE_HS_EBADDATA;
@@ -654,7 +654,7 @@ ble_hs_hci_evt_le_adv_set_terminated(uint8_t subevent, const uint8_t *data,
                                      unsigned int len)
 {
 #if MYNEWT_VAL(BLE_EXT_ADV)
-    const struct ble_hci_ev_le_subev_adv_set_terminated *ev = data;
+    const struct ble_hci_ev_le_subev_adv_set_terminated *ev = (const struct ble_hci_ev_le_subev_adv_set_terminated *)data;
 
     if(len != sizeof(*ev)) {
         return BLE_HS_ECONTROLLER;
@@ -675,7 +675,7 @@ ble_hs_hci_evt_le_scan_req_rcvd(uint8_t subevent, const uint8_t *data,
                                 unsigned int len)
 {
 #if MYNEWT_VAL(BLE_EXT_ADV)
-    const struct ble_hci_ev_le_subev_scan_req_rcvd *ev = data;
+    const struct ble_hci_ev_le_subev_scan_req_rcvd *ev = (const struct ble_hci_ev_le_subev_scan_req_rcvd *)data;
 
     if(len != sizeof(*ev)) {
         return BLE_HS_ECONTROLLER;
@@ -690,7 +690,7 @@ static int
 ble_hs_hci_evt_le_conn_upd_complete(uint8_t subevent, const uint8_t *data,
                                     unsigned int len)
 {
-    const struct ble_hci_ev_le_subev_conn_upd_complete *ev = data;
+    const struct ble_hci_ev_le_subev_conn_upd_complete *ev = (const struct ble_hci_ev_le_subev_conn_upd_complete *)data;
 
     if(len != sizeof(*ev)) {
         return BLE_HS_ECONTROLLER;
@@ -712,7 +712,7 @@ ble_hs_hci_evt_le_conn_upd_complete(uint8_t subevent, const uint8_t *data,
 static int
 ble_hs_hci_evt_le_lt_key_req(uint8_t subevent, const uint8_t *data, unsigned int len)
 {
-    const struct ble_hci_ev_le_subev_lt_key_req *ev = data;
+    const struct ble_hci_ev_le_subev_lt_key_req *ev = (const struct ble_hci_ev_le_subev_lt_key_req *)data;
 
     if(len != sizeof(*ev)) {
         return BLE_HS_ECONTROLLER;
@@ -725,7 +725,7 @@ ble_hs_hci_evt_le_lt_key_req(uint8_t subevent, const uint8_t *data, unsigned int
 static int
 ble_hs_hci_evt_le_conn_parm_req(uint8_t subevent, const uint8_t *data, unsigned int len)
 {
-    const struct ble_hci_ev_le_subev_rem_conn_param_req *ev = data;
+    const struct ble_hci_ev_le_subev_rem_conn_param_req *ev = (const struct ble_hci_ev_le_subev_rem_conn_param_req *)data;
 
     if(len != sizeof(*ev)) {
         return BLE_HS_ECONTROLLER;
@@ -744,7 +744,7 @@ ble_hs_hci_evt_le_conn_parm_req(uint8_t subevent, const uint8_t *data, unsigned 
 static int
 ble_hs_hci_evt_le_data_len_changed(uint8_t subevent, const uint8_t *data, unsigned int len)
 {
-    const struct ble_hci_ev_le_subev_data_len_chg *ev = data;
+    const struct ble_hci_ev_le_subev_data_len_chg *ev = (const struct ble_hci_ev_le_subev_data_len_chg *)data;
     struct ble_hs_conn *conn;
 
     if(len != sizeof(*ev)) {
@@ -771,7 +771,7 @@ static int
 ble_hs_hci_evt_le_phy_update_complete(uint8_t subevent, const uint8_t *data,
                                       unsigned int len)
 {
-    const struct ble_hci_ev_le_subev_phy_update_complete *ev = data;
+    const struct ble_hci_ev_le_subev_phy_update_complete *ev = (const struct ble_hci_ev_le_subev_phy_update_complete *)data;
 
     if(len != sizeof(*ev)) {
         return BLE_HS_ECONTROLLER;

@@ -220,15 +220,15 @@ static void wm_i2s_set_freq(uint32_t lr_freq, uint32_t mclk)
     
 #if FPGA_800_I2S
 	div = div/2;
-#else
-	div = div;
 #endif
 
 	//Mclk should be set bigger than sample_rate * 256.
 	//mclk_div = I2S_CLK / ( freq*256 ) + 1;
 	mclk_div = I2S_CLK / mclk;
 
-	(mclk_div > 0x3F)?(mclk_div = 0x3F):(mclk_div = mclk_div);
+    if(mclk_div > 0x3F){
+        mclk_div = 0x3F;
+    }
 
 	*(volatile uint32_t *)HR_CLK_I2S_CTL &= ~0x3FFFF;
 	//set bclk div ,mclk div, inter clk be used, mclk enabled.
@@ -314,13 +314,13 @@ static void wm_i2s_dma_rx_init(uint8_t ch, uint32_t count, int16_t * buf)
 ATTRIBUTE_ISR void i2s_I2S_IRQHandler(void)
 {	
 	volatile uint32_t temp;
-	volatile uint8_t fifo_level, cnt;	
 	csi_kernel_intrpt_enter();
 	/* TxTH*/
 	if ((M32(HR_I2S_INT_SRC) >> 6) & 0x1)
 	{	
 		if (wm_i2s_buf->txtail < wm_i2s_buf->txlen)
 		{
+		    volatile uint8_t fifo_level;
 			for(fifo_level = ((I2S->INT_STATUS >> 4)& 0x0F),temp = 0; temp < 8-fifo_level; temp++)
 			{
 				tls_reg_write32(HR_I2S_TX, wm_i2s_buf->txbuf[wm_i2s_buf->txtail++]);
@@ -368,7 +368,8 @@ ATTRIBUTE_ISR void i2s_I2S_IRQHandler(void)
 	}	
 	/* RxTH */
 	if (tls_bitband_read(HR_I2S_INT_SRC, 2) )
-	{		
+	{	
+	    volatile uint8_t cnt;	
 		for(cnt = (I2S->INT_STATUS & 0x0F),temp = 0; temp < cnt; temp++)
 		{
 			if (wm_i2s_buf->rxhead < wm_i2s_buf->rxlen)

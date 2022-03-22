@@ -45,9 +45,6 @@ extern "C" {
 
 #include <stdbool.h>
 
-#ifndef NULL
-#define NULL ((void *)0)
-#endif
 
 #define TC_CRYPTO_SUCCESS 1
 #define TC_CRYPTO_FAIL 0
