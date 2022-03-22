@@ -75,7 +75,7 @@ VOID TaskSample(VOID)
     stTask.uwStackSize = LOSCFG_BASE_CORE_TSK_DEFAULT_STACK_SIZE;
     stTask.pcName = "TaskSampleEntry1";
     stTask.usTaskPrio = TASK1_PRIORITY;
-    ret = LOS_TaskCreate(&taskID2, &stTask);
+    ret = LOS_TaskCreate(&taskID1, &stTask);
     if (ret != LOS_OK) {
         printf("Task1 create failed\n");
     }

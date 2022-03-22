@@ -23,6 +23,7 @@
 #if NIMBLE_CFG_CONTROLLER
 #include "controller/ble_ll.h"
 #endif
+#include "store/config/ble_store_config.h"
 
 static struct ble_npl_eventq g_eventq_dflt ;
 static struct ble_hs_stop_listener stop_listener;

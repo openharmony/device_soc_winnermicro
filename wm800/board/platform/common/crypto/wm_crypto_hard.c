@@ -259,7 +259,7 @@ int tls_crypto_random_bytes(unsigned char *out, u32 len)
     unsigned int val;
     unsigned int cpu_sr;
     uint32 inLen = len;
-    int randomBytes = 2;
+    int randomBytes;
 #if USE_TRNG
 	randomBytes = 4;
 #else
@@ -458,7 +458,6 @@ int tls_crypto_rc4(psCipherContext_t *ctx, unsigned char *in, unsigned char *out
  */
 int tls_crypto_aes_init(psCipherContext_t *ctx, const unsigned char *IV, const unsigned char *key, u32 keylen, CRYPTO_MODE cbc)
 {
-    int x = 0;
     if (keylen != 16)
         return ERR_FAILURE;
 
@@ -467,7 +466,7 @@ int tls_crypto_aes_init(psCipherContext_t *ctx, const unsigned char *IV, const u
     ctx->aes.key.rounds = 16;
 	if(IV)
 	{
-	    for (x = 0; x < ctx->aes.key.rounds; x++)
+	    for (int x = 0; x < ctx->aes.key.rounds; x++)
 	    {
 	        ctx->aes.IV[x] = IV[x];
 	    }
@@ -543,7 +542,6 @@ int tls_crypto_aes_encrypt_decrypt(psCipherContext_t *ctx, unsigned char *in, un
  */
 int tls_crypto_3des_init(psCipherContext_t *ctx, const unsigned char *IV, const unsigned char *key, u32 keylen, CRYPTO_MODE cbc)
 {
-    unsigned int x;
     if (keylen != DES3_KEY_LEN)
         return ERR_FAILURE;
 
@@ -552,7 +550,7 @@ int tls_crypto_3des_init(psCipherContext_t *ctx, const unsigned char *IV, const 
     ctx->des3.blocklen = DES3_IV_LEN;
 	if(IV)
 	{
-	    for (x = 0; x < ctx->des3.blocklen; x++)
+	    for (unsigned int x = 0; x < ctx->des3.blocklen; x++)
 	    {
 	        ctx->des3.IV[x] = IV[x];
 	    }
@@ -622,7 +620,6 @@ int tls_crypto_3des_encrypt_decrypt(psCipherContext_t *ctx, unsigned char *in, u
  */
 int tls_crypto_des_init(psCipherContext_t *ctx, const unsigned char *IV, const unsigned char *key, u32 keylen, CRYPTO_MODE cbc)
 {
-    unsigned int x;
     if (keylen != DES_KEY_LEN)
         return ERR_FAILURE;
     memcpy(ctx->des3.key.ek[0], key, keylen);
@@ -630,7 +627,7 @@ int tls_crypto_des_init(psCipherContext_t *ctx, const unsigned char *IV, const u
     ctx->des3.blocklen = DES3_IV_LEN;
 	if(IV)
 	{
-	    for (x = 0; x < ctx->des3.blocklen; x++)
+	    for (unsigned int x = 0; x < ctx->des3.blocklen; x++)
 	    {
 	        ctx->des3.IV[x] = IV[x];
 	    }
@@ -802,9 +799,8 @@ int tls_crypto_crc_final(psCrcContext_t *ctx, u32 *crc_val)
 
 static void hd_sha1_compress(psDigestContext_t *md)
 {
-    unsigned int sec_cfg, val;
+    unsigned int sec_cfg;
     unsigned int cpu_sr;
-    int i = 0;
 	tls_crypto_sem_lock();
     tls_open_peripheral_clock(TLS_PERIPHERAL_TYPE_GPSEC);
     tls_reg_write32(HR_CRYPTO_SRC_ADDR, (unsigned int)md->u.sha1.buf);
@@ -829,10 +825,9 @@ static void hd_sha1_compress(psDigestContext_t *md)
 	}
 	g_crypto_ctx.gpsec_complete = 0;
 	tls_os_release_critical(cpu_sr);
-    for (i = 0; i < 5; i++)
+    for (int i = 0; i < 5; i++)
     {
-        val = tls_reg_read32(HR_CRYPTO_SHA1_DIGEST0 + (4 * i));
-        md->u.sha1.state[i] = val;
+        md->u.sha1.state[i] = tls_reg_read32(HR_CRYPTO_SHA1_DIGEST0 + (4 * i));
     }
     tls_close_peripheral_clock(TLS_PERIPHERAL_TYPE_GPSEC);
 	tls_crypto_sem_unlock();
@@ -1005,7 +1000,7 @@ int tls_crypto_sha1_final(psDigestContext_t *md, unsigned char *hash)
 
 static void hd_md5_compress(psDigestContext_t *md)
 {
-    unsigned int sec_cfg, val, i;
+    unsigned int sec_cfg;
 	tls_crypto_sem_lock();
     tls_open_peripheral_clock(TLS_PERIPHERAL_TYPE_GPSEC);
     tls_reg_write32(HR_CRYPTO_SRC_ADDR, (unsigned int)md->u.md5.buf);
@@ -1022,9 +1017,9 @@ static void hd_md5_compress(psDigestContext_t *md)
 
     }
     g_crypto_ctx.gpsec_complete = 0;
-    for (i = 0; i < 4; i++)
+    for (unsigned int i = 0; i < 4; i++)
     {
-        val = tls_reg_read32(HR_CRYPTO_SHA1_DIGEST0 + (4 * i));
+        unsigned int val = tls_reg_read32(HR_CRYPTO_SHA1_DIGEST0 + (4 * i));
         md->u.md5.state[i] = val;
     }
 
@@ -1213,7 +1208,6 @@ static void rsaMonMulWriteMc(const u32 mc)
     val = RSAMC;
     if(val == mc)
     {
-        val = 1;
         return;
     }
 }

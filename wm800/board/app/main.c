@@ -16,13 +16,13 @@
 
 void UserMain(void)
 {
-	printf("\n user task \n");
+    printf("\n user task \n");
 
 #if DEMO_CONSOLE
-	CreateDemoTask();
+    CreateDemoTask();
 #endif
-	//用户自己的task
-	if (DeviceManagerStart()) {
+    // 用户自己的task
+    if (DeviceManagerStart()) {
         printf("[%s] No drivers need load by hdf manager!",__func__);
     }
 }

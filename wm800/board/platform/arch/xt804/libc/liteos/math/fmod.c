@@ -14,7 +14,7 @@ double fmod(double x, double y)
 	uint64_t uxi = ux.i;
 
 	if (uy.i<<1 == 0 || isnan(y) || ex == 0x7ff)
-		return (x*y)/(x*y);
+		return (x*y*1.0)/(x*y);
 	if (uxi<<1 <= uy.i<<1) {
 		if (uxi<<1 == uy.i<<1)
 			return 0*x;

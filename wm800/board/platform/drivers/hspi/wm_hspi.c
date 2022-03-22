@@ -410,7 +410,6 @@ int tls_hspi_tx_data(char *txbuf, int len)
 {
     struct tls_hspi_tx_desc *tx_desc;
     int totallen = len;
-    int txlen;
 
     if (NULL == txbuf || len <= 0 || len > (HSPI_TXBUF_SIZE * HSPI_TX_DESC_NUM))
     {
@@ -426,7 +425,7 @@ int tls_hspi_tx_data(char *txbuf, int len)
     }
     while (!(tx_desc->valid_ctrl & SET_BIT(31)))
     {
-        txlen = (totallen > HSPI_TXBUF_SIZE) ? HSPI_TXBUF_SIZE : totallen;
+        int txlen = (totallen > HSPI_TXBUF_SIZE) ? HSPI_TXBUF_SIZE : totallen;
 #if HSPI_TX_MEM_MALLOC
         if (tx_desc->txbuf_addr != NULL)
         {

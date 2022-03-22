@@ -374,7 +374,6 @@ void tls_adc_set_pga(int gain1, int gain2)
 			break;
 	}
 
-	val = tls_reg_read32(HR_SD_ADC_PGA_CTRL);
 	val = GAIN_CTRL_PGA_VAL(gain2times)|CLK_CHOP_SEL_PGA_VAL(gain1times)|PGA_BYPASS_VAL(0)|PGA_CHOP_ENP_VAL(1)|PGA_EN_VAL(1);
 	tls_reg_write32(HR_SD_ADC_PGA_CTRL, val);
 }
@@ -483,8 +482,6 @@ u32 adc_get_interVolt(void)
 {
 	u32 voltValue;
 	u32 value = 0;
-	u32 code = 0;	
-	int i = 0;
 	adc_get_offset();
 
     tls_adc_init(0, 0); 
@@ -493,7 +490,7 @@ u32 adc_get_interVolt(void)
 	tls_adc_set_clk(0x28);	
 	tls_adc_start_with_cpu(CONFIG_ADC_CHL_VOLT);
 	voltValue = 0;
-	for (i = 0;i < 10; i++)
+	for (int i = 0;i < 10; i++)
 	{
 		waitForAdcDone();
 		value = tls_read_adc_result();
@@ -501,7 +498,6 @@ u32 adc_get_interVolt(void)
 		voltValue += value;
 	}
 	voltValue = voltValue/10;
-	code = voltValue;
 	tls_adc_stop(0);
 	voltValue = ((voltValue - adc_offset)*685/20+1200000)*2;
 	value = voltValue - voltValue*10/100;
