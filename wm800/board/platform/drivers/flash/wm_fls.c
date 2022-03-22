@@ -83,8 +83,6 @@ int tls_spifls_read(u32 addr, u8 * buf, u32 len)
     read_bytes =
         ((addr + len) > drv->total_size) ? (drv->total_size - addr) : len;
 
-    err = TLS_FLS_STATUS_OK;
-
     err = drv->read(addr, buf, read_bytes);
     tls_os_sem_release(spi_fls->fls_lock);
     return err;
@@ -122,8 +120,6 @@ int tls_spifls_fast_read(u32 addr, u8 * buf, u32 len)
     drv = spi_fls->current_drv;
     read_bytes =
         ((addr + len) > drv->total_size) ? (drv->total_size - addr) : len;
-
-    err = TLS_FLS_STATUS_OK;
 
     err = drv->fast_read(addr, buf, read_bytes);
 
@@ -324,8 +320,6 @@ int tls_spifls_erase(u32 sector)
     tls_os_sem_acquire(spi_fls->fls_lock, 0);
     drv = spi_fls->current_drv;
 
-    err = TLS_FLS_STATUS_OK;
-
     err = drv->erase(sector);
     tls_os_sem_release(spi_fls->fls_lock);
     return err;
@@ -349,8 +343,6 @@ int tls_spifls_chip_erase(void)
     }
 
     drv = spi_fls->current_drv;
-
-    err = TLS_FLS_STATUS_OK;
 
     err = drv->chip_erase();
 

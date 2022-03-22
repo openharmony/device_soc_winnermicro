@@ -282,14 +282,13 @@ int strtohex(u32 *hex, char *str)
 
 int strtohexarray(u8 array[], int cnt, char *str)
 {
-	int hex;
 	u8 tmp;
 	u8 *des;
 
 	des = array;
 	
 	while (cnt-- > 0) {
-		hex = atohex(*str++);
+		int hex = atohex(*str++);
 		if (hex < 0) {return -1;}
 		else {tmp = (hex << 4) & 0xf0;}
 
@@ -380,13 +379,12 @@ int hexstr_to_unit(char *buf, u32 *d)
 {
     int i;
     int len = strlen(buf);
-    int c;
     *d = 0;
 
     if (len > 8)
         return -1;
     for (i=0; i<len; i++) {
-        c = hex_to_digit(buf[i]);
+        int c = hex_to_digit(buf[i]);
         if (c < 0)
             return -1;
         *d = (u8)c | (*d << 4);
@@ -411,7 +409,7 @@ int string_to_uint(char *buf, u32 *d)
 int string_to_ipaddr(const char *buf, u8 *addr)
 {
 	int count = 0, rc = 0;
-	int in[4];
+	unsigned int in[4];
 	char c;
 
 	rc = sscanf(buf, "%u.%u.%u.%u%c",
@@ -512,10 +510,9 @@ void dumpUint32(char *name, uint32_t* buffer, int len)
 
 int strcasecmp(const char *s1, const char *s2)
 {
-	char a, b;
 	while (*s1 && *s2) {
-		a = *s1++;
-		b = *s2++;
+		char a = *s1++;
+		char b = *s2++;
 
 		if (a == b)
 			continue;

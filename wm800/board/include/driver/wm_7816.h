@@ -19,8 +19,7 @@ extern "C" {
 #include "wm_type_def.h"
 #include "wm_io.h"
 
-#define WM_SC_RST_PIN		WM_IO_PB_23 //(23)    
-#define WM_SC_PWR_PIN		WM_IO_PB_24 //(29)	
+
 
 #define WM_SC_DEFAULT_FD	(372)
 

@@ -137,19 +137,16 @@ int _write_r(void *r, int file, const void *ptr, size_t len)
 
 static int __ip2str(unsigned char v4v6, unsigned int *inuint, char *outtxt)
 {
-    unsigned char i;
     unsigned char j = 0;
-    unsigned char k;
     unsigned char h;
     unsigned char m;
     unsigned char l;
-    unsigned char bit;
 
     if (4 == v4v6)
     {
-        for(i = 0; i < 4; i++)
+        for(unsigned char i = 0; i < 4; i++)
         {
-            bit = (*inuint >> (8 * i)) & 0xff;
+            unsigned char bit = (*inuint >> (8 * i)) & 0xff;
             h = bit / 100;
             if (h)
                 outtxt[j++] = '0' + h;
@@ -170,9 +167,9 @@ static int __ip2str(unsigned char v4v6, unsigned int *inuint, char *outtxt)
     }
     else
     {
-        for (k = 0; k < 4; k++)
+        for (unsigned char k = 0; k < 4; k++)
         {
-            for(i = 0; i < 4; i++)
+            for(unsigned char i = 0; i < 4; i++)
             {
                 m = (*inuint >> (8 * i)) & 0xff;
                 h = m >> 4;
@@ -198,13 +195,11 @@ static int __ip2str(unsigned char v4v6, unsigned int *inuint, char *outtxt)
 
 static int __mac2str(unsigned char *inchar, char *outtxt)
 {
-    unsigned char hbit,lbit;
     unsigned int i;
-
     for(i = 0; i < 6; i++)/* mac length */
     {
-        hbit = (*(inchar + i) & 0xf0) >> 4;
-        lbit = *(inchar + i ) & 0x0f;
+        unsigned char hbit = (*(inchar + i) & 0xf0) >> 4;
+        unsigned char lbit = *(inchar + i ) & 0x0f;
         if (hbit > 9)
             outtxt[3 * i] = 'A' + hbit - 10;
         else 
@@ -368,8 +363,6 @@ int wm_vsscanf(const char *buffer, const char *format, va_list ap)
   unsigned long matchmap[((1 << CHAR_BIT)+(LONG_BIT-1))/LONG_BIT];
   int matchinv = 0;		/* Is match map inverted? */
   unsigned char range_start = 0;
-
-  sign = sign; /* gcc warning */
 
   while ( (ch = *p++) && !bail ) {
     switch ( state ) {
@@ -842,7 +835,7 @@ static size_t _ntoa_long(out_fct_type out, char* buffer, size_t idx, size_t maxl
   if (!(flags & FLAGS_PRECISION) || value) {
     do {
       const char digit = (char)(value % base);
-      buf[len++] = digit < 10 ? '0' + digit : (flags & FLAGS_UPPERCASE ? 'A' : 'a') + digit - 10;
+      buf[len++] = digit < 10 ? '0' + digit : ((flags & FLAGS_UPPERCASE) ? 'A' : 'a') + digit - 10;
       value /= base;
     } while (value && (len < PRINTF_NTOA_BUFFER_SIZE));
   }
@@ -867,7 +860,7 @@ static size_t _ntoa_long_long(out_fct_type out, char* buffer, size_t idx, size_t
   if (!(flags & FLAGS_PRECISION) || value) {
     do {
       const char digit = (char)(value % base);
-      buf[len++] = digit < 10 ? '0' + digit : (flags & FLAGS_UPPERCASE ? 'A' : 'a') + digit - 10;
+      buf[len++] = (digit < 10) ? ('0' + digit) : (((flags & FLAGS_UPPERCASE) ? 'A' : 'a') + digit - 10);
       value /= base;
     } while (value && (len < PRINTF_NTOA_BUFFER_SIZE));
   }
@@ -951,7 +944,7 @@ static size_t _ftoa(out_fct_type out, char* buffer, size_t idx, size_t maxlen, d
 
   if (prec == 0U) {
     diff = value - (double)whole;
-    if ((!(diff < 0.5) || (diff > 0.5)) && (whole & 1)) {
+    if ((diff > 0.5) && (whole & 1)) {    
       // exactly 0.5 and ODD, then round up
       // 1.5 -> 2, but 2.5 -> 2
       ++whole;
@@ -1372,7 +1365,11 @@ static int _vsnprintf(out_fct_type out, char* buffer, const size_t maxlen, const
         width = sizeof(void*) * 2U;
         flags |= FLAGS_ZEROPAD | FLAGS_UPPERCASE;
 #if defined(PRINTF_SUPPORT_LONG_LONG)
-        const bool is_ll = sizeof(uintptr_t) == sizeof(long long);
+        bool is_ll = false;
+        if(sizeof(uintptr_t) == sizeof(long long))
+        {
+            is_ll = true;
+        }
         if (is_ll) {
           idx = _ntoa_long_long(out, buffer, idx, maxlen, (uintptr_t)va_arg(va, void*), false, 16U, precision, width, flags);
         }

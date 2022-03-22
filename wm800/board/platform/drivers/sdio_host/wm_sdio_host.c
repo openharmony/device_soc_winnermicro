@@ -174,7 +174,6 @@ end:
 static uint32_t SD_GetCapacity(uint8_t *csd, SD_CardInfo_t *SDCardInfo)
 {
   uint32_t Capacity;
-  uint16_t n;
   uint32_t csize; 
 
   if((csd[0]&0xC0)==0x40)//ÅĞ¶Ïbit126ÊÇ·ñÎª1
@@ -186,7 +185,7 @@ static uint32_t SD_GetCapacity(uint8_t *csd, SD_CardInfo_t *SDCardInfo)
   }
   else
   { 
-    n = (csd[5] & 0x0F) + ((csd[10] & 0x80) >> 7) + ((csd[9] & 0x03) << 1) + 2;
+    uint16_t n = (csd[5] & 0x0F) + ((csd[10] & 0x80) >> 7) + ((csd[9] & 0x03) << 1) + 2;
     csize = (csd[8] >> 6) + ((uint16_t)csd[7] << 2) + ((uint16_t)(csd[6] & 0x03) << 10) + 1;
     Capacity = (uint32_t)csize << (n - 10);
 	SDCardInfo->CardCapacity = (long long)Capacity*1024;
@@ -397,7 +396,7 @@ end:
 
 int wm_sd_card_stop_trans(void)
 {
-	int ret = -1;
+	int ret;
 	uint32_t respCmd[2];
 	wm_sdh_send_cmd(12, 0, 0x44); //Send CMD12
 	ret = sm_sdh_wait_interrupt(0, -1);
@@ -423,7 +422,7 @@ static void sdio_host_reset(void)
 
 int sdh_card_init(uint32_t *rca_ref)
 {
-	int ret = -1;
+	int ret;
 	uint32_t rca = 0;
 
 	sdio_host_reset();
@@ -667,7 +666,7 @@ end:
 int wm_sd_card_blocks_write(uint32_t rca, uint32_t sd_addr, char *buf, uint32_t buflen)
 {
 	int dma_channel = 0xFF;
-	int ret = -1, retresp = -100;
+	int ret, retresp = -100;
 	uint32_t respCmd[2];
 	int block_cnt = buflen/512;
 	uint8_t current_state = 0;

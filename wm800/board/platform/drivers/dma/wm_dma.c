@@ -45,7 +45,6 @@ static void dma_irq_proc(void *p)
 {
     unsigned char ch;
     unsigned int int_src;
-    static uint32_t len[8] = {0,0,0,0,0,0,0,0};
 
     ch = (unsigned char)(unsigned long)p;
     int_src = tls_reg_read32(HR_DMA_INT_SRC);
@@ -65,6 +64,7 @@ static void dma_irq_proc(void *p)
     if (DMA_CTRL_REG(ch) & 0x01)
     {
         uint32_t temp = 0, cur_len = 0;
+        static uint32_t len[8] = {0,0,0,0,0,0,0,0};
         
         temp = DMA_CTRL_REG(ch);
         if(len[ch] == 0)
@@ -343,10 +343,10 @@ unsigned char tls_dma_stop(unsigned char ch)
 unsigned char tls_dma_request(unsigned char ch, unsigned char flags)
 {
 	unsigned char freeCh = 0xFF;
- 	int i = 0;
+
 
 	/*If channel is valid, try to use specified DMA channel!*/
-	if ((ch >= 0) && (ch < 8))
+	if ((ch < 8))
 	{
 		if (!(channels.channels[ch] & TLS_DMA_FLAGS_CHANNEL_VALID))
 		{
@@ -357,6 +357,7 @@ unsigned char tls_dma_request(unsigned char ch, unsigned char flags)
 	/*If ch is not valid, or ch has been used, try to select another free channel for the caller*/
 	if (freeCh == 0xFF)
 	{
+	 	int i = 0;
 		for (i = 0; i < 8; i++)
 		{
 			if (!(channels.channels[i] & TLS_DMA_FLAGS_CHANNEL_VALID))
@@ -372,7 +373,7 @@ unsigned char tls_dma_request(unsigned char ch, unsigned char flags)
 		}
 	}
 
-	if ((freeCh >= 0) && (freeCh < 8))
+	if ((freeCh < 8))
 	{
 		if (dma_used_bit == 0)
 		{

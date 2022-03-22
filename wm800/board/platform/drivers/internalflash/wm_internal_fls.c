@@ -308,7 +308,7 @@ static unsigned int getFlashDensity(void)
 
     density = ((read_first_value() & 0xFFFFFF) >> 16) & 0xFF;
     //	printf("density %x\n", density);
-    if (density && (density <= 0x21))  /*just limit to (1<<33UL) Byte*/
+    if (density && (density <= 28)) 
     {
         return (1 << density);
     }
@@ -428,13 +428,14 @@ int flashRead(unsigned long addr, unsigned char *buf, unsigned long sz)
     unsigned int sz_remain = 0;
     int i = 0;
     int page_offset = addr & (INSIDE_FLS_PAGE_SIZE - 1);
-	unsigned int max_size = 0;
+	
 
 	if ((page_offset == 0) 
 		&& (((unsigned int)buf&0x3) == 0) 
 		&& ((sz&0x3) == 0))/*Use 4-bytes aligned and buf must be 4 times, sz must be 4 times*/
 	{
 		flash_addr = addr;
+        unsigned int max_size = 0;
 		if (sz >= 512)
 		{
 			max_size = INSIDE_FLS_MAX_RD_SIZE;
@@ -461,9 +462,7 @@ int flashRead(unsigned long addr, unsigned char *buf, unsigned long sz)
 	}
 	else
 	{
-	    char *cache = NULL;
-
-	    cache = tls_mem_alloc(INSIDE_FLS_PAGE_SIZE);
+	    char *cache = tls_mem_alloc(INSIDE_FLS_PAGE_SIZE);
 	    if (cache == NULL)
 	    {
 	        TLS_DBGPRT_ERR("allocate sector cache memory fail!\n");
@@ -681,7 +680,6 @@ int tls_fls_otp_read(u32 addr, u8 *buf, u32 len)
 {
     int err;
 	
-	int i = 0;
 	int word = len/4;
 	int byte = len%4;
 	unsigned long addr_read = 0xBC00C048;
@@ -709,7 +707,7 @@ int tls_fls_otp_read(u32 addr, u8 *buf, u32 len)
 	if(buf)
 	{
 		addr_read = RSA_BASE_ADDRESS + (addr_offset / 4 * 4);
-		i = (4 - addr_offset % 4) % 4;
+		int i = (4 - addr_offset % 4) % 4;
 		if(i > len)
 		{
 			byte = len;
@@ -1130,14 +1128,13 @@ static u32 gsSector = 0;
  */
 static void tls_fls_flush_sector(void)
 {
-    int i;
     u32 addr;
     if (gsSector < (inside_fls->density / INSIDE_FLS_SECTOR_SIZE + INSIDE_FLS_BASE_ADDR / INSIDE_FLS_SECTOR_SIZE))
     {
         addr = gsSector * INSIDE_FLS_SECTOR_SIZE;
 
         eraseSector(addr);
-        for (i = 0; i < INSIDE_FLS_SECTOR_SIZE / INSIDE_FLS_PAGE_SIZE; i++)
+        for (int i = 0; i < INSIDE_FLS_SECTOR_SIZE / INSIDE_FLS_PAGE_SIZE; i++)
         {
             programPage(gsSector * INSIDE_FLS_SECTOR_SIZE +
                         i * INSIDE_FLS_PAGE_SIZE, INSIDE_FLS_PAGE_SIZE,
@@ -1262,7 +1259,6 @@ int tls_fls_fast_write(u32 addr, u8 *buf, u32 length)
         }
         offset = 0;
         maxlen = INSIDE_FLS_SECTOR_SIZE;
-        sector++;
         buf += len;
         length -= len;
     }

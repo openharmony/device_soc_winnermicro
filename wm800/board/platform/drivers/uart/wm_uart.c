@@ -523,11 +523,10 @@ void tls_uart_tx_chars_start(struct tls_uart_port *port)
 void tls_set_uart_rx_status(int uart_no, int status)
 {
     u32 cpu_sr;
-    struct tls_uart_port *port;
 
     if (TLS_UART_1 == uart_no)
     {
-        port = &uart_port[1];
+        struct tls_uart_port *port = &uart_port[1];
         if ((TLS_UART_RX_DISABLE == port->rxstatus
              && TLS_UART_RX_DISABLE == status)
             || (TLS_UART_RX_ENABLE == port->rxstatus
@@ -853,7 +852,6 @@ int tls_uart_port_init(u16 uart_no, tls_uart_options_t * opts, u8 modeChoose)
 {
     struct tls_uart_port *port;
     int ret;
-    char *bufrx;                // ,*buftx
     tls_uart_options_t opt;
 	if (TLS_UART_MAX <= uart_no)
 	{
@@ -922,7 +920,7 @@ int tls_uart_port_init(u16 uart_no, tls_uart_options_t * opts, u8 modeChoose)
 
     if (port->recv.buf == NULL)
 	{
-		bufrx = tls_mem_alloc(TLS_UART_RX_BUF_SIZE);
+		char *bufrx = tls_mem_alloc(TLS_UART_RX_BUF_SIZE);
 		if (!bufrx)
 		    return WM_FAILED;
 	    memset(bufrx, 0, TLS_UART_RX_BUF_SIZE);
@@ -981,11 +979,9 @@ void tls_uart_tx_sent_callback_register(u16 uart_no, s16(*tx_callback) (struct t
 int tls_uart_try_read(u16 uart_no, int32_t read_size)
 {
     int data_cnt = 0;
-    struct tls_uart_port *port = NULL;
-    struct tls_uart_circ_buf *recv;
+    struct tls_uart_port *port = &uart_port[uart_no];;
+    struct tls_uart_circ_buf *recv = &port->recv;
 
-	port = &uart_port[uart_no];
-    recv = &port->recv;
     data_cnt = CIRC_CNT(recv->head, recv->tail, TLS_UART_RX_BUF_SIZE);
     if(data_cnt >= read_size)
     {
@@ -1005,7 +1001,7 @@ int tls_uart_try_read(u16 uart_no, int32_t read_size)
  */
 int tls_uart_read(u16 uart_no, u8 * buf, u16 readsize)
 {
-    int data_cnt, buflen, bufcopylen;
+    int data_cnt, buflen;
     struct tls_uart_port *port = NULL;
     struct tls_uart_circ_buf *recv;
 
@@ -1020,7 +1016,7 @@ int tls_uart_read(u16 uart_no, u8 * buf, u16 readsize)
 	(data_cnt >= readsize)?(buflen = readsize):(buflen = data_cnt);
     if ((recv->tail + buflen) > TLS_UART_RX_BUF_SIZE)
     {
-        bufcopylen = (TLS_UART_RX_BUF_SIZE - recv->tail);
+        int bufcopylen = (TLS_UART_RX_BUF_SIZE - recv->tail);
         MEMCPY(buf, (void *)(recv->buf + recv->tail), bufcopylen);
         MEMCPY(buf + bufcopylen, (void *)recv->buf, buflen - bufcopylen);
     }

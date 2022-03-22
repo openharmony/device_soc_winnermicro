@@ -107,7 +107,6 @@ int spiWaitIdle(void)
 
 static int SpiDmaBlockWrite(u8 * data, u32 len, u8 ifusecmd, u32 cmd)
 {
-    unsigned char dmaCh = 0;
     struct tls_dma_descriptor DmaDesc;
     u32 txlen, txlenbk;
     u32 i, blocknum, blocksize = 0;
@@ -141,7 +140,7 @@ static int SpiDmaBlockWrite(u8 * data, u32 len, u8 ifusecmd, u32 cmd)
         blocknum = txlen / SPI_DMA_MAX_TRANS_SIZE;
 
     /* Request DMA Channel */
-        dmaCh = tls_dma_request(1,TLS_DMA_FLAGS_CHANNEL_SEL(TLS_DMA_SEL_LSSPI_TX) |
+        unsigned char dmaCh = tls_dma_request(1,TLS_DMA_FLAGS_CHANNEL_SEL(TLS_DMA_SEL_LSSPI_TX) |
                             TLS_DMA_FLAGS_HARD_MODE);
         for (i = 0; i <= blocknum; i++)
         {

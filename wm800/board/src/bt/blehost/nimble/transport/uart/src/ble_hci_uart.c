@@ -466,7 +466,7 @@ static void ble_hs_event_hci_rx_func(void *arg)
 #define BT_HCI_EVT_LE_META_EVENT                0x3e
 #define BT_HCI_EVT_LE_ADVERTISING_REPORT        0x02
 
-static int notify_host_recv(uint8_t *data, uint16_t len)
+static void notify_host_recv(uint8_t *data, uint16_t len)
 {
 #if HCI_VUART_RX_QUEUE
 
@@ -518,7 +518,7 @@ static int notify_host_recv(uint8_t *data, uint16_t len)
     //hci_dbg_hexstring("<<<", data, len);
     ble_hci_trans_hs_rx(data, len);
 #endif
-    return 0;
+    return;
 }
 
 static tls_bt_host_if_t vuart_hci_cb = {
