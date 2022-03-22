@@ -35,7 +35,6 @@ static void _mdelay(void)
 {
     uint32_t load = csi_coret_get_load();
     uint32_t start = csi_coret_get_value();
-    uint32_t cur;
     uint32_t cnt;
     tls_sys_clk sysclk;
 
@@ -43,7 +42,7 @@ static void _mdelay(void)
     cnt = sysclk.cpuclk * 1000;
 
     while (1) {
-        cur = csi_coret_get_value();
+        uint32_t cur = csi_coret_get_value();
 
         if (start > cur) {
             if (start - cur >= cnt) {

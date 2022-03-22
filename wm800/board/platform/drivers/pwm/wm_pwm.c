@@ -857,7 +857,7 @@ void tls_pwm_duty_set(u8 channel, u8 duty)
 int tls_pwm_init(u8 channel,u32 freq, u8 duty, u8 pnum)
 {
     pwm_init_param pwm_param;
-    int ret=-1;
+    int ret;
 	tls_sys_clk sysclk;
 	
 	tls_sys_clk_get(&sysclk);

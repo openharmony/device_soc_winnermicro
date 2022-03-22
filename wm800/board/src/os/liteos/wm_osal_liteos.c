@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 HiHope Community.
+ * Copyright (c) 2020, HiHope Community.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -251,7 +251,7 @@ tls_os_status_t tls_os_task_del_by_task_handle(tls_os_task_t task, void (*freefu
 		os_status = TLS_OS_ERROR;
 	}
 	printf("%s: handle %d, ret %d\n", __FUNCTION__, (u32)task, ret);
-	return TLS_OS_SUCCESS;
+	return os_status;
 }
 
 /*
@@ -287,9 +287,7 @@ tls_os_status_t tls_os_mutex_create(u8 prio,
     u32 error;
     UINT32 mutexID = 0 ;
     tls_os_status_t os_status;
-	tls_os_handle_t *pHandle = NULL;
-
-	pHandle = tls_mem_alloc(sizeof(tls_os_handle_t));
+	tls_os_handle_t *pHandle = tls_mem_alloc(sizeof(tls_os_handle_t));
 	if(!pHandle)
 	{
 		printf("%s: malloc error\n", __FUNCTION__);
@@ -447,12 +445,9 @@ tls_os_status_t tls_os_mutex_release(tls_os_mutex_t *mutex)
 tls_os_status_t tls_os_sem_create(tls_os_sem_t **sem, u32 cnt)
 {
     u32 error;
-    static u32 sem_num = 0;
 
     tls_os_status_t os_status;
-	tls_os_handle_t *pHandle = NULL;
-
-	pHandle = tls_mem_alloc(sizeof(tls_os_handle_t));
+	tls_os_handle_t *pHandle = tls_mem_alloc(sizeof(tls_os_handle_t));
 	if(!pHandle)
 	{
 		printf("%s: malloc error\n", __FUNCTION__);
@@ -620,10 +615,7 @@ UINT32 LOS_SemCount(UINT32 semHandle)
 */
 u16 tls_os_sem_get_count(tls_os_sem_t *sem)
 {
-    u16 ret;
-    tls_os_status_t os_status;
 	tls_os_handle_t *pHandle = (tls_os_handle_t *)sem;
-
 	
     return (u16)LOS_SemCount(pHandle->handle);
 }
@@ -655,9 +647,7 @@ tls_os_status_t tls_os_queue_create(tls_os_queue_t **queue, u32 queue_size)
     tls_os_status_t os_status;
     u32 ret;
     UINT32 uwQueueID;
-	tls_os_handle_t *pHandle = NULL;
-
-	pHandle = tls_mem_alloc(sizeof(tls_os_handle_t));
+	tls_os_handle_t *pHandle = tls_mem_alloc(sizeof(tls_os_handle_t));
 	if(!pHandle)
 	{
 		printf("%s: malloc error\n", __FUNCTION__);
@@ -980,7 +970,7 @@ tls_os_status_t tls_os_timer_create(tls_os_timer_t **timer,
 *
 ************************************************************************************************************************
 */
-void tls_os_timer_start(tls_os_timer_t *timer)
+tls_os_status_t tls_os_timer_start(tls_os_timer_t *timer)
 {
     u32 ret;
     u32 uwTimerID;
@@ -990,6 +980,13 @@ void tls_os_timer_start(tls_os_timer_t *timer)
     }
     uwTimerID = swtmr_cb->swtmrId;
     ret = LOS_SwtmrStart(uwTimerID);
+    if (ret  == LOS_OK)
+    {
+        return TLS_OS_SUCCESS;
+    }else
+    {
+        return TLS_OS_ERROR;
+    }
 }
 
 /*
@@ -1018,7 +1015,7 @@ extern LITE_OS_SEC_BSS SWTMR_CTRL_S     *g_swtmrCBArray;
    LOS_IntRestore(uvIntSave);\
 }
 
-void tls_os_timer_change(tls_os_timer_t *timer, u32 ticks)
+tls_os_status_t tls_os_timer_change(tls_os_timer_t *timer, u32 ticks)
 {
 //TODO: must need
     tls_swtmr_cb_t *swtmr_cb = (tls_swtmr_cb_t *)timer;
@@ -1041,7 +1038,7 @@ void tls_os_timer_change(tls_os_timer_t *timer, u32 ticks)
     else
         os_status = TLS_OS_ERROR;
 
-    return;
+    return os_status;
 }
 
 
@@ -1080,7 +1077,7 @@ int LOS_SwtmrIsActive(UINT32 swtmrId)
 *
 ************************************************************************************************************************
 */
-void tls_os_timer_stop(tls_os_timer_t *timer)
+tls_os_status_t tls_os_timer_stop(tls_os_timer_t *timer)
 {
     u32 ret;
     u32 uwTimerID;
@@ -1088,8 +1085,18 @@ void tls_os_timer_stop(tls_os_timer_t *timer)
     if (swtmr_cb == NULL) {
         return;
     }
+    tls_os_status_t os_status;
     uwTimerID = swtmr_cb->swtmrId;
     ret = LOS_SwtmrStop(uwTimerID);
+    if (ret  == LOS_OK)
+    {
+        os_status = TLS_OS_SUCCESS;
+    }else
+    {
+        os_status = TLS_OS_ERROR;
+    }
+
+    return os_status;
 }
 
 /*
@@ -1139,7 +1146,6 @@ tls_os_status_t tls_os_timer_delete(tls_os_timer_t *timer)
 // extern int LOS_SwtmrIsActive(UINT16 swtmrId);
 u8 tls_os_timer_active(tls_os_timer_t *timer)
 {
-    u8 ret = 0;
     u32 uwTimerID;
     tls_swtmr_cb_t *swtmr_cb = (tls_swtmr_cb_t *)timer;
     if (swtmr_cb == NULL) {

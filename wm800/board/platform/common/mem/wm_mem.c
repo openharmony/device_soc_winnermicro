@@ -64,7 +64,6 @@ void * mem_alloc_debug(u32 size, char* file, int line)
 {
     void *buf = NULL;
     u32 pad_len;
-    int i =  0;
     u32  cpu_sr;
     //
     // If the memory manager has not been initialized, do so now
@@ -83,7 +82,7 @@ void * mem_alloc_debug(u32 size, char* file, int line)
             printf("mem_alloc_debug: tls_os_sem_create mem_sem error\r\n");
         dl_list_init(&memory_used_list);
         dl_list_init(&memory_free_list);
-        for(i = 0; i < MEM_BLOCK_SIZE; i++)
+        for(int i = 0; i < MEM_BLOCK_SIZE; i++)
         {
             dl_list_add_tail(&memory_free_list, &mem_blocks[i].list);
         }
@@ -179,7 +178,6 @@ void * mem_calloc_debug(u32 n, u32 size, char* file, int line)
 {
     void *buf = NULL;
     u32 pad_len;
-    int i =  0;
     u32  cpu_sr;
     //
     // If the memory manager has not been initialized, do so now
@@ -198,7 +196,7 @@ void * mem_calloc_debug(u32 n, u32 size, char* file, int line)
             printf("mem_alloc_debug: tls_os_sem_create mem_sem error\r\n");
         dl_list_init(&memory_used_list);
         dl_list_init(&memory_free_list);
-        for(i = 0; i < MEM_BLOCK_SIZE; i++)
+        for(int i = 0; i < MEM_BLOCK_SIZE; i++)
         {
             dl_list_add_tail(&memory_free_list, &mem_blocks[i].list);
         }
@@ -499,13 +497,12 @@ int is_safe_addr_debug(void* p, u32 len, char* file, int line)
 #else /* WM_MEM_DEBUG */
 void * mem_alloc_debug(u32 size)
 {
-    u32 *buffer = NULL;
-    buffer = LOS_MemAlloc(OS_SYS_MEM_ADDR, size);
+    u32 *buffer = (u32 *)LOS_MemAlloc(OS_SYS_MEM_ADDR, size);
+    
 	if(buffer == NULL)
 		printf("malloc error \n");
 
 	return buffer;
-
 }
 
 void mem_free_debug(void *p)
@@ -520,17 +517,14 @@ void mem_free_debug(void *p)
 
 void * mem_realloc_debug(void *mem_address, u32 size)
 {
-    u32 * mem_re_addr = NULL;
-
-    mem_re_addr = LOS_MemRealloc(OS_SYS_MEM_ADDR, mem_address, size);
+    u32 * mem_re_addr = (u32 *)LOS_MemRealloc(OS_SYS_MEM_ADDR, mem_address, size);
+    
 	return mem_re_addr;
 }
 
 void *mem_calloc_debug(u32 n, u32 size)
 {
-    u32 *buffer = NULL;
-
-    buffer = LOS_MemAlloc(OS_SYS_MEM_ADDR, n*size);
+    u32 *buffer = (u32 *)LOS_MemAlloc(OS_SYS_MEM_ADDR, n*size);
 	if(buffer) 
 	{
 		memset(buffer, 0, n*size);

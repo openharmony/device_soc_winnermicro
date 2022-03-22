@@ -1410,9 +1410,7 @@ struct tls_sys_param * tls_param_user_param_init(void)
 **********************************************************************************************************/
 int tls_param_save_user(struct tls_user_param *user_param)
 {
-	struct tls_sys_param *param = NULL;
-
-	param = tls_param_user_param_init();
+	struct tls_sys_param *param = tls_param_user_param_init();
 	if (NULL == param)
 	{
 		return TLS_PARAM_STATUS_EMEM;

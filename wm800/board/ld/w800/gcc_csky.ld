@@ -65,7 +65,9 @@ SECTIONS
  .rodata : {
   . = ALIGN(0x4) ;
   __srodata = .;
-  *(.rdata)
+  KEEP(*(.rdata))
+  . = ALIGN(0x4) ;
+  *(.rodata.g_hdfConfigEntrySymbol)
   *(.rdata*)
   *(.rdata1)
   *(.rdata.*)
