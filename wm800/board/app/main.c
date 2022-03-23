@@ -21,9 +21,14 @@ void UserMain(void)
 #if DEMO_CONSOLE
     CreateDemoTask();
 #endif
-    // 用户自己的task
+
+#if defined(LOSCFG_KERNEL_TEST_FULL) || defined(LOSCFG_KERNEL_TEST)
+	LosAppInit();
+#else
     if (DeviceManagerStart()) {
         printf("[%s] No drivers need load by hdf manager!",__func__);
     }
+#endif	
+	
 }
 

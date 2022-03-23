@@ -60,10 +60,10 @@ extern "C" {
 /*=============================================================================
                                        Task module configuration
 =============================================================================*/
-#define LOSCFG_BASE_CORE_TSK_LIMIT                          32
+#define LOSCFG_BASE_CORE_TSK_LIMIT                          31
 #define LOSCFG_BASE_CORE_TSK_IDLE_STACK_SIZE                (0x600U)
 #define LOSCFG_BASE_CORE_TSK_DEFAULT_STACK_SIZE             (0x800U)
-#define LOSCFG_BASE_CORE_TSK_MIN_STACK_SIZE                 (0x40U)
+#define LOSCFG_BASE_CORE_TSK_MIN_STACK_SIZE                 (0x200U)
 #define LOSCFG_BASE_CORE_TIMESLICE                          1
 #define LOSCFG_BASE_CORE_TIMESLICE_TIMEOUT                  1000
 #define LOSCFG_BASE_CORE_TSK_MONITOR                        1
