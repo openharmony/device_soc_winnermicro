@@ -101,7 +101,7 @@ WifiErrorCode EnableHotspot()
         }
         return ERROR_WIFI_BUSY;
     }
-
+    tls_wifi_init();
     struct tls_softap_info_t apinfo = {0};
     strcpy(apinfo.ssid, g_wifiApConfig.ssid);
     // errno_t err = strcpy_s(apinfo.ssid, sizeof(apinfo.ssid), g_wifiApConfig.ssid);

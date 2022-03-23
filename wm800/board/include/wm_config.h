@@ -42,7 +42,7 @@
 
 
 
-#define	TLS_CONFIG_HARD_CRYPTO							CFG_OFF
+#define	TLS_CONFIG_HARD_CRYPTO							CFG_ON
 
 #define TLS_CONFIG_NTO                                  CFG_ON
 #define TLS_CONFIG_CRYSTAL_24M                          CFG_OFF
