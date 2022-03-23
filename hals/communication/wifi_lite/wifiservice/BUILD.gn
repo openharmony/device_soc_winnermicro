@@ -37,7 +37,7 @@ kernel_module(module_name) {
       "source/wifi_hotspot.c",
       "source/wifi_device_util.c",
     ]
-  deps = [ "//foundation/communication/wifi_lite:wifi" ]
+    deps = [ "//foundation/communication/wifi_lite:wifi" ]
     visibility += [ "../../.." ]
     include_dirs = [
         "//utils/native/lite/include",

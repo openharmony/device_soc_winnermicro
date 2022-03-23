@@ -37,7 +37,7 @@ kernel_module(module_name) {
       "source/nble_server.c",
       "source/ble_util.c"
     ]
-  deps = [ "//foundation/communication/wifi_lite:wifi" ]
+    deps = [ "//foundation/communication/wifi_lite:wifi" ]
     visibility += [ "../../.." ]
     include_dirs = [
         "//utils/native/lite/include",
