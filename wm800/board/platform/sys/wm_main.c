@@ -232,6 +232,9 @@ void tls_pmu_chipsleep_callback(int sleeptime)
  ****************************************************************************/
 void task_start (void *data)
 {
+#if defined(LOSCFG_KERNEL_TEST_FULL) || defined(LOSCFG_KERNEL_TEST)
+	/*nothing to do when kernel test is running*/
+#else
 	u8 enable = 0;
 
 #if TLS_CONFIG_CRYSTAL_24M
@@ -268,7 +271,7 @@ void task_start (void *data)
 	    enable = TRUE;
 	    tls_param_set(TLS_PARAM_ID_PSM, &enable, TRUE);	  
 	}
-
+#endif
     UserMain();
 
     extern void OHOS_SystemInit();
