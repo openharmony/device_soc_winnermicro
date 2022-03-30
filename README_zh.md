@@ -2,7 +2,9 @@
 
 #### 介绍
 
-##### 目录
+本仓库托管联盛德芯片的样例代码,包含hal模块等。
+
+#### 目录
 
 ```
 device/soc/
@@ -16,7 +18,7 @@ device/soc/
 └── Kconfig.liteos_m.soc                  # soc kconfig配置宏
 ```
 
-仓库包含编译构建脚本和打包镜像工具。
+#### 编译环境搭建
 
 系统要求： Ubuntu18.04 64位系统及以上版本。
 
@@ -24,13 +26,12 @@ device/soc/
 
 1. 获取源码
 2. 安装的库和工具
-3. 安装python3
+3. 安装Python3
 4. 安装hb
 5. 安装csky-abiv2-elf-gcc
-6. 编译流程
-7. 烧录打印
 
-## 获取源码
+
+##### 获取源码
 
 ```shell
 mkdir openharmony_winnermicro
@@ -44,7 +45,7 @@ repo sync -c
 repo forall -c 'git lfs pull'
 ```
 
-## 安装的库和工具
+##### 安装的库和工具
 
 > - 通常系统默认安装samba、vim等常用软件。
 
@@ -54,7 +55,7 @@ repo forall -c 'git lfs pull'
 sudo apt-get install build-essential gcc g++ make zlib* libffi-dev e2fsprogs pkg-config flex bison perl bc openssl libssl-dev libelf-dev libc6-dev-amd64 binutils binutils-dev libdwarf-dev u-boot-tools mtd-utils gcc-arm-linux-gnueabi
 ```
 
-## 安装Python3
+##### 安装Python3
 
 1. 打开Linux编译服务器终端。
 2. 输入如下命令，查看python版本号：
@@ -94,16 +95,15 @@ sudo apt-get install build-essential gcc g++ make zlib* libffi-dev e2fsprogs pkg
      python get-pip.py
      ```
 
-## 安装hb
-### 安装方法
+##### 安装hb
 
-1. 运行如下命令安装hb
+1. 运行如下命令安装hb：
 
    ```
    pip3 uninstall ohos-build # 如果安装了hb,先卸载
    pip3 install build/lite
    ```
-2. 设置环境变量
+2. 设置环境变量：
 
    ```
    vim ~/.bashrc
@@ -138,17 +138,16 @@ sudo apt-get install build-essential gcc g++ make zlib* libffi-dev e2fsprogs pkg
      -h, --help            show this help message and exit
    ```
 
-## 安装csky-abiv2-elf-gcc
+##### 安装csky-abiv2-elf-gcc
 
 1. 打开Linux编译服务器终端。
 2. 下载[csky-abiv2-elf-gcc 编译工具下载](https://occ.t-head.cn/community/download?id=3885366095506644992)
 	选择下载 csky-elfabiv2-tools-x86_64-minilibc-20210423.tar。
-3. 解压 csky-elfabiv2-tools-x86_64-minilibc-20210423.tar 安装包至\~/toolchain/路径下，并将解压生成的bin目录名修改为csky-elfabiv2-bin。
+3. 解压 csky-elfabiv2-tools-x86_64-minilibc-20210423.tar 安装包至\~/toolchain/路径下。
 
    ```shell
    cd toolchain
-   tar zxvf csky-elfabiv2-tools-x86_64-minilibc-20210423.tar
-   mv bin csky-elfabiv2-bin
+   tar -zxvf csky-elfabiv2-tools-x86_64-minilibc-20210423.tar.gz
    ```
 4. 设置环境变量。
 
@@ -159,7 +158,7 @@ sudo apt-get install build-essential gcc g++ make zlib* libffi-dev e2fsprogs pkg
    将以下命令拷贝到.bashrc文件的最后一行，保存并退出。
 
    ```
-   export PATH=~/toolchain/csky-elfabiv2-bin:$PATH
+   export PATH=~/toolchain/bin:$PATH
    ```
 5. 生效环境变量。
 
@@ -167,7 +166,7 @@ sudo apt-get install build-essential gcc g++ make zlib* libffi-dev e2fsprogs pkg
    source ~/.bashrc
    ```
 
-## 编译流程
+#### 编译流程
 
 [编译构建使用指南](https://gitee.com/openharmony/docs/blob/master/zh-cn/device-dev/subsystems/subsys-build-mini-lite.md)
 
@@ -175,25 +174,25 @@ sudo apt-get install build-essential gcc g++ make zlib* libffi-dev e2fsprogs pkg
 hb set
 
 hihope
- > neptune100
+ > neptune_iotlink_demo
 
-选择neptune100
+选择neptune_iotlink_demo
 
 hb build -f
 ```
 
-## 烧录打印
+#### 烧录打印
 
 windows下：
 1. 下载PC端固件烧录工具并安装(HW Upgrade Tools) [w800串口烧录工具下载参考](https://www.winnermicro.com/html/1/156/158/558.html)。
-2. 在代码根目录下执行编译命令hb build -f，编译成功会在out/neptune100/neptune100/bin目录下生成 .fls文件。
+2. 在代码根目录下执行编译命令hb build -f，编译成功会在out/neptune100/neptune_iotlink_demo/bin目录下生成 .fls文件。
 3. 通过USB转接线连接PC和w800开发板,在PC的设备管理器中确认与w800连接所用的COM口。
 4. 打开烧录工具(Upgrade_Tools)，选定COM口并选择打开串口,选择固件为hihope_neptune100.fls文件，勾选擦除Flash(波特率:115200,型号:W80X)。
 5. 点击下载键等待烧录。
 6. 烧录成功图形界面会显示file success以及烧录成功之后的启动log,反之显示fail。
 7. 打开烧录工具(Upgrade_Tools),选择复位，可在图形界面看到板子启动log;或打开串口调试工具,RST按键启动板子,查看log。
 
-# 相关仓
+#### 相关仓
 
 * [device/board/hihope](https://gitee.com/openharmony-sig/device_board_hihope)
 * [vendor/hihope](https://gitee.com/openharmony-sig/vendor_hihope)
