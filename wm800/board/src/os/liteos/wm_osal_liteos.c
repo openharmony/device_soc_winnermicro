@@ -1396,5 +1396,13 @@ tls_os_task_t tls_os_task_id()
    return (tls_os_task_t)LOS_CurTaskIDGet(); 
 }
 
+void HalHwiHandleReInit(UINT32 hwiFormAddr)
+{
+    HWI_PROC_FUNC *p_hwiForm = (HWI_PROC_FUNC *)hwiFormAddr;
+
+    p_hwiForm[0] = (HWI_PROC_FUNC)Reset_Handler;
+    p_hwiForm[PendSV_IRQn] = (HWI_PROC_FUNC)tspend_handler;
+}
+
 
 #endif /* end of WM_OS_LITEOS_H */
