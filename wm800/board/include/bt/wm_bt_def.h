@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2022 Winner Microelectronics Co., Ltd. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 /**
  * @file    wm_bt_def.h
  *
@@ -1399,6 +1414,7 @@ typedef union
 typedef void (*tls_btrc_callback_t)(tls_btrc_evt_t event, tls_btrc_msg_t *p_data);
 
 
+
 /*************************************************************************************************************/
 
 typedef enum
@@ -1761,6 +1777,7 @@ typedef union
 typedef void (*tls_bthf_client_callback_t)(tls_bthf_client_evt_t event, tls_bthf_client_msg_t *p_data);
 
 
+
 /******************************************************************************************/
 /* Security Setting Mask */
 #define WM_SPP_SEC_NONE            0x0000    /* No security*/
@@ -1873,6 +1890,7 @@ typedef union
 
 /** WM BT SPP callback function */
 typedef void (*tls_bt_spp_callback_t)(tls_spp_event_t event, tls_spp_msg_t *p_data);
+
 typedef enum
 {
     BLE_UART_SERVER_MODE,
