@@ -116,8 +116,8 @@ extern unsigned int __heap_end;
 
 #define  PendSV_IRQn  22 // Pend SV Interrupt
 
+extern void Reset_Handler(void);
 extern void tspend_handler(void);
-extern uint32_t irq_vectors[];
 
 #ifdef __cplusplus
 #if __cplusplus
