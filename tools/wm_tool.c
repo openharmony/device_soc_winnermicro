@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2022 Winner Microelectronics Co., Ltd. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 #include <time.h>
 #include <stdio.h>
 #include <errno.h>
@@ -3177,7 +3192,6 @@ static int wm_tool_parse_arv(int argc, char *argv[])
                 else
                     wm_tool_show_usage = 1;
                 break;
-                break;
             }
             case 'H':
             {
@@ -3209,8 +3223,8 @@ static int wm_tool_parse_arv(int argc, char *argv[])
 
 static int wm_tool_pack_image(const char *outfile)
 {
-    FILE *fpbin = NULL;
-	FILE *fpimg = NULL;
+    FILE *fpbin;
+	FILE *fpimg;
 	int readlen = 0;
 	int filelen = 0;
 	int patch = 0;
@@ -3305,8 +3319,8 @@ static int wm_tool_pack_image(const char *outfile)
 
 static int wm_tool_pack_gz_image(const char *gzbin, const char *outfile)
 {
-    FILE *fpbin = NULL;
-	FILE *fpimg = NULL;
+    FILE *fpbin;
+	FILE *fpimg;
 	int readlen = 0;
 	int filelen = 0;
 	int patch = 0;
@@ -3398,8 +3412,8 @@ static int wm_tool_pack_gz_image(const char *gzbin, const char *outfile)
 
 static int wm_tool_pack_dbg_image(const char *image, const char *outfile)
 {
-    FILE *fpimg = NULL;
-	FILE *fout = NULL;
+    FILE *fpimg;
+	FILE *fout;
 	unsigned char buf[WM_TOOL_ONCE_READ_LEN + 1];
 	int readlen = 0;
 	int i;
@@ -3477,9 +3491,9 @@ static int wm_tool_pack_dbg_image(const char *image, const char *outfile)
 
 static int wm_tool_pack_fls(const char *image, const char *outfile)
 {
-	FILE *fpsec = NULL;
-	FILE *fpimg = NULL;
-	FILE *fout = NULL;
+	FILE *fpsec;
+	FILE *fpimg;
+	FILE *fout;
 	unsigned char buf[WM_TOOL_ONCE_READ_LEN + 1];
 	int readlen = 0;
 	int magic_word = 0;
