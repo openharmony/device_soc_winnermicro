@@ -22,7 +22,7 @@ root {
             priority = 50;
             device_gpio :: device {
                 gpio0 :: deviceNode {
-                    policy = 2;
+                    policy = 0;
                     priority = 45;
                     moduleName = "WM_GPIO_MODULE_HDF";
                     serviceName = "HDF_PLATFORM_GPIO";
@@ -34,7 +34,7 @@ root {
                     policy = 2;
                     priority = 50;
                     moduleName = "WM_WATCHDOG_MODULE_HDF";
-                    serviceName = "HDF_PLATFORM_WATCHDOG";
+                    serviceName = "HDF_PLATFORM_WATCHDOG_0";
                     deviceMatchAttr = "watchdog_config";
                 }
             }
@@ -43,7 +43,7 @@ root {
                     policy = 2;
                     priority = 100;
                     moduleName = "WM_PWM_MODULE_HDF";
-                    serviceName = "HDF_PLATFORM_PWM";
+                    serviceName = "HDF_PLATFORM_PWM_0";
                     deviceMatchAttr = "pwm_config";
                 }
             }
