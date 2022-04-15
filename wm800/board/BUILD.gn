@@ -33,7 +33,7 @@ if (ohos_kernel_type == "liteos_m") {
       #"c",
       "btcontroller",
       "wlan",
-      "dsp",
+      #"dsp",
     ]
     
     include_dirs = [
