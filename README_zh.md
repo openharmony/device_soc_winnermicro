@@ -38,7 +38,7 @@ mkdir openharmony_winnermicro
 
 cd openharmony_winnermicro
 
-repo init -u git@gitee.com:openharmony/manifest.git -b OpenHarmony-3.1-Beta --no-repo-verify
+repo init -u git@gitee.com:openharmony/manifest.git -b master --no-repo-verify
 
 repo sync -c
 
