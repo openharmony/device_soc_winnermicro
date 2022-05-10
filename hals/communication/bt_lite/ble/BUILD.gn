@@ -32,21 +32,21 @@ module_switch = defined(LOSCFG_HALS_COMMUCATION_WIFI_LITE)
 module_name = get_path_info(rebase_path("."), "name")
 
 kernel_module(module_name) {
-    sources = [
-      "source/nble.c",
-      "source/nble_server.c",
-      "source/ble_util.c"
-    ]
-    deps = [ "//foundation/communication/wifi_lite:wifi" ]
-    visibility += [ "../../.." ]
-    include_dirs = [
-        "//utils/native/lite/include",
-        "//device/soc/winnermicro/wm800/board/include/",
-        "//foundation/communication/bluetooth/interfaces/innerkits/native_c/include",
-        "//device/soc/winnermicro/wm800/board/src/bt/blehost/nimble",
-        "//device/soc/winnermicro/wm800/board/src/bt/blehost/nimble/include",
-        "//device/soc/winnermicro/wm800/board/src/bt/blehost/nimble/host/include",
-        "//device/soc/winnermicro/wm800/board/src/bt/blehost/porting/w800/include",
-        "//device/soc/winnermicro/wm800/board/src/bt/blehost/nimble/host/util/include",
-    ]
+  sources = [
+    "source/ble_util.c",
+    "source/nble.c",
+    "source/nble_server.c",
+  ]
+  deps = [ "//foundation/communication/wifi_lite:wifi" ]
+  visibility += [ "../../.." ]
+  include_dirs = [
+    "//utils/native/lite/include",
+    "//device/soc/winnermicro/wm800/board/include/",
+    "//foundation/communication/bluetooth/interfaces/inner_api/include/c_header",
+    "//device/soc/winnermicro/wm800/board/src/bt/blehost/nimble",
+    "//device/soc/winnermicro/wm800/board/src/bt/blehost/nimble/include",
+    "//device/soc/winnermicro/wm800/board/src/bt/blehost/nimble/host/include",
+    "//device/soc/winnermicro/wm800/board/src/bt/blehost/porting/w800/include",
+    "//device/soc/winnermicro/wm800/board/src/bt/blehost/nimble/host/util/include",
+  ]
 }
