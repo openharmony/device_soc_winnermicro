@@ -25,29 +25,28 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
 import("//kernel/liteos_m/liteos.gni")
 
 module_switch = defined(LOSCFG_HALS_COMMUCATION_WIFI_LITE)
 
 module_name = get_path_info(rebase_path("."), "name")
 kernel_module(module_name) {
-    sources = [
-      "source/wifi_device.c",
-      "source/wifi_hotspot.c",
-      "source/wifi_device_util.c",
-    ]
-    deps = [ "//foundation/communication/wifi_lite:wifi" ]
-    visibility += [ "../../.." ]
-    include_dirs = [
-        "//utils/native/lite/include",
-        "//device/soc/winnermicro/w800/board/include/os",
-        "//device/soc/winnermicro/w800/board/include/app",
-        "//device/soc/winnermicro/w800/board/include/net",
-        "//device/soc/winnermicro/w800/board/include/wifi",
-        "//device/soc/winnermicro/w800/board/include/driver",
-        "//device/soc/winnermicro/w800/board/platform",
-        "//device/soc/winnermicro/w800/board/include/arch/xt804",
-        "//foundation/communication/wifi_lite/interfaces/wifiservice",
-    ]
+  sources = [
+    "source/wifi_device.c",
+    "source/wifi_device_util.c",
+    "source/wifi_hotspot.c",
+  ]
+  deps = [ "//foundation/communication/wifi_lite:wifi" ]
+  visibility += [ "../../.." ]
+  include_dirs = [
+    "//utils/native/lite/include",
+    "//device/soc/winnermicro/w800/board/include/os",
+    "//device/soc/winnermicro/w800/board/include/app",
+    "//device/soc/winnermicro/w800/board/include/net",
+    "//device/soc/winnermicro/w800/board/include/wifi",
+    "//device/soc/winnermicro/w800/board/include/driver",
+    "//device/soc/winnermicro/w800/board/platform",
+    "//device/soc/winnermicro/w800/board/include/arch/xt804",
+    "//foundation/communication/wifi_lite/interfaces/wifiservice",
+  ]
 }

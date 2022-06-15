@@ -11,15 +11,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import("//drivers/adapter/khdf/liteos_m/hdf.gni")
+import("//drivers/hdf_core/adapter/khdf/liteos_m/hdf.gni")
 
 module_name = get_path_info(rebase_path("."), "name")
 hdf_driver(module_name) {
-  sources = [
-    "kv_porting.c",
-  ]
-  include_dirs = [
-    ".",
-  ]
+  sources = [ "kv_porting.c" ]
+  include_dirs = [ "." ]
+
   #deps = [ "//kernel/liteos_m/components" ]
 }

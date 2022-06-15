@@ -30,6 +30,7 @@ kernel_module(module_name) {
     "io/wm_io.c",
     "irq/wm_irq.c",
     "pmu/wm_pmu.c",
+    "psram/wm_psram.c",
     "pwm/wm_pwm.c",
     "rtc/wm_rtc.c",
     "sasc/wm_sasc.c",
@@ -37,10 +38,6 @@ kernel_module(module_name) {
     "timer/wm_timer.c",
     "uart/wm_uart.c",
     "watchdog/wm_watchdog.c",
-    "psram/wm_psram.c",
   ]
-  include_dirs = [
-    "spi",
-  ]
+  include_dirs = [ "spi" ]
 }
-

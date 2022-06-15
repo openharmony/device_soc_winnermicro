@@ -27,15 +27,17 @@ if (ohos_kernel_type == "liteos_m") {
       "-nodefaultlibs",
       "-L" + rebase_path("./lib/w800"),
     ]
-    
+
     libs = [
       "gcc",
+
       #"c",
       "btcontroller",
       "wlan",
+
       #"dsp",
     ]
-    
+
     include_dirs = [
       ".",
       "include",
@@ -59,10 +61,10 @@ if (ohos_kernel_type == "liteos_m") {
       "//third_party/musl/porting/liteos_m/kernel/src/include",
       "//third_party/musl/porting/liteos_m/kernel/src/internal",
       "//third_party/wpa_supplicant/wpa_supplicant-2.9/src/utils",
-      "//drivers/framework/core/common/include/manager",
-      "//drivers/framework/include/platform",
-      "//drivers/framework/include/utils",
-      "//drivers/adapter/khdf/liteos_m/osal/include",
+      "//drivers/hdf_core/framework/core/common/include/manager",
+      "//drivers/hdf_core/framework/include/platform",
+      "//drivers/hdf_core/framework/include/utils",
+      "//drivers/hdf_core/adapter/khdf/liteos_m/osal/include",
     ]
   }
   module_group(module_name) {
