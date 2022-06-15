@@ -154,4 +154,3 @@ kernel_module(module_name) {
     "blehost/porting/w800/include/sysinit",
   ]
 }
-

@@ -17,11 +17,9 @@ if (ohos_kernel_type == "liteos_m") {
   import("//kernel/liteos_m/liteos.gni")
   module_name = get_path_info(rebase_path("."), "name")
   module_group(module_name) {
-    modules = [
-        "board",
-    ]
+    modules = [ "board" ]
   }
-  
+
   # global config
   out_product_path = "${ohos_root_path}out/${board_name}/${product_name}"
 
@@ -43,7 +41,7 @@ if (ohos_kernel_type == "liteos_m") {
         "-Wl,-Map=bin/$output_name.map",
       ]
 
-      deps = [ ]
+      deps = []
 
       if (build_enable == "true") {
         # force link invisible function ,which ar to lib
@@ -73,8 +71,7 @@ if (ohos_kernel_type == "liteos_m") {
       objdump = "${compile_prefix}objdump$toolchain_cmd_suffix"
 
       command = "$objcopy -O binary $output_name.elf $output_name.bin"
-      command +=
-            " && sh -c '$objdump -t $output_name.elf | sort >$output_name.sym.sorted'"
+      command += " && sh -c '$objdump -t $output_name.elf | sort >$output_name.sym.sorted'"
       command += " && sh -c '$objdump -d $output_name.elf >$output_name.asm'"
     }
 
