@@ -11,15 +11,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import("//drivers/adapter/khdf/liteos_m/hdf.gni")
+import("//drivers/hdf_core/adapter/khdf/liteos_m/hdf.gni")
 
 hdf_driver("fs") {
   sources = [
     "wm_fs_init.c",
     "wm_littlefs.c",
   ]
-  include_dirs = [
-    ".",
-  ]
+  include_dirs = [ "." ]
+
   #deps = [ "//kernel/liteos_m/components" ]
 }

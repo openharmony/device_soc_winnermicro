@@ -15,7 +15,5 @@ import("//kernel/liteos_m/liteos.gni")
 
 module_name = get_path_info(rebase_path("."), "name")
 kernel_module(module_name) {
-  sources = [
-    "hal_trace.c",
-  ]
+  sources = [ "hal_trace.c" ]
 }

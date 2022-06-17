@@ -15,12 +15,11 @@ import("//kernel/liteos_m/liteos.gni")
 module_name = get_path_info(rebase_path("."), "name")
 kernel_module(module_name) {
   sources = [
+    "crypto/wm_crypto_hard.c",
     "fwup/wm_fwup.c",
     "mem/wm_mem.c",
     "params/wm_param.c",
     "utils/utils.c",
-    "crypto/wm_crypto_hard.c",
   ]
   include_dirs = []
 }
-
