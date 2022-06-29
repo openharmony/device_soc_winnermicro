@@ -167,7 +167,7 @@ static void DispatchScanStateChangeEvent(const WifiEvent* event, WifiEventState 
         return;
     }
 
-    if (state == WIFI_STATE_AVALIABLE) {
+    if (state == WIFI_STATE_AVAILABLE) {
         bssCount = gScannedAPCount;
         if (bssCount < 0) {
             printf("Get scanned count failed.\n");
@@ -248,7 +248,7 @@ static void WifiScanHandler(void)
     printf("[wifi_service]: dispatch scan event.\n");
     for (int i = 0; i < WIFI_MAX_EVENT_SIZE; ++i) {
         if (gWifiEvents[i] != NULL) {
-            DispatchScanStateChangeEvent(gWifiEvents[i], WIFI_STATE_AVALIABLE);
+            DispatchScanStateChangeEvent(gWifiEvents[i], WIFI_STATE_AVAILABLE);
         }
     }
     UnlockWifiEventLock();
@@ -323,7 +323,7 @@ static void WifiEventCallback(u8 status)
             if (err != WIFI_SUCCESS) {
                 DispatchConnectEvent(WIFI_STATE_NOT_AVALIABLE, NULL);
             } else {
-                DispatchConnectEvent(WIFI_STATE_AVALIABLE, &info);
+                DispatchConnectEvent(WIFI_STATE_AVAILABLE, &info);
             }
             break;
         case NETIF_WIFI_JOIN_FAILED:
