@@ -81,9 +81,9 @@ static u8 keystring[MAX_WIFI_KV_NAME_LEN];
 static u8 keynew = 0;
 static u8 keyold  = 0;
 
-//#ifndef DEBUG
+// #ifndef DEBUG
 #define DEBUG (1)
-//#endif
+// #endif
 
 #define debug_wifi(fmt, ...)            \
     do {                                \
@@ -108,7 +108,7 @@ WifiErrorCode EnableWifi(void)
         }
         return ERROR_WIFI_BUSY;
     }
-	tls_wifi_init();
+    tls_wifi_init();
     gWifiStaStatus = WIFI_STA_ACTIVE;
 
     if (UnlockWifiGlobalLock() != WIFI_SUCCESS) {
@@ -225,8 +225,8 @@ static void WifiScanHandler(void)
 
     if (gScannedBuffer == NULL) {
         printf("[wifi_device]: scan buffer is NULL!\n");
-		
-		gWifiScanDone = TRUE;
+        
+        gWifiScanDone = TRUE;
         return;
     }
 
@@ -235,8 +235,8 @@ static void WifiScanHandler(void)
         printf("[wifi_device]: get scan result failed.\n");
         tls_mem_free(gScannedBuffer);
         gScannedBuffer = NULL;
-		
-		gWifiScanDone = TRUE;
+
+        gWifiScanDone = TRUE;
         return;
     }
 
@@ -463,7 +463,7 @@ WifiErrorCode AdvanceScan(WifiScanParams *params)
     }
 
     if (params->scanType == WIFI_BAND_SCAN && params->band == 0) {
-        /// FIXME: test case code logic error, but we follow it, need update when test code update.
+        // /FIXME: test case code logic error, but we follow it, need update when test code update.
         printf("[wifi_service] WIFI_BAND_SCAN, but band = %d invalid!\n", params->band);
     }
 
@@ -537,7 +537,6 @@ WifiErrorCode GetScanInfoList(WifiScanInfo* result, unsigned int* size)
         scanCount = WIFI_SCAN_HOTSPOT_LIMIT;
     }
 
-
     for (i = 0; i < scanCount; ++i) {
         int cpyErr = memcpy_s(result[i].ssid, WIFI_MAX_SSID_LEN, bssInfo->ssid, bssInfo->ssid_len);
         if (cpyErr != EOK) {
@@ -597,7 +596,7 @@ WifiErrorCode AddDeviceConfig(const WifiDeviceConfig* config, int* result)
 {
     int netId = WIFI_CONFIG_INVALID;
     int i;
-	int ret = 0;
+    int ret = 0;
 
     if (config == NULL || result == NULL) {
         printf("[wifi_device]:add device config invalid argument.\n");
@@ -623,17 +622,17 @@ WifiErrorCode AddDeviceConfig(const WifiDeviceConfig* config, int* result)
         return ERROR_WIFI_BUSY;
     }
 
-	UtilsSetEnv(KV_FILE_NAME);
-	memset(kvstring, 0, MAX_WIFI_KV_STRING_LEN);
-	memset(keystring, 0, MAX_WIFI_KV_NAME_LEN);
-	memcpy(kvstring, config, sizeof(WifiDeviceConfig));
-	kvstring[sizeof(WifiDeviceConfig)] = '\0';
+    UtilsSetEnv(KV_FILE_NAME);
+    memset(kvstring, 0, MAX_WIFI_KV_STRING_LEN);
+    memset(keystring, 0, MAX_WIFI_KV_NAME_LEN);
+    memcpy(kvstring, config, sizeof(WifiDeviceConfig));
+    kvstring[sizeof(WifiDeviceConfig)] = '\0';
 
-	sprintf(keystring, WIFI_CFG_INFO"_%d", netId);
-	ret = UtilsSetValue(keystring, kvstring);
-	if (ret < 0 )  {
-		return ERROR_WIFI_BUSY;
-	}
+    sprintf(keystring, WIFI_CFG_INFO"_%d", netId);
+    ret = UtilsSetValue(keystring, kvstring);
+    if (ret < 0 )  {
+        return ERROR_WIFI_BUSY;
+    }
 
     int cpyErr = memcpy_s(&gWifiConfigs[netId], sizeof(WifiDeviceConfig), config, sizeof(WifiDeviceConfig));
     if (cpyErr != EOK) {
@@ -659,39 +658,38 @@ WifiErrorCode GetDeviceConfigs(WifiDeviceConfig* result, unsigned int* size)
     unsigned int retIndex = 0;
     int i = 0;
     int cpyErr;
-	int validflag = -1;
-
+    int validflag = -1;
 
     if (result == NULL || size == NULL || *size == 0) {
         return ERROR_WIFI_INVALID_ARGS;
     }
-	//printf("\r\nGetDeviceConfigs, *size=%d, caller addr=%p\n", *size, __builtin_return_address(0));
+    // printf("\r\nGetDeviceConfigs, *size=%d, caller addr=%p\n", *size, __builtin_return_address(0));
 
     if (LockWifiGlobalLock() != WIFI_SUCCESS) {
         printf("[wifi_device]: Unlock wifi global lock failed in get device config.\n");
         return ERROR_WIFI_UNKNOWN;
     }
 
-	UtilsSetEnv(KV_FILE_NAME);
-	for (i = 0; i < WIFI_MAX_CONFIG_SIZE; i++)
-	{
-		memset(keystring, 0, MAX_WIFI_KV_NAME_LEN);
-		sprintf(keystring, WIFI_CFG_INFO"_%d", i);
-		int ret = UtilsGetValue(keystring, &gWifiConfigs[i], sizeof(WifiDeviceConfig));
-		if (ret == 0)
-		{
-			validflag = 1;
-		}			
-	}
+    UtilsSetEnv(KV_FILE_NAME);
+    for (i = 0; i < WIFI_MAX_CONFIG_SIZE; i++)
+    {
+        memset(keystring, 0, MAX_WIFI_KV_NAME_LEN);
+        sprintf(keystring, WIFI_CFG_INFO"_%d", i);
+        int ret = UtilsGetValue(keystring, &gWifiConfigs[i], sizeof(WifiDeviceConfig));
+        if (ret == 0)
+        {
+            validflag = 1;
+        }
+    }
 
     if (validflag < 0 ) {
         printf("\r\n read wifi cfg info fail");
-	    if (UnlockWifiGlobalLock() != WIFI_SUCCESS) {
+        if (UnlockWifiGlobalLock() != WIFI_SUCCESS) {
             printf("[wifi_device] Unlock wifi global lock failed in get device config.\n");
         }
-        return ERROR_WIFI_NOT_AVAILABLE;		
+        return ERROR_WIFI_NOT_AVAILABLE;
     } else {
-        //printf("\r\n read wifi cfg info ok");
+        // printf("\r\n read wifi cfg info ok");
     }
 
     for (i = 0; i < WIFI_MAX_CONFIG_SIZE; ++i) {
@@ -731,7 +729,7 @@ WifiErrorCode GetDeviceConfigs(WifiDeviceConfig* result, unsigned int* size)
 
 WifiErrorCode Disconnect(void)
 {
-	printf("\r\nDisconnect: g_connectStatus=%d", g_connectStatus);
+    printf("\r\nDisconnect: g_connectStatus=%d", g_connectStatus);
 
     tls_wifi_disconnect();
 
@@ -745,7 +743,7 @@ WifiErrorCode Disconnect(void)
 WifiErrorCode RemoveDevice(int networkId)
 {
     if (networkId >= WIFI_MAX_CONFIG_SIZE || networkId < 0) {
-		printf("[wifi_service]:removeDevice invalid param: networkId=%d\n", networkId);
+        printf("[wifi_service]:removeDevice invalid param: networkId=%d\n", networkId);
         return ERROR_WIFI_INVALID_ARGS;
     }
 
@@ -757,23 +755,23 @@ WifiErrorCode RemoveDevice(int networkId)
         printf("[wifi_service]:removeDevice memset failed\n");
     }
     gWifiConfigs[networkId].netId = WIFI_CONFIG_INVALID;
-	
-	gWifiStaStatus = WIFI_STA_NOT_ACTIVE;
-	g_connectStatus = 0;
-	g_hasConnected = 0;
+    
+    gWifiStaStatus = WIFI_STA_NOT_ACTIVE;
+    g_connectStatus = 0;
+    g_hasConnected = 0;
 
 #if 1
-	UtilsSetEnv(KV_FILE_NAME);
-	memset(keystring, 0, MAX_WIFI_KV_NAME_LEN);
-	sprintf(keystring, WIFI_CFG_INFO"_%d", networkId);
+    UtilsSetEnv(KV_FILE_NAME);
+    memset(keystring, 0, MAX_WIFI_KV_NAME_LEN);
+    sprintf(keystring, WIFI_CFG_INFO"_%d", networkId);
     int ret = UtilsDeleteValue(keystring);
     if (ret < 0 )  {
         printf("\r\n clear wifi cfg info fail");
     } else {
     }
 #else
-	extern void HalFlashFileDeInit(void);
-	HalFlashFileDeInit();
+    extern void HalFlashFileDeInit(void);
+    HalFlashFileDeInit();
 #endif
 
     if (UnlockWifiGlobalLock() != WIFI_SUCCESS) {
@@ -853,7 +851,7 @@ static void InitWifiConfig(void)
         tls_wifi_softap_destroy();
         osDelay(10);
         wireless_protocol = TLS_PARAM_IEEE80211_INFRA;
-        tls_param_set(TLS_PARAM_ID_WPROTOCOL, (void *) &wireless_protocol, TRUE);//FALSE
+        tls_param_set(TLS_PARAM_ID_WPROTOCOL, (void *) &wireless_protocol, TRUE);// FALSE
     }
 
     ip_param = tls_mem_alloc(sizeof(struct tls_param_ip));
@@ -869,7 +867,7 @@ static void InitWifiConfig(void)
 
 static void WifiStatusHandler(u8 status)
 {
-	printf("\r\n WifiStatusHandler status=%d", status);
+    printf("\r\n WifiStatusHandler status=%d", status);
     g_connectStatus = status;
 }
 
@@ -932,7 +930,7 @@ WifiErrorCode ConnectTo(int networkId)
     debug_wifi("Connect to %s done, status = %d!\n", connConfig.ssid, g_connectStatus);
 #endif
     if (g_connectStatus == NETIF_WIFI_JOIN_SUCCESS) {
-		g_hasConnected = 1;
+        g_hasConnected = 1;
         return WIFI_SUCCESS;
     }
 
@@ -941,6 +939,6 @@ WifiErrorCode ConnectTo(int networkId)
         printf("[wifi_device]: tls_netif_remove_status_event for ConnectTo failed.\n");
         return ERROR_WIFI_UNKNOWN;
     }
-	printf("[wifi_device]: ConnectTo failed due to unknown reason.\n");
+    printf("[wifi_device]: ConnectTo failed due to unknown reason.\n");
     return ERROR_WIFI_UNKNOWN;
 }

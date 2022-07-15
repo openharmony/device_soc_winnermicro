@@ -25,12 +25,10 @@
 #ifndef __WM_TYPE_DEF_H__
 #define __WM_TYPE_DEF_H__
 
-
 #define __NEED_uint32_t
 #define __NEED_uint64_t
 
 #include <bits/alltypes.h>
-
 
 #ifdef bool
 #undef bool
@@ -152,7 +150,6 @@ typedef unsigned short uint16_t;
 #endif
 typedef unsigned int u32_t;
 
-
 #ifdef s8_t
 #undef s8_t
 #endif
@@ -179,7 +176,6 @@ typedef unsigned int size_t;
 #endif
 typedef signed char err_t;
 
-
 #ifdef mem_ptr_t
 #undef mem_ptr_t
 #endif
@@ -195,8 +191,8 @@ typedef unsigned int mem_ptr_t;
 #endif
 #define FALSE                    0
 
-#define true				1
-#define false				0
+#define true                1
+#define false                0
 
 #ifndef NULL
 #ifdef __cplusplus

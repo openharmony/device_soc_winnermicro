@@ -47,7 +47,6 @@
 #define TLS_DBGPRT_FLASH_ERR(f, a...)
 #endif
 
-
 #if (TLS_SPI_DBG && TLS_DBG_LEVEL_INFO)
 #define TLS_DBGPRT_SPI_INFO(f, a...)          __TLS_DBGPRT_INFO(f, ##a)
 #else
@@ -66,7 +65,6 @@
 #define TLS_DBGPRT_SPI_ERR(f, a...)
 #endif
 
-
 #if (TLS_IO_DBG && TLS_DBG_LEVEL_INFO)
 #define TLS_DBGPRT_IO_INFO(f, a...)          __TLS_DBGPRT_INFO(f, ##a)
 #else
@@ -84,7 +82,6 @@
 #else
 #define TLS_DBGPRT_IO_ERR(f, a...)
 #endif
-
 
 #if (TLS_DMA_DBG && TLS_DBG_LEVEL_INFO)
 #define TLS_DBGPRT_DMA_INFO(f, a...)          __TLS_DBGPRT_INFO(f, ##a)

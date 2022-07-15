@@ -51,7 +51,7 @@
 #define TLS_FLS_FLAG_FAST_READ      (1<<1)
 #define TLS_FLS_FLAG_AAAI      (1<<2)
 
-#define FLS_CMD_READ_DEV_ID     (0x9F)  // read device id //(0x9f)
+#define FLS_CMD_READ_DEV_ID     (0x9F)  // read device id // (0x9f)
 
 /**
  * @struct fls_list     list
@@ -61,7 +61,6 @@ struct fls_list
     struct fls_list *next;
     struct fls_list *prev;
 };
-
 
 /**
  * @struct tls_fls_drv     flash driver
@@ -130,7 +129,6 @@ struct tls_fls
  */
 int tls_spifls_init(void);
 
-
 /**
  * @brief          This function is used to read data from the flash.
  *
@@ -144,7 +142,6 @@ int tls_spifls_init(void);
  * @note           None
  */
 int tls_spifls_read(u32 addr, u8 * buf, u32 len);
-
 
 /**
  * @brief          This function is used to write data into the flash.

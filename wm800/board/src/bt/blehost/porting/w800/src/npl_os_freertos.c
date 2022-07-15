@@ -30,8 +30,8 @@ npl_freertos_eventq_get(struct ble_npl_eventq *evq, ble_npl_time_t tmo)
     tls_os_status_t status;
     status = tls_os_queue_receive(evq->q, (void **)&ev, sizeof(ev), tmo);
 
-    if(status == TLS_OS_SUCCESS) {
-    if(ev) {
+    if (status == TLS_OS_SUCCESS) {
+    if (ev) {
         ev->queued = false;
     }
     }
@@ -44,7 +44,7 @@ npl_freertos_eventq_put(struct ble_npl_eventq *evq, struct ble_npl_event *ev)
 {
     tls_os_status_t status;
 
-    if(ev->queued) {
+    if (ev->queued) {
         return;
     }
 
@@ -59,7 +59,7 @@ npl_freertos_eventq_remove(struct ble_npl_eventq *evq,
 {
     tls_os_status_t status;
 
-    if(!ev->queued) {
+    if (!ev->queued) {
         return;
     }
 
@@ -73,7 +73,7 @@ npl_freertos_mutex_init(struct ble_npl_mutex *mu)
 {
     tls_os_status_t status;
 
-    if(!mu) {
+    if (!mu) {
         return BLE_NPL_INVALID_PARAM;
     }
 
@@ -87,11 +87,11 @@ npl_freertos_mutex_deinit(struct ble_npl_mutex *mu)
 {
     tls_os_status_t status;
 
-    if(!mu) {
+    if (!mu) {
         return BLE_NPL_INVALID_PARAM;
     }
 
-    if(mu->handle) {
+    if (mu->handle) {
         status = tls_os_mutex_delete(mu->handle);
         assert(status == TLS_OS_SUCCESS);
     }
@@ -104,13 +104,13 @@ npl_freertos_mutex_pend(struct ble_npl_mutex *mu, ble_npl_time_t timeout)
 {
     tls_os_status_t status;
 
-    if(!mu) {
+    if (!mu) {
         return BLE_NPL_INVALID_PARAM;
     }
 
     assert(mu->handle);
 
-    if(tls_get_isr_count() > 0) {
+    if (tls_get_isr_count() > 0) {
         status = TLS_OS_ERROR;
         assert(0);
     } else {
@@ -125,18 +125,18 @@ npl_freertos_mutex_release(struct ble_npl_mutex *mu)
 {
     tls_os_status_t status;
 
-    if(!mu) {
+    if (!mu) {
         return BLE_NPL_INVALID_PARAM;
     }
 
     assert(mu->handle);
 
-    if(tls_get_isr_count() > 0) {
+    if (tls_get_isr_count() > 0) {
         assert(0);
     } else {
         status = tls_os_mutex_release(mu->handle);
 
-        if(status != TLS_OS_SUCCESS) {
+        if (status != TLS_OS_SUCCESS) {
             return BLE_NPL_BAD_MUTEX;
         }
     }
@@ -144,13 +144,12 @@ npl_freertos_mutex_release(struct ble_npl_mutex *mu)
     return BLE_NPL_OK;
 }
 
-
 ble_npl_error_t
 npl_freertos_sem_init(struct ble_npl_sem *sem, uint16_t tokens)
 {
     tls_os_status_t status;
 
-    if(!sem) {
+    if (!sem) {
         return BLE_NPL_INVALID_PARAM;
     }
 
@@ -164,11 +163,11 @@ npl_freertos_sem_deinit(struct ble_npl_sem *sem)
 {
     tls_os_status_t status;
 
-    if(!sem) {
+    if (!sem) {
         return BLE_NPL_INVALID_PARAM;
     }
 
-    if(sem->handle) {
+    if (sem->handle) {
         status = tls_os_sem_delete(sem->handle);
         assert(status == TLS_OS_SUCCESS);
     }
@@ -181,7 +180,7 @@ npl_freertos_sem_pend(struct ble_npl_sem *sem, ble_npl_time_t timeout)
 {
     tls_os_status_t status;
 
-    if(!sem) {
+    if (!sem) {
         return BLE_NPL_INVALID_PARAM;
     }
 
@@ -191,7 +190,7 @@ npl_freertos_sem_pend(struct ble_npl_sem *sem, ble_npl_time_t timeout)
 }
 uint16_t npl_freertos_get_sem_count(struct ble_npl_sem *sem)
 {
-    if(!sem) {
+    if (!sem) {
         return BLE_NPL_INVALID_PARAM;
     }
 
@@ -204,7 +203,7 @@ npl_freertos_sem_release(struct ble_npl_sem *sem)
 {
     tls_os_status_t status;
 
-    if(!sem) {
+    if (!sem) {
         return BLE_NPL_INVALID_PARAM;
     }
 
@@ -219,7 +218,7 @@ os_callout_timer_cb(void *ptmr, void *parg)
     struct ble_npl_callout *co;
     co = (struct ble_npl_callout *)parg;
 
-    if(co->evq) {
+    if (co->evq) {
         ble_npl_eventq_put(co->evq, &co->ev);
     } else {
         co->ev.fn(&co->ev);
@@ -253,7 +252,7 @@ npl_freertos_callout_remaining_ticks(struct ble_npl_callout *co,
     uint32_t exp;
     exp = tls_os_timer_expirytime(co->handle);
 
-    if(exp > now) {
+    if (exp > now) {
         rt = exp - now;
     } else {
         rt = 0;
@@ -268,7 +267,7 @@ npl_freertos_time_ms_to_ticks(uint32_t ms, ble_npl_time_t *out_ticks)
     uint64_t ticks;
     ticks = ((uint64_t)ms * /*configTICK_RATE_HZ*/HZ) / 1000;
 
-    if(ticks > UINT32_MAX) {
+    if (ticks > UINT32_MAX) {
         return BLE_NPL_EINVAL;
     }
 
@@ -282,7 +281,7 @@ npl_freertos_time_ticks_to_ms(ble_npl_time_t ticks, uint32_t *out_ms)
     uint64_t ms;
     ms = ((uint64_t)ticks * 1000) / /*configTICK_RATE_HZ*/HZ;
 
-    if(ms > UINT32_MAX) {
+    if (ms > UINT32_MAX) {
         return BLE_NPL_EINVAL;
     }
 

@@ -33,7 +33,6 @@
 #include "wm_mem.h"
 #include "wm_fls_gd25qxx.h"
 
-
 static struct tls_fls *spi_fls = NULL;
 
 static int tls_spifls_read_id(u32 * id)
@@ -57,7 +56,6 @@ static int tls_spifls_read_id(u32 * id)
     return TLS_FLS_STATUS_OK;
 }
 
-
 /**
  * @brief          This function is used to read data from the flash.
  *
@@ -65,8 +63,8 @@ static int tls_spifls_read_id(u32 * id)
  * @param[in]      buf                   is user for data buffer of flash read
  * @param[in]      len                   is byte length for read.
  *
- * @retval         TLS_FLS_STATUS_OK	    if read sucsess
- * @retval         TLS_FLS_STATUS_EIO	    if read fail
+ * @retval         TLS_FLS_STATUS_OK        if read sucsess
+ * @retval         TLS_FLS_STATUS_EIO        if read fail
  *
  * @note           None
  */
@@ -192,10 +190,10 @@ int tls_spifls_page_write(u32 page, u8 * buf, u32 page_cnt)
  * @param[in]      buf       is the data buffer want to write to flash
  * @param[in]      len       is the byte length want to write
  *
- * @retval         TLS_FLS_STATUS_OK	           if write flash success
- * @retval         TLS_FLS_STATUS_EPERM	    if flash struct point is null
- * @retval         TLS_FLS_STATUS_ENODRV	    if flash driver is not installed
- * @retval         TLS_FLS_STATUS_EINVAL	    if argument is invalid
+ * @retval         TLS_FLS_STATUS_OK               if write flash success
+ * @retval         TLS_FLS_STATUS_EPERM        if flash struct point is null
+ * @retval         TLS_FLS_STATUS_ENODRV        if flash driver is not installed
+ * @retval         TLS_FLS_STATUS_EINVAL        if argument is invalid
  * @retval         TLS_FLS_STATUS_EIO           if io error
  *
  * @note           None
@@ -261,25 +259,25 @@ int tls_spifls_write(u32 addr, u8 * buf, u32 len)
             break;
         }
 
-		if (1 == sector_num){/*flash write only in one sector*/
-			MEMCPY(cache + (addr%drv->sector_size), buf, write_bytes);	
-			buf += write_bytes;
-			write_bytes = 0;			
-		}else{/*flash write through some sectors*/
-			if (0 == i) {
-				MEMCPY(cache+(addr%drv->sector_size), buf, drv->sector_size - (addr%drv->sector_size));
-				buf += drv->sector_size - (addr%drv->sector_size);
-				write_bytes -= drv->sector_size - (addr%drv->sector_size);
-			} else if (i == (sector_num - 1)) {
-				MEMCPY(cache, buf, write_bytes);
-				buf += write_bytes;
-				write_bytes = 0;
-			} else {
-				MEMCPY(cache, buf, drv->sector_size);
-				buf += drv->sector_size;
-				write_bytes -= drv->sector_size;
-			}
-		}
+        if (1 == sector_num){/*flash write only in one sector*/
+            MEMCPY(cache + (addr%drv->sector_size), buf, write_bytes);    
+            buf += write_bytes;
+            write_bytes = 0;            
+        }else{/*flash write through some sectors*/
+            if (0 == i) {
+                MEMCPY(cache+(addr%drv->sector_size), buf, drv->sector_size - (addr%drv->sector_size));
+                buf += drv->sector_size - (addr%drv->sector_size);
+                write_bytes -= drv->sector_size - (addr%drv->sector_size);
+            } else if (i == (sector_num - 1)) {
+                MEMCPY(cache, buf, write_bytes);
+                buf += write_bytes;
+                write_bytes = 0;
+            } else {
+                MEMCPY(cache, buf, drv->sector_size);
+                buf += drv->sector_size;
+                write_bytes -= drv->sector_size;
+            }
+        }
 
         TLS_DBGPRT_FLASH_INFO("second, erase the sector - %d.\n",
                               sector_addr + i);
@@ -308,7 +306,6 @@ int tls_spifls_write(u32 addr, u8 * buf, u32 len)
     tls_os_sem_release(spi_fls->fls_lock);
     return err;
 }
-
 
 int tls_spifls_erase(u32 sector)
 {

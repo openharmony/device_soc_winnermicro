@@ -72,8 +72,8 @@ typedef union {
 } TIPC_VLD1_Type;
 
 typedef struct {
-	__IOM uint32_t VLD0;
-	__IOM uint32_t VLD1;
+    __IOM uint32_t VLD0;
+    __IOM uint32_t VLD1;
 } TIPC_Type;
 
 #define TIPC          ((TIPC_Type    *) HR_TIPC_BASE)
@@ -109,10 +109,10 @@ typedef struct {
  */
 __STATIC_INLINE void wm_tipc_enable_i2c(void)
 {
-	TIPC_VLD0_Type vld0;
-	vld0.w = TIPC->VLD0;
-	vld0.b.I2C = 1;
-	TIPC->VLD0 = vld0.w;
+    TIPC_VLD0_Type vld0;
+    vld0.w = TIPC->VLD0;
+    vld0.b.I2C = 1;
+    TIPC->VLD0 = vld0.w;
 }
 
 /**
@@ -126,10 +126,10 @@ __STATIC_INLINE void wm_tipc_enable_i2c(void)
  */
 __STATIC_INLINE void wm_tipc_disable_i2c(void)
 {
-	TIPC_VLD0_Type vld0;
-	vld0.w = TIPC->VLD0;
-	vld0.b.I2C = 0;
-	TIPC->VLD0 = vld0.w;
+    TIPC_VLD0_Type vld0;
+    vld0.w = TIPC->VLD0;
+    vld0.b.I2C = 0;
+    TIPC->VLD0 = vld0.w;
 }
 
 /**
@@ -143,10 +143,10 @@ __STATIC_INLINE void wm_tipc_disable_i2c(void)
  */
 __STATIC_INLINE void wm_tipc_enable_uart0(void)
 {
-	TIPC_VLD0_Type vld0;
-	vld0.w = TIPC->VLD0;
-	vld0.b.UART0 = 1;
-	TIPC->VLD0 = vld0.w;
+    TIPC_VLD0_Type vld0;
+    vld0.w = TIPC->VLD0;
+    vld0.b.UART0 = 1;
+    TIPC->VLD0 = vld0.w;
 }
 
 /**
@@ -160,10 +160,10 @@ __STATIC_INLINE void wm_tipc_enable_uart0(void)
  */
 __STATIC_INLINE void wm_tipc_disable_uart0(void)
 {
-	TIPC_VLD0_Type vld0;
-	vld0.w = TIPC->VLD0;
-	vld0.b.UART0 = 0;
-	TIPC->VLD0 = vld0.w;
+    TIPC_VLD0_Type vld0;
+    vld0.w = TIPC->VLD0;
+    vld0.b.UART0 = 0;
+    TIPC->VLD0 = vld0.w;
 }
 
 /**
@@ -177,10 +177,10 @@ __STATIC_INLINE void wm_tipc_disable_uart0(void)
  */
 __STATIC_INLINE void wm_tipc_enable_sar_adc(void)
 {
-	TIPC_VLD0_Type vld0;
-	vld0.w = TIPC->VLD0;
-	vld0.b.SAR_ADC = 1;
-	TIPC->VLD0 = vld0.w;
+    TIPC_VLD0_Type vld0;
+    vld0.w = TIPC->VLD0;
+    vld0.b.SAR_ADC = 1;
+    TIPC->VLD0 = vld0.w;
 }
 
 /**
@@ -194,10 +194,10 @@ __STATIC_INLINE void wm_tipc_enable_sar_adc(void)
  */
 __STATIC_INLINE void wm_tipc_disable_sar_adc(void)
 {
-	TIPC_VLD0_Type vld0;
-	vld0.w = TIPC->VLD0;
-	vld0.b.SAR_ADC = 0;
-	TIPC->VLD0 = vld0.w;
+    TIPC_VLD0_Type vld0;
+    vld0.w = TIPC->VLD0;
+    vld0.b.SAR_ADC = 0;
+    TIPC->VLD0 = vld0.w;
 }
 
 /**
@@ -211,10 +211,10 @@ __STATIC_INLINE void wm_tipc_disable_sar_adc(void)
  */
 __STATIC_INLINE void wm_tipc_enable_lspi(void)
 {
-	TIPC_VLD0_Type vld0;
-	vld0.w = TIPC->VLD0;
-	vld0.b.SPI_LS = 1;
-	TIPC->VLD0 = vld0.w;
+    TIPC_VLD0_Type vld0;
+    vld0.w = TIPC->VLD0;
+    vld0.b.SPI_LS = 1;
+    TIPC->VLD0 = vld0.w;
 }
 
 /**
@@ -228,10 +228,10 @@ __STATIC_INLINE void wm_tipc_enable_lspi(void)
  */
 __STATIC_INLINE void wm_tipc_disable_lspi(void)
 {
-	TIPC_VLD0_Type vld0;
-	vld0.w = TIPC->VLD0;
-	vld0.b.SPI_LS = 0;
-	TIPC->VLD0 = vld0.w;
+    TIPC_VLD0_Type vld0;
+    vld0.w = TIPC->VLD0;
+    vld0.b.SPI_LS = 0;
+    TIPC->VLD0 = vld0.w;
 }
 
 /**
@@ -245,10 +245,10 @@ __STATIC_INLINE void wm_tipc_disable_lspi(void)
  */
 __STATIC_INLINE void wm_tipc_enable_uart1(void)
 {
-	TIPC_VLD0_Type vld0;
-	vld0.w = TIPC->VLD0;
-	vld0.b.UART1 = 1;
-	TIPC->VLD0 = vld0.w;
+    TIPC_VLD0_Type vld0;
+    vld0.w = TIPC->VLD0;
+    vld0.b.UART1 = 1;
+    TIPC->VLD0 = vld0.w;
 }
 
 /**
@@ -262,10 +262,10 @@ __STATIC_INLINE void wm_tipc_enable_uart1(void)
  */
 __STATIC_INLINE void wm_tipc_disable_uart1(void)
 {
-	TIPC_VLD0_Type vld0;
-	vld0.w = TIPC->VLD0;
-	vld0.b.UART1 = 0;
-	TIPC->VLD0 = vld0.w;
+    TIPC_VLD0_Type vld0;
+    vld0.w = TIPC->VLD0;
+    vld0.b.UART1 = 0;
+    TIPC->VLD0 = vld0.w;
 }
 
 /**
@@ -279,10 +279,10 @@ __STATIC_INLINE void wm_tipc_disable_uart1(void)
  */
 __STATIC_INLINE void wm_tipc_enable_uart2(void)
 {
-	TIPC_VLD0_Type vld0;
-	vld0.w = TIPC->VLD0;
-	vld0.b.UART2 = 1;
-	TIPC->VLD0 = vld0.w;
+    TIPC_VLD0_Type vld0;
+    vld0.w = TIPC->VLD0;
+    vld0.b.UART2 = 1;
+    TIPC->VLD0 = vld0.w;
 }
 
 /**
@@ -296,10 +296,10 @@ __STATIC_INLINE void wm_tipc_enable_uart2(void)
  */
 __STATIC_INLINE void wm_tipc_disable_uart2(void)
 {
-	TIPC_VLD0_Type vld0;
-	vld0.w = TIPC->VLD0;
-	vld0.b.UART2 = 0;
-	TIPC->VLD0 = vld0.w;
+    TIPC_VLD0_Type vld0;
+    vld0.w = TIPC->VLD0;
+    vld0.b.UART2 = 0;
+    TIPC->VLD0 = vld0.w;
 }
 
 /**
@@ -313,10 +313,10 @@ __STATIC_INLINE void wm_tipc_disable_uart2(void)
  */
 __STATIC_INLINE void wm_tipc_enable_uart3(void)
 {
-	TIPC_VLD0_Type vld0;
-	vld0.w = TIPC->VLD0;
-	vld0.b.UART3 = 1;
-	TIPC->VLD0 = vld0.w;
+    TIPC_VLD0_Type vld0;
+    vld0.w = TIPC->VLD0;
+    vld0.b.UART3 = 1;
+    TIPC->VLD0 = vld0.w;
 }
 
 /**
@@ -330,10 +330,10 @@ __STATIC_INLINE void wm_tipc_enable_uart3(void)
  */
 __STATIC_INLINE void wm_tipc_disable_uart3(void)
 {
-	TIPC_VLD0_Type vld0;
-	vld0.w = TIPC->VLD0;
-	vld0.b.UART3 = 0;
-	TIPC->VLD0 = vld0.w;
+    TIPC_VLD0_Type vld0;
+    vld0.w = TIPC->VLD0;
+    vld0.b.UART3 = 0;
+    TIPC->VLD0 = vld0.w;
 }
 
 /**
@@ -347,10 +347,10 @@ __STATIC_INLINE void wm_tipc_disable_uart3(void)
  */
 __STATIC_INLINE void wm_tipc_enable_uart4(void)
 {
-	TIPC_VLD0_Type vld0;
-	vld0.w = TIPC->VLD0;
-	vld0.b.UART4 = 1;
-	TIPC->VLD0 = vld0.w;
+    TIPC_VLD0_Type vld0;
+    vld0.w = TIPC->VLD0;
+    vld0.b.UART4 = 1;
+    TIPC->VLD0 = vld0.w;
 }
 
 /**
@@ -364,10 +364,10 @@ __STATIC_INLINE void wm_tipc_enable_uart4(void)
  */
 __STATIC_INLINE void wm_tipc_disable_uart4(void)
 {
-	TIPC_VLD0_Type vld0;
-	vld0.w = TIPC->VLD0;
-	vld0.b.UART4 = 0;
-	TIPC->VLD0 = vld0.w;
+    TIPC_VLD0_Type vld0;
+    vld0.w = TIPC->VLD0;
+    vld0.b.UART4 = 0;
+    TIPC->VLD0 = vld0.w;
 }
 
 /**
@@ -381,10 +381,10 @@ __STATIC_INLINE void wm_tipc_disable_uart4(void)
  */
 __STATIC_INLINE void wm_tipc_enable_uart5(void)
 {
-	TIPC_VLD0_Type vld0;
-	vld0.w = TIPC->VLD0;
-	vld0.b.UART5 = 1;
-	TIPC->VLD0 = vld0.w;
+    TIPC_VLD0_Type vld0;
+    vld0.w = TIPC->VLD0;
+    vld0.b.UART5 = 1;
+    TIPC->VLD0 = vld0.w;
 }
 
 /**
@@ -398,10 +398,10 @@ __STATIC_INLINE void wm_tipc_enable_uart5(void)
  */
 __STATIC_INLINE void wm_tipc_disable_uart5(void)
 {
-	TIPC_VLD0_Type vld0;
-	vld0.w = TIPC->VLD0;
-	vld0.b.UART5 = 0;
-	TIPC->VLD0 = vld0.w;
+    TIPC_VLD0_Type vld0;
+    vld0.w = TIPC->VLD0;
+    vld0.b.UART5 = 0;
+    TIPC->VLD0 = vld0.w;
 }
 
 /**
@@ -415,10 +415,10 @@ __STATIC_INLINE void wm_tipc_disable_uart5(void)
  */
 __STATIC_INLINE void wm_tipc_enable_porta(void)
 {
-	TIPC_VLD0_Type vld0;
-	vld0.w = TIPC->VLD0;
-	vld0.b.PORTA = 1;
-	TIPC->VLD0 = vld0.w;
+    TIPC_VLD0_Type vld0;
+    vld0.w = TIPC->VLD0;
+    vld0.b.PORTA = 1;
+    TIPC->VLD0 = vld0.w;
 }
 
 /**
@@ -432,10 +432,10 @@ __STATIC_INLINE void wm_tipc_enable_porta(void)
  */
 __STATIC_INLINE void wm_tipc_disable_porta(void)
 {
-	TIPC_VLD0_Type vld0;
-	vld0.w = TIPC->VLD0;
-	vld0.b.PORTA = 0;
-	TIPC->VLD0 = vld0.w;
+    TIPC_VLD0_Type vld0;
+    vld0.w = TIPC->VLD0;
+    vld0.b.PORTA = 0;
+    TIPC->VLD0 = vld0.w;
 }
 
 /**
@@ -449,10 +449,10 @@ __STATIC_INLINE void wm_tipc_disable_porta(void)
  */
 __STATIC_INLINE void wm_tipc_enable_portb(void)
 {
-	TIPC_VLD0_Type vld0;
-	vld0.w = TIPC->VLD0;
-	vld0.b.PORTB = 1;
-	TIPC->VLD0 = vld0.w;
+    TIPC_VLD0_Type vld0;
+    vld0.w = TIPC->VLD0;
+    vld0.b.PORTB = 1;
+    TIPC->VLD0 = vld0.w;
 }
 
 /**
@@ -466,10 +466,10 @@ __STATIC_INLINE void wm_tipc_enable_portb(void)
  */
 __STATIC_INLINE void wm_tipc_disable_portb(void)
 {
-	TIPC_VLD0_Type vld0;
-	vld0.w = TIPC->VLD0;
-	vld0.b.PORTB = 0;
-	TIPC->VLD0 = vld0.w;
+    TIPC_VLD0_Type vld0;
+    vld0.w = TIPC->VLD0;
+    vld0.b.PORTB = 0;
+    TIPC->VLD0 = vld0.w;
 }
 
 /**
@@ -483,10 +483,10 @@ __STATIC_INLINE void wm_tipc_disable_portb(void)
  */
 __STATIC_INLINE void wm_tipc_enable_watch_dog(void)
 {
-	TIPC_VLD0_Type vld0;
-	vld0.w = TIPC->VLD0;
-	vld0.b.WD = 1;
-	TIPC->VLD0 = vld0.w;
+    TIPC_VLD0_Type vld0;
+    vld0.w = TIPC->VLD0;
+    vld0.b.WD = 1;
+    TIPC->VLD0 = vld0.w;
 }
 
 /**
@@ -500,10 +500,10 @@ __STATIC_INLINE void wm_tipc_enable_watch_dog(void)
  */
 __STATIC_INLINE void wm_tipc_disable_watch_dog(void)
 {
-	TIPC_VLD0_Type vld0;
-	vld0.w = TIPC->VLD0;
-	vld0.b.WD = 0;
-	TIPC->VLD0 = vld0.w;
+    TIPC_VLD0_Type vld0;
+    vld0.w = TIPC->VLD0;
+    vld0.b.WD = 0;
+    TIPC->VLD0 = vld0.w;
 }
 
 /**
@@ -517,10 +517,10 @@ __STATIC_INLINE void wm_tipc_disable_watch_dog(void)
  */
 __STATIC_INLINE void wm_tipc_enable_timer(void)
 {
-	TIPC_VLD0_Type vld0;
-	vld0.w = TIPC->VLD0;
-	vld0.b.TIMER = 1;
-	TIPC->VLD0 = vld0.w;
+    TIPC_VLD0_Type vld0;
+    vld0.w = TIPC->VLD0;
+    vld0.b.TIMER = 1;
+    TIPC->VLD0 = vld0.w;
 }
 
 /**
@@ -534,10 +534,10 @@ __STATIC_INLINE void wm_tipc_enable_timer(void)
  */
 __STATIC_INLINE void wm_tipc_disable_timer(void)
 {
-	TIPC_VLD0_Type vld0;
-	vld0.w = TIPC->VLD0;
-	vld0.b.TIMER = 0;
-	TIPC->VLD0 = vld0.w;
+    TIPC_VLD0_Type vld0;
+    vld0.w = TIPC->VLD0;
+    vld0.b.TIMER = 0;
+    TIPC->VLD0 = vld0.w;
 }
 
 /**
@@ -551,10 +551,10 @@ __STATIC_INLINE void wm_tipc_disable_timer(void)
  */
 __STATIC_INLINE void wm_tipc_enable_rf_controler(void)
 {
-	TIPC_VLD0_Type vld0;
-	vld0.w = TIPC->VLD0;
-	vld0.b.RFC = 1;
-	TIPC->VLD0 = vld0.w;
+    TIPC_VLD0_Type vld0;
+    vld0.w = TIPC->VLD0;
+    vld0.b.RFC = 1;
+    TIPC->VLD0 = vld0.w;
 }
 
 /**
@@ -568,10 +568,10 @@ __STATIC_INLINE void wm_tipc_enable_rf_controler(void)
  */
 __STATIC_INLINE void wm_tipc_disable_rf_controler(void)
 {
-	TIPC_VLD0_Type vld0;
-	vld0.w = TIPC->VLD0;
-	vld0.b.RFC = 0;
-	TIPC->VLD0 = vld0.w;
+    TIPC_VLD0_Type vld0;
+    vld0.w = TIPC->VLD0;
+    vld0.b.RFC = 0;
+    TIPC->VLD0 = vld0.w;
 }
 
 /**
@@ -585,10 +585,10 @@ __STATIC_INLINE void wm_tipc_disable_rf_controler(void)
  */
 __STATIC_INLINE void wm_tipc_enable_lcd(void)
 {
-	TIPC_VLD0_Type vld0;
-	vld0.w = TIPC->VLD0;
-	vld0.b.LCD = 1;
-	TIPC->VLD0 = vld0.w;
+    TIPC_VLD0_Type vld0;
+    vld0.w = TIPC->VLD0;
+    vld0.b.LCD = 1;
+    TIPC->VLD0 = vld0.w;
 }
 
 /**
@@ -602,10 +602,10 @@ __STATIC_INLINE void wm_tipc_enable_lcd(void)
  */
 __STATIC_INLINE void wm_tipc_disable_lcd(void)
 {
-	TIPC_VLD0_Type vld0;
-	vld0.w = TIPC->VLD0;
-	vld0.b.LCD = 0;
-	TIPC->VLD0 = vld0.w;
+    TIPC_VLD0_Type vld0;
+    vld0.w = TIPC->VLD0;
+    vld0.b.LCD = 0;
+    TIPC->VLD0 = vld0.w;
 }
 
 /**
@@ -619,10 +619,10 @@ __STATIC_INLINE void wm_tipc_disable_lcd(void)
  */
 __STATIC_INLINE void wm_tipc_enable_pwm(void)
 {
-	TIPC_VLD0_Type vld0;
-	vld0.w = TIPC->VLD0;
-	vld0.b.PWM = 1;
-	TIPC->VLD0 = vld0.w;
+    TIPC_VLD0_Type vld0;
+    vld0.w = TIPC->VLD0;
+    vld0.b.PWM = 1;
+    TIPC->VLD0 = vld0.w;
 }
 
 /**
@@ -636,10 +636,10 @@ __STATIC_INLINE void wm_tipc_enable_pwm(void)
  */
 __STATIC_INLINE void wm_tipc_disable_pwm(void)
 {
-	TIPC_VLD0_Type vld0;
-	vld0.w = TIPC->VLD0;
-	vld0.b.PWM = 0;
-	TIPC->VLD0 = vld0.w;
+    TIPC_VLD0_Type vld0;
+    vld0.w = TIPC->VLD0;
+    vld0.b.PWM = 0;
+    TIPC->VLD0 = vld0.w;
 }
 
 /**
@@ -653,10 +653,10 @@ __STATIC_INLINE void wm_tipc_disable_pwm(void)
  */
 __STATIC_INLINE void wm_tipc_enable_i2s(void)
 {
-	TIPC_VLD0_Type vld0;
-	vld0.w = TIPC->VLD0;
-	vld0.b.I2S = 1;
-	TIPC->VLD0 = vld0.w;
+    TIPC_VLD0_Type vld0;
+    vld0.w = TIPC->VLD0;
+    vld0.b.I2S = 1;
+    TIPC->VLD0 = vld0.w;
 }
 
 /**
@@ -670,10 +670,10 @@ __STATIC_INLINE void wm_tipc_enable_i2s(void)
  */
 __STATIC_INLINE void wm_tipc_disable_i2s(void)
 {
-	TIPC_VLD0_Type vld0;
-	vld0.w = TIPC->VLD0;
-	vld0.b.I2S = 0;
-	TIPC->VLD0 = vld0.w;
+    TIPC_VLD0_Type vld0;
+    vld0.w = TIPC->VLD0;
+    vld0.b.I2S = 0;
+    TIPC->VLD0 = vld0.w;
 }
 
 /**
@@ -687,10 +687,10 @@ __STATIC_INLINE void wm_tipc_disable_i2s(void)
  */
 __STATIC_INLINE void wm_tipc_enable_bt_modem(void)
 {
-	TIPC_VLD0_Type vld0;
-	vld0.w = TIPC->VLD0;
-	vld0.b.BT_MODEM = 1;
-	TIPC->VLD0 = vld0.w;
+    TIPC_VLD0_Type vld0;
+    vld0.w = TIPC->VLD0;
+    vld0.b.BT_MODEM = 1;
+    TIPC->VLD0 = vld0.w;
 }
 
 /**
@@ -704,10 +704,10 @@ __STATIC_INLINE void wm_tipc_enable_bt_modem(void)
  */
 __STATIC_INLINE void wm_tipc_disable_bt_modem(void)
 {
-	TIPC_VLD0_Type vld0;
-	vld0.w = TIPC->VLD0;
-	vld0.b.BT_MODEM = 0;
-	TIPC->VLD0 = vld0.w;
+    TIPC_VLD0_Type vld0;
+    vld0.w = TIPC->VLD0;
+    vld0.b.BT_MODEM = 0;
+    TIPC->VLD0 = vld0.w;
 }
 
 /**
@@ -721,10 +721,10 @@ __STATIC_INLINE void wm_tipc_disable_bt_modem(void)
  */
 __STATIC_INLINE void wm_tipc_enable_sdio_host(void)
 {
-	TIPC_VLD1_Type vld1;
-	vld1.w = TIPC->VLD1;
-	vld1.b.SDIO_HOST = 1;
-	TIPC->VLD1 = vld1.w;
+    TIPC_VLD1_Type vld1;
+    vld1.w = TIPC->VLD1;
+    vld1.b.SDIO_HOST = 1;
+    TIPC->VLD1 = vld1.w;
 }
 
 /**
@@ -738,10 +738,10 @@ __STATIC_INLINE void wm_tipc_enable_sdio_host(void)
  */
 __STATIC_INLINE void wm_tipc_disable_sdio_host(void)
 {
-	TIPC_VLD1_Type vld1;
-	vld1.w = TIPC->VLD1;
-	vld1.b.SDIO_HOST = 0;
-	TIPC->VLD1 = vld1.w;
+    TIPC_VLD1_Type vld1;
+    vld1.w = TIPC->VLD1;
+    vld1.b.SDIO_HOST = 0;
+    TIPC->VLD1 = vld1.w;
 }
 
 /**
@@ -755,10 +755,10 @@ __STATIC_INLINE void wm_tipc_disable_sdio_host(void)
  */
 __STATIC_INLINE void wm_tipc_enable_flash(void)
 {
-	TIPC_VLD1_Type vld1;
-	vld1.w = TIPC->VLD1;
-	vld1.b.FLASH = 1;
-	TIPC->VLD1 = vld1.w;
+    TIPC_VLD1_Type vld1;
+    vld1.w = TIPC->VLD1;
+    vld1.b.FLASH = 1;
+    TIPC->VLD1 = vld1.w;
 }
 
 /**
@@ -772,10 +772,10 @@ __STATIC_INLINE void wm_tipc_enable_flash(void)
  */
 __STATIC_INLINE void wm_tipc_disable_flash(void)
 {
-	TIPC_VLD1_Type vld1;
-	vld1.w = TIPC->VLD1;
-	vld1.b.FLASH = 0;
-	TIPC->VLD1 = vld1.w;
+    TIPC_VLD1_Type vld1;
+    vld1.w = TIPC->VLD1;
+    vld1.b.FLASH = 0;
+    TIPC->VLD1 = vld1.w;
 }
 
 /**
@@ -789,10 +789,10 @@ __STATIC_INLINE void wm_tipc_disable_flash(void)
  */
 __STATIC_INLINE void wm_tipc_enable_psram(void)
 {
-	TIPC_VLD1_Type vld1;
-	vld1.w = TIPC->VLD1;
-	vld1.b.PSRAM = 1;
-	TIPC->VLD1 = vld1.w;
+    TIPC_VLD1_Type vld1;
+    vld1.w = TIPC->VLD1;
+    vld1.b.PSRAM = 1;
+    TIPC->VLD1 = vld1.w;
 }
 
 /**
@@ -806,10 +806,10 @@ __STATIC_INLINE void wm_tipc_enable_psram(void)
  */
 __STATIC_INLINE void wm_tipc_disable_psram(void)
 {
-	TIPC_VLD1_Type vld1;
-	vld1.w = TIPC->VLD1;
-	vld1.b.PSRAM = 0;
-	TIPC->VLD1 = vld1.w;
+    TIPC_VLD1_Type vld1;
+    vld1.w = TIPC->VLD1;
+    vld1.b.PSRAM = 0;
+    TIPC->VLD1 = vld1.w;
 }
 
 /**
@@ -823,10 +823,10 @@ __STATIC_INLINE void wm_tipc_disable_psram(void)
  */
 __STATIC_INLINE void wm_tipc_enable_rsa(void)
 {
-	TIPC_VLD1_Type vld1;
-	vld1.w = TIPC->VLD1;
-	vld1.b.RSA = 1;
-	TIPC->VLD1 = vld1.w;
+    TIPC_VLD1_Type vld1;
+    vld1.w = TIPC->VLD1;
+    vld1.b.RSA = 1;
+    TIPC->VLD1 = vld1.w;
 }
 
 /**
@@ -840,10 +840,10 @@ __STATIC_INLINE void wm_tipc_enable_rsa(void)
  */
 __STATIC_INLINE void wm_tipc_disable_rsa(void)
 {
-	TIPC_VLD1_Type vld1;
-	vld1.w = TIPC->VLD1;
-	vld1.b.RSA = 0;
-	TIPC->VLD1 = vld1.w;
+    TIPC_VLD1_Type vld1;
+    vld1.w = TIPC->VLD1;
+    vld1.b.RSA = 0;
+    TIPC->VLD1 = vld1.w;
 }
 
 /**
@@ -857,10 +857,10 @@ __STATIC_INLINE void wm_tipc_disable_rsa(void)
  */
 __STATIC_INLINE void wm_tipc_enable_dma(void)
 {
-	TIPC_VLD1_Type vld1;
-	vld1.w = TIPC->VLD1;
-	vld1.b.DMA = 1;
-	TIPC->VLD1 = vld1.w;
+    TIPC_VLD1_Type vld1;
+    vld1.w = TIPC->VLD1;
+    vld1.b.DMA = 1;
+    TIPC->VLD1 = vld1.w;
 }
 
 /**
@@ -874,10 +874,10 @@ __STATIC_INLINE void wm_tipc_enable_dma(void)
  */
 __STATIC_INLINE void wm_tipc_disable_dma(void)
 {
-	TIPC_VLD1_Type vld1;
-	vld1.w = TIPC->VLD1;
-	vld1.b.DMA = 0;
-	TIPC->VLD1 = vld1.w;
+    TIPC_VLD1_Type vld1;
+    vld1.w = TIPC->VLD1;
+    vld1.b.DMA = 0;
+    TIPC->VLD1 = vld1.w;
 }
 
 /**
@@ -891,10 +891,10 @@ __STATIC_INLINE void wm_tipc_disable_dma(void)
  */
 __STATIC_INLINE void wm_tipc_enable_gpsec(void)
 {
-	TIPC_VLD1_Type vld1;
-	vld1.w = TIPC->VLD1;
-	vld1.b.GPSEC = 1;
-	TIPC->VLD1 = vld1.w;
+    TIPC_VLD1_Type vld1;
+    vld1.w = TIPC->VLD1;
+    vld1.b.GPSEC = 1;
+    TIPC->VLD1 = vld1.w;
 }
 
 /**
@@ -908,10 +908,10 @@ __STATIC_INLINE void wm_tipc_enable_gpsec(void)
  */
 __STATIC_INLINE void wm_tipc_disable_gpsec(void)
 {
-	TIPC_VLD1_Type vld1;
-	vld1.w = TIPC->VLD1;
-	vld1.b.GPSEC = 0;
-	TIPC->VLD1 = vld1.w;
+    TIPC_VLD1_Type vld1;
+    vld1.w = TIPC->VLD1;
+    vld1.b.GPSEC = 0;
+    TIPC->VLD1 = vld1.w;
 }
 
 /**
@@ -925,10 +925,10 @@ __STATIC_INLINE void wm_tipc_disable_gpsec(void)
  */
 __STATIC_INLINE void wm_tipc_enable_bt(void)
 {
-	TIPC_VLD1_Type vld1;
-	vld1.w = TIPC->VLD1;
-	vld1.b.BT = 1;
-	TIPC->VLD1 = vld1.w;
+    TIPC_VLD1_Type vld1;
+    vld1.w = TIPC->VLD1;
+    vld1.b.BT = 1;
+    TIPC->VLD1 = vld1.w;
 }
 
 /**
@@ -942,10 +942,10 @@ __STATIC_INLINE void wm_tipc_enable_bt(void)
  */
 __STATIC_INLINE void wm_tipc_disable_bt(void)
 {
-	TIPC_VLD1_Type vld1;
-	vld1.w = TIPC->VLD1;
-	vld1.b.BT = 0;
-	TIPC->VLD1 = vld1.w;
+    TIPC_VLD1_Type vld1;
+    vld1.w = TIPC->VLD1;
+    vld1.b.BT = 0;
+    TIPC->VLD1 = vld1.w;
 }
 
 /**
@@ -959,10 +959,10 @@ __STATIC_INLINE void wm_tipc_disable_bt(void)
  */
 __STATIC_INLINE void wm_tipc_enable_pmu(void)
 {
-	TIPC_VLD1_Type vld1;
-	vld1.w = TIPC->VLD1;
-	vld1.b.PMU = 1;
-	TIPC->VLD1 = vld1.w;
+    TIPC_VLD1_Type vld1;
+    vld1.w = TIPC->VLD1;
+    vld1.b.PMU = 1;
+    TIPC->VLD1 = vld1.w;
 }
 
 /**
@@ -976,10 +976,10 @@ __STATIC_INLINE void wm_tipc_enable_pmu(void)
  */
 __STATIC_INLINE void wm_tipc_disable_pmu(void)
 {
-	TIPC_VLD1_Type vld1;
-	vld1.w = TIPC->VLD1;
-	vld1.b.PMU = 0;
-	TIPC->VLD1 = vld1.w;
+    TIPC_VLD1_Type vld1;
+    vld1.w = TIPC->VLD1;
+    vld1.b.PMU = 0;
+    TIPC->VLD1 = vld1.w;
 }
 
 /**
@@ -993,10 +993,10 @@ __STATIC_INLINE void wm_tipc_disable_pmu(void)
  */
 __STATIC_INLINE void wm_tipc_enable_clk_rst(void)
 {
-	TIPC_VLD1_Type vld1;
-	vld1.w = TIPC->VLD1;
-	vld1.b.CLK_RST = 1;
-	TIPC->VLD1 = vld1.w;
+    TIPC_VLD1_Type vld1;
+    vld1.w = TIPC->VLD1;
+    vld1.b.CLK_RST = 1;
+    TIPC->VLD1 = vld1.w;
 }
 
 /**
@@ -1010,10 +1010,10 @@ __STATIC_INLINE void wm_tipc_enable_clk_rst(void)
  */
 __STATIC_INLINE void wm_tipc_disable_clk_rst(void)
 {
-	TIPC_VLD1_Type vld1;
-	vld1.w = TIPC->VLD1;
-	vld1.b.CLK_RST = 0;
-	TIPC->VLD1 = vld1.w;
+    TIPC_VLD1_Type vld1;
+    vld1.w = TIPC->VLD1;
+    vld1.b.CLK_RST = 0;
+    TIPC->VLD1 = vld1.w;
 }
 
 /**
@@ -1027,10 +1027,10 @@ __STATIC_INLINE void wm_tipc_disable_clk_rst(void)
  */
 __STATIC_INLINE void wm_tipc_enable_mmu(void)
 {
-	TIPC_VLD1_Type vld1;
-	vld1.w = TIPC->VLD1;
-	vld1.b.MMU = 1;
-	TIPC->VLD1 = vld1.w;
+    TIPC_VLD1_Type vld1;
+    vld1.w = TIPC->VLD1;
+    vld1.b.MMU = 1;
+    TIPC->VLD1 = vld1.w;
 }
 
 /**
@@ -1044,10 +1044,10 @@ __STATIC_INLINE void wm_tipc_enable_mmu(void)
  */
 __STATIC_INLINE void wm_tipc_disable_mmu(void)
 {
-	TIPC_VLD1_Type vld1;
-	vld1.w = TIPC->VLD1;
-	vld1.b.MMU = 0;
-	TIPC->VLD1 = vld1.w;
+    TIPC_VLD1_Type vld1;
+    vld1.w = TIPC->VLD1;
+    vld1.b.MMU = 0;
+    TIPC->VLD1 = vld1.w;
 }
 
 /**
@@ -1061,10 +1061,10 @@ __STATIC_INLINE void wm_tipc_disable_mmu(void)
  */
 __STATIC_INLINE void wm_tipc_enable_bbp(void)
 {
-	TIPC_VLD1_Type vld1;
-	vld1.w = TIPC->VLD1;
-	vld1.b.BBP = 1;
-	TIPC->VLD1 = vld1.w;
+    TIPC_VLD1_Type vld1;
+    vld1.w = TIPC->VLD1;
+    vld1.b.BBP = 1;
+    TIPC->VLD1 = vld1.w;
 }
 
 /**
@@ -1078,10 +1078,10 @@ __STATIC_INLINE void wm_tipc_enable_bbp(void)
  */
 __STATIC_INLINE void wm_tipc_disable_bbp(void)
 {
-	TIPC_VLD1_Type vld1;
-	vld1.w = TIPC->VLD1;
-	vld1.b.BBP = 0;
-	TIPC->VLD1 = vld1.w;
+    TIPC_VLD1_Type vld1;
+    vld1.w = TIPC->VLD1;
+    vld1.b.BBP = 0;
+    TIPC->VLD1 = vld1.w;
 }
 
 /**
@@ -1095,10 +1095,10 @@ __STATIC_INLINE void wm_tipc_disable_bbp(void)
  */
 __STATIC_INLINE void wm_tipc_enable_mac(void)
 {
-	TIPC_VLD1_Type vld1;
-	vld1.w = TIPC->VLD1;
-	vld1.b.MAC = 1;
-	TIPC->VLD1 = vld1.w;
+    TIPC_VLD1_Type vld1;
+    vld1.w = TIPC->VLD1;
+    vld1.b.MAC = 1;
+    TIPC->VLD1 = vld1.w;
 }
 
 /**
@@ -1112,10 +1112,10 @@ __STATIC_INLINE void wm_tipc_enable_mac(void)
  */
 __STATIC_INLINE void wm_tipc_disable_mac(void)
 {
-	TIPC_VLD1_Type vld1;
-	vld1.w = TIPC->VLD1;
-	vld1.b.MAC = 0;
-	TIPC->VLD1 = vld1.w;
+    TIPC_VLD1_Type vld1;
+    vld1.w = TIPC->VLD1;
+    vld1.b.MAC = 0;
+    TIPC->VLD1 = vld1.w;
 }
 
 /**
@@ -1129,10 +1129,10 @@ __STATIC_INLINE void wm_tipc_disable_mac(void)
  */
 __STATIC_INLINE void wm_tipc_enable_sec(void)
 {
-	TIPC_VLD1_Type vld1;
-	vld1.w = TIPC->VLD1;
-	vld1.b.SEC = 1;
-	TIPC->VLD1 = vld1.w;
+    TIPC_VLD1_Type vld1;
+    vld1.w = TIPC->VLD1;
+    vld1.b.SEC = 1;
+    TIPC->VLD1 = vld1.w;
 }
 
 /**
@@ -1146,10 +1146,10 @@ __STATIC_INLINE void wm_tipc_enable_sec(void)
  */
 __STATIC_INLINE void wm_tipc_disable_sec(void)
 {
-	TIPC_VLD1_Type vld1;
-	vld1.w = TIPC->VLD1;
-	vld1.b.SEC = 0;
-	TIPC->VLD1 = vld1.w;
+    TIPC_VLD1_Type vld1;
+    vld1.w = TIPC->VLD1;
+    vld1.b.SEC = 0;
+    TIPC->VLD1 = vld1.w;
 }
 
 /**
@@ -1163,10 +1163,10 @@ __STATIC_INLINE void wm_tipc_disable_sec(void)
  */
 __STATIC_INLINE void wm_tipc_enable_sdio_slave(void)
 {
-	TIPC_VLD1_Type vld1;
-	vld1.w = TIPC->VLD1;
-	vld1.b.SDIO_SLAVE = 1;
-	TIPC->VLD1 = vld1.w;
+    TIPC_VLD1_Type vld1;
+    vld1.w = TIPC->VLD1;
+    vld1.b.SDIO_SLAVE = 1;
+    TIPC->VLD1 = vld1.w;
 }
 
 /**
@@ -1180,10 +1180,10 @@ __STATIC_INLINE void wm_tipc_enable_sdio_slave(void)
  */
 __STATIC_INLINE void wm_tipc_disable_sdio_slave(void)
 {
-	TIPC_VLD1_Type vld1;
-	vld1.w = TIPC->VLD1;
-	vld1.b.SDIO_SLAVE = 0;
-	TIPC->VLD1 = vld1.w;
+    TIPC_VLD1_Type vld1;
+    vld1.w = TIPC->VLD1;
+    vld1.b.SDIO_SLAVE = 0;
+    TIPC->VLD1 = vld1.w;
 }
 
 /**
@@ -1197,10 +1197,10 @@ __STATIC_INLINE void wm_tipc_disable_sdio_slave(void)
  */
 __STATIC_INLINE void wm_tipc_enable_hspi(void)
 {
-	TIPC_VLD1_Type vld1;
-	vld1.w = TIPC->VLD1;
-	vld1.b.SPI_HS = 1;
-	TIPC->VLD1 = vld1.w;
+    TIPC_VLD1_Type vld1;
+    vld1.w = TIPC->VLD1;
+    vld1.b.SPI_HS = 1;
+    TIPC->VLD1 = vld1.w;
 }
 
 /**
@@ -1214,10 +1214,10 @@ __STATIC_INLINE void wm_tipc_enable_hspi(void)
  */
 __STATIC_INLINE void wm_tipc_disable_hspi(void)
 {
-	TIPC_VLD1_Type vld1;
-	vld1.w = TIPC->VLD1;
-	vld1.b.SPI_HS = 0;
-	TIPC->VLD1 = vld1.w;
+    TIPC_VLD1_Type vld1;
+    vld1.w = TIPC->VLD1;
+    vld1.b.SPI_HS = 0;
+    TIPC->VLD1 = vld1.w;
 }
 
 /**
@@ -1231,10 +1231,10 @@ __STATIC_INLINE void wm_tipc_disable_hspi(void)
  */
 __STATIC_INLINE void wm_tipc_enable_sdio_wrapper(void)
 {
-	TIPC_VLD1_Type vld1;
-	vld1.w = TIPC->VLD1;
-	vld1.b.SDIO_WRAPPER = 1;
-	TIPC->VLD1 = vld1.w;
+    TIPC_VLD1_Type vld1;
+    vld1.w = TIPC->VLD1;
+    vld1.b.SDIO_WRAPPER = 1;
+    TIPC->VLD1 = vld1.w;
 }
 
 /**
@@ -1248,10 +1248,10 @@ __STATIC_INLINE void wm_tipc_enable_sdio_wrapper(void)
  */
 __STATIC_INLINE void wm_tipc_disable_sdio_wrapper(void)
 {
-	TIPC_VLD1_Type vld1;
-	vld1.w = TIPC->VLD1;
-	vld1.b.SDIO_WRAPPER = 0;
-	TIPC->VLD1 = vld1.w;
+    TIPC_VLD1_Type vld1;
+    vld1.w = TIPC->VLD1;
+    vld1.b.SDIO_WRAPPER = 0;
+    TIPC->VLD1 = vld1.w;
 }
 
 /**
@@ -1265,10 +1265,10 @@ __STATIC_INLINE void wm_tipc_disable_sdio_wrapper(void)
  */
 __STATIC_INLINE void wm_tipc_enable_rf_bist(void)
 {
-	TIPC_VLD1_Type vld1;
-	vld1.w = TIPC->VLD1;
-	vld1.b.RF_BIST = 1;
-	TIPC->VLD1 = vld1.w;
+    TIPC_VLD1_Type vld1;
+    vld1.w = TIPC->VLD1;
+    vld1.b.RF_BIST = 1;
+    TIPC->VLD1 = vld1.w;
 }
 
 /**
@@ -1282,10 +1282,10 @@ __STATIC_INLINE void wm_tipc_enable_rf_bist(void)
  */
 __STATIC_INLINE void wm_tipc_disable_rf_bist(void)
 {
-	TIPC_VLD1_Type vld1;
-	vld1.w = TIPC->VLD1;
-	vld1.b.RF_BIST = 0;
-	TIPC->VLD1 = vld1.w;
+    TIPC_VLD1_Type vld1;
+    vld1.w = TIPC->VLD1;
+    vld1.b.RF_BIST = 0;
+    TIPC->VLD1 = vld1.w;
 }
 
 /**

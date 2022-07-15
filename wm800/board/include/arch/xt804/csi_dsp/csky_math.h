@@ -32,7 +32,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  * -------------------------------------------------------------------------- */
 
-
 /**
  * @defgroup groupMath Basic Math Functions
  */
@@ -153,7 +152,6 @@
  * bilinear interpolation is used for 2-dimensional data.
  */
 
-
 /**
  * @defgroup groupYunvoice Yunvoice Functions
  * These functions are designed for Yunvoice project, which are modified
@@ -164,7 +162,6 @@
 /**
  * @defgroup groupExamples Examples
  */
-
 
 #ifndef _CSKY_MATH_H
 #define _CSKY_MATH_H
@@ -181,7 +178,6 @@
 extern "C"
 {
 #endif
-
 
   /**
    * @brief Macros required for reciprocal calculation in Normalized LMS
@@ -221,7 +217,6 @@ extern "C"
 #else
     #define ALIGN4 __attribute__((aligned(4)))
 #endif   /* #ifndef UNALIGNED_SUPPORT_DISABLE */
-
 
   /**
    * @brief Macro for log , pow and related fast functions.
@@ -271,7 +266,6 @@ extern "C"
                 (((((y)-r)+(x))+(xx))+(yy));       \
         z=r+s;  zz=(r-z)+s;
 
-
 /* Double-length subtraction, Dekker. The macro produces a double-length  */
 /* number (z,zz) which satisfies approximately   z+zz = x+xx - (y+yy).    */
 /* An error bound: (abs(x+xx)+abs(y+yy))*4.94e-32. (x,xx), (y,yy)         */
@@ -283,7 +277,6 @@ extern "C"
                 (((((x)-r)-(y))-(yy))+(xx)) :      \
                 ((((x)-((y)+r))+(xx))-(yy));       \
         z=r+s;  zz=(r-z)+s;
-
 
 /* Double-length multiplication, Dekker. The macro produces a double-length  */
 /* number (z,zz) which satisfies approximately   z+zz = (x+xx)*(y+yy).       */
@@ -486,7 +479,6 @@ __STATIC_INLINE int32_t mult_h16xh16_keep32(int32_t x, int32_t y)
 
 #endif
 
-
   /**
    * @brief Error status returned by some functions in the library.
    */
@@ -570,7 +562,6 @@ __STATIC_INLINE int32_t mult_h16xh16_keep32(int32_t x, int32_t y)
 
 #endif
 
-
    /**
    * @brief definition to pack four 8 bit values.
    */
@@ -640,69 +631,68 @@ __STATIC_INLINE int32_t mult_h16xh16_keep32(int32_t x, int32_t y)
   } csky_fir_instance_f32;
 
   void csky_fir_q7(
-  const csky_fir_instance_q7 * S,
-  q7_t * pSrc,
-  q7_t * pDst,
+  const csky_fir_instance_q7 *S,
+  q7_t *pSrc,
+  q7_t *pDst,
   uint32_t blockSize);
 
   void csky_fir_init_q7(
-  csky_fir_instance_q7 * S,
+  csky_fir_instance_q7 *S,
   uint16_t numTaps,
-  q7_t * pCoeffs,
-  q7_t * pState,
+  q7_t *pCoeffs,
+  q7_t *pState,
   uint32_t blockSize);
 
   void csky_fir_q15(
-  const csky_fir_instance_q15 * S,
-  q15_t * pSrc,
-  q15_t * pDst,
+  const csky_fir_instance_q15 *S,
+  q15_t *pSrc,
+  q15_t *pDst,
   uint32_t blockSize);
 
   void csky_fir_fast_q15(
-  const csky_fir_instance_q15 * S,
-  q15_t * pSrc,
-  q15_t * pDst,
+  const csky_fir_instance_q15 *S,
+  q15_t *pSrc,
+  q15_t *pDst,
   uint32_t blockSize);
 
   csky_status csky_fir_init_q15(
-  csky_fir_instance_q15 * S,
+  csky_fir_instance_q15 *S,
   uint16_t numTaps,
-  q15_t * pCoeffs,
-  q15_t * pState,
+  q15_t *pCoeffs,
+  q15_t *pState,
   uint32_t blockSize);
 
   void csky_fir_q31(
-  const csky_fir_instance_q31 * S,
-  q31_t * pSrc,
-  q31_t * pDst,
+  const csky_fir_instance_q31 *S,
+  q31_t *pSrc,
+  q31_t *pDst,
   uint32_t blockSize);
 
   void csky_fir_fast_q31(
-  const csky_fir_instance_q31 * S,
-  q31_t * pSrc,
-  q31_t * pDst,
+  const csky_fir_instance_q31 *S,
+  q31_t *pSrc,
+  q31_t *pDst,
   uint32_t blockSize);
 
   void csky_fir_init_q31(
-  csky_fir_instance_q31 * S,
+  csky_fir_instance_q31 *S,
   uint16_t numTaps,
-  q31_t * pCoeffs,
-  q31_t * pState,
+  q31_t *pCoeffs,
+  q31_t *pState,
   uint32_t blockSize);
 
   void csky_fir_f32(
-  const csky_fir_instance_f32 * S,
-  float32_t * pSrc,
-  float32_t * pDst,
+  const csky_fir_instance_f32 *S,
+  float32_t *pSrc,
+  float32_t *pDst,
   uint32_t blockSize);
 
   void csky_fir_init_f32(
-  csky_fir_instance_f32 * S,
+  csky_fir_instance_f32 *S,
   uint16_t numTaps,
-  float32_t * pCoeffs,
-  float32_t * pState,
+  float32_t *pCoeffs,
+  float32_t *pState,
   uint32_t blockSize);
-
 
   /**
    * @brief Instance structure for the Q15 Biquad cascade filter.
@@ -741,55 +731,54 @@ __STATIC_INLINE int32_t mult_h16xh16_keep32(int32_t x, int32_t y)
   } csky_biquad_casd_df1_inst_f32;
 
   void csky_biquad_cascade_df1_q15(
-  const csky_biquad_casd_df1_inst_q15 * S,
-  q15_t * pSrc,
-  q15_t * pDst,
+  const csky_biquad_casd_df1_inst_q15 *S,
+  q15_t *pSrc,
+  q15_t *pDst,
   uint32_t blockSize);
 
   void csky_biquad_cascade_df1_init_q15(
-  csky_biquad_casd_df1_inst_q15 * S,
+  csky_biquad_casd_df1_inst_q15 *S,
   uint8_t numStages,
-  q15_t * pCoeffs,
-  q15_t * pState,
+  q15_t *pCoeffs,
+  q15_t *pState,
   int8_t postShift);
 
   void csky_biquad_cascade_df1_fast_q15(
-  const csky_biquad_casd_df1_inst_q15 * S,
-  q15_t * pSrc,
-  q15_t * pDst,
+  const csky_biquad_casd_df1_inst_q15 *S,
+  q15_t *pSrc,
+  q15_t *pDst,
   uint32_t blockSize);
 
   void csky_biquad_cascade_df1_q31(
-  const csky_biquad_casd_df1_inst_q31 * S,
-  q31_t * pSrc,
-  q31_t * pDst,
+  const csky_biquad_casd_df1_inst_q31 *S,
+  q31_t *pSrc,
+  q31_t *pDst,
   uint32_t blockSize);
 
   void csky_biquad_cascade_df1_fast_q31(
-  const csky_biquad_casd_df1_inst_q31 * S,
-  q31_t * pSrc,
-  q31_t * pDst,
+  const csky_biquad_casd_df1_inst_q31 *S,
+  q31_t *pSrc,
+  q31_t *pDst,
   uint32_t blockSize);
 
   void csky_biquad_cascade_df1_init_q31(
-  csky_biquad_casd_df1_inst_q31 * S,
+  csky_biquad_casd_df1_inst_q31 *S,
   uint8_t numStages,
-  q31_t * pCoeffs,
-  q31_t * pState,
+  q31_t *pCoeffs,
+  q31_t *pState,
   int8_t postShift);
 
   void csky_biquad_cascade_df1_f32(
-  const csky_biquad_casd_df1_inst_f32 * S,
-  float32_t * pSrc,
-  float32_t * pDst,
+  const csky_biquad_casd_df1_inst_f32 *S,
+  float32_t *pSrc,
+  float32_t *pDst,
   uint32_t blockSize);
 
   void csky_biquad_cascade_df1_init_f32(
-  csky_biquad_casd_df1_inst_f32 * S,
+  csky_biquad_casd_df1_inst_f32 *S,
   uint8_t numStages,
-  float32_t * pCoeffs,
-  float32_t * pState);
-
+  float32_t *pCoeffs,
+  float32_t *pState);
 
   /**
    * @brief Instance structure for the floating-point matrix structure.
@@ -800,7 +789,6 @@ __STATIC_INLINE int32_t mult_h16xh16_keep32(int32_t x, int32_t y)
     uint16_t numCols;     /**< number of columns of the matrix.  */
     float32_t *pData;     /**< points to the data of the matrix. */
   } csky_matrix_instance_f32;
-
 
   /**
    * @brief Instance structure for the floating-point matrix structure.
@@ -833,127 +821,127 @@ __STATIC_INLINE int32_t mult_h16xh16_keep32(int32_t x, int32_t y)
   } csky_matrix_instance_q31;
 
   csky_status csky_mat_add_f32(
-  const csky_matrix_instance_f32 * pSrcA,
-  const csky_matrix_instance_f32 * pSrcB,
-  csky_matrix_instance_f32 * pDst);
+  const csky_matrix_instance_f32 *pSrcA,
+  const csky_matrix_instance_f32 *pSrcB,
+  csky_matrix_instance_f32 *pDst);
 
   csky_status csky_mat_add_q15(
-  const csky_matrix_instance_q15 * pSrcA,
-  const csky_matrix_instance_q15 * pSrcB,
-  csky_matrix_instance_q15 * pDst);
+  const csky_matrix_instance_q15 *pSrcA,
+  const csky_matrix_instance_q15 *pSrcB,
+  csky_matrix_instance_q15 *pDst);
 
   csky_status csky_mat_add_q31(
-  const csky_matrix_instance_q31 * pSrcA,
-  const csky_matrix_instance_q31 * pSrcB,
-  csky_matrix_instance_q31 * pDst);
+  const csky_matrix_instance_q31 *pSrcA,
+  const csky_matrix_instance_q31 *pSrcB,
+  csky_matrix_instance_q31 *pDst);
 
   csky_status csky_mat_cmplx_mult_f32(
-  const csky_matrix_instance_f32 * pSrcA,
-  const csky_matrix_instance_f32 * pSrcB,
-  csky_matrix_instance_f32 * pDst);
+  const csky_matrix_instance_f32 *pSrcA,
+  const csky_matrix_instance_f32 *pSrcB,
+  csky_matrix_instance_f32 *pDst);
 
   csky_status csky_mat_cmplx_mult_q15(
-  const csky_matrix_instance_q15 * pSrcA,
-  const csky_matrix_instance_q15 * pSrcB,
-  csky_matrix_instance_q15 * pDst,
-  q15_t * pScratch);
+  const csky_matrix_instance_q15 *pSrcA,
+  const csky_matrix_instance_q15 *pSrcB,
+  csky_matrix_instance_q15 *pDst,
+  q15_t *pScratch);
 
   csky_status csky_mat_cmplx_mult_q31(
-  const csky_matrix_instance_q31 * pSrcA,
-  const csky_matrix_instance_q31 * pSrcB,
-  csky_matrix_instance_q31 * pDst);
+  const csky_matrix_instance_q31 *pSrcA,
+  const csky_matrix_instance_q31 *pSrcB,
+  csky_matrix_instance_q31 *pDst);
 
   csky_status csky_mat_trans_f32(
-  const csky_matrix_instance_f32 * pSrc,
-  csky_matrix_instance_f32 * pDst);
+  const csky_matrix_instance_f32 *pSrc,
+  csky_matrix_instance_f32 *pDst);
 
   csky_status csky_mat_trans_q15(
-  const csky_matrix_instance_q15 * pSrc,
-  csky_matrix_instance_q15 * pDst);
+  const csky_matrix_instance_q15 *pSrc,
+  csky_matrix_instance_q15 *pDst);
 
   csky_status csky_mat_trans_q31(
-  const csky_matrix_instance_q31 * pSrc,
-  csky_matrix_instance_q31 * pDst);
+  const csky_matrix_instance_q31 *pSrc,
+  csky_matrix_instance_q31 *pDst);
 
   csky_status csky_mat_mult_f32(
-  const csky_matrix_instance_f32 * pSrcA,
-  const csky_matrix_instance_f32 * pSrcB,
-  csky_matrix_instance_f32 * pDst);
+  const csky_matrix_instance_f32 *pSrcA,
+  const csky_matrix_instance_f32 *pSrcB,
+  csky_matrix_instance_f32 *pDst);
 
   csky_status csky_mat_mult_q15(
-  const csky_matrix_instance_q15 * pSrcA,
-  const csky_matrix_instance_q15 * pSrcB,
-  csky_matrix_instance_q15 * pDst,
-  q15_t * pState);
+  const csky_matrix_instance_q15 *pSrcA,
+  const csky_matrix_instance_q15 *pSrcB,
+  csky_matrix_instance_q15 *pDst,
+  q15_t *pState);
 
   csky_status csky_mat_mult_fast_q15(
-  const csky_matrix_instance_q15 * pSrcA,
-  const csky_matrix_instance_q15 * pSrcB,
-  csky_matrix_instance_q15 * pDst,
-  q15_t * pState);
+  const csky_matrix_instance_q15 *pSrcA,
+  const csky_matrix_instance_q15 *pSrcB,
+  csky_matrix_instance_q15 *pDst,
+  q15_t *pState);
 
   csky_status csky_mat_mult_q31(
-  const csky_matrix_instance_q31 * pSrcA,
-  const csky_matrix_instance_q31 * pSrcB,
-  csky_matrix_instance_q31 * pDst);
+  const csky_matrix_instance_q31 *pSrcA,
+  const csky_matrix_instance_q31 *pSrcB,
+  csky_matrix_instance_q31 *pDst);
 
   csky_status csky_mat_mult_fast_q31(
-  const csky_matrix_instance_q31 * pSrcA,
-  const csky_matrix_instance_q31 * pSrcB,
-  csky_matrix_instance_q31 * pDst);
+  const csky_matrix_instance_q31 *pSrcA,
+  const csky_matrix_instance_q31 *pSrcB,
+  csky_matrix_instance_q31 *pDst);
 
   csky_status csky_mat_sub_f32(
-  const csky_matrix_instance_f32 * pSrcA,
-  const csky_matrix_instance_f32 * pSrcB,
-  csky_matrix_instance_f32 * pDst);
+  const csky_matrix_instance_f32 *pSrcA,
+  const csky_matrix_instance_f32 *pSrcB,
+  csky_matrix_instance_f32 *pDst);
 
   csky_status csky_mat_sub_q15(
-  const csky_matrix_instance_q15 * pSrcA,
-  const csky_matrix_instance_q15 * pSrcB,
-  csky_matrix_instance_q15 * pDst);
+  const csky_matrix_instance_q15 *pSrcA,
+  const csky_matrix_instance_q15 *pSrcB,
+  csky_matrix_instance_q15 *pDst);
 
   csky_status csky_mat_sub_q31(
-  const csky_matrix_instance_q31 * pSrcA,
-  const csky_matrix_instance_q31 * pSrcB,
-  csky_matrix_instance_q31 * pDst);
+  const csky_matrix_instance_q31 *pSrcA,
+  const csky_matrix_instance_q31 *pSrcB,
+  csky_matrix_instance_q31 *pDst);
 
   csky_status csky_mat_scale_f32(
-  const csky_matrix_instance_f32 * pSrc,
+  const csky_matrix_instance_f32 *pSrc,
   float32_t scale,
-  csky_matrix_instance_f32 * pDst);
+  csky_matrix_instance_f32 *pDst);
 
   csky_status csky_mat_scale_q15(
-  const csky_matrix_instance_q15 * pSrc,
+  const csky_matrix_instance_q15 *pSrc,
   q15_t scaleFract,
   int32_t shift,
-  csky_matrix_instance_q15 * pDst);
+  csky_matrix_instance_q15 *pDst);
 
   csky_status csky_mat_scale_q31(
-  const csky_matrix_instance_q31 * pSrc,
+  const csky_matrix_instance_q31 *pSrc,
   q31_t scaleFract,
   int32_t shift,
-  csky_matrix_instance_q31 * pDst);
+  csky_matrix_instance_q31 *pDst);
 
   void csky_mat_init_q31(
-  csky_matrix_instance_q31 * S,
+  csky_matrix_instance_q31 *S,
   uint16_t nRows,
   uint16_t nColumns,
-  q31_t * pData);
+  q31_t *pData);
 
   void csky_mat_init_q15(
-  csky_matrix_instance_q15 * S,
+  csky_matrix_instance_q15 *S,
   uint16_t nRows,
   uint16_t nColumns,
-  q15_t * pData);
+  q15_t *pData);
 
   void csky_mat_init_f32(
-  csky_matrix_instance_f32 * S,
+  csky_matrix_instance_f32 *S,
   uint16_t nRows,
   uint16_t nColumns,
-  float32_t * pData);
+  float32_t *pData);
 
   /**
-   * @brief Instance structure for the Q15 PID Control.
+   *@brief Instance structure for the Q15 PID Control.
    */
   typedef struct
   {
@@ -995,26 +983,25 @@ __STATIC_INLINE int32_t mult_h16xh16_keep32(int32_t x, int32_t y)
   } csky_pid_instance_f32;
 
   void csky_pid_init_f32(
-  csky_pid_instance_f32 * S,
+  csky_pid_instance_f32 *S,
   int32_t resetStateFlag);
 
   void csky_pid_reset_f32(
-  csky_pid_instance_f32 * S);
+  csky_pid_instance_f32 *S);
 
   void csky_pid_init_q31(
-  csky_pid_instance_q31 * S,
+  csky_pid_instance_q31 *S,
   int32_t resetStateFlag);
 
   void csky_pid_reset_q31(
-  csky_pid_instance_q31 * S);
+  csky_pid_instance_q31 *S);
 
   void csky_pid_init_q15(
-  csky_pid_instance_q15 * S,
+  csky_pid_instance_q15 *S,
   int32_t resetStateFlag);
 
   void csky_pid_reset_q15(
-  csky_pid_instance_q15 * S);
-
+  csky_pid_instance_q15 *S);
 
   /**
    * @brief Instance structure for the floating-point Linear Interpolate function.
@@ -1068,35 +1055,34 @@ __STATIC_INLINE int32_t mult_h16xh16_keep32(int32_t x, int32_t y)
   } csky_bilinear_interp_instance_q7;
 
   void csky_mult_q7(
-  q7_t * pSrcA,
-  q7_t * pSrcB,
-  q7_t * pDst,
+  q7_t *pSrcA,
+  q7_t *pSrcB,
+  q7_t *pDst,
   uint32_t blockSize);
 
   void csky_mult_q15(
-  q15_t * pSrcA,
-  q15_t * pSrcB,
-  q15_t * pDst,
+  q15_t *pSrcA,
+  q15_t *pSrcB,
+  q15_t *pDst,
   uint32_t blockSize);
 
   void csky_mult_rnd_q15(
-  q15_t * pSrcA,
-  q15_t * pSrcB,
-  q15_t * pDst,
+  q15_t *pSrcA,
+  q15_t *pSrcB,
+  q15_t *pDst,
   uint32_t blockSize);
 
   void csky_mult_q31(
-  q31_t * pSrcA,
-  q31_t * pSrcB,
-  q31_t * pDst,
+  q31_t *pSrcA,
+  q31_t *pSrcB,
+  q31_t *pDst,
   uint32_t blockSize);
 
   void csky_mult_f32(
-  float32_t * pSrcA,
-  float32_t * pSrcB,
-  float32_t * pDst,
+  float32_t *pSrcA,
+  float32_t *pSrcB,
+  float32_t *pDst,
   uint32_t blockSize);
-
 
   /**
    * @brief Instance structure for the Q15 CFFT/CIFFT function.
@@ -1196,8 +1182,8 @@ __STATIC_INLINE int32_t mult_h16xh16_keep32(int32_t x, int32_t y)
   } csky_cfft_instance_q15;
 
 void csky_cfft_q15(
-    const csky_cfft_instance_q15 * S,
-    q15_t * p1,
+    const csky_cfft_instance_q15 *S,
+    q15_t *p1,
     uint8_t ifftFlag,
     uint8_t bitReverseFlag);
 
@@ -1213,8 +1199,8 @@ void csky_cfft_q15(
   } csky_cfft_instance_q31;
 
 void csky_cfft_q31(
-    const csky_cfft_instance_q31 * S,
-    q31_t * p1,
+    const csky_cfft_instance_q31 *S,
+    q31_t *p1,
     uint8_t ifftFlag,
     uint8_t bitReverseFlag);
 
@@ -1230,8 +1216,8 @@ void csky_cfft_q31(
   } csky_cfft_instance_f32;
 
   void csky_cfft_f32(
-  const csky_cfft_instance_f32 * S,
-  float32_t * p1,
+  const csky_cfft_instance_f32 *S,
+  float32_t *p1,
   uint8_t ifftFlag,
   uint8_t bitReverseFlag);
 
@@ -1249,15 +1235,15 @@ void csky_cfft_q31(
   } csky_rfft_instance_q15;
 
   csky_status csky_rfft_init_q15(
-  csky_rfft_instance_q15 * S,
+  csky_rfft_instance_q15 *S,
   uint32_t fftLenReal,
   uint32_t ifftFlagR,
   uint32_t bitReverseFlag);
 
   void csky_rfft_q15(
-  const csky_rfft_instance_q15 * S,
-  q15_t * pSrc,
-  q15_t * pDst);
+  const csky_rfft_instance_q15 *S,
+  q15_t *pSrc,
+  q15_t *pDst);
 
   /**
    * @brief Instance structure for the Q31 RFFT/RIFFT function.
@@ -1273,15 +1259,15 @@ void csky_cfft_q31(
   } csky_rfft_instance_q31;
 
   csky_status csky_rfft_init_q31(
-  csky_rfft_instance_q31 * S,
+  csky_rfft_instance_q31 *S,
   uint32_t fftLenReal,
   uint32_t ifftFlagR,
   uint32_t bitReverseFlag);
 
   void csky_rfft_q31(
-  const csky_rfft_instance_q31 * S,
-  q31_t * pSrc,
-  q31_t * pDst);
+  const csky_rfft_instance_q31 *S,
+  q31_t *pSrc,
+  q31_t *pDst);
 
   /**
    * @brief Instance structure for the floating-point RFFT/RIFFT function.
@@ -1299,16 +1285,16 @@ void csky_cfft_q31(
   } csky_rfft_instance_f32;
 
   csky_status csky_rfft_init_f32(
-  csky_rfft_instance_f32 * S,
-  csky_cfft_radix4_instance_f32 * S_CFFT,
+  csky_rfft_instance_f32 *S,
+  csky_cfft_radix4_instance_f32 *S_CFFT,
   uint32_t fftLenReal,
   uint32_t ifftFlagR,
   uint32_t bitReverseFlag);
 
   void csky_rfft_f32(
-  const csky_rfft_instance_f32 * S,
-  float32_t * pSrc,
-  float32_t * pDst);
+  const csky_rfft_instance_f32 *S,
+  float32_t *pSrc,
+  float32_t *pDst);
 
   /**
    * @brief Instance structure for the floating-point RFFT/RIFFT function.
@@ -1317,16 +1303,16 @@ typedef struct
   {
     csky_cfft_instance_f32 Sint;     /**< Internal CFFT structure. */
     uint16_t fftLenRFFT;             /**< length of the real sequence */
-    float32_t * pTwiddleRFFT;        /**< Twiddle factors real stage  */
+    float32_t *pTwiddleRFFT;        /**< Twiddle factors real stage  */
   } csky_rfft_fast_instance_f32 ;
 
 csky_status csky_rfft_fast_init_f32 (
-   csky_rfft_fast_instance_f32 * S,
+   csky_rfft_fast_instance_f32 *S,
    uint16_t fftLen);
 
 void csky_rfft_fast_f32(
-  csky_rfft_fast_instance_f32 * S,
-  float32_t * p, float32_t * pOut,
+  csky_rfft_fast_instance_f32 *S,
+  float32_t *p, float32_t *pOut,
   uint8_t ifftFlag);
 
   /**
@@ -1344,18 +1330,17 @@ void csky_rfft_fast_f32(
   } csky_dct4_instance_f32;
 
   csky_status csky_dct4_init_f32(
-  csky_dct4_instance_f32 * S,
-  csky_rfft_fast_instance_f32 * S_RFFT,
-  csky_cfft_radix4_instance_f32 * S_CFFT,
+  csky_dct4_instance_f32 *S,
+  csky_rfft_fast_instance_f32 *S_RFFT,
+  csky_cfft_radix4_instance_f32 *S_CFFT,
   uint16_t N,
   uint16_t Nby2,
   float32_t normalize);
 
   void csky_dct4_f32(
-  const csky_dct4_instance_f32 * S,
-  float32_t * pState,
-  float32_t * pInlineBuffer);
-
+  const csky_dct4_instance_f32 *S,
+  float32_t *pState,
+  float32_t *pInlineBuffer);
 
   /**
    * @brief Instance structure for the Q31 DCT4/IDCT4 function.
@@ -1372,17 +1357,17 @@ void csky_rfft_fast_f32(
   } csky_dct4_instance_q31;
 
   csky_status csky_dct4_init_q31(
-  csky_dct4_instance_q31 * S,
-  csky_rfft_instance_q31 * S_RFFT,
-  csky_cfft_radix4_instance_q31 * S_CFFT,
+  csky_dct4_instance_q31 *S,
+  csky_rfft_instance_q31 *S_RFFT,
+  csky_cfft_radix4_instance_q31 *S_CFFT,
   uint16_t N,
   uint16_t Nby2,
   q31_t normalize);
 
   void csky_dct4_q31(
-  const csky_dct4_instance_q31 * S,
-  q31_t * pState,
-  q31_t * pInlineBuffer);
+  const csky_dct4_instance_q31 *S,
+  q31_t *pState,
+  q31_t *pInlineBuffer);
 
   /**
    * @brief Instance structure for the Q15 DCT4/IDCT4 function.
@@ -1399,403 +1384,402 @@ void csky_rfft_fast_f32(
   } csky_dct4_instance_q15;
 
   csky_status csky_dct4_init_q15(
-  csky_dct4_instance_q15 * S,
-  csky_rfft_instance_q15 * S_RFFT,
-  csky_cfft_radix4_instance_q15 * S_CFFT,
+  csky_dct4_instance_q15 *S,
+  csky_rfft_instance_q15 *S_RFFT,
+  csky_cfft_radix4_instance_q15 *S_CFFT,
   uint16_t N,
   uint16_t Nby2,
   q15_t normalize);
 
   void csky_dct4_q15(
-  const csky_dct4_instance_q15 * S,
-  q15_t * pState,
-  q15_t * pInlineBuffer);
+  const csky_dct4_instance_q15 *S,
+  q15_t *pState,
+  q15_t *pInlineBuffer);
 
   void csky_add_f32(
-  float32_t * pSrcA,
-  float32_t * pSrcB,
-  float32_t * pDst,
+  float32_t *pSrcA,
+  float32_t *pSrcB,
+  float32_t *pDst,
   uint32_t blockSize);
 
   void csky_add_q7(
-  q7_t * pSrcA,
-  q7_t * pSrcB,
-  q7_t * pDst,
+  q7_t *pSrcA,
+  q7_t *pSrcB,
+  q7_t *pDst,
   uint32_t blockSize);
 
   void csky_add_q15(
-  q15_t * pSrcA,
-  q15_t * pSrcB,
-  q15_t * pDst,
+  q15_t *pSrcA,
+  q15_t *pSrcB,
+  q15_t *pDst,
   uint32_t blockSize);
 
   void csky_add_q31(
-  q31_t * pSrcA,
-  q31_t * pSrcB,
-  q31_t * pDst,
+  q31_t *pSrcA,
+  q31_t *pSrcB,
+  q31_t *pDst,
   uint32_t blockSize);
 
   void csky_sub_f32(
-  float32_t * pSrcA,
-  float32_t * pSrcB,
-  float32_t * pDst,
+  float32_t *pSrcA,
+  float32_t *pSrcB,
+  float32_t *pDst,
   uint32_t blockSize);
 
   void csky_sub_q7(
-  q7_t * pSrcA,
-  q7_t * pSrcB,
-  q7_t * pDst,
+  q7_t *pSrcA,
+  q7_t *pSrcB,
+  q7_t *pDst,
   uint32_t blockSize);
 
   void csky_sub_q15(
-  q15_t * pSrcA,
-  q15_t * pSrcB,
-  q15_t * pDst,
+  q15_t *pSrcA,
+  q15_t *pSrcB,
+  q15_t *pDst,
   uint32_t blockSize);
 
   void csky_sub_q31(
-  q31_t * pSrcA,
-  q31_t * pSrcB,
-  q31_t * pDst,
+  q31_t *pSrcA,
+  q31_t *pSrcB,
+  q31_t *pDst,
   uint32_t blockSize);
 
   void csky_scale_f32(
-  float32_t * pSrc,
+  float32_t *pSrc,
   float32_t scale,
-  float32_t * pDst,
+  float32_t *pDst,
   uint32_t blockSize);
 
   void csky_scale_q7(
-  q7_t * pSrc,
+  q7_t *pSrc,
   q7_t scaleFract,
   int8_t shift,
-  q7_t * pDst,
+  q7_t *pDst,
   uint32_t blockSize);
 
   void csky_scale_q15(
-  q15_t * pSrc,
+  q15_t *pSrc,
   q15_t scaleFract,
   int8_t shift,
-  q15_t * pDst,
+  q15_t *pDst,
   uint32_t blockSize);
 
   void csky_scale_q31(
-  q31_t * pSrc,
+  q31_t *pSrc,
   q31_t scaleFract,
   int8_t shift,
-  q31_t * pDst,
+  q31_t *pDst,
   uint32_t blockSize);
 
   void csky_abs_q7(
-  q7_t * pSrc,
-  q7_t * pDst,
+  q7_t *pSrc,
+  q7_t *pDst,
   uint32_t blockSize);
 
   void csky_abs_f32(
-  float32_t * pSrc,
-  float32_t * pDst,
+  float32_t *pSrc,
+  float32_t *pDst,
   uint32_t blockSize);
 
   void csky_abs_q15(
-  q15_t * pSrc,
-  q15_t * pDst,
+  q15_t *pSrc,
+  q15_t *pDst,
   uint32_t blockSize);
 
   void csky_abs_q31(
-  q31_t * pSrc,
-  q31_t * pDst,
+  q31_t *pSrc,
+  q31_t *pDst,
   uint32_t blockSize);
 
   void csky_abs_max_q15(
-  q15_t * pSrc,
-  q15_t * pDst,
+  q15_t *pSrc,
+  q15_t *pDst,
   uint32_t blockSize);
 
   void csky_abs_max_q31(
-  q31_t * pSrc,
-  q31_t * pDst,
+  q31_t *pSrc,
+  q31_t *pDst,
   uint32_t blockSize);
 
-
   void csky_dot_prod_f32(
-  float32_t * pSrcA,
-  float32_t * pSrcB,
+  float32_t *pSrcA,
+  float32_t *pSrcB,
   uint32_t blockSize,
-  float32_t * result);
+  float32_t *result);
 
   void csky_dot_prod_q7(
-  q7_t * pSrcA,
-  q7_t * pSrcB,
+  q7_t *pSrcA,
+  q7_t *pSrcB,
   uint32_t blockSize,
-  q31_t * result);
+  q31_t *result);
 
   void csky_dot_prod_q15(
-  q15_t * pSrcA,
-  q15_t * pSrcB,
+  q15_t *pSrcA,
+  q15_t *pSrcB,
   uint32_t blockSize,
-  q63_t * result);
+  q63_t *result);
 
   void csky_dot_prod_q31(
-  q31_t * pSrcA,
-  q31_t * pSrcB,
+  q31_t *pSrcA,
+  q31_t *pSrcB,
   uint32_t blockSize,
-  q63_t * result);
+  q63_t *result);
 
   void csky_shift_q7(
-  q7_t * pSrc,
+  q7_t *pSrc,
   int8_t shiftBits,
-  q7_t * pDst,
+  q7_t *pDst,
   uint32_t blockSize);
 
   void csky_shift_q15(
-  q15_t * pSrc,
+  q15_t *pSrc,
   int8_t shiftBits,
-  q15_t * pDst,
+  q15_t *pDst,
   uint32_t blockSize);
 
   void csky_shift_q31(
-  q31_t * pSrc,
+  q31_t *pSrc,
   int8_t shiftBits,
-  q31_t * pDst,
+  q31_t *pDst,
   uint32_t blockSize);
 
   void csky_offset_f32(
-  float32_t * pSrc,
+  float32_t *pSrc,
   float32_t offset,
-  float32_t * pDst,
+  float32_t *pDst,
   uint32_t blockSize);
 
   void csky_offset_q7(
-  q7_t * pSrc,
+  q7_t *pSrc,
   q7_t offset,
-  q7_t * pDst,
+  q7_t *pDst,
   uint32_t blockSize);
 
   void csky_offset_q15(
-  q15_t * pSrc,
+  q15_t *pSrc,
   q15_t offset,
-  q15_t * pDst,
+  q15_t *pDst,
   uint32_t blockSize);
 
   void csky_offset_q31(
-  q31_t * pSrc,
+  q31_t *pSrc,
   q31_t offset,
-  q31_t * pDst,
+  q31_t *pDst,
   uint32_t blockSize);
 
   void csky_negate_f32(
-  float32_t * pSrc,
-  float32_t * pDst,
+  float32_t *pSrc,
+  float32_t *pDst,
   uint32_t blockSize);
 
   void csky_negate_q7(
-  q7_t * pSrc,
-  q7_t * pDst,
+  q7_t *pSrc,
+  q7_t *pDst,
   uint32_t blockSize);
 
   void csky_negate_q15(
-  q15_t * pSrc,
-  q15_t * pDst,
+  q15_t *pSrc,
+  q15_t *pDst,
   uint32_t blockSize);
 
   void csky_negate_q31(
-  q31_t * pSrc,
-  q31_t * pDst,
+  q31_t *pSrc,
+  q31_t *pDst,
   uint32_t blockSize);
 
   void csky_copy_f32(
-  float32_t * pSrc,
-  float32_t * pDst,
+  float32_t *pSrc,
+  float32_t *pDst,
   uint32_t blockSize);
 
   void csky_copy_q7(
-  q7_t * pSrc,
-  q7_t * pDst,
+  q7_t *pSrc,
+  q7_t *pDst,
   uint32_t blockSize);
 
   void csky_copy_q15(
-  q15_t * pSrc,
-  q15_t * pDst,
+  q15_t *pSrc,
+  q15_t *pDst,
   uint32_t blockSize);
 
   void csky_copy_q31(
-  q31_t * pSrc,
-  q31_t * pDst,
+  q31_t *pSrc,
+  q31_t *pDst,
   uint32_t blockSize);
 
   void csky_fill_f32(
   float32_t value,
-  float32_t * pDst,
+  float32_t *pDst,
   uint32_t blockSize);
 
   void csky_fill_q7(
   q7_t value,
-  q7_t * pDst,
+  q7_t *pDst,
   uint32_t blockSize);
 
   void csky_fill_q15(
   q15_t value,
-  q15_t * pDst,
+  q15_t *pDst,
   uint32_t blockSize);
 
   void csky_fill_q31(
   q31_t value,
-  q31_t * pDst,
+  q31_t *pDst,
   uint32_t blockSize);
 
   void csky_conv_f32(
-  float32_t * pSrcA,
+  float32_t *pSrcA,
   uint32_t srcALen,
-  float32_t * pSrcB,
+  float32_t *pSrcB,
   uint32_t srcBLen,
-  float32_t * pDst);
+  float32_t *pDst);
 
   void csky_conv_opt_q15(
-  q15_t * pSrcA,
+  q15_t *pSrcA,
   uint32_t srcALen,
-  q15_t * pSrcB,
+  q15_t *pSrcB,
   uint32_t srcBLen,
-  q15_t * pDst,
-  q15_t * pScratch1,
-  q15_t * pScratch2);
+  q15_t *pDst,
+  q15_t *pScratch1,
+  q15_t *pScratch2);
 
   void csky_conv_q15(
-  q15_t * pSrcA,
+  q15_t *pSrcA,
   uint32_t srcALen,
-  q15_t * pSrcB,
+  q15_t *pSrcB,
   uint32_t srcBLen,
-  q15_t * pDst);
+  q15_t *pDst);
 
   void csky_conv_fast_q15(
-          q15_t * pSrcA,
+          q15_t *pSrcA,
           uint32_t srcALen,
-          q15_t * pSrcB,
+          q15_t *pSrcB,
           uint32_t srcBLen,
-          q15_t * pDst);
+          q15_t *pDst);
 
   void csky_conv_fast_opt_q15(
-  q15_t * pSrcA,
+  q15_t *pSrcA,
   uint32_t srcALen,
-  q15_t * pSrcB,
+  q15_t *pSrcB,
   uint32_t srcBLen,
-  q15_t * pDst,
-  q15_t * pScratch1,
-  q15_t * pScratch2);
+  q15_t *pDst,
+  q15_t *pScratch1,
+  q15_t *pScratch2);
 
   void csky_conv_q31(
-  q31_t * pSrcA,
+  q31_t *pSrcA,
   uint32_t srcALen,
-  q31_t * pSrcB,
+  q31_t *pSrcB,
   uint32_t srcBLen,
-  q31_t * pDst);
+  q31_t *pDst);
 
   void csky_conv_fast_q31(
-  q31_t * pSrcA,
+  q31_t *pSrcA,
   uint32_t srcALen,
-  q31_t * pSrcB,
+  q31_t *pSrcB,
   uint32_t srcBLen,
-  q31_t * pDst);
+  q31_t *pDst);
 
   void csky_conv_opt_q7(
-  q7_t * pSrcA,
+  q7_t *pSrcA,
   uint32_t srcALen,
-  q7_t * pSrcB,
+  q7_t *pSrcB,
   uint32_t srcBLen,
-  q7_t * pDst,
-  q15_t * pScratch1,
-  q15_t * pScratch2);
+  q7_t *pDst,
+  q15_t *pScratch1,
+  q15_t *pScratch2);
 
   void csky_conv_q7(
-  q7_t * pSrcA,
+  q7_t *pSrcA,
   uint32_t srcALen,
-  q7_t * pSrcB,
+  q7_t *pSrcB,
   uint32_t srcBLen,
-  q7_t * pDst);
+  q7_t *pDst);
 
   csky_status csky_conv_partial_f32(
-  float32_t * pSrcA,
+  float32_t *pSrcA,
   uint32_t srcALen,
-  float32_t * pSrcB,
+  float32_t *pSrcB,
   uint32_t srcBLen,
-  float32_t * pDst,
+  float32_t *pDst,
   uint32_t firstIndex,
   uint32_t numPoints);
 
   csky_status csky_conv_partial_opt_q15(
-  q15_t * pSrcA,
+  q15_t *pSrcA,
   uint32_t srcALen,
-  q15_t * pSrcB,
+  q15_t *pSrcB,
   uint32_t srcBLen,
-  q15_t * pDst,
+  q15_t *pDst,
   uint32_t firstIndex,
   uint32_t numPoints,
-  q15_t * pScratch1,
-  q15_t * pScratch2);
+  q15_t *pScratch1,
+  q15_t *pScratch2);
 
   csky_status csky_conv_partial_q15(
-  q15_t * pSrcA,
+  q15_t *pSrcA,
   uint32_t srcALen,
-  q15_t * pSrcB,
+  q15_t *pSrcB,
   uint32_t srcBLen,
-  q15_t * pDst,
+  q15_t *pDst,
   uint32_t firstIndex,
   uint32_t numPoints);
 
   csky_status csky_conv_partial_fast_q15(
-  q15_t * pSrcA,
+  q15_t *pSrcA,
   uint32_t srcALen,
-  q15_t * pSrcB,
+  q15_t *pSrcB,
   uint32_t srcBLen,
-  q15_t * pDst,
+  q15_t *pDst,
   uint32_t firstIndex,
   uint32_t numPoints);
 
   csky_status csky_conv_partial_fast_opt_q15(
-  q15_t * pSrcA,
+  q15_t *pSrcA,
   uint32_t srcALen,
-  q15_t * pSrcB,
+  q15_t *pSrcB,
   uint32_t srcBLen,
-  q15_t * pDst,
+  q15_t *pDst,
   uint32_t firstIndex,
   uint32_t numPoints,
-  q15_t * pScratch1,
-  q15_t * pScratch2);
+  q15_t *pScratch1,
+  q15_t *pScratch2);
 
   csky_status csky_conv_partial_q31(
-  q31_t * pSrcA,
+  q31_t *pSrcA,
   uint32_t srcALen,
-  q31_t * pSrcB,
+  q31_t *pSrcB,
   uint32_t srcBLen,
-  q31_t * pDst,
+  q31_t *pDst,
   uint32_t firstIndex,
   uint32_t numPoints);
 
   csky_status csky_conv_partial_fast_q31(
-  q31_t * pSrcA,
+  q31_t *pSrcA,
   uint32_t srcALen,
-  q31_t * pSrcB,
+  q31_t *pSrcB,
   uint32_t srcBLen,
-  q31_t * pDst,
+  q31_t *pDst,
   uint32_t firstIndex,
   uint32_t numPoints);
 
   csky_status csky_conv_partial_opt_q7(
-  q7_t * pSrcA,
+  q7_t *pSrcA,
   uint32_t srcALen,
-  q7_t * pSrcB,
+  q7_t *pSrcB,
   uint32_t srcBLen,
-  q7_t * pDst,
+  q7_t *pDst,
   uint32_t firstIndex,
   uint32_t numPoints,
-  q15_t * pScratch1,
-  q15_t * pScratch2);
+  q15_t *pScratch1,
+  q15_t *pScratch2);
 
   csky_status csky_conv_partial_q7(
-  q7_t * pSrcA,
+  q7_t *pSrcA,
   uint32_t srcALen,
-  q7_t * pSrcB,
+  q7_t *pSrcB,
   uint32_t srcBLen,
-  q7_t * pDst,
+  q7_t *pDst,
   uint32_t firstIndex,
   uint32_t numPoints);
 
@@ -1803,110 +1787,110 @@ void csky_rfft_fast_f32(
    * functions for the yunVoice functions.
    */
    q15_t csky_dsp_lib_vec_max_abs16(
-   q15_t  * A,
+   q15_t  *A,
    uint32_t N);
 
    q31_t csky_dsp_lib_vec_max_abs32(
-   q31_t  * A,
+   q31_t  *A,
    uint32_t N);
 
    void csky_dsp_lib_vec_abs16(
-   q15_t  * A,
+   q15_t  *A,
    uint32_t N,
-   q15_t  * C);
+   q15_t  *C);
 
    void csky_dsp_lib_vec_abs32(
-   q31_t * A,
+   q31_t *A,
    uint32_t N,
-   q31_t * C);
+   q31_t *C);
 
    void csky_dsp_lib_vec_add16(
-   q15_t * A,
-   q15_t * B,
+   q15_t *A,
+   q15_t *B,
    uint32_t N,
-   q15_t * C);
+   q15_t *C);
 
    void csky_dsp_lib_vec_add32(
-   q31_t * A,
-   q31_t * B,
+   q31_t *A,
+   q31_t *B,
    uint32_t N,
-   q31_t * C);
+   q31_t *C);
 
    void csky_dsp_lib_vec_cx_conj_q15(
-   q15_t * A,
+   q15_t *A,
    uint32_t N,
-   q15_t * B);
+   q15_t *B);
 
    void csky_dsp_lib_vec_cx_conj_q31(
-   q31_t * A,
+   q31_t *A,
    uint32_t N,
-   q31_t * C);
+   q31_t *C);
 
    q31_t csky_dsp_lib_vec_dot_q15(
-   q15_t * A,
-   q15_t * B,
+   q15_t *A,
+   q15_t *B,
    uint32_t N);
 
    q31_t csky_dsp_lib_vec_dot_q31(
-   q31_t * A,
-   q31_t * B,
+   q31_t *A,
+   q31_t *B,
    uint32_t N);
 
    void csky_dsp_lib_mat_cx_add16(
-   cq15_t * A,
-   cq15_t * B,
+   cq15_t *A,
+   cq15_t *B,
    uint32_t N,
    uint32_t M,
-   cq15_t * C);
+   cq15_t *C);
 
    void csky_dsp_lib_mat_cx_add32(
-   cq31_t * A,
-   cq31_t * B,
+   cq31_t *A,
+   cq31_t *B,
    uint32_t N,
    uint32_t M,
-   cq31_t * C);
+   cq31_t *C);
 
    void csky_dsp_lib_mat_cx_mul_q15(
-   cq15_t * A,
-   cq15_t * B,
+   cq15_t *A,
+   cq15_t *B,
    uint32_t N,
    uint32_t M,
    uint32_t L,
-   cq15_t * C);
+   cq15_t *C);
 
    void csky_dsp_lib_mat_cx_mul_q31(
-   cq31_t * A,
-   cq31_t * B,
+   cq31_t *A,
+   cq31_t *B,
    uint32_t N,
    uint32_t M,
    uint32_t L,
-   cq31_t * C);
+   cq31_t *C);
 
    void csky_dsp_lib_mat_cx_sub16(
-   cq15_t * A,
-   cq15_t * B,
+   cq15_t *A,
+   cq15_t *B,
    uint32_t N,
    uint32_t M,
-   cq15_t * C);
+   cq15_t *C);
 
    void csky_dsp_lib_mat_cx_sub32(
-   cq31_t * A,
-   cq31_t * B,
+   cq31_t *A,
+   cq31_t *B,
    uint32_t N,
    uint32_t M,
-   cq31_t * C);
+   cq31_t *C);
 
    void csky_dsp_lib_vec_mul_q15(
-   q15_t * A,
-   q15_t * B,
+   q15_t *A,
+   q15_t *B,
    uint32_t N,
-   q15_t * C);
+   q15_t *C);
 
    void csky_dsp_lib_vec_mul_q31(
-   q31_t * A,
-   q31_t * B,
+   q31_t *A,
+   q31_t *B,
    uint32_t N,
-   q31_t * C);
+   q31_t *C);
 
    q31_t csky_dsp_lib_pow_int32(
    q31_t arg_in_x,
@@ -1916,133 +1900,133 @@ void csky_rfft_fast_f32(
    q31_t *arg_exp_out);
 
    void csky_dsp_lib_vec_scale_q15(
-   q15_t * A,
+   q15_t *A,
    q15_t scaleFract,
    int8_t shift,
-   q15_t * B,
+   q15_t *B,
    uint32_t N);
 
    void csky_dsp_lib_vec_scale_q31(
-   q31_t * A,
+   q31_t *A,
    q31_t scaleFract,
    int8_t shift,
-   q31_t * B,
+   q31_t *B,
    uint32_t N);
 
    void csky_dsp_lib_vec_shf16(
-   q15_t * A,
+   q15_t *A,
    int8_t shift_val,
    uint32_t N,
-   q15_t * C);
+   q15_t *C);
 
    void csky_dsp_lib_vec_shf32(
-   q31_t * A,
+   q31_t *A,
    q31_t shift_val,
    uint32_t N,
-   q31_t * C);
+   q31_t *C);
 
    q15_t csky_dsp_lib_sqrt_int32(
    q31_t x,
    uint32_t rnd_flag);
 
    void csky_dsp_lib_vec_sub16(
-   q15_t * A,
-   q15_t * B,
+   q15_t *A,
+   q15_t *B,
    uint32_t N,
-   q15_t * C);
+   q15_t *C);
 
    void csky_dsp_lib_vec_sub32(
-   q31_t * A,
-   q31_t * B,
+   q31_t *A,
+   q31_t *B,
    uint32_t N,
-   q31_t * C);
+   q31_t *C);
 
    q63_t csky_dsp_lib_vec_sum16(
-   q15_t * A,
+   q15_t *A,
    uint32_t N);
 
    q63_t csky_dsp_lib_vec_sum32(
-   q31_t * A,
+   q31_t *A,
    uint32_t N);
 
     void csky_fft_lib_cx16_fft(
     q31_t log2_buf_len,
-    q15_t * in_buf,
-    q15_t * out_buf,
-    const q15_t * twi_table,
-    const uint16_t * bitrev_tbl,
-    q15_t * temp_buf,
-    q7_t  * ScaleShift,
+    q15_t *in_buf,
+    q15_t *out_buf,
+    const q15_t *twi_table,
+    const uint16_t *bitrev_tbl,
+    q15_t *temp_buf,
+    q7_t  *ScaleShift,
     q31_t br);
 
     void csky_fft_lib_cx32_fft(
     q31_t log2_buf_len,
-    q31_t * in_buf,
-    q31_t * out_buf,
-    const q31_t * twi_table,
-    const uint16_t * bitrev_tbl,
-    q31_t * temp_buf,
+    q31_t *in_buf,
+    q31_t *out_buf,
+    const q31_t *twi_table,
+    const uint16_t *bitrev_tbl,
+    q31_t *temp_buf,
     q31_t br);
 
     void csky_fft_lib_cx16_ifft(
     q31_t log2_buf_len,
-    q15_t * in_buf,
-    q15_t * out_buf,
-    const q15_t * twi_table,
-    const uint16_t * bitrev_tbl,
-    q15_t * temp_buf,
-    q7_t  * ScaleShift,
+    q15_t *in_buf,
+    q15_t *out_buf,
+    const q15_t *twi_table,
+    const uint16_t *bitrev_tbl,
+    q15_t *temp_buf,
+    q7_t  *ScaleShift,
     q31_t br);
 
     void csky_fft_lib_cx32_ifft(
     q31_t log2_buf_len,
-    q31_t * in_buf,
-    q31_t * out_buf,
-    const q31_t * twi_table,
-    const uint16_t * bitrev_tbl,
-    q31_t * temp_buf,
+    q31_t *in_buf,
+    q31_t *out_buf,
+    const q31_t *twi_table,
+    const uint16_t *bitrev_tbl,
+    q31_t *temp_buf,
     q31_t br);
 
     void csky_fft_lib_int16_fft(
     q31_t log2_buf_len,
-    q15_t * in_buf,
-    q15_t * out_buf,
-    const q15_t * twi_table,
-    const q15_t * last_stage_twi_table,
-    const uint16_t * bitrev_tbl,
-    q15_t * temp_buf,
-    q7_t  * ScaleShift,
+    q15_t *in_buf,
+    q15_t *out_buf,
+    const q15_t *twi_table,
+    const q15_t *last_stage_twi_table,
+    const uint16_t *bitrev_tbl,
+    q15_t *temp_buf,
+    q7_t  *ScaleShift,
     q31_t br);
 
     void csky_fft_lib_int32_fft(
     q31_t log2_buf_len,
-    q31_t * in_buf,
-    q31_t * out_buf,
-    const q31_t * twi_table,
-    const q31_t * last_stage_twi_table,
-    const uint16_t * bitrev_tbl,
-    q31_t * temp_buf,
+    q31_t *in_buf,
+    q31_t *out_buf,
+    const q31_t *twi_table,
+    const q31_t *last_stage_twi_table,
+    const uint16_t *bitrev_tbl,
+    q31_t *temp_buf,
     q31_t br);
 
     void csky_fft_lib_int16_ifft(
     q31_t log2_buf_len,
-    q15_t * in_buf,
-    q15_t * out_buf,
-    const q15_t * twi_table,
-    const q15_t * last_stage_twi_table,
-    const uint16_t * bitrev_tbl,
-    q15_t * temp_buf,
-    q7_t  * ScaleShift,
+    q15_t *in_buf,
+    q15_t *out_buf,
+    const q15_t *twi_table,
+    const q15_t *last_stage_twi_table,
+    const uint16_t *bitrev_tbl,
+    q15_t *temp_buf,
+    q7_t  *ScaleShift,
     q31_t br);
 
     void csky_fft_lib_int32_ifft(
     q31_t log2_buf_len,
-    q31_t * in_buf,
-    q31_t * out_buf,
-    const q31_t * twi_table,
-    const q31_t * last_stage_twi_table,
-    const uint16_t * bitrev_tbl,
-    q31_t * temp_buf,
+    q31_t *in_buf,
+    q31_t *out_buf,
+    const q31_t *twi_table,
+    const q31_t *last_stage_twi_table,
+    const uint16_t *bitrev_tbl,
+    q31_t *temp_buf,
     q31_t br);
 
   /**
@@ -2079,59 +2063,58 @@ void csky_rfft_fast_f32(
   } csky_fir_decimate_instance_f32;
 
   void csky_fir_decimate_f32(
-  const csky_fir_decimate_instance_f32 * S,
-  float32_t * pSrc,
-  float32_t * pDst,
+  const csky_fir_decimate_instance_f32 *S,
+  float32_t *pSrc,
+  float32_t *pDst,
   uint32_t blockSize);
 
   csky_status csky_fir_decimate_init_f32(
-  csky_fir_decimate_instance_f32 * S,
+  csky_fir_decimate_instance_f32 *S,
   uint16_t numTaps,
   uint8_t M,
-  float32_t * pCoeffs,
-  float32_t * pState,
+  float32_t *pCoeffs,
+  float32_t *pState,
   uint32_t blockSize);
 
   void csky_fir_decimate_q15(
-  const csky_fir_decimate_instance_q15 * S,
-  q15_t * pSrc,
-  q15_t * pDst,
+  const csky_fir_decimate_instance_q15 *S,
+  q15_t *pSrc,
+  q15_t *pDst,
   uint32_t blockSize);
 
   void csky_fir_decimate_fast_q15(
-  const csky_fir_decimate_instance_q15 * S,
-  q15_t * pSrc,
-  q15_t * pDst,
+  const csky_fir_decimate_instance_q15 *S,
+  q15_t *pSrc,
+  q15_t *pDst,
   uint32_t blockSize);
 
   csky_status csky_fir_decimate_init_q15(
-  csky_fir_decimate_instance_q15 * S,
+  csky_fir_decimate_instance_q15 *S,
   uint16_t numTaps,
   uint8_t M,
-  q15_t * pCoeffs,
-  q15_t * pState,
+  q15_t *pCoeffs,
+  q15_t *pState,
   uint32_t blockSize);
 
   void csky_fir_decimate_q31(
-  const csky_fir_decimate_instance_q31 * S,
-  q31_t * pSrc,
-  q31_t * pDst,
+  const csky_fir_decimate_instance_q31 *S,
+  q31_t *pSrc,
+  q31_t *pDst,
   uint32_t blockSize);
 
   void csky_fir_decimate_fast_q31(
-  csky_fir_decimate_instance_q31 * S,
-  q31_t * pSrc,
-  q31_t * pDst,
+  csky_fir_decimate_instance_q31 *S,
+  q31_t *pSrc,
+  q31_t *pDst,
   uint32_t blockSize);
 
   csky_status csky_fir_decimate_init_q31(
-  csky_fir_decimate_instance_q31 * S,
+  csky_fir_decimate_instance_q31 *S,
   uint16_t numTaps,
   uint8_t M,
-  q31_t * pCoeffs,
-  q31_t * pState,
+  q31_t *pCoeffs,
+  q31_t *pState,
   uint32_t blockSize);
-
 
   /**
    * @brief Instance structure for the Q15 FIR interpolator.
@@ -2167,47 +2150,46 @@ void csky_rfft_fast_f32(
   } csky_fir_interpolate_instance_f32;
 
   void csky_fir_interpolate_q15(
-  const csky_fir_interpolate_instance_q15 * S,
-  q15_t * pSrc,
-  q15_t * pDst,
+  const csky_fir_interpolate_instance_q15 *S,
+  q15_t *pSrc,
+  q15_t *pDst,
   uint32_t blockSize);
 
   csky_status csky_fir_interpolate_init_q15(
-  csky_fir_interpolate_instance_q15 * S,
+  csky_fir_interpolate_instance_q15 *S,
   uint8_t L,
   uint16_t numTaps,
-  q15_t * pCoeffs,
-  q15_t * pState,
+  q15_t *pCoeffs,
+  q15_t *pState,
   uint32_t blockSize);
 
   void csky_fir_interpolate_q31(
-  const csky_fir_interpolate_instance_q31 * S,
-  q31_t * pSrc,
-  q31_t * pDst,
+  const csky_fir_interpolate_instance_q31 *S,
+  q31_t *pSrc,
+  q31_t *pDst,
   uint32_t blockSize);
 
   csky_status csky_fir_interpolate_init_q31(
-  csky_fir_interpolate_instance_q31 * S,
+  csky_fir_interpolate_instance_q31 *S,
   uint8_t L,
   uint16_t numTaps,
-  q31_t * pCoeffs,
-  q31_t * pState,
+  q31_t *pCoeffs,
+  q31_t *pState,
   uint32_t blockSize);
 
   void csky_fir_interpolate_f32(
-  const csky_fir_interpolate_instance_f32 * S,
-  float32_t * pSrc,
-  float32_t * pDst,
+  const csky_fir_interpolate_instance_f32 *S,
+  float32_t *pSrc,
+  float32_t *pDst,
   uint32_t blockSize);
 
   csky_status csky_fir_interpolate_init_f32(
-  csky_fir_interpolate_instance_f32 * S,
+  csky_fir_interpolate_instance_f32 *S,
   uint8_t L,
   uint16_t numTaps,
-  float32_t * pCoeffs,
-  float32_t * pState,
+  float32_t *pCoeffs,
+  float32_t *pState,
   uint32_t blockSize);
-
 
   /**
    * @brief Instance structure for the high precision Q31 Biquad cascade filter.
@@ -2221,18 +2203,17 @@ void csky_rfft_fast_f32(
   } csky_biquad_cas_df1_32x64_ins_q31;
 
   void csky_biquad_cas_df1_32x64_q31(
-  const csky_biquad_cas_df1_32x64_ins_q31 * S,
-  q31_t * pSrc,
-  q31_t * pDst,
+  const csky_biquad_cas_df1_32x64_ins_q31 *S,
+  q31_t *pSrc,
+  q31_t *pDst,
   uint32_t blockSize);
 
   void csky_biquad_cas_df1_32x64_init_q31(
-  csky_biquad_cas_df1_32x64_ins_q31 * S,
+  csky_biquad_cas_df1_32x64_ins_q31 *S,
   uint8_t numStages,
-  q31_t * pCoeffs,
-  q63_t * pState,
+  q31_t *pCoeffs,
+  q63_t *pState,
   uint8_t postShift);
-
 
   /**
    * @brief Instance structure for the floating-point transposed direct form II Biquad cascade filter.
@@ -2265,42 +2246,40 @@ void csky_rfft_fast_f32(
   } csky_biquad_cascade_df2T_instance_f64;
 
   void csky_biquad_cascade_df2T_f32(
-  const csky_biquad_cascade_df2T_instance_f32 * S,
-  float32_t * pSrc,
-  float32_t * pDst,
+  const csky_biquad_cascade_df2T_instance_f32 *S,
+  float32_t *pSrc,
+  float32_t *pDst,
   uint32_t blockSize);
 
   void csky_biquad_cascade_stereo_df2T_f32(
-  const csky_biquad_cascade_stereo_df2T_instance_f32 * S,
-  float32_t * pSrc,
-  float32_t * pDst,
+  const csky_biquad_cascade_stereo_df2T_instance_f32 *S,
+  float32_t *pSrc,
+  float32_t *pDst,
   uint32_t blockSize);
 
   void csky_biquad_cascade_df2T_f64(
-  const csky_biquad_cascade_df2T_instance_f64 * S,
-  float64_t * pSrc,
-  float64_t * pDst,
+  const csky_biquad_cascade_df2T_instance_f64 *S,
+  float64_t *pSrc,
+  float64_t *pDst,
   uint32_t blockSize);
 
   void csky_biquad_cascade_df2T_init_f32(
-  csky_biquad_cascade_df2T_instance_f32 * S,
+  csky_biquad_cascade_df2T_instance_f32 *S,
   uint8_t numStages,
-  float32_t * pCoeffs,
-  float32_t * pState);
+  float32_t *pCoeffs,
+  float32_t *pState);
 
   void csky_biquad_cascade_stereo_df2T_init_f32(
-  csky_biquad_cascade_stereo_df2T_instance_f32 * S,
+  csky_biquad_cascade_stereo_df2T_instance_f32 *S,
   uint8_t numStages,
-  float32_t * pCoeffs,
-  float32_t * pState);
-
+  float32_t *pCoeffs,
+  float32_t *pState);
 
   void csky_biquad_cascade_df2T_init_f64(
-  csky_biquad_cascade_df2T_instance_f64 * S,
+  csky_biquad_cascade_df2T_instance_f64 *S,
   uint8_t numStages,
-  float64_t * pCoeffs,
-  float64_t * pState);
-
+  float64_t *pCoeffs,
+  float64_t *pState);
 
   /**
    * @brief Instance structure for the Q15 FIR lattice filter.
@@ -2333,51 +2312,50 @@ void csky_rfft_fast_f32(
   } csky_fir_lattice_instance_f32;
 
   void csky_fir_lattice_init_q15(
-  csky_fir_lattice_instance_q15 * S,
+  csky_fir_lattice_instance_q15 *S,
   uint16_t numStages,
-  q15_t * pCoeffs,
-  q15_t * pState);
+  q15_t *pCoeffs,
+  q15_t *pState);
 
   void csky_fir_lattice_q15(
-  const csky_fir_lattice_instance_q15 * S,
-  q15_t * pSrc,
-  q15_t * pDst,
+  const csky_fir_lattice_instance_q15 *S,
+  q15_t *pSrc,
+  q15_t *pDst,
   uint32_t blockSize);
 
   void csky_fir_lattice_init_q31(
-  csky_fir_lattice_instance_q31 * S,
+  csky_fir_lattice_instance_q31 *S,
   uint16_t numStages,
-  q31_t * pCoeffs,
-  q31_t * pState);
+  q31_t *pCoeffs,
+  q31_t *pState);
 
   void csky_fir_lattice_q31(
-  const csky_fir_lattice_instance_q31 * S,
-  q31_t * pSrc,
-  q31_t * pDst,
+  const csky_fir_lattice_instance_q31 *S,
+  q31_t *pSrc,
+  q31_t *pDst,
   uint32_t blockSize);
 
   void csky_fir_lattice_init_f32(
-  csky_fir_lattice_instance_f32 * S,
+  csky_fir_lattice_instance_f32 *S,
   uint16_t numStages,
-  float32_t * pCoeffs,
-  float32_t * pState);
+  float32_t *pCoeffs,
+  float32_t *pState);
 
   void csky_fir_lattice_f32(
-  const csky_fir_lattice_instance_f32 * S,
-  float32_t * pSrc,
-  float32_t * pDst,
+  const csky_fir_lattice_instance_f32 *S,
+  float32_t *pSrc,
+  float32_t *pDst,
   uint32_t blockSize);
-
 
   /**
    * @brief Instance structure for the Q15 IIR lattice filter.
    */
   typedef struct
   {
-    uint16_t numStages;                  /**< number of stages in the filter. */
-    q15_t *pState;                       /**< points to the state variable array. The array is of length numStages+blockSize. */
-    q15_t *pkCoeffs;                     /**< points to the reflection coefficient array. The array is of length numStages. */
-    q15_t *pvCoeffs;                     /**< points to the ladder coefficient array. The array is of length numStages+1. */
+    uint16_t numStages;        /**< number of stages in the filter. */
+    q15_t *pState;             /**< points to the state variable array. The array is of length numStages+blockSize. */
+    q15_t *pkCoeffs;           /**< points to the reflection coefficient array. The array is of length numStages. */
+    q15_t *pvCoeffs;           /**< points to the ladder coefficient array. The array is of length numStages+1. */
   } csky_iir_lattice_instance_q15;
 
   /**
@@ -2385,10 +2363,10 @@ void csky_rfft_fast_f32(
    */
   typedef struct
   {
-    uint16_t numStages;                  /**< number of stages in the filter. */
-    q31_t *pState;                       /**< points to the state variable array. The array is of length numStages+blockSize. */
-    q31_t *pkCoeffs;                     /**< points to the reflection coefficient array. The array is of length numStages. */
-    q31_t *pvCoeffs;                     /**< points to the ladder coefficient array. The array is of length numStages+1. */
+    uint16_t numStages;         /**< number of stages in the filter. */
+    q31_t *pState;              /**< points to the state variable array. The array is of length numStages+blockSize. */
+    q31_t *pkCoeffs;            /**< points to the reflection coefficient array. The array is of length numStages. */
+    q31_t *pvCoeffs;            /**< points to the ladder coefficient array. The array is of length numStages+1. */
   } csky_iir_lattice_instance_q31;
 
   /**
@@ -2396,54 +2374,53 @@ void csky_rfft_fast_f32(
    */
   typedef struct
   {
-    uint16_t numStages;                  /**< number of stages in the filter. */
-    float32_t *pState;                   /**< points to the state variable array. The array is of length numStages+blockSize. */
-    float32_t *pkCoeffs;                 /**< points to the reflection coefficient array. The array is of length numStages. */
-    float32_t *pvCoeffs;                 /**< points to the ladder coefficient array. The array is of length numStages+1. */
+    uint16_t numStages;         /**< number of stages in the filter. */
+    float32_t *pState;          /**< points to the state variable array. The array is of length numStages+blockSize. */
+    float32_t *pkCoeffs;        /**< points to the reflection coefficient array. The array is of length numStages. */
+    float32_t *pvCoeffs;        /**< points to the ladder coefficient array. The array is of length numStages+1. */
   } csky_iir_lattice_instance_f32;
 
   void csky_iir_lattice_f32(
-  const csky_iir_lattice_instance_f32 * S,
-  float32_t * pSrc,
-  float32_t * pDst,
+  const csky_iir_lattice_instance_f32 *S,
+  float32_t *pSrc,
+  float32_t *pDst,
   uint32_t blockSize);
 
   void csky_iir_lattice_init_f32(
-  csky_iir_lattice_instance_f32 * S,
+  csky_iir_lattice_instance_f32 *S,
   uint16_t numStages,
-  float32_t * pkCoeffs,
-  float32_t * pvCoeffs,
-  float32_t * pState,
+  float32_t *pkCoeffs,
+  float32_t *pvCoeffs,
+  float32_t *pState,
   uint32_t blockSize);
 
   void csky_iir_lattice_q31(
-  const csky_iir_lattice_instance_q31 * S,
-  q31_t * pSrc,
-  q31_t * pDst,
+  const csky_iir_lattice_instance_q31 *S,
+  q31_t *pSrc,
+  q31_t *pDst,
   uint32_t blockSize);
 
   void csky_iir_lattice_init_q31(
-  csky_iir_lattice_instance_q31 * S,
+  csky_iir_lattice_instance_q31 *S,
   uint16_t numStages,
-  q31_t * pkCoeffs,
-  q31_t * pvCoeffs,
-  q31_t * pState,
+  q31_t *pkCoeffs,
+  q31_t *pvCoeffs,
+  q31_t *pState,
   uint32_t blockSize);
 
   void csky_iir_lattice_q15(
-  const csky_iir_lattice_instance_q15 * S,
-  q15_t * pSrc,
-  q15_t * pDst,
+  const csky_iir_lattice_instance_q15 *S,
+  q15_t *pSrc,
+  q15_t *pDst,
   uint32_t blockSize);
 
   void csky_iir_lattice_init_q15(
-  csky_iir_lattice_instance_q15 * S,
+  csky_iir_lattice_instance_q15 *S,
   uint16_t numStages,
-  q15_t * pkCoeffs,
-  q15_t * pvCoeffs,
-  q15_t * pState,
+  q15_t *pkCoeffs,
+  q15_t *pvCoeffs,
+  q15_t *pState,
   uint32_t blockSize);
-
 
   /**
    * @brief Instance structure for the floating-point LMS filter.
@@ -2458,20 +2435,19 @@ void csky_rfft_fast_f32(
 
   void csky_lms_f32(
   const csky_lms_instance_f32 * S,
-  float32_t * pSrc,
-  float32_t * pRef,
-  float32_t * pOut,
-  float32_t * pErr,
+  float32_t *pSrc,
+  float32_t *pRef,
+  float32_t *pOut,
+  float32_t *pErr,
   uint32_t blockSize);
 
   void csky_lms_init_f32(
-  csky_lms_instance_f32 * S,
+  csky_lms_instance_f32 *S,
   uint16_t numTaps,
-  float32_t * pCoeffs,
-  float32_t * pState,
+  float32_t *pCoeffs,
+  float32_t *pState,
   float32_t mu,
   uint32_t blockSize);
-
 
   /**
    * @brief Instance structure for the Q15 LMS filter.
@@ -2486,22 +2462,21 @@ void csky_rfft_fast_f32(
   } csky_lms_instance_q15;
 
   void csky_lms_init_q15(
-  csky_lms_instance_q15 * S,
+  csky_lms_instance_q15 *S,
   uint16_t numTaps,
-  q15_t * pCoeffs,
-  q15_t * pState,
+  q15_t *pCoeffs,
+  q15_t *pState,
   q15_t mu,
   uint32_t blockSize,
   uint32_t postShift);
 
   void csky_lms_q15(
-  const csky_lms_instance_q15 * S,
-  q15_t * pSrc,
-  q15_t * pRef,
-  q15_t * pOut,
-  q15_t * pErr,
+  const csky_lms_instance_q15 *S,
+  q15_t *pSrc,
+  q15_t *pRef,
+  q15_t *pOut,
+  q15_t *pErr,
   uint32_t blockSize);
-
 
   /**
    * @brief Instance structure for the Q31 LMS filter.
@@ -2516,22 +2491,21 @@ void csky_rfft_fast_f32(
   } csky_lms_instance_q31;
 
   void csky_lms_q31(
-  const csky_lms_instance_q31 * S,
-  q31_t * pSrc,
-  q31_t * pRef,
-  q31_t * pOut,
-  q31_t * pErr,
+  const csky_lms_instance_q31 *S,
+  q31_t *pSrc,
+  q31_t *pRef,
+  q31_t *pOut,
+  q31_t *pErr,
   uint32_t blockSize);
 
   void csky_lms_init_q31(
-  csky_lms_instance_q31 * S,
+  csky_lms_instance_q31 *S,
   uint16_t numTaps,
-  q31_t * pCoeffs,
-  q31_t * pState,
+  q31_t *pCoeffs,
+  q31_t *pState,
   q31_t mu,
   uint32_t blockSize,
   uint32_t postShift);
-
 
   /**
    * @brief Instance structure for the floating-point normalized LMS filter.
@@ -2547,21 +2521,20 @@ void csky_rfft_fast_f32(
   } csky_lms_norm_instance_f32;
 
   void csky_lms_norm_f32(
-  csky_lms_norm_instance_f32 * S,
-  float32_t * pSrc,
-  float32_t * pRef,
-  float32_t * pOut,
-  float32_t * pErr,
+  csky_lms_norm_instance_f32 *S,
+  float32_t *pSrc,
+  float32_t *pRef,
+  float32_t *pOut,
+  float32_t *pErr,
   uint32_t blockSize);
 
   void csky_lms_norm_init_f32(
-  csky_lms_norm_instance_f32 * S,
+  csky_lms_norm_instance_f32 *S,
   uint16_t numTaps,
-  float32_t * pCoeffs,
-  float32_t * pState,
+  float32_t *pCoeffs,
+  float32_t *pState,
   float32_t mu,
   uint32_t blockSize);
-
 
   /**
    * @brief Instance structure for the Q31 normalized LMS filter.
@@ -2579,22 +2552,21 @@ void csky_rfft_fast_f32(
   } csky_lms_norm_instance_q31;
 
   void csky_lms_norm_q31(
-  csky_lms_norm_instance_q31 * S,
-  q31_t * pSrc,
-  q31_t * pRef,
-  q31_t * pOut,
-  q31_t * pErr,
+  csky_lms_norm_instance_q31 *S,
+  q31_t *pSrc,
+  q31_t *pRef,
+  q31_t *pOut,
+  q31_t *pErr,
   uint32_t blockSize);
 
   void csky_lms_norm_init_q31(
-  csky_lms_norm_instance_q31 * S,
+  csky_lms_norm_instance_q31 *S,
   uint16_t numTaps,
-  q31_t * pCoeffs,
-  q31_t * pState,
+  q31_t *pCoeffs,
+  q31_t *pState,
   q31_t mu,
   uint32_t blockSize,
   uint8_t postShift);
-
 
   /**
    * @brief Instance structure for the Q15 normalized LMS filter.
@@ -2612,89 +2584,88 @@ void csky_rfft_fast_f32(
   } csky_lms_norm_instance_q15;
 
   void csky_lms_norm_q15(
-  csky_lms_norm_instance_q15 * S,
-  q15_t * pSrc,
-  q15_t * pRef,
-  q15_t * pOut,
-  q15_t * pErr,
+  csky_lms_norm_instance_q15 *S,
+  q15_t *pSrc,
+  q15_t *pRef,
+  q15_t *pOut,
+  q15_t *pErr,
   uint32_t blockSize);
 
   void csky_lms_norm_init_q15(
-  csky_lms_norm_instance_q15 * S,
+  csky_lms_norm_instance_q15 *S,
   uint16_t numTaps,
-  q15_t * pCoeffs,
-  q15_t * pState,
+  q15_t *pCoeffs,
+  q15_t *pState,
   q15_t mu,
   uint32_t blockSize,
   uint8_t postShift);
 
   void csky_correlate_f32(
-  float32_t * pSrcA,
+  float32_t *pSrcA,
   uint32_t srcALen,
-  float32_t * pSrcB,
+  float32_t *pSrcB,
   uint32_t srcBLen,
-  float32_t * pDst);
+  float32_t *pDst);
 
   void csky_correlate_opt_q15(
-  q15_t * pSrcA,
+  q15_t *pSrcA,
   uint32_t srcALen,
-  q15_t * pSrcB,
+  q15_t *pSrcB,
   uint32_t srcBLen,
-  q15_t * pDst,
-  q15_t * pScratch);
+  q15_t *pDst,
+  q15_t *pScratch);
 
   void csky_correlate_q15(
-  q15_t * pSrcA,
+  q15_t *pSrcA,
   uint32_t srcALen,
-  q15_t * pSrcB,
+  q15_t *pSrcB,
   uint32_t srcBLen,
-  q15_t * pDst);
+  q15_t *pDst);
 
   void csky_correlate_fast_q15(
-  q15_t * pSrcA,
+  q15_t *pSrcA,
   uint32_t srcALen,
-  q15_t * pSrcB,
+  q15_t *pSrcB,
   uint32_t srcBLen,
-  q15_t * pDst);
+  q15_t *pDst);
 
   void csky_correlate_fast_opt_q15(
-  q15_t * pSrcA,
+  q15_t *pSrcA,
   uint32_t srcALen,
-  q15_t * pSrcB,
+  q15_t *pSrcB,
   uint32_t srcBLen,
-  q15_t * pDst,
-  q15_t * pScratch);
+  q15_t *pDst,
+  q15_t *pScratch);
 
   void csky_correlate_q31(
-  q31_t * pSrcA,
+  q31_t *pSrcA,
   uint32_t srcALen,
-  q31_t * pSrcB,
+  q31_t *pSrcB,
   uint32_t srcBLen,
-  q31_t * pDst);
+  q31_t *pDst);
 
   void csky_correlate_fast_q31(
-  q31_t * pSrcA,
+  q31_t *pSrcA,
   uint32_t srcALen,
-  q31_t * pSrcB,
+  q31_t *pSrcB,
   uint32_t srcBLen,
-  q31_t * pDst);
+  q31_t *pDst);
 
   void csky_correlate_opt_q7(
-  q7_t * pSrcA,
+  q7_t *pSrcA,
   uint32_t srcALen,
-  q7_t * pSrcB,
+  q7_t *pSrcB,
   uint32_t srcBLen,
-  q7_t * pDst,
-  q15_t * pScratch1,
-  q15_t * pScratch2);
+  q7_t *pDst,
+  q15_t *pScratch1,
+  q15_t *pScratch2);
 
   void csky_correlate_q7(
-  q7_t * pSrcA,
+  q7_t *pSrcA,
   uint32_t srcALen,
-  q7_t * pSrcB,
+  q7_t *pSrcB,
   uint32_t srcBLen,
-  q7_t * pDst);
-
+  q7_t *pDst);
 
   /**
    * @brief Instance structure for the floating-point sparse FIR filter.
@@ -2749,109 +2720,109 @@ void csky_rfft_fast_f32(
   } csky_fir_sparse_instance_q7;
 
   void csky_fir_sparse_f32(
-  csky_fir_sparse_instance_f32 * S,
-  float32_t * pSrc,
-  float32_t * pDst,
-  float32_t * pScratchIn,
+  csky_fir_sparse_instance_f32 *S,
+  float32_t *pSrc,
+  float32_t *pDst,
+  float32_t *pScratchIn,
   uint32_t blockSize);
 
   void csky_fir_sparse_init_f32(
-  csky_fir_sparse_instance_f32 * S,
+  csky_fir_sparse_instance_f32 *S,
   uint16_t numTaps,
-  float32_t * pCoeffs,
-  float32_t * pState,
-  int32_t * pTapDelay,
+  float32_t *pCoeffs,
+  float32_t *pState,
+  int32_t *pTapDelay,
   uint16_t maxDelay,
   uint32_t blockSize);
 
   void csky_fir_sparse_q31(
-  csky_fir_sparse_instance_q31 * S,
-  q31_t * pSrc,
-  q31_t * pDst,
-  q31_t * pScratchIn,
+  csky_fir_sparse_instance_q31 *S,
+  q31_t *pSrc,
+  q31_t *pDst,
+  q31_t *pScratchIn,
   uint32_t blockSize);
 
   void csky_fir_sparse_init_q31(
-  csky_fir_sparse_instance_q31 * S,
+  csky_fir_sparse_instance_q31 *S,
   uint16_t numTaps,
-  q31_t * pCoeffs,
-  q31_t * pState,
-  int32_t * pTapDelay,
+  q31_t *pCoeffs,
+  q31_t *pState,
+  int32_t *pTapDelay,
   uint16_t maxDelay,
   uint32_t blockSize);
 
   void csky_fir_sparse_q15(
-  csky_fir_sparse_instance_q15 * S,
-  q15_t * pSrc,
-  q15_t * pDst,
-  q15_t * pScratchIn,
-  q31_t * pScratchOut,
+  csky_fir_sparse_instance_q15 *S,
+  q15_t *pSrc,
+  q15_t *pDst,
+  q15_t *pScratchIn,
+  q31_t *pScratchOut,
   uint32_t blockSize);
 
   void csky_fir_sparse_init_q15(
-  csky_fir_sparse_instance_q15 * S,
+  csky_fir_sparse_instance_q15 *S,
   uint16_t numTaps,
-  q15_t * pCoeffs,
-  q15_t * pState,
-  int32_t * pTapDelay,
+  q15_t *pCoeffs,
+  q15_t *pState,
+  int32_t *pTapDelay,
   uint16_t maxDelay,
   uint32_t blockSize);
 
   void csky_fir_sparse_q7(
-  csky_fir_sparse_instance_q7 * S,
-  q7_t * pSrc,
-  q7_t * pDst,
-  q7_t * pScratchIn,
-  q31_t * pScratchOut,
+  csky_fir_sparse_instance_q7 *S,
+  q7_t *pSrc,
+  q7_t *pDst,
+  q7_t *pScratchIn,
+  q31_t *pScratchOut,
   uint32_t blockSize);
 
   void csky_fir_sparse_init_q7(
-  csky_fir_sparse_instance_q7 * S,
+  csky_fir_sparse_instance_q7 *S,
   uint16_t numTaps,
-  q7_t * pCoeffs,
-  q7_t * pState,
-  int32_t * pTapDelay,
+  q7_t *pCoeffs,
+  q7_t *pState,
+  int32_t *pTapDelay,
   uint16_t maxDelay,
   uint32_t blockSize);
 
   void csky_sin_cos_f32(
   float32_t theta,
-  float32_t * pSinVal,
-  float32_t * pCosVal);
+  float32_t *pSinVal,
+  float32_t *pCosVal);
 
   void csky_sin_cos_q31(
   q31_t theta,
-  q31_t * pSinVal,
-  q31_t * pCosVal);
+  q31_t *pSinVal,
+  q31_t *pCosVal);
 
   void csky_cmplx_conj_f32(
-  float32_t * pSrc,
-  float32_t * pDst,
+  float32_t *pSrc,
+  float32_t *pDst,
   uint32_t numSamples);
 
   void csky_cmplx_conj_q31(
-  q31_t * pSrc,
-  q31_t * pDst,
+  q31_t *pSrc,
+  q31_t *pDst,
   uint32_t numSamples);
 
   void csky_cmplx_conj_q15(
-  q15_t * pSrc,
-  q15_t * pDst,
+  q15_t *pSrc,
+  q15_t *pDst,
   uint32_t numSamples);
 
   void csky_cmplx_mag_squared_f32(
-  float32_t * pSrc,
-  float32_t * pDst,
+  float32_t *pSrc,
+  float32_t *pDst,
   uint32_t numSamples);
 
   void csky_cmplx_mag_squared_q31(
-  q31_t * pSrc,
-  q31_t * pDst,
+  q31_t *pSrc,
+  q31_t *pDst,
   uint32_t numSamples);
 
   void csky_cmplx_mag_squared_q15(
-  q15_t * pSrc,
-  q15_t * pDst,
+  q15_t *pSrc,
+  q15_t *pDst,
   uint32_t numSamples);
 
 /**
@@ -2927,7 +2898,7 @@ void csky_rfft_fast_f32(
  * @return out processed output sample.
  */
   __STATIC_INLINE float32_t csky_pid_f32(
-  csky_pid_instance_f32 * S,
+  csky_pid_instance_f32 *S,
   float32_t in)
   {
     float32_t out;
@@ -2949,7 +2920,6 @@ void csky_rfft_fast_f32(
  * @}
 */ // end of PID group
 
-
 /**
  * @addtogroup PID
  * @{
@@ -2970,7 +2940,7 @@ void csky_rfft_fast_f32(
  * After all multiply-accumulates are performed, the 2.62 accumulator is truncated to 1.32 format and then saturated to 1.31 format.
  */
   __STATIC_INLINE q31_t csky_pid_q31(
-  csky_pid_instance_q31 * S,
+  csky_pid_instance_q31 *S,
   q31_t in)
   {
     q63_t acc;
@@ -3038,7 +3008,7 @@ void csky_rfft_fast_f32(
  * Lastly, the accumulator is saturated to yield a result in 1.15 format.
  */
   __STATIC_INLINE q15_t csky_pid_q15(
-  csky_pid_instance_q15 * S,
+  csky_pid_instance_q15 *S,
   q15_t in)
   {
     q63_t acc;
@@ -3070,12 +3040,12 @@ void csky_rfft_fast_f32(
  */ // end of PID group
 
   csky_status csky_mat_inverse_f32(
-  const csky_matrix_instance_f32 * src,
-  csky_matrix_instance_f32 * dst);
+  const csky_matrix_instance_f32 *src,
+  csky_matrix_instance_f32 *dst);
 
   csky_status csky_mat_inverse_f64(
-  const csky_matrix_instance_f64 * src,
-  csky_matrix_instance_f64 * dst);
+  const csky_matrix_instance_f64 *src,
+  csky_matrix_instance_f64 *dst);
 
 /**
  * @ingroup groupController
@@ -3119,8 +3089,8 @@ void csky_rfft_fast_f32(
   __STATIC_INLINE void csky_clarke_f32(
   float32_t Ia,
   float32_t Ib,
-  float32_t * pIalpha,
-  float32_t * pIbeta)
+  float32_t *pIalpha,
+  float32_t *pIbeta)
   {
     /* Calculate pIalpha using the equation, pIalpha = Ia */
     *pIalpha = Ia;
@@ -3132,7 +3102,6 @@ void csky_rfft_fast_f32(
 /**
  * @}
  */ // end of clarke group
-
 
 /**
  * @addtogroup clarke
@@ -3155,8 +3124,8 @@ void csky_rfft_fast_f32(
   __STATIC_INLINE void csky_clarke_q31(
   q31_t Ia,
   q31_t Ib,
-  q31_t * pIalpha,
-  q31_t * pIbeta)
+  q31_t *pIalpha,
+  q31_t *pIbeta)
   {
     q31_t product1, product2;                    /* Temporary variables used to store intermediate results */
 
@@ -3181,14 +3150,13 @@ void csky_rfft_fast_f32(
     *pIbeta = __QADD(product1, product2);
   }
 
-
 /**
  * @}
  */ // end of clarke group
 
   void csky_q7_to_q31(
-  q7_t * pSrc,
-  q31_t * pDst,
+  q7_t *pSrc,
+  q31_t *pDst,
   uint32_t blockSize);
 
 /**
@@ -3225,8 +3193,8 @@ void csky_rfft_fast_f32(
   __STATIC_INLINE void csky_inv_clarke_f32(
   float32_t Ialpha,
   float32_t Ibeta,
-  float32_t * pIa,
-  float32_t * pIb)
+  float32_t *pIa,
+  float32_t *pIb)
   {
     /* Calculating pIa from Ialpha by equation pIa = Ialpha */
     *pIa = Ialpha;
@@ -3234,7 +3202,6 @@ void csky_rfft_fast_f32(
     /* Calculating pIb from Ialpha and Ibeta by equation pIb = -(1/2) * Ialpha + (sqrt(3)/2) * Ibeta */
     *pIb = -0.5f * Ialpha + 0.8660254039f * Ibeta;
   }
-
 
 /**
  * @}
@@ -3261,8 +3228,8 @@ void csky_rfft_fast_f32(
   __STATIC_INLINE void csky_inv_clarke_q31(
   q31_t Ialpha,
   q31_t Ibeta,
-  q31_t * pIa,
-  q31_t * pIb)
+  q31_t *pIa,
+  q31_t *pIb)
   {
     q31_t product1, product2;                    /* Temporary variables used to store intermediate results */
 
@@ -3292,8 +3259,8 @@ void csky_rfft_fast_f32(
  */ // end of inv_clarke group
 
   void csky_q7_to_q15(
-  q7_t * pSrc,
-  q15_t * pDst,
+  q7_t *pSrc,
+  q15_t *pDst,
   uint32_t blockSize);
 
 /**
@@ -3341,8 +3308,8 @@ void csky_rfft_fast_f32(
   __STATIC_INLINE void csky_park_f32(
   float32_t Ialpha,
   float32_t Ibeta,
-  float32_t * pId,
-  float32_t * pIq,
+  float32_t *pId,
+  float32_t *pIq,
   float32_t sinVal,
   float32_t cosVal)
 {
@@ -3377,8 +3344,8 @@ void csky_rfft_fast_f32(
   __STATIC_INLINE void csky_park_q31(
   q31_t Ialpha,
   q31_t Ibeta,
-  q31_t * pId,
-  q31_t * pIq,
+  q31_t *pId,
+  q31_t *pIq,
   q31_t sinVal,
   q31_t cosVal)
 {
@@ -3416,8 +3383,8 @@ void csky_rfft_fast_f32(
  */ // end of park group
 
   void csky_q7_to_float(
-  q7_t * pSrc,
-  float32_t * pDst,
+  q7_t *pSrc,
+  float32_t *pDst,
   uint32_t blockSize);
 
 /**
@@ -3455,8 +3422,8 @@ void csky_rfft_fast_f32(
   __STATIC_INLINE void csky_inv_park_f32(
   float32_t Id,
   float32_t Iq,
-  float32_t * pIalpha,
-  float32_t * pIbeta,
+  float32_t *pIalpha,
+  float32_t *pIbeta,
   float32_t sinVal,
   float32_t cosVal)
 {
@@ -3491,8 +3458,8 @@ void csky_rfft_fast_f32(
   __STATIC_INLINE void csky_inv_park_q31(
   q31_t Id,
   q31_t Iq,
-  q31_t * pIalpha,
-  q31_t * pIbeta,
+  q31_t *pIalpha,
+  q31_t *pIbeta,
   q31_t sinVal,
   q31_t cosVal)
 {
@@ -3532,8 +3499,8 @@ void csky_rfft_fast_f32(
  */ // end of inv_park group
 
   void csky_q31_to_float(
-  q31_t * pSrc,
-  float32_t * pDst,
+  q31_t *pSrc,
+  float32_t *pDst,
   uint32_t blockSize);
 
 /**
@@ -3593,12 +3560,12 @@ float32_t x)
   float32_t *pYData = S->pYData;               /* pointer to output table */
   /* Calculation of index */
   i = (int32_t) ((x - S->x1) / xSpacing);
-  if(i < 0)
+  if (i < 0)
   {
     /* Iniatilize output for below specified range as least output value of table */
     y = pYData[0];
   }
-  else if((uint32_t)i >= S->nValues)
+  else if ((uint32_t)i >= S->nValues)
   {
     /* Iniatilize output for above specified range as last output value of table */
     y = pYData[S->nValues - 1];
@@ -3639,7 +3606,7 @@ float32_t x)
  *
  */
 __STATIC_INLINE q31_t csky_linear_interp_q31(
-q31_t * pYData,
+q31_t *pYData,
 q31_t x,
 uint32_t nValues)
 {
@@ -3651,11 +3618,11 @@ uint32_t nValues)
   /* 12 bits for the table index */
   /* Index value calculation */
   index = ((x & (q31_t)0xFFF00000) >> 20);
-  if(index >= (int32_t)(nValues - 1))
+  if (index >= (int32_t)(nValues - 1))
   {
     return (pYData[nValues - 1]);
   }
-  else if(index < 0)
+  else if (index < 0)
   {
     return (pYData[0]);
   }
@@ -3704,7 +3671,7 @@ uint32_t nValues)
  *
  */
 __STATIC_INLINE q15_t csky_linear_interp_q15(
-q15_t * pYData,
+q15_t *pYData,
 q31_t x,
 uint32_t nValues)
 {
@@ -3716,16 +3683,11 @@ uint32_t nValues)
   /* 12 bits for the table index */
   /* Index value calculation */
   index = ((x & (int32_t)0xFFF00000) >> 20);
-  if(index >= (int32_t)(nValues - 1))
-  {
+  if (index >= (int32_t)(nValues - 1)) {
     return (pYData[nValues - 1]);
-  }
-  else if(index < 0)
-  {
+  } else if (index < 0) {
     return (pYData[0]);
-  }
-  else
-  {
+  } else {
     /* 20 bits for the fractional part */
     /* fract is in 12.20 format */
     fract = (x & 0x000FFFFF);
@@ -3768,7 +3730,7 @@ uint32_t nValues)
  * This function can support maximum of table size 2^12.
  */
 __STATIC_INLINE q7_t csky_linear_interp_q7(
-q7_t * pYData,
+q7_t *pYData,
 q31_t x,
 uint32_t nValues)
 {
@@ -3779,17 +3741,13 @@ uint32_t nValues)
   /* Input is in 12.20 format */
   /* 12 bits for the table index */
   /* Index value calculation */
-  if (x < 0)
-  {
+  if (x < 0) {
     return (pYData[0]);
   }
   index = (x >> 20) & 0xfff;
-  if(index >= (nValues - 1))
-  {
+  if (index >= (nValues - 1)) {
     return (pYData[nValues - 1]);
-  }
-  else
-  {
+  } else {
     /* 20 bits for the fractional part */
     /* fract is in 12.20 format */
     fract = (x & 0x000FFFFF);
@@ -3828,15 +3786,15 @@ uint32_t nValues)
 
   csky_status csky_sqrt_f32(
   float32_t in,
-  float32_t * pOut);
+  float32_t *pOut);
 
   csky_status csky_sqrt_q31(
   q31_t in,
-  q31_t * pOut);
+  q31_t *pOut);
 
   csky_status csky_sqrt_q15(
   q15_t in,
-  q15_t * pOut);
+  q15_t *pOut);
 
   /*double format*/
   typedef union _myNumber
@@ -3918,277 +3876,276 @@ uint32_t nValues)
   float64_t x);
 
   void csky_power_q31(
-  q31_t * pSrc,
+  q31_t *pSrc,
   uint32_t blockSize,
-  q63_t * pResult);
+  q63_t *pResult);
 
   void csky_power_int32(
-  int32_t * pSrc,
+  int32_t *pSrc,
   uint32_t blockSize,
-  q63_t * pResult);
+  q63_t *pResult);
 
   void csky_power_int32(
-  int32_t * pSrc,
+  int32_t *pSrc,
   uint32_t blockSize,
-  q63_t * pResult);
+  q63_t *pResult);
 
   void csky_power_f32(
-  float32_t * pSrc,
+  float32_t *pSrc,
   uint32_t blockSize,
-  float32_t * pResult);
+  float32_t *pResult);
 
   void csky_power_q15(
-  q15_t * pSrc,
+  q15_t *pSrc,
   uint32_t blockSize,
-  q63_t * pResult);
+  q63_t *pResult);
 
   void csky_power_q7(
-  q7_t * pSrc,
+  q7_t *pSrc,
   uint32_t blockSize,
-  q31_t * pResult);
+  q31_t *pResult);
 
   void csky_mean_q7(
-  q7_t * pSrc,
+  q7_t *pSrc,
   uint32_t blockSize,
-  q7_t * pResult);
+  q7_t *pResult);
 
   void csky_mean_q15(
-  q15_t * pSrc,
+  q15_t *pSrc,
   uint32_t blockSize,
-  q15_t * pResult);
+  q15_t *pResult);
 
   void csky_mean_q31(
-  q31_t * pSrc,
+  q31_t *pSrc,
   uint32_t blockSize,
-  q31_t * pResult);
+  q31_t *pResult);
 
   void csky_mean_f32(
-  float32_t * pSrc,
+  float32_t *pSrc,
   uint32_t blockSize,
-  float32_t * pResult);
+  float32_t *pResult);
 
   void csky_var_f32(
-  float32_t * pSrc,
+  float32_t *pSrc,
   uint32_t blockSize,
-  float32_t * pResult);
+  float32_t *pResult);
 
   void csky_var_q31(
-  q31_t * pSrc,
+  q31_t *pSrc,
   uint32_t blockSize,
-  q31_t * pResult);
+  q31_t *pResult);
 
   void csky_var_q15(
-  q15_t * pSrc,
+  q15_t *pSrc,
   uint32_t blockSize,
-  q15_t * pResult);
+  q15_t *pResult);
 
   void csky_rms_f32(
-  float32_t * pSrc,
+  float32_t *pSrc,
   uint32_t blockSize,
-  float32_t * pResult);
+  float32_t *pResult);
 
   void csky_rms_q31(
-  q31_t * pSrc,
+  q31_t *pSrc,
   uint32_t blockSize,
-  q31_t * pResult);
+  q31_t *pResult);
 
   void csky_rms_q15(
-  q15_t * pSrc,
+  q15_t *pSrc,
   uint32_t blockSize,
-  q15_t * pResult);
+  q15_t *pResult);
 
   void csky_std_f32(
-  float32_t * pSrc,
+  float32_t *pSrc,
   uint32_t blockSize,
-  float32_t * pResult);
+  float32_t *pResult);
 
   void csky_std_q31(
-  q31_t * pSrc,
+  q31_t *pSrc,
   uint32_t blockSize,
-  q31_t * pResult);
+  q31_t *pResult);
 
   void csky_std_q15(
-  q15_t * pSrc,
+  q15_t *pSrc,
   uint32_t blockSize,
-  q15_t * pResult);
+  q15_t *pResult);
 
   void csky_cmplx_mag_f32(
-  float32_t * pSrc,
-  float32_t * pDst,
+  float32_t *pSrc,
+  float32_t *pDst,
   uint32_t numSamples);
 
   void csky_cmplx_mag_q31(
-  q31_t * pSrc,
-  q31_t * pDst,
+  q31_t *pSrc,
+  q31_t *pDst,
   uint32_t numSamples);
 
   void csky_cmplx_mag_q15(
-  q15_t * pSrc,
-  q15_t * pDst,
+  q15_t *pSrc,
+  q15_t *pDst,
   uint32_t numSamples);
 
   void csky_cmplx_dot_prod_q15(
-  q15_t * pSrcA,
-  q15_t * pSrcB,
+  q15_t *pSrcA,
+  q15_t *pSrcB,
   uint32_t numSamples,
-  q31_t * realResult,
-  q31_t * imagResult);
+  q31_t *realResult,
+  q31_t *imagResult);
 
   void csky_cmplx_dot_prod_q31(
-  q31_t * pSrcA,
-  q31_t * pSrcB,
+  q31_t *pSrcA,
+  q31_t *pSrcB,
   uint32_t numSamples,
-  q63_t * realResult,
-  q63_t * imagResult);
+  q63_t *realResult,
+  q63_t *imagResult);
 
   void csky_cmplx_dot_prod_f32(
-  float32_t * pSrcA,
-  float32_t * pSrcB,
+  float32_t *pSrcA,
+  float32_t *pSrcB,
   uint32_t numSamples,
-  float32_t * realResult,
-  float32_t * imagResult);
+  float32_t *realResult,
+  float32_t *imagResult);
 
   void csky_cmplx_mult_real_q15(
-  q15_t * pSrcCmplx,
-  q15_t * pSrcReal,
-  q15_t * pCmplxDst,
+  q15_t *pSrcCmplx,
+  q15_t *pSrcReal,
+  q15_t *pCmplxDst,
   uint32_t numSamples);
 
   void csky_cmplx_mult_real_q31(
-  q31_t * pSrcCmplx,
-  q31_t * pSrcReal,
-  q31_t * pCmplxDst,
+  q31_t *pSrcCmplx,
+  q31_t *pSrcReal,
+  q31_t *pCmplxDst,
   uint32_t numSamples);
 
   void csky_cmplx_mult_real_f32(
-  float32_t * pSrcCmplx,
-  float32_t * pSrcReal,
-  float32_t * pCmplxDst,
+  float32_t *pSrcCmplx,
+  float32_t *pSrcReal,
+  float32_t *pCmplxDst,
   uint32_t numSamples);
 
   void csky_min_q7(
-  q7_t * pSrc,
+  q7_t *pSrc,
   uint32_t blockSize,
-  q7_t * result,
-  uint32_t * index);
+  q7_t *result,
+  uint32_t *index);
 
   void csky_min_q15(
-  q15_t * pSrc,
+  q15_t *pSrc,
   uint32_t blockSize,
-  q15_t * pResult,
-  uint32_t * pIndex);
+  q15_t *pResult,
+  uint32_t *pIndex);
 
   void csky_min_q31(
-  q31_t * pSrc,
+  q31_t *pSrc,
   uint32_t blockSize,
-  q31_t * pResult,
-  uint32_t * pIndex);
+  q31_t *pResult,
+  uint32_t *pIndex);
 
   void csky_min_f32(
-  float32_t * pSrc,
+  float32_t *pSrc,
   uint32_t blockSize,
-  float32_t * pResult,
-  uint32_t * pIndex);
+  float32_t *pResult,
+  uint32_t *pIndex);
 
   void csky_max_q7(
-  q7_t * pSrc,
+  q7_t *pSrc,
   uint32_t blockSize,
-  q7_t * pResult,
-  uint32_t * pIndex);
+  q7_t *pResult,
+  uint32_t *pIndex);
 
   void csky_max_q15(
-  q15_t * pSrc,
+  q15_t *pSrc,
   uint32_t blockSize,
-  q15_t * pResult,
-  uint32_t * pIndex);
+  q15_t *pResult,
+  uint32_t *pIndex);
 
   void csky_max_q31(
-  q31_t * pSrc,
+  q31_t *pSrc,
   uint32_t blockSize,
-  q31_t * pResult,
-  uint32_t * pIndex);
+  q31_t *pResult,
+  uint32_t *pIndex);
 
   void csky_max_f32(
-  float32_t * pSrc,
+  float32_t *pSrc,
   uint32_t blockSize,
-  float32_t * pResult,
-  uint32_t * pIndex);
+  float32_t *pResult,
+  uint32_t *pIndex);
 
   void csky_cmplx_mult_cmplx_q15(
-  q15_t * pSrcA,
-  q15_t * pSrcB,
-  q15_t * pDst,
+  q15_t *pSrcA,
+  q15_t *pSrcB,
+  q15_t *pDst,
   uint32_t numSamples);
 
   void csky_cmplx_mult_cmplx_q31(
-  q31_t * pSrcA,
-  q31_t * pSrcB,
-  q31_t * pDst,
+  q31_t *pSrcA,
+  q31_t *pSrcB,
+  q31_t *pDst,
   uint32_t numSamples);
 
   void csky_cmplx_mult_cmplx_f32(
-  float32_t * pSrcA,
-  float32_t * pSrcB,
-  float32_t * pDst,
+  float32_t *pSrcA,
+  float32_t *pSrcB,
+  float32_t *pDst,
   uint32_t numSamples);
 
   void csky_cmplx_mult_cmplx_re_q15(
-  q15_t * pSrcA,
-  q15_t * pSrcB,
-  q15_t * pDst,
+  q15_t *pSrcA,
+  q15_t *pSrcB,
+  q15_t *pDst,
   uint32_t numSamples);
 
   void csky_cmplx_mult_cmplx_re_q31(
-  q31_t * pSrcA,
-  q31_t * pSrcB,
-  q31_t * pDst,
+  q31_t *pSrcA,
+  q31_t *pSrcB,
+  q31_t *pDst,
   uint32_t numSamples);
 
   void csky_cmplx_mult_cmplx_re_f32(
-  float32_t * pSrcA,
-  float32_t * pSrcB,
-  float32_t * pDst,
+  float32_t *pSrcA,
+  float32_t *pSrcB,
+  float32_t *pDst,
   uint32_t numSamples);
 
-
   void csky_float_to_q31(
-  float32_t * pSrc,
-  q31_t * pDst,
+  float32_t *pSrc,
+  q31_t *pDst,
   uint32_t blockSize);
 
   void csky_float_to_q15(
-  float32_t * pSrc,
-  q15_t * pDst,
+  float32_t *pSrc,
+  q15_t *pDst,
   uint32_t blockSize);
 
   void csky_float_to_q7(
-  float32_t * pSrc,
-  q7_t * pDst,
+  float32_t *pSrc,
+  q7_t *pDst,
   uint32_t blockSize);
 
   void csky_q31_to_q15(
-  q31_t * pSrc,
-  q15_t * pDst,
+  q31_t *pSrc,
+  q15_t *pDst,
   uint32_t blockSize);
 
   void csky_q31_to_q7(
-  q31_t * pSrc,
-  q7_t * pDst,
+  q31_t *pSrc,
+  q7_t *pDst,
   uint32_t blockSize);
 
   void csky_q15_to_float(
-  q15_t * pSrc,
-  float32_t * pDst,
+  q15_t *pSrc,
+  float32_t *pDst,
   uint32_t blockSize);
 
   void csky_q15_to_q31(
-  q15_t * pSrc,
-  q31_t * pDst,
+  q15_t *pSrc,
+  q31_t *pDst,
   uint32_t blockSize);
 
   void csky_q15_to_q7(
-  q15_t * pSrc,
-  q7_t * pDst,
+  q15_t *pSrc,
+  q7_t *pDst,
   uint32_t blockSize);
 
 /**
@@ -4272,7 +4229,7 @@ float32_t Y)
   yIndex = (int32_t) Y;
   /* Care taken for table outside boundary */
   /* Returns zero output when values are outside table boundary */
-  if(xIndex < 0 || xIndex > (S->numRows - 1) || yIndex < 0 || yIndex > (S->numCols - 1))
+  if (xIndex < 0 || xIndex > (S->numRows - 1) || yIndex < 0 || yIndex > (S->numCols - 1))
   {
     return (0);
   }
@@ -4317,7 +4274,7 @@ float32_t Y)
 * @return out interpolated value.
 */
 __STATIC_INLINE q31_t csky_bilinear_interp_q31(
-csky_bilinear_interp_instance_q31 * S,
+csky_bilinear_interp_instance_q31 *S,
 q31_t X,
 q31_t Y)
 {
@@ -4338,7 +4295,7 @@ q31_t Y)
   cI = ((Y & (q31_t)0xFFF00000) >> 20);
   /* Care taken for table outside boundary */
   /* Returns zero output when values are outside table boundary */
-  if(rI < 0 || rI > (S->numRows - 1) || cI < 0 || cI > (S->numCols - 1))
+  if (rI < 0 || rI > (S->numRows - 1) || cI < 0 || cI > (S->numCols - 1))
   {
     return (0);
   }
@@ -4421,7 +4378,7 @@ q31_t Y)
   cI = ((Y & (q31_t)0xFFF00000) >> 20);
   /* Care taken for table outside boundary */
   /* Returns zero output when values are outside table boundary */
-  if(rI < 0 || rI > (S->numRows - 1) || cI < 0 || cI > (S->numCols - 1))
+  if (rI < 0 || rI > (S->numRows - 1) || cI < 0 || cI > (S->numCols - 1))
   {
     return (0);
   }
@@ -4508,7 +4465,7 @@ q31_t Y)
   cI = ((Y & (q31_t)0xFFF00000) >> 20);
   /* Care taken for table outside boundary */
   /* Returns zero output when values are outside table boundary */
-  if(rI < 0 || rI > (S->numRows - 1) || cI < 0 || cI > (S->numCols - 1))
+  if (rI < 0 || rI > (S->numRows - 1) || cI < 0 || cI > (S->numCols - 1))
   {
     return (0);
   }
@@ -4613,7 +4570,6 @@ q31_t Y)
  * @}
  */ // end of ShiftRight group
 
-
 /**
  * @addtogroup ShiftRight
  * @{
@@ -4649,7 +4605,6 @@ q31_t Y)
  * @}
  */ // end of ShiftRight group
 
-
 /**
  * @addtogroup ShiftRight
  * @{
@@ -4683,7 +4638,6 @@ q31_t Y)
 /**
  * @}
  */ // end of ShiftRight group
-
 
 /**
  * @addtogroup ShiftRight
@@ -4738,11 +4692,10 @@ q31_t Y)
  * @}
  */ // end of ShiftRight group
 
-//#define SHR(a, shift)                 csky_shr_q31(a, shift)
+// #define SHR(a, shift)                 csky_shr_q31(a, shift)
 #define PSHR(a, shift)                csky_pshr_q31(a, shift)
 #define PSHR_POSITIVE(a, shift)       csky_pshr_pos_q31(a, shift)
 #define PSHR64(a, shift)              csky_pshr_q63(a, shift)
-
 
 #ifdef CSKY_SIMD
 #else

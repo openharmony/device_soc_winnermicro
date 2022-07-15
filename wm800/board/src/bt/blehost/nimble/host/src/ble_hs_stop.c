@@ -87,7 +87,7 @@ ble_hs_stop_terminate_all_periodic_sync(void)
         sync_handle = psync->sync_handle;
         rc = ble_gap_periodic_adv_sync_terminate(sync_handle);
 
-        if(rc != 0 && rc != BLE_HS_ENOTCONN) {
+        if (rc != 0 && rc != BLE_HS_ENOTCONN) {
             BLE_HS_LOG(ERROR, "failed to terminate periodic sync=0x%04x, rc=%d\n",
                        sync_handle, rc);
             return rc;
@@ -107,7 +107,7 @@ ble_hs_stop_terminate_conn(struct ble_hs_conn *conn, void *arg)
     int rc;
     rc = ble_gap_terminate_with_conn(conn, BLE_ERR_REM_USER_CONN_TERM);
 
-    if(rc == 0) {
+    if (rc == 0) {
         /* Terminate procedure successfully initiated.  Let the GAP event
          * handler deal with the result.
          */
@@ -145,11 +145,11 @@ static int
 ble_hs_stop_gap_event(struct ble_gap_event *event, void *arg)
 {
     /* Only process connection termination events. */
-    if(event->type == BLE_GAP_EVENT_DISCONNECT ||
+    if (event->type == BLE_GAP_EVENT_DISCONNECT ||
             event->type == BLE_GAP_EVENT_TERM_FAILURE) {
         ble_hs_stop_conn_cnt--;
 
-        if(ble_hs_stop_conn_cnt == 0) {
+        if (ble_hs_stop_conn_cnt == 0) {
             ble_hs_stop_done(0);
         }
     }
@@ -179,7 +179,7 @@ ble_hs_stop_begin(struct ble_hs_stop_listener *listener,
             /* Host is enabled; proceed with the stop procedure. */
             ble_hs_enabled_state = BLE_HS_ENABLED_STATE_STOPPING;
 
-            if(listener != NULL) {
+            if (listener != NULL) {
                 ble_hs_stop_register_listener(listener, fn, arg);
             }
 
@@ -194,7 +194,7 @@ ble_hs_stop_begin(struct ble_hs_stop_listener *listener,
             /* A stop procedure is already in progress.  Just listen for the
              * procedure's completion.
              */
-            if(listener != NULL) {
+            if (listener != NULL) {
                 ble_hs_stop_register_listener(listener, fn, arg);
             }
 
@@ -237,7 +237,7 @@ ble_hs_stop(struct ble_hs_stop_listener *listener,
     /* Check for active periodic sync first and terminate it all */
     rc = ble_hs_stop_terminate_all_periodic_sync();
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
@@ -245,7 +245,7 @@ ble_hs_stop(struct ble_hs_stop_listener *listener,
     rc = ble_gap_event_listener_register(&ble_hs_stop_gap_listener,
                                          ble_hs_stop_gap_event, NULL);
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
@@ -253,7 +253,7 @@ ble_hs_stop(struct ble_hs_stop_listener *listener,
     ble_hs_conn_foreach(ble_hs_stop_terminate_conn, NULL);
     ble_hs_unlock();
 
-    if(ble_hs_stop_conn_cnt > 0) {
+    if (ble_hs_stop_conn_cnt > 0) {
         ble_npl_callout_reset(&ble_hs_stop_terminate_tmo,
                               ble_npl_time_ms_to_ticks32(BLE_HOST_STOP_TIMEOUT_MS));
     } else {

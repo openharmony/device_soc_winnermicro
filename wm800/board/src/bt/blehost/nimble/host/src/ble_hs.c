@@ -123,7 +123,7 @@ ble_hs_locked_by_cur_task(void)
 #if MYNEWT
     struct os_task *owner;
 
-    if(!ble_npl_os_started()) {
+    if (!ble_npl_os_started()) {
         return ble_hs_dbg_mutex_locked;
     }
 
@@ -154,7 +154,7 @@ ble_hs_lock_nested(void)
     int rc;
 #if MYNEWT_VAL(BLE_HS_DEBUG)
 
-    if(!ble_npl_os_started()) {
+    if (!ble_npl_os_started()) {
         ble_hs_dbg_mutex_locked = 1;
         return;
     }
@@ -173,7 +173,7 @@ ble_hs_unlock_nested(void)
     int rc;
 #if MYNEWT_VAL(BLE_HS_DEBUG)
 
-    if(!ble_npl_os_started()) {
+    if (!ble_npl_os_started()) {
         ble_hs_dbg_mutex_locked = 0;
         return;
     }
@@ -192,7 +192,7 @@ ble_hs_lock(void)
     BLE_HS_DBG_ASSERT(!ble_hs_locked_by_cur_task());
 #if MYNEWT_VAL(BLE_HS_DEBUG)
 
-    if(!ble_npl_os_started()) {
+    if (!ble_npl_os_started()) {
         BLE_HS_DBG_ASSERT(!ble_hs_dbg_mutex_locked);
     }
 
@@ -208,7 +208,7 @@ ble_hs_unlock(void)
 {
 #if MYNEWT_VAL(BLE_HS_DEBUG)
 
-    if(!ble_npl_os_started()) {
+    if (!ble_npl_os_started()) {
         BLE_HS_DBG_ASSERT(ble_hs_dbg_mutex_locked);
     }
 
@@ -240,7 +240,7 @@ ble_hs_wakeup_tx_conn(struct ble_hs_conn *conn)
         om = OS_MBUF_PKTHDR_TO_MBUF(omp);
         int rc = ble_hs_hci_acl_tx_now(conn, &om);
 
-        if(rc == BLE_HS_EAGAIN) {
+        if (rc == BLE_HS_EAGAIN) {
             /* Controller is at capacity.  This packet will be the first to
              * get transmitted next time around.
              */
@@ -269,10 +269,10 @@ ble_hs_wakeup_tx(void)
     for(conn = ble_hs_conn_first();
             conn != NULL;
             conn = SLIST_NEXT(conn, bhc_next)) {
-        if(conn->bhc_flags & BLE_HS_CONN_F_TX_FRAG) {
+        if (conn->bhc_flags & BLE_HS_CONN_F_TX_FRAG) {
             rc = ble_hs_wakeup_tx_conn(conn);
 
-            if(rc != 0) {
+            if (rc != 0) {
                 goto done;
             }
 
@@ -288,7 +288,7 @@ ble_hs_wakeup_tx(void)
             conn = SLIST_NEXT(conn, bhc_next)) {
         rc = ble_hs_wakeup_tx_conn(conn);
 
-        if(rc != 0) {
+        if (rc != 0) {
             goto done;
         }
     }
@@ -331,7 +331,7 @@ ble_hs_sync(void)
     ble_hs_sync_state = BLE_HS_SYNC_STATE_BRINGUP;
     rc = ble_hs_startup_go();
 
-    if(rc == 0) {
+    if (rc == 0) {
         ble_hs_sync_state = BLE_HS_SYNC_STATE_GOOD;
     } else {
         ble_hs_sync_state = BLE_HS_SYNC_STATE_BAD;
@@ -340,15 +340,15 @@ ble_hs_sync(void)
     retry_tmo_ticks = ble_npl_time_ms_to_ticks32(BLE_HS_SYNC_RETRY_TIMEOUT_MS);
     ble_hs_timer_sched(retry_tmo_ticks);
 
-    if(rc == 0) {
+    if (rc == 0) {
         rc = ble_hs_misc_restore_irks();
 
-        if(rc != 0) {
+        if (rc != 0) {
             BLE_HS_LOG(INFO, "Failed to restore IRKs from store; status=%d\n",
                        rc);
         }
 
-        if(ble_hs_cfg.sync_cb != NULL) {
+        if (ble_hs_cfg.sync_cb != NULL) {
             ble_hs_cfg.sync_cb();
         }
 
@@ -374,7 +374,7 @@ ble_hs_reset(void)
     while(1) {
         uint16_t conn_handle = ble_hs_atomic_first_conn_handle();
 
-        if(conn_handle == BLE_HS_CONN_HANDLE_NONE) {
+        if (conn_handle == BLE_HS_CONN_HANDLE_NONE) {
             break;
         }
 
@@ -384,7 +384,7 @@ ble_hs_reset(void)
     /* Clear configured addresses. */
     ble_hs_id_reset();
 
-    if(ble_hs_cfg.reset_cb != NULL && ble_hs_reset_reason != 0) {
+    if (ble_hs_cfg.reset_cb != NULL && ble_hs_reset_reason != 0) {
         ble_hs_cfg.reset_cb(ble_hs_reset_reason);
     }
 
@@ -432,7 +432,7 @@ static void
 ble_hs_timer_reset(uint32_t ticks)
 {
 
-    if(!ble_hs_is_enabled()) {
+    if (!ble_hs_is_enabled()) {
         ble_npl_callout_stop(&ble_hs_timer);
     } else {
         int rc = ble_npl_callout_reset(&ble_hs_timer, ticks);
@@ -445,7 +445,7 @@ ble_hs_timer_sched(int32_t ticks_from_now)
 {
     ble_npl_time_t abs_time;
 
-    if(ticks_from_now == BLE_HS_FOREVER) {
+    if (ticks_from_now == BLE_HS_FOREVER) {
         return;
     }
 
@@ -454,7 +454,7 @@ ble_hs_timer_sched(int32_t ticks_from_now)
      */
     abs_time = ble_npl_time_get() + ticks_from_now;
 
-    if(!ble_npl_callout_is_active(&ble_hs_timer) ||
+    if (!ble_npl_callout_is_active(&ble_hs_timer) ||
             ((ble_npl_stime_t)(abs_time -
                                ble_npl_callout_get_ticks(&ble_hs_timer))) < 0) {
         ble_hs_timer_reset(ticks_from_now);
@@ -557,7 +557,7 @@ ble_hs_enqueue_hci_event(uint8_t *hci_evt)
     struct ble_npl_event *ev;
     ev = os_memblock_get(&ble_hs_hci_ev_pool);
 
-    if(ev == NULL) {
+    if (ev == NULL) {
         ble_hci_trans_buf_free(hci_evt);
     } else {
         ble_npl_event_init(ev, ble_hs_event_rx_hci_ev, hci_evt);
@@ -574,7 +574,7 @@ ble_hs_notifications_sched(void)
 {
 #if !MYNEWT_VAL(BLE_HS_REQUIRE_OS)
 
-    if(!ble_npl_os_started()) {
+    if (!ble_npl_os_started()) {
         ble_gatts_tx_notifications();
         return;
     }
@@ -625,7 +625,7 @@ ble_hs_start(void)
 
     ble_hs_unlock();
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
@@ -640,7 +640,7 @@ ble_hs_start(void)
 #if 0
     rc = ble_gatts_start();
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
@@ -668,7 +668,7 @@ ble_hs_rx_data(struct os_mbuf *om, void *arg)
     ble_hs_flow_fill_acl_usrhdr(om);
     rc = ble_mqueue_put(&ble_hs_rx_q, ble_hs_evq, om);
 
-    if(rc != 0) {
+    if (rc != 0) {
         os_mbuf_free_chain(om);
         return BLE_HS_EOS;
     }

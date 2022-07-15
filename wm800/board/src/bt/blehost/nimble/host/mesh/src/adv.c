@@ -67,7 +67,6 @@ static const u8_t adv_type[] = {
     [BT_MESH_ADV_URI]    = BLE_HS_ADV_TYPE_URI,
 };
 
-
 static struct bt_mesh_adv adv_pool[CONFIG_BT_MESH_ADV_BUF_COUNT];
 
 static struct bt_mesh_adv *adv_alloc(int id)
@@ -79,7 +78,7 @@ static inline void adv_send_start(u16_t duration, int err,
                                   const struct bt_mesh_send_cb *cb,
                                   void *cb_data)
 {
-    if(cb && cb->start) {
+    if (cb && cb->start) {
         cb->start(duration, err, cb_data);
     }
 }
@@ -87,7 +86,7 @@ static inline void adv_send_start(u16_t duration, int err,
 static inline void adv_send_end(int err, const struct bt_mesh_send_cb *cb,
                                 void *cb_data)
 {
-    if(cb && cb->end) {
+    if (cb && cb->end) {
         cb->end(err, cb_data);
     }
 }
@@ -125,7 +124,7 @@ static inline void adv_send(struct os_mbuf *buf)
     net_buf_unref(buf);
     adv_send_start(duration, err, cb, cb_data);
 
-    if(err) {
+    if (err) {
         BT_ERR("Advertising failed: err %d", err);
         return;
     }
@@ -135,7 +134,7 @@ static inline void adv_send(struct os_mbuf *buf)
     err = bt_le_adv_stop(false);
     adv_send_end(err, cb, cb_data);
 
-    if(err) {
+    if (err) {
         BT_ERR("Stopping advertising failed: err %d", err);
         return;
     }
@@ -153,7 +152,7 @@ mesh_adv_thread(void *args)
     BT_DBG("started");
 
     while(1) {
-		static struct ble_npl_event *ev;
+        static struct ble_npl_event *ev;
 #if (MYNEWT_VAL(BLE_MESH_PROXY))
         ev = ble_npl_eventq_get(&adv_queue, 0);
 
@@ -162,7 +161,7 @@ mesh_adv_thread(void *args)
             BT_DBG("Proxy Advertising up to %d ms", (int) timeout);
 
             // FIXME: should we redefine K_SECONDS macro instead in glue?
-            if(timeout != K_FOREVER) {
+            if (timeout != K_FOREVER) {
                 timeout = ble_npl_time_ms_to_ticks32(timeout);
             }
 
@@ -174,14 +173,14 @@ mesh_adv_thread(void *args)
         ev = ble_npl_eventq_get(&adv_queue, BLE_NPL_TIME_FOREVER);
 #endif
 
-        if(!ev || !ble_npl_event_get_arg(ev)) {
+        if (!ev || !ble_npl_event_get_arg(ev)) {
             continue;
         }
 
         buf = ble_npl_event_get_arg(ev);
 
         /* busy == 0 means this was canceled */
-        if(BT_MESH_ADV(buf)->busy) {
+        if (BT_MESH_ADV(buf)->busy) {
             BT_MESH_ADV(buf)->busy = 0;
             adv_send(buf);
         } else {
@@ -207,14 +206,14 @@ struct os_mbuf *bt_mesh_adv_create_from_pool(struct os_mbuf_pool *pool,
     struct bt_mesh_adv *adv;
     struct os_mbuf *buf;
 
-    if(atomic_test_bit(bt_mesh.flags, BT_MESH_SUSPENDED)) {
+    if (atomic_test_bit(bt_mesh.flags, BT_MESH_SUSPENDED)) {
         BT_WARN("Refusing to allocate buffer while suspended");
         return NULL;
     }
 
     buf = os_mbuf_get_pkthdr(pool, BT_MESH_ADV_USER_DATA_SIZE);
 
-    if(!buf) {
+    if (!buf) {
         return NULL;
     }
 
@@ -249,7 +248,7 @@ void bt_mesh_adv_send(struct os_mbuf *buf, const struct bt_mesh_send_cb *cb,
 static void bt_mesh_scan_cb(const bt_addr_le_t *addr, s8_t rssi,
                             u8_t adv_type, struct os_mbuf *buf)
 {
-    if(adv_type != BLE_HCI_ADV_TYPE_ADV_NONCONN_IND) {
+    if (adv_type != BLE_HCI_ADV_TYPE_ADV_NONCONN_IND) {
         return;
     }
 
@@ -263,11 +262,11 @@ static void bt_mesh_scan_cb(const bt_addr_le_t *addr, s8_t rssi,
         len = net_buf_simple_pull_u8(buf);
 
         /* Check for early termination */
-        if(len == 0) {
+        if (len == 0) {
             return;
         }
 
-        if(len > buf->om_len) {
+        if (len > buf->om_len) {
             BT_WARN("AD malformed");
             return;
         }
@@ -305,7 +304,7 @@ void bt_mesh_adv_init(void)
 
     /* Advertising should only be initialized once. Calling
      * os_task init the second time will result in an assert. */
-    if(adv_initialized) {
+    if (adv_initialized) {
         return;
     }
 
@@ -325,7 +324,7 @@ void bt_mesh_adv_init(void)
 #endif
 
     /* For BT5 controllers we can have fast advertising interval */
-    if(ble_hs_hci_get_hci_version() >= BLE_HCI_VER_BCS_5_0) {
+    if (ble_hs_hci_get_hci_version() >= BLE_HCI_VER_BCS_5_0) {
         adv_int_min = ADV_INT_FAST_MS;
     }
 
@@ -351,7 +350,7 @@ ble_adv_gap_mesh_cb(struct ble_gap_event *event, void *arg)
             ext_desc = &event->ext_disc;
             buf = os_mbuf_get_pkthdr(&adv_os_mbuf_pool, 0);
 
-            if(!buf || os_mbuf_append(buf, ext_desc->data, ext_desc->length_data)) {
+            if (!buf || os_mbuf_append(buf, ext_desc->data, ext_desc->length_data)) {
                 BT_ERR("Could not append data");
                 goto done;
             }
@@ -365,7 +364,7 @@ ble_adv_gap_mesh_cb(struct ble_gap_event *event, void *arg)
             desc = &event->disc;
             buf = os_mbuf_get_pkthdr(&adv_os_mbuf_pool, 0);
 
-            if(!buf || os_mbuf_append(buf, desc->data, desc->length_data)) {
+            if (!buf || os_mbuf_append(buf, desc->data, desc->length_data)) {
                 BT_ERR("Could not append data");
                 goto done;
             }
@@ -379,7 +378,7 @@ ble_adv_gap_mesh_cb(struct ble_gap_event *event, void *arg)
 
 done:
 
-    if(buf) {
+    if (buf) {
         os_mbuf_free_chain(buf);
     }
 
@@ -407,7 +406,7 @@ int bt_mesh_scan_enable(void)
                         NULL, NULL);
 #endif
 
-    if(err && err != BLE_HS_EALREADY) {
+    if (err && err != BLE_HS_EALREADY) {
         BT_ERR("starting scan failed (err %d)", err);
         return err;
     }
@@ -421,7 +420,7 @@ int bt_mesh_scan_disable(void)
     BT_DBG("");
     err = ble_gap_disc_cancel();
 
-    if(err && err != BLE_HS_EALREADY) {
+    if (err && err != BLE_HS_EALREADY) {
         BT_ERR("stopping scan failed (err %d)", err);
         return err;
     }

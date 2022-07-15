@@ -396,15 +396,15 @@ int friend_cred_del(u16_t net_idx, u16_t addr);
 static inline void send_cb_finalize(const struct bt_mesh_send_cb *cb,
                                     void *cb_data)
 {
-    if(!cb) {
+    if (!cb) {
         return;
     }
 
-    if(cb->start) {
+    if (cb->start) {
         cb->start(0, 0, cb_data);
     }
 
-    if(cb->end) {
+    if (cb->end) {
         cb->end(0, cb_data);
     }
 }

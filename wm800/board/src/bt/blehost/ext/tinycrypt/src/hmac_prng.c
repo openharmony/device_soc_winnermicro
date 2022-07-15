@@ -110,7 +110,7 @@ int tc_hmac_prng_init(TCHmacPrng_t prng,
                       unsigned int plen)
 {
     /* input sanity check: */
-    if(prng == (TCHmacPrng_t) 0 ||
+    if (prng == (TCHmacPrng_t) 0 ||
             personalization == (uint8_t *) 0 ||
             plen > MAX_PLEN) {
         return TC_CRYPTO_FAIL;
@@ -134,19 +134,19 @@ int tc_hmac_prng_reseed(TCHmacPrng_t prng,
                         unsigned int additionallen)
 {
     /* input sanity check: */
-    if(prng == (TCHmacPrng_t) 0 ||
+    if (prng == (TCHmacPrng_t) 0 ||
             seed == (const uint8_t *) 0 ||
             seedlen < MIN_SLEN ||
             seedlen > MAX_SLEN) {
         return TC_CRYPTO_FAIL;
     }
 
-    if(additional_input != (const uint8_t *) 0) {
+    if (additional_input != (const uint8_t *) 0) {
         /*
          * Abort if additional_input is provided but has inappropriate
          * length
          */
-        if(additionallen == 0 ||
+        if (additionallen == 0 ||
                 additionallen > MAX_ALEN) {
             return TC_CRYPTO_FAIL;
         } else {
@@ -167,12 +167,12 @@ int tc_hmac_prng_reseed(TCHmacPrng_t prng,
 int tc_hmac_prng_generate(uint8_t *out, unsigned int outlen, TCHmacPrng_t prng)
 {
     /* input sanity check: */
-    if(out == (uint8_t *) 0 ||
+    if (out == (uint8_t *) 0 ||
             prng == (TCHmacPrng_t) 0 ||
             outlen == 0 ||
             outlen > MAX_OUT) {
         return TC_CRYPTO_FAIL;
-    } else if(prng->countdown == 0) {
+    } else if (prng->countdown == 0) {
         return TC_HMAC_PRNG_RESEED_REQ;
     }
 

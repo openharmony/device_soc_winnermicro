@@ -51,9 +51,8 @@
 #define CHAR_BIT 8
 #endif
 
-
 static unsigned char printf_port = 0;
-//0 uart0; 1: uart1; other: close;
+// 0 uart0; 1: uart1; other: close;
 unsigned char get_printf_port(void)
 {
     return printf_port;
@@ -61,11 +60,11 @@ unsigned char get_printf_port(void)
 
 void set_printf_port(unsigned char port)
 {
-    if(port == 0)
+    if (port == 0)
     {
         printf_port = 0;
     }
-    else if(port == 1)
+    else if (port == 1)
     {
         printf_port = 1;
     }
@@ -77,28 +76,28 @@ void set_printf_port(unsigned char port)
 
 int sendchar(int ch)
 {
-	//tls_reg_write32(HR_UART0_INT_MASK, 0x3);
-	if (printf_port == 0)
-	{
-		if(ch == '\n')
-		{
-			while (tls_reg_read32(HR_UART0_FIFO_STATUS) & 0x3F);
-			tls_reg_write32(HR_UART0_TX_WIN, '\r');
-	    }
-	    while(tls_reg_read32(HR_UART0_FIFO_STATUS) & 0x3F);
-	    tls_reg_write32(HR_UART0_TX_WIN, (char)ch);
-	}
-	else if (printf_port == 1)
-	{
-		if(ch == '\n')
-		{
-			while (tls_reg_read32(HR_UART1_FIFO_STATUS) & 0x3F);
-			tls_reg_write32(HR_UART1_TX_WIN, '\r');
-	    }
-		while(tls_reg_read32(HR_UART1_FIFO_STATUS) & 0x3F);
-		tls_reg_write32(HR_UART1_TX_WIN, (char)ch);
-	}
-    //tls_reg_write32(HR_UART0_INT_MASK, 0x0);
+    // tls_reg_write32(HR_UART0_INT_MASK, 0x3);
+    if (printf_port == 0)
+    {
+        if (ch == '\n')
+        {
+            while (tls_reg_read32(HR_UART0_FIFO_STATUS) & 0x3F);
+            tls_reg_write32(HR_UART0_TX_WIN, '\r');
+        }
+        while(tls_reg_read32(HR_UART0_FIFO_STATUS) & 0x3F);
+        tls_reg_write32(HR_UART0_TX_WIN, (char)ch);
+    }
+    else if (printf_port == 1)
+    {
+        if (ch == '\n')
+        {
+            while (tls_reg_read32(HR_UART1_FIFO_STATUS) & 0x3F);
+            tls_reg_write32(HR_UART1_TX_WIN, '\r');
+        }
+        while(tls_reg_read32(HR_UART1_FIFO_STATUS) & 0x3F);
+        tls_reg_write32(HR_UART1_TX_WIN, (char)ch);
+    }
+    // tls_reg_write32(HR_UART0_INT_MASK, 0x0);
     return ch;
 }
 
@@ -109,7 +108,7 @@ int fputc(int ch, FILE *stream)
     return 0;
 }
 
-#if 1//defined(__MINILIBC__)
+#if 1// defined(__MINILIBC__)
 int fgetc(FILE *stream)
 {
     (void)stream;
@@ -118,20 +117,20 @@ int fgetc(FILE *stream)
 }
 #endif
 
-#if 1//defined(_NEWLIB_VERSION_H__)
-//_ssize_t _write_r (struct _reent *, int, const void *, size_t) /* ignore warning */
+#if 1// defined(_NEWLIB_VERSION_H__)
+// _ssize_t _write_r (struct _reent *, int, const void *, size_t) /* ignore warning */
 int _write_r(void *r, int file, const void *ptr, size_t len)
 {
-	size_t i;
-	char *p;
+    size_t i;
+    char *p;
 
-	p = (char*) ptr;
-	
-	for (i = 0; i < len; i++) 
-	{
-		(void)fputc(*p++, r); /* r: ignore warning */
-	}
-	return len;
+    p = (char*) ptr;
+    
+    for (i = 0; i < len; i++) 
+    {
+        (void)fputc(*p++, r); /* r: ignore warning */
+    }
+    return len;
 }
 #endif
 
@@ -142,8 +141,7 @@ static int __ip2str(unsigned char v4v6, unsigned int *inuint, char *outtxt)
     unsigned char m;
     unsigned char l;
 
-    if (4 == v4v6)
-    {
+    if (4 == v4v6) {
         for(unsigned char i = 0; i < 4; i++)
         {
             unsigned char bit = (*inuint >> (8 * i)) & 0xff;
@@ -151,12 +149,9 @@ static int __ip2str(unsigned char v4v6, unsigned int *inuint, char *outtxt)
             if (h)
                 outtxt[j++] = '0' + h;
             m = (bit % 100) / 10;
-            if (m)
-            {
+            if (m) {
                 outtxt[j++] = '0' + m;
-            }
-            else
-            {
+            } else {
                 if (h)
                     outtxt[j++] = '0';
             }
@@ -164,13 +159,9 @@ static int __ip2str(unsigned char v4v6, unsigned int *inuint, char *outtxt)
             outtxt[j++] = '0' + l;
             outtxt[j++] = '.';
         }
-    }
-    else
-    {
-        for (unsigned char k = 0; k < 4; k++)
-        {
-            for(unsigned char i = 0; i < 4; i++)
-            {
+    } else {
+        for (unsigned char k = 0; k < 4; k++) {
+            for(unsigned char i = 0; i < 4; i++) {
                 m = (*inuint >> (8 * i)) & 0xff;
                 h = m >> 4;
                 l = m & 0xf;
@@ -196,8 +187,7 @@ static int __ip2str(unsigned char v4v6, unsigned int *inuint, char *outtxt)
 static int __mac2str(unsigned char *inchar, char *outtxt)
 {
     unsigned int i;
-    for(i = 0; i < 6; i++)/* mac length */
-    {
+    for(i = 0; i < 6; i++) {   /* mac length */
         unsigned char hbit = (*(inchar + i) & 0xf0) >> 4;
         unsigned char lbit = *(inchar + i ) & 0x0f;
         if (hbit > 9)
@@ -251,7 +241,7 @@ uintmax_t strntoumax(const char *nptr, char **endptr, int base, size_t n)
 
   if ( base == 0 ) {
     if ( n >= 2 && nptr[0] == '0' &&
-	 (nptr[1] == 'x' || nptr[1] == 'X') ) {
+     (nptr[1] == 'x' || nptr[1] == 'X') ) {
       n -= 2;
       nptr += 2;
       base = 16;
@@ -264,7 +254,7 @@ uintmax_t strntoumax(const char *nptr, char **endptr, int base, size_t n)
     }
   } else if ( base == 16 ) {
     if ( n >= 2 && nptr[0] == '0' &&
-	 (nptr[1] == 'x' || nptr[1] == 'X') ) {
+     (nptr[1] == 'x' || nptr[1] == 'X') ) {
       n -= 2;
       nptr += 2;
     }
@@ -287,32 +277,32 @@ uintmax_t strntoumax(const char *nptr, char **endptr, int base, size_t n)
 #endif
 
 enum flags {
-  FL_SPLAT  = 0x01,		/* Drop the value, do not assign */
-  FL_INV    = 0x02,		/* Character-set with inverse */
-  FL_WIDTH  = 0x04,		/* Field width specified */
-  FL_MINUS  = 0x08,		/* Negative number */
+  FL_SPLAT  = 0x01,        /* Drop the value, do not assign */
+  FL_INV    = 0x02,        /* Character-set with inverse */
+  FL_WIDTH  = 0x04,        /* Field width specified */
+  FL_MINUS  = 0x08,        /* Negative number */
 };
 
 enum ranks {
-  rank_char	= -2,
-  rank_short	= -1,
-  rank_int 	= 0,
-  rank_long	= 1,
-  rank_longlong	= 2,
-  rank_ptr      = INT_MAX	/* Special value used for pointers */
+  rank_char    = -2,
+  rank_short    = -1,
+  rank_int     = 0,
+  rank_long    = 1,
+  rank_longlong    = 2,
+  rank_ptr      = INT_MAX    /* Special value used for pointers */
 };
 
-#define MIN_RANK	rank_char
-#define MAX_RANK	rank_longlong
+#define MIN_RANK    rank_char
+#define MAX_RANK    rank_longlong
 
-#define INTMAX_RANK	rank_longlong
-#define SIZE_T_RANK	rank_long
-#define PTRDIFF_T_RANK	rank_long
+#define INTMAX_RANK    rank_longlong
+#define SIZE_T_RANK    rank_long
+#define PTRDIFF_T_RANK    rank_long
 
 enum bail {
-  bail_none = 0,		/* No error condition */
-  bail_eof,			/* Hit EOF */
-  bail_err			/* Conversion mismatch */
+  bail_none = 0,        /* No error condition */
+  bail_eof,            /* Hit EOF */
+  bail_err            /* Conversion mismatch */
 };
 
 static inline const char *
@@ -343,193 +333,193 @@ int wm_vsscanf(const char *buffer, const char *format, va_list ap)
   const char *q = buffer;
   const char *qq;
   uintmax_t val = 0;
-  int rank = rank_int;		/* Default rank */
+  int rank = rank_int;        /* Default rank */
   unsigned int width = UINT_MAX;
   int base;
   enum flags flags = 0;
   enum {
-    st_normal,			/* Ground state */
-    st_flags,			/* Special flags */
-    st_width,			/* Field width */
-    st_modifiers,		/* Length or conversion modifiers */
-    st_match_init,		/* Initial state of %[ sequence */
-    st_match,			/* Main state of %[ sequence */
-    st_match_range,		/* After - in a %[ sequence */
+    st_normal,            /* Ground state */
+    st_flags,            /* Special flags */
+    st_width,            /* Field width */
+    st_modifiers,        /* Length or conversion modifiers */
+    st_match_init,        /* Initial state of %[ sequence */
+    st_match,            /* Main state of %[ sequence */
+    st_match_range,        /* After - in a %[ sequence */
   } state = st_normal;
-  char *sarg = NULL;		/* %s %c or %[ string argument */
+  char *sarg = NULL;        /* %s %c or %[ string argument */
   enum bail bail = bail_none;
   int sign = 0;
-  int converted = 0;		/* Successful conversions */
+  int converted = 0;        /* Successful conversions */
   unsigned long matchmap[((1 << CHAR_BIT)+(LONG_BIT-1))/LONG_BIT];
-  int matchinv = 0;		/* Is match map inverted? */
+  int matchinv = 0;        /* Is match map inverted? */
   unsigned char range_start = 0;
 
   while ( (ch = *p++) && !bail ) {
     switch ( state ) {
     case st_normal:
       if ( ch == '%' ) {
-	state = st_flags;
-	flags = 0; rank = rank_int; width = UINT_MAX;
+    state = st_flags;
+    flags = 0; rank = rank_int; width = UINT_MAX;
       } else if ( isspace((unsigned char)ch) ) {
-	q = skipspace(q);
+    q = skipspace(q);
       } else {
-	if ( *q == ch )
-	  q++;
-	else
-	  bail = bail_err;	/* Match failure */
+    if ( *q == ch )
+      q++;
+    else
+      bail = bail_err;    /* Match failure */
       }
       break;
 
     case st_flags:
       switch ( ch ) {
       case '*':
-	flags |= FL_SPLAT;
-	break;
+    flags |= FL_SPLAT;
+    break;
       case '0' ... '9':
-	width = (ch-'0');
-	state = st_width;
-	flags |= FL_WIDTH;
-	break;
+    width = (ch-'0');
+    state = st_width;
+    flags |= FL_WIDTH;
+    break;
       default:
-	state = st_modifiers;
-	p--;			/* Process this character again */
-	break;
+    state = st_modifiers;
+    p--;            /* Process this character again */
+    break;
       }
       break;
 
     case st_width:
       if ( ch >= '0' && ch <= '9' ) {
-	width = width*10+(ch-'0');
+    width = width*10+(ch-'0');
       } else {
-	state = st_modifiers;
-	p--;			/* Process this character again */
+    state = st_modifiers;
+    p--;            /* Process this character again */
       }
       break;
 
     case st_modifiers:
       switch ( ch ) {
-	/* Length modifiers - nonterminal sequences */
+    /* Length modifiers - nonterminal sequences */
       case 'h':
-	rank--;			/* Shorter rank */
-	break;
+    rank--;            /* Shorter rank */
+    break;
       case 'l':
-	rank++;			/* Longer rank */
-	break;
+    rank++;            /* Longer rank */
+    break;
       case 'j':
-	rank = INTMAX_RANK;
-	break;
+    rank = INTMAX_RANK;
+    break;
       case 'z':
-	rank = SIZE_T_RANK;
-	break;
+    rank = SIZE_T_RANK;
+    break;
       case 't':
-	rank = PTRDIFF_T_RANK;
-	break;
+    rank = PTRDIFF_T_RANK;
+    break;
       case 'L':
       case 'q':
-	rank = rank_longlong;	/* long double/long long */
-	break;
+    rank = rank_longlong;    /* long double/long long */
+    break;
 
       default:
-	/* Output modifiers - terminal sequences */
-	state = st_normal;	/* Next state will be normal */
-	if ( rank < MIN_RANK )	/* Canonicalize rank */
-	  rank = MIN_RANK;
-	else if ( rank > MAX_RANK )
-	  rank = MAX_RANK;
+    /* Output modifiers - terminal sequences */
+    state = st_normal;    /* Next state will be normal */
+    if ( rank < MIN_RANK )    /* Canonicalize rank */
+      rank = MIN_RANK;
+    else if ( rank > MAX_RANK )
+      rank = MAX_RANK;
 
-	switch ( ch ) {
-	case 'P':		/* Upper case pointer */
-	case 'p':		/* Pointer */
-#if 0	/* Enable this to allow null pointers by name */
-	  q = skipspace(q);
-	  if ( !isdigit((unsigned char)*q) ) {
-	    static const char * const nullnames[] =
-	    { "null", "nul", "nil", "(null)", "(nul)", "(nil)", 0 };
-	    const char * const *np;
+    switch ( ch ) {
+    case 'P':        /* Upper case pointer */
+    case 'p':        /* Pointer */
+#if 0    /* Enable this to allow null pointers by name */
+      q = skipspace(q);
+      if ( !isdigit((unsigned char)*q) ) {
+        static const char * const nullnames[] =
+        { "null", "nul", "nil", "(null)", "(nul)", "(nil)", 0 };
+        const char * const *np;
 
-	    /* Check to see if it's a null pointer by name */
-	    for ( np = nullnames ; *np ; np++ ) {
-	      if ( !strncasecmp(q, *np, strlen(*np)) ) {
-		val = (uintmax_t)((void *)NULL);
-		goto set_integer;
-	      }
-	    }
-	    /* Failure */
-	    bail = bail_err;
-	    break;
-	  }
-	  /* else */
+        /* Check to see if it's a null pointer by name */
+        for ( np = nullnames ; *np ; np++ ) {
+          if ( !strncasecmp(q, *np, strlen(*np)) ) {
+        val = (uintmax_t)((void *)NULL);
+        goto set_integer;
+          }
+        }
+        /* Failure */
+        bail = bail_err;
+        break;
+      }
+      /* else */
 #endif
-	  rank = rank_ptr;
-	  base = 0; sign = 0;
-	  goto scan_int;
+      rank = rank_ptr;
+      base = 0; sign = 0;
+      goto scan_int;
 
-	case 'i':		/* Base-independent integer */
-	  base = 0; sign = 1;
-	  goto scan_int;
+    case 'i':        /* Base-independent integer */
+      base = 0; sign = 1;
+      goto scan_int;
 
-	case 'd':		/* Decimal integer */
-	  base = 10; sign = 1;
-	  goto scan_int;
+    case 'd':        /* Decimal integer */
+      base = 10; sign = 1;
+      goto scan_int;
 
-	case 'o':		/* Octal integer */
-	  base = 8; sign = 0;
-	  goto scan_int;
+    case 'o':        /* Octal integer */
+      base = 8; sign = 0;
+      goto scan_int;
 
-	case 'u':		/* Unsigned decimal integer */
-	  base = 10; sign = 0;
-	  goto scan_int;
-	  
-	case 'x':		/* Hexadecimal integer */
-	case 'X':
-	  base = 16; sign = 0;
-	  goto scan_int;
+    case 'u':        /* Unsigned decimal integer */
+      base = 10; sign = 0;
+      goto scan_int;
+      
+    case 'x':        /* Hexadecimal integer */
+    case 'X':
+      base = 16; sign = 0;
+      goto scan_int;
 
-	case 'n':		/* Number of characters consumed */
-	  val = (q-buffer);
-	  goto set_integer;
+    case 'n':        /* Number of characters consumed */
+      val = (q-buffer);
+      goto set_integer;
 
-	scan_int:
-	  q = skipspace(q);
-	  if ( !*q ) {
-	    bail = bail_eof;
-	    break;
-	  }
-	  val = strntoumax(q, (char **)&qq, base, width);
-	  if ( qq == q ) {
-	    bail = bail_err;
-	    break;
-	  }
-	  q = qq;
-	  converted++;
-	  /* fall through */
+    scan_int:
+      q = skipspace(q);
+      if ( !*q ) {
+        bail = bail_eof;
+        break;
+      }
+      val = strntoumax(q, (char **)&qq, base, width);
+      if ( qq == q ) {
+        bail = bail_err;
+        break;
+      }
+      q = qq;
+      converted++;
+      /* fall through */
 
-	set_integer:
-	  if ( !(flags & FL_SPLAT) ) {
-	    switch(rank) {
-	    case rank_char:
-	      *va_arg(ap, unsigned char *) = (unsigned char)val;
-	      break;
-	    case rank_short:
-	      *va_arg(ap, unsigned short *) = (unsigned short)val;
-	      break;
-	    case rank_int:
-	      *va_arg(ap, unsigned int *) = (unsigned int)val;
-	      break;
-	    case rank_long:
-	      *va_arg(ap, unsigned long *) = (unsigned long)val;
-	      break;
-	    case rank_longlong:
-	      *va_arg(ap, unsigned long long *) = (unsigned long long)val;
-	      break;
-	    case rank_ptr:
-	      *va_arg(ap, void **) = (void *)(uintptr_t)val;
-	      break;
-	    }
-	  }
-	  break;
-	  
-	case 'c':               /* Character */
+    set_integer:
+      if ( !(flags & FL_SPLAT) ) {
+        switch(rank) {
+        case rank_char:
+          *va_arg(ap, unsigned char *) = (unsigned char)val;
+          break;
+        case rank_short:
+          *va_arg(ap, unsigned short *) = (unsigned short)val;
+          break;
+        case rank_int:
+          *va_arg(ap, unsigned int *) = (unsigned int)val;
+          break;
+        case rank_long:
+          *va_arg(ap, unsigned long *) = (unsigned long)val;
+          break;
+        case rank_longlong:
+          *va_arg(ap, unsigned long long *) = (unsigned long long)val;
+          break;
+        case rank_ptr:
+          *va_arg(ap, void **) = (void *)(uintptr_t)val;
+          break;
+        }
+      }
+      break;
+      
+    case 'c':               /* Character */
           width = (flags & FL_WIDTH) ? width : 1; /* Default width == 1 */
           sarg = va_arg(ap, char *);
           while ( width-- ) {
@@ -544,122 +534,121 @@ int wm_vsscanf(const char *buffer, const char *format, va_list ap)
           break;
 
         case 's':               /* String */
-	  {
-	    char *sp;
-	    sp = sarg = va_arg(ap, char *);
-	    while ( width-- && *q && !isspace((unsigned char)*q) ) {
-	      *sp++ = *q++;
-	    }
-	    if ( sarg != sp ) {
-	      *sp = '\0';	/* Terminate output */
-	      converted++;
-	    } else {
-	      bail = bail_eof;
-	    }
-	  }
-	  break;
+      {
+        char *sp;
+        sp = sarg = va_arg(ap, char *);
+        while ( width-- && *q && !isspace((unsigned char)*q) ) {
+          *sp++ = *q++;
+        }
+        if ( sarg != sp ) {
+          *sp = '\0';    /* Terminate output */
+          converted++;
+        } else {
+          bail = bail_eof;
+        }
+      }
+      break;
 
-	  case 'f':               /* float */
-	  {
+      case 'f':               /* float */
+      {
         float *vp = (float *) va_arg(ap, float *);
         const char *vpq = q;
         *vp = strtof(vpq, (char **)&q);
-	    if ( vpq != q ) {
-	      converted++;
-	    } else {
-	      //bail = bail_eof;
-	      bail = bail_err;
-	    }
-	  }
-	  break;
-	  case 'g':               /* double */
-	  {
+        if ( vpq != q ) {
+          converted++;
+        } else {
+          // bail = bail_eof;
+          bail = bail_err;
+        }
+      }
+      break;
+      case 'g':               /* double */
+      {
         double *vp = (double *) va_arg(ap, double *);
         const char *vpq = q;
         *vp = strtod(vpq, (char **)&q);
-	    if ( vpq != q ) {
-	      converted++;
-	    } else {
-	      //bail = bail_eof;
-	      bail = bail_err;
-	    }
-	  }
-	  break;
-	  
-	case '[':		/* Character range */
-	  sarg = va_arg(ap, char *);
-	  state = st_match_init;
-	  matchinv = 0;
-	  memset(matchmap, 0, sizeof matchmap);
-	  break;
+        if ( vpq != q ) {
+          converted++;
+        } else {
+          // bail = bail_eof;
+          bail = bail_err;
+        }
+      }
+      break;
+      
+    case '[':        /* Character range */
+      sarg = va_arg(ap, char *);
+      state = st_match_init;
+      matchinv = 0;
+      memset(matchmap, 0, sizeof matchmap);
+      break;
 
-	case '%':		/* %% sequence */
-	  if ( *q == '%' )
-	    q++;
-	  else
-	    bail = bail_err;
-	  break;
+    case '%':        /* %% sequence */
+      if ( *q == '%' )
+        q++;
+      else
+        bail = bail_err;
+      break;
 
-	default:		/* Anything else */
-	  bail = bail_err;	/* Unknown sequence */
-	  break;
-	}
+    default:        /* Anything else */
+      bail = bail_err;    /* Unknown sequence */
+      break;
+    }
       }
       break;
     
-    case st_match_init:		/* Initial state for %[ match */
+    case st_match_init:        /* Initial state for %[ match */
       if ( ch == '^' && !(flags & FL_INV) ) {
-	matchinv = 1;
+    matchinv = 1;
       } else {
-	set_bit(matchmap, (unsigned char)ch);
-	state = st_match;
+    set_bit(matchmap, (unsigned char)ch);
+    state = st_match;
       }
       break;
       
-    case st_match:		/* Main state for %[ match */
+    case st_match:        /* Main state for %[ match */
       if ( ch == ']' ) {
-	goto match_run;
+    goto match_run;
       } else if ( ch == '-' ) {
-	range_start = (unsigned char)ch;
-	state = st_match_range;
+    range_start = (unsigned char)ch;
+    state = st_match_range;
       } else {
-	set_bit(matchmap, (unsigned char)ch);
+    set_bit(matchmap, (unsigned char)ch);
       }
       break;
       
-    case st_match_range:		/* %[ match after - */
+    case st_match_range:        /* %[ match after - */
       if ( ch == ']' ) {
-	set_bit(matchmap, (unsigned char)'-'); /* - was last character */
-	goto match_run;
+    set_bit(matchmap, (unsigned char)'-'); /* - was last character */
+    goto match_run;
       } else {
-	int i;
-	for ( i = range_start ; i < (unsigned char)ch ; i++ )
-	  set_bit(matchmap, i);
-	state = st_match;
+    int i;
+    for ( i = range_start ; i < (unsigned char)ch ; i++ )
+      set_bit(matchmap, i);
+    state = st_match;
       }
       break;
 
-    match_run:			/* Match expression finished */
+    match_run:            /* Match expression finished */
       qq = q;
       while ( width && *q && test_bit(matchmap, (unsigned char)*q)^matchinv ) {
-	*sarg++ = *q++;
+    *sarg++ = *q++;
       }
       if ( q != qq ) {
-	*sarg = '\0';
-	converted++;
+    *sarg = '\0';
+    converted++;
       } else {
-	bail = *q ? bail_err : bail_eof;
+    bail = *q ? bail_err : bail_eof;
       }
       break;
     }
   }
 
   if ( bail == bail_eof && !converted )
-    converted = -1;		/* Return EOF (-1) */
+    converted = -1;        /* Return EOF (-1) */
 
   return converted;
 }
-
 
 #define PRINTF_NTOA_BUFFER_SIZE    32U
 #define PRINTF_FTOA_BUFFER_SIZE    32U
@@ -670,12 +659,10 @@ int wm_vsscanf(const char *buffer, const char *format, va_list ap)
 #define PRINTF_SUPPORT_LONG_LONG
 #define PRINTF_SUPPORT_PTRDIFF_T
 
-
 // import float.h for DBL_MAX
 #if defined(PRINTF_SUPPORT_FLOAT)
 #include <float.h>
 #endif
-
 
 // internal flag definitions
 #define FLAGS_ZEROPAD   (1U <<  0U)
@@ -819,7 +806,6 @@ static size_t _ntoa_format(out_fct_type out, char* buffer, size_t idx, size_t ma
   return _out_rev(out, buffer, idx, maxlen, buf, len, width, flags);
 }
 
-
 // internal itoa for 'long' type
 static size_t _ntoa_long(out_fct_type out, char* buffer, size_t idx, size_t maxlen, unsigned long value, bool negative, unsigned long base, unsigned int prec, unsigned int width, unsigned int flags)
 {
@@ -842,7 +828,6 @@ static size_t _ntoa_long(out_fct_type out, char* buffer, size_t idx, size_t maxl
 
   return _ntoa_format(out, buffer, idx, maxlen, buf, len, negative, (unsigned int)base, prec, width, flags);
 }
-
 
 // internal itoa for 'long long' type
 #if defined(PRINTF_SUPPORT_LONG_LONG)
@@ -875,7 +860,6 @@ static size_t _ntoa_long_long(out_fct_type out, char* buffer, size_t idx, size_t
 // forward declaration so that _ftoa can switch to exp notation for values > PRINTF_MAX_FLOAT
 static size_t _etoa(out_fct_type out, char* buffer, size_t idx, size_t maxlen, double value, unsigned int prec, unsigned int width, unsigned int flags);
 #endif
-
 
 // internal ftoa for fixed decimal floating point
 static size_t _ftoa(out_fct_type out, char* buffer, size_t idx, size_t maxlen, double value, unsigned int prec, unsigned int width, unsigned int flags)
@@ -934,10 +918,9 @@ static size_t _ftoa(out_fct_type out, char* buffer, size_t idx, size_t maxlen, d
       frac = 0;
       ++whole;
     }
-  }
-  else if (diff < 0.5) {
-  }
-  else if ((frac == 0U) || (frac & 1U)) {
+  } else if (diff < 0.5) {
+
+  } else if ((frac == 0U) || (frac & 1U)) {
     // if halfway, round up if odd OR if last digit is 0
     ++frac;
   }
@@ -991,18 +974,15 @@ static size_t _ftoa(out_fct_type out, char* buffer, size_t idx, size_t maxlen, d
   if (len < PRINTF_FTOA_BUFFER_SIZE) {
     if (negative) {
       buf[len++] = '-';
-    }
-    else if (flags & FLAGS_PLUS) {
+    } else if (flags & FLAGS_PLUS) {
       buf[len++] = '+';  // ignore the space if the '+' exists
-    }
-    else if (flags & FLAGS_SPACE) {
+    } else if (flags & FLAGS_SPACE) {
       buf[len++] = ' ';
     }
   }
 
   return _out_rev(out, buffer, idx, maxlen, buf, len, width, flags);
 }
-
 
 #if defined(PRINTF_SUPPORT_EXPONENTIAL)
 // internal ftoa variant for exponential floating-point type, contributed by Martijn Jasperse <m.jasperse@gmail.com>
@@ -1025,7 +1005,7 @@ static size_t _etoa(out_fct_type out, char* buffer, size_t idx, size_t maxlen, d
   }
 
   // determine the decimal exponent
-  // based on the algorithm by David Gay (https://www.ampl.com/netlib/fp/dtoa.c)
+  // based on the algorithm by David Gay (https:// www.ampl.com/netlib/fp/dtoa.c)
   union {
     uint64_t U;
     double   F;
@@ -1041,7 +1021,7 @@ static size_t _etoa(out_fct_type out, char* buffer, size_t idx, size_t maxlen, d
   const double z  = expval * 2.302585092994046 - exp2 * 0.6931471805599453;
   const double z2 = z * z;
   conv.U = (uint64_t)(exp2 + 1023) << 52U;
-  // compute exp(z) using continued fractions, see https://en.wikipedia.org/wiki/Exponential_function#Continued_fractions_for_ex
+  // compute exp(z) using continued fractions, see https:// en.wikipedia.org/wiki/Exponential_function#Continued_fractions_for_ex
   conv.F *= 1 + 2 * z / (2 - z + (z2 / (6 + (z2 / (10 + z2 / 14)))));
   // correct for rounding errors
   if (value < conv.F) {
@@ -1058,16 +1038,14 @@ static size_t _etoa(out_fct_type out, char* buffer, size_t idx, size_t maxlen, d
     if ((value >= 1e-4) && (value < 1e6)) {
       if ((int)prec > expval) {
         prec = (unsigned)((int)prec - expval - 1);
-      }
-      else {
+      } else {
         prec = 0;
       }
       flags |= FLAGS_PRECISION;   // make sure _ftoa respects precision
       // no characters in exponent
       minwidth = 0U;
       expval   = 0;
-    }
-    else {
+    } else {
       // we use one sigfig for the whole part
       if ((prec > 0) && (flags & FLAGS_PRECISION)) {
         --prec;
@@ -1113,7 +1091,6 @@ static size_t _etoa(out_fct_type out, char* buffer, size_t idx, size_t maxlen, d
 }
 #endif  // PRINTF_SUPPORT_EXPONENTIAL
 #endif  // PRINTF_SUPPORT_FLOAT
-
 
 // internal vsnprintf
 static int _vsnprintf(out_fct_type out, char* buffer, const size_t maxlen, const char* format, va_list va)
@@ -1366,7 +1343,7 @@ static int _vsnprintf(out_fct_type out, char* buffer, const size_t maxlen, const
         flags |= FLAGS_ZEROPAD | FLAGS_UPPERCASE;
 #if defined(PRINTF_SUPPORT_LONG_LONG)
         bool is_ll = false;
-        if(sizeof(uintptr_t) == sizeof(long long))
+        if (sizeof(uintptr_t) == sizeof(long long))
         {
             is_ll = true;
         }
@@ -1495,11 +1472,11 @@ int printf(const char *restrict fmt, ...)
     va_list args;
     size_t length;
 
-	va_start(args, fmt);
-	length = _vsnprintf(_out_uart, (char*)fmt, (size_t) - 1, fmt, args);
-	va_end(args);
+    va_start(args, fmt);
+    length = _vsnprintf(_out_uart, (char*)fmt, (size_t) - 1, fmt, args);
+    va_end(args);
 
-	return length;
+    return length;
 }
 #endif
 
@@ -1508,23 +1485,23 @@ int wm_printf(const char *fmt,...)
     va_list args;
     size_t length;
 
-	va_start(args, fmt);
-	length = _vsnprintf(_out_uart, (char*)fmt, (size_t) - 1, fmt, args);
-	va_end(args);
+    va_start(args, fmt);
+    length = _vsnprintf(_out_uart, (char*)fmt, (size_t) - 1, fmt, args);
+    va_end(args);
 
-	return length;
+    return length;
 }
 
 int wm_vprintf(const char *fmt, va_list arg_ptr)
 {
     size_t length;
 
-	length = _vsnprintf(_out_uart, (char*)fmt, (size_t) - 1, fmt, arg_ptr);
+    length = _vsnprintf(_out_uart, (char*)fmt, (size_t) - 1, fmt, arg_ptr);
 
-	return length;
+    return length;
 }
 
-#if 1//defined(_NEWLIB_VERSION_H__)
+#if 1// defined(_NEWLIB_VERSION_H__)
  __attribute__((__weak__)) int sscanf(const char *str, const char *format, ...) /* bug: replace 3.10.21 newlib */
 {
     va_list args;
@@ -1540,13 +1517,13 @@ int wm_vprintf(const char *fmt, va_list arg_ptr)
 __attribute__((__weak__)) int __cskyvscanfsscanf(const char *str, const char *format, ...)
 {
     va_list args;
-	int i;
+    int i;
 
-	va_start(args,format);
-	i = wm_vsscanf(str, format, args);
-	va_end(args);
-	
-	return i;
+    va_start(args,format);
+    i = wm_vsscanf(str, format, args);
+    va_end(args);
+    
+    return i;
 }
 
 __attribute__((__weak__)) int __cskyvprintfsprintf(char *str, const char *format, ...)
@@ -1554,11 +1531,11 @@ __attribute__((__weak__)) int __cskyvprintfsprintf(char *str, const char *format
     va_list ap;
     int i;
 
-	va_start(ap, format);
-	i = wm_vsnprintf(str, (size_t) - 1, format, ap);
-	va_end(ap);
+    va_start(ap, format);
+    i = wm_vsnprintf(str, (size_t) - 1, format, ap);
+    va_end(ap);
 
-	return i;
+    return i;
 }
 
 __attribute__((__weak__)) int __cskyvprintfsnprintf(char *str, size_t size, const char *format, ...)
@@ -1566,11 +1543,11 @@ __attribute__((__weak__)) int __cskyvprintfsnprintf(char *str, size_t size, cons
     va_list ap;
     int i;
 
-	va_start(ap, format);
-	i = wm_vsnprintf(str, size, format, ap);
-	va_end(ap);
+    va_start(ap, format);
+    i = wm_vsnprintf(str, size, format, ap);
+    va_end(ap);
 
-	return i;
+    return i;
 }
 
 __attribute__((__weak__)) int __cskyvprintfvsnprintf(char *str, size_t size, const char *format, va_list ap)
@@ -1586,13 +1563,13 @@ __attribute__((__weak__)) int __cskyvprintfvsprintf(char *str, const char *forma
 int __cskyvprintfprintf(const char *fmt, ...) __attribute__((__weak__, alias("wm_printf")));
 
 __attribute__((__weak__)) void __assert_fail(const char *file,
-	int line,
-	const char *func,
-	const char *failedexpr)
+    int line,
+    const char *func,
+    const char *failedexpr)
 {
     wm_printf("assertion \"%s\" failed: file \"%s\", line %d%s%s\r\n",
-	   failedexpr, file, line,
-	   func ? ", function: " : "", func ? func : "");
+       failedexpr, file, line,
+       func ? ", function: " : "", func ? func : "");
     while(1);
 }
 

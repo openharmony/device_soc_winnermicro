@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-/**************************************************************************//**
+/****************************************************************************
  * @file     wm_i2c.h
  * @author
  * @version
@@ -35,14 +35,14 @@ extern "C" {
 #include "wm_irq.h"
 
 typedef struct 
-{	
-	__IO uint32_t PRER_LO;	
-	__IO uint32_t PRER_HI;	
-	__IO uint32_t CTRL;	
-	__O  uint32_t TX_RX;	
-	__O  uint32_t CR_SR;	
-	__I  uint32_t TXR;	
-	__I  uint32_t CR;
+{
+    __IO uint32_t PRER_LO;
+    __IO uint32_t PRER_HI;
+    __IO uint32_t CTRL;
+    __O  uint32_t TX_RX;
+    __O  uint32_t CR_SR;
+    __I  uint32_t TXR;
+    __I  uint32_t CR;
 }I2C_T;
 #define I2C		((I2C_T *)(HR_I2C_BASE_ADDR))
 

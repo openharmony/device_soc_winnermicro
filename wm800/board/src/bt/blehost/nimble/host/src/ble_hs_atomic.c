@@ -26,11 +26,11 @@ ble_hs_atomic_conn_delete(uint16_t conn_handle)
     ble_hs_lock();
     conn = ble_hs_conn_find(conn_handle);
 
-    if(conn != NULL) {
+    if (conn != NULL) {
         ble_hs_conn_remove(conn);
 #if MYNEWT_VAL(BLE_PERIODIC_ADV_SYNC_TRANSFER)
 
-        if(conn->psync) {
+        if (conn->psync) {
             ble_hs_periodic_sync_free(conn->psync);
         }
 
@@ -58,12 +58,12 @@ ble_hs_atomic_conn_flags(uint16_t conn_handle, ble_hs_conn_flags_t *out_flags)
     ble_hs_lock();
     conn = ble_hs_conn_find(conn_handle);
 
-    if(conn == NULL) {
+    if (conn == NULL) {
         rc = BLE_HS_ENOTCONN;
     } else {
         rc = 0;
 
-        if(out_flags != NULL) {
+        if (out_flags != NULL) {
             *out_flags = conn->bhc_flags;
         }
     }
@@ -81,12 +81,12 @@ ble_hs_atomic_conn_set_flags(uint16_t conn_handle, ble_hs_conn_flags_t flags,
     ble_hs_lock();
     conn = ble_hs_conn_find(conn_handle);
 
-    if(conn == NULL) {
+    if (conn == NULL) {
         rc = BLE_HS_ENOTCONN;
     } else {
         rc = 0;
 
-        if(on) {
+        if (on) {
             conn->bhc_flags |= flags;
         } else {
             conn->bhc_flags &= ~flags;
@@ -105,7 +105,7 @@ ble_hs_atomic_first_conn_handle(void)
     ble_hs_lock();
     conn = ble_hs_conn_first();
 
-    if(conn != NULL) {
+    if (conn != NULL) {
         conn_handle = conn->bhc_handle;
     } else {
         conn_handle = BLE_HS_CONN_HANDLE_NONE;
