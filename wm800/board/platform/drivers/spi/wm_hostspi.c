@@ -39,7 +39,6 @@
 #include "core_804.h"
 #include "wm_pmu.h"
 
-
 static struct tls_spi_port *spi_port = NULL;
 
 #define MSG_QUEUE_SIZE      (8)
@@ -49,7 +48,6 @@ static struct tls_spi_port *spi_port = NULL;
 static u32 *spi_scheduler_stk = NULL;
 #endif
 void tls_spi_queue_send(u32 msg);
-
 
 #define SPI_SCHED_MSG_START_ENGINE      (1)
 #define SPI_SCHED_MSG_TX_FIFO_READY      (2)
@@ -68,37 +66,37 @@ unsigned char *SPI_DMA_BUF_ADDR = NULL;
 
 static void SpiMasterInit(u8 mode, u8 cs_active, u32 fclk)
 {
-	tls_sys_clk sysclk;
+    tls_sys_clk sysclk;
 
     SPIM_CHCFG_REG = SPI_CLEAR_FIFOS;
     while (SPIM_CHCFG_REG & SPI_CLEAR_FIFOS);
 
-	tls_sys_clk_get(&sysclk);
+    tls_sys_clk_get(&sysclk);
 
     SPIM_CLKCFG_REG = sysclk.apbclk*UNIT_MHZ/(fclk*2) - 1;;
     SPIM_SPICFG_REG = 0;
     SPIM_SPICFG_REG = SPI_FRAME_FORMAT_MOTO | SPI_SET_MASTER_SLAVE(SPI_MASTER) | mode;
     SPIM_INTEN_REG = 0xff;      /* Disable INT */
 
-	if (SPI_DMA_CMD_ADDR == NULL)
-	{
-		SPI_DMA_CMD_ADDR = tls_mem_alloc(SPI_DMA_CMD_MAX_SIZE);
-		if (SPI_DMA_CMD_ADDR == NULL)
-		{
-			return;
-		}
-	}
+    if (SPI_DMA_CMD_ADDR == NULL)
+    {
+        SPI_DMA_CMD_ADDR = tls_mem_alloc(SPI_DMA_CMD_MAX_SIZE);
+        if (SPI_DMA_CMD_ADDR == NULL)
+        {
+            return;
+        }
+    }
 
-	if (SPI_DMA_BUF_ADDR == NULL)
-	{
-		SPI_DMA_BUF_ADDR = tls_mem_alloc(SPI_DMA_BUF_MAX_SIZE);
-		if (SPI_DMA_BUF_ADDR == NULL)
-		{
-			tls_mem_free(SPI_DMA_CMD_ADDR);
-			SPI_DMA_CMD_ADDR = NULL;
-			return;
-		}
-	}
+    if (SPI_DMA_BUF_ADDR == NULL)
+    {
+        SPI_DMA_BUF_ADDR = tls_mem_alloc(SPI_DMA_BUF_MAX_SIZE);
+        if (SPI_DMA_BUF_ADDR == NULL)
+        {
+            tls_mem_free(SPI_DMA_CMD_ADDR);
+            SPI_DMA_CMD_ADDR = NULL;
+            return;
+        }
+    }
 
     tls_dma_init();
 }
@@ -367,14 +365,13 @@ static int SpiDmaBlockRead(u8 * data, u32 len, u8 * txdata, u8 txlen)
 }
 #endif
 
-
 /**
  * @brief          This function is used to set SPI transfer mode.
  *
  * @param[in]      type             is the transfer type.
- *				                type == SPI_BYTE_TRANSFER	byte transfer
- *	                        	         type == SPI_WORD_TRANSFER	word transfer
- *				                type == SPI_USE_DMA_TRANSFER	DMA transfer
+ *                                type == SPI_BYTE_TRANSFER    byte transfer
+ *                                         type == SPI_WORD_TRANSFER    word transfer
+ *                                type == SPI_USE_DMA_TRANSFER    DMA transfer
  *
  * @return         None
  *
@@ -401,7 +398,6 @@ static void spi_message_init(struct tls_spi_message *m)
     memset(m, 0, sizeof(*m));
     dl_list_init(&m->transfers);
 }
-
 
 static void spi_complete(void *arg)
 {
@@ -464,7 +460,7 @@ static u32 spi_fill_txfifo(struct tls_spi_transfer *current_transfer,
         {
             data32 = 0xffffffff;
         }
-    	TLS_DBGPRT_SPI_INFO("spi fifo[%d]: 0x%x.\n", i, data32);
+        TLS_DBGPRT_SPI_INFO("spi fifo[%d]: 0x%x.\n", i, data32);
         spi_data_put(data32);
         tx_remaining_bytes -= 4;
     }
@@ -491,7 +487,7 @@ static u32 spi_fill_txfifo(struct tls_spi_transfer *current_transfer,
             }
             tx_remaining_bytes -= 1;
         }
-    	TLS_DBGPRT_SPI_INFO("spi_fifo: 0x%x.\n", data32);
+        TLS_DBGPRT_SPI_INFO("spi_fifo: 0x%x.\n", data32);
         spi_data_put(data32);
     }
 
@@ -621,7 +617,7 @@ static void spi_start_transfer(u32 transfer_bytes)
     }
 
     spi_set_sclk_length(transfer_bytes * 8, 0);
-// if(0 == gSpiCsFlag)
+// if (0 == gSpiCsFlag)
     {
         spi_set_chipselect_mode(SPI_CS_ACTIVE_MODE);
     }
@@ -653,7 +649,7 @@ static void spi_continue_transfer(void)
             spi_next_transfer(spi_port->current_message);
         if (spi_port->current_transfer == NULL)
         {
-//            tls_sys_clk_set(CPU_CLK_40M);
+//           tls_sys_clk_set(CPU_CLK_40M);
             spi_set_chipselect_mode(SPI_CS_INACTIVE_MODE);
             current_message->status = SPI_MESSAGE_STATUS_DONE;
             dl_list_del(&current_message->queue);
@@ -701,7 +697,7 @@ static void spi_scheduler(void *data)
             switch (msg)
             {
                 case SPI_SCHED_MSG_START_ENGINE:
-//                    tls_sys_clk_set(CPU_CLK_80M);			//80MHZ
+//                   tls_sys_clk_set(CPU_CLK_80M);            // 80MHZ
                     if (spi_port->current_message)
                     {
                         TLS_DBGPRT_WARNING
@@ -729,9 +725,9 @@ static void spi_scheduler(void *data)
                 // TLS_DBGPRT_SPI("current transfer lenght - %d.\n",
                 // spi_port->current_remaining_bytes);
 
-                 	TLS_DBGPRT_SPI_INFO("fill the tx fifo.\n");
+                    TLS_DBGPRT_SPI_INFO("fill the tx fifo.\n");
                     transfer_bytes = spi_fill_txfifo(current_transfer, spi_port->current_remaining_bytes);
-                 	TLS_DBGPRT_SPI_INFO("start the spi transfer - %d.\n", transfer_bytes);
+                    TLS_DBGPRT_SPI_INFO("start the spi transfer - %d.\n", transfer_bytes);
                     spi_start_transfer(transfer_bytes);
 
                     break;
@@ -775,12 +771,12 @@ ATTRIBUTE_ISR void SPI_LS_IRQHandler(void)
 
     if (int_status & SPI_INT_TX_FIFO_RDY)
     {
-		tls_spi_queue_send(SPI_SCHED_MSG_TX_FIFO_READY);
+        tls_spi_queue_send(SPI_SCHED_MSG_TX_FIFO_READY);
     }
 
     if (int_status & SPI_INT_RX_FIFO_RDY)
     {
-		tls_spi_queue_send(SPI_SCHED_MSG_RX_FIFO_READY);
+        tls_spi_queue_send(SPI_SCHED_MSG_RX_FIFO_READY);
     }
 
     if (int_status & SPI_INT_TRANSFER_DONE)
@@ -788,16 +784,13 @@ ATTRIBUTE_ISR void SPI_LS_IRQHandler(void)
         if (SPI_WORD_TRANSFER == spi_port->transtype)
         {
             spi_continue_transfer();
-        }
-        else
-        {
-       		tls_spi_queue_send(SPI_SCHED_MSG_TRANSFER_COMPLETE);
+        } else {
+            tls_spi_queue_send(SPI_SCHED_MSG_TRANSFER_COMPLETE);
         }
 
     }
     csi_kernel_intrpt_exit();
 }
-
 
  /**
  * @brief          This function is used to setup the spi CPOL,CPHA,cs signal and clock.
@@ -806,16 +799,16 @@ ATTRIBUTE_ISR void SPI_LS_IRQHandler(void)
  * @param[in]      cs_active    is cs mode, defined as TLS_SPI_CS_LOW or TLS_SPI_CS_HIGH
  * @param[in]      fclk            is spi clock,the unit is HZ.
  *
- * @retval         TLS_SPI_STATUS_OK			if setup success
- * @retval         TLS_SPI_STATUS_EMODENOSUPPORT	if mode is not support
- * @retval         TLS_SPI_STATUS_EINVAL			if cs_active is not support
- * @retval         TLS_SPI_STATUS_ECLKNOSUPPORT	if fclk is not support
+ * @retval         TLS_SPI_STATUS_OK            if setup success
+ * @retval         TLS_SPI_STATUS_EMODENOSUPPORT    if mode is not support
+ * @retval         TLS_SPI_STATUS_EINVAL            if cs_active is not support
+ * @retval         TLS_SPI_STATUS_ECLKNOSUPPORT    if fclk is not support
  *
  * @note           None
  */
 int tls_spi_setup(u8 mode, u8 cs_active, u32 fclk)
 {
-	tls_sys_clk sysclk;
+    tls_sys_clk sysclk;
 
     if ((spi_port->mode == mode) && (spi_port->cs_active == cs_active)
         && (spi_port->speed_hz == fclk))
@@ -848,10 +841,10 @@ int tls_spi_setup(u8 mode, u8 cs_active, u32 fclk)
     {
         spi_port->cs_active = cs_active;
     }
-	
-	tls_sys_clk_get(&sysclk);
+    
+    tls_sys_clk_get(&sysclk);
 
-    if ((fclk < TLS_SPI_FCLK_MIN) || (fclk > sysclk.apbclk*UNIT_MHZ/2))		//TLS_SPI_FCLK_MAX
+    if ((fclk < TLS_SPI_FCLK_MIN) || (fclk > sysclk.apbclk*UNIT_MHZ/2))        // TLS_SPI_FCLK_MAX
     {
         TLS_DBGPRT_ERR("@fclk is invalid!\n");
         return TLS_SPI_STATUS_ECLKNOSUPPORT;
@@ -874,7 +867,6 @@ int tls_spi_setup(u8 mode, u8 cs_active, u32 fclk)
     return TLS_SPI_STATUS_OK;
 }
 
-
 /**
  * @brief          This function is used to synchronous write command then read data by SPI.
  *
@@ -883,10 +875,10 @@ int tls_spi_setup(u8 mode, u8 cs_active, u32 fclk)
  * @param[in]      rxbuf        is the read data buffer.
  * @param[in]      n_rx         is the read data length.
  *
- * @retval         TLS_SPI_STATUS_OK			if write success.
- * @retval         TLS_SPI_STATUS_EINVAL		if argument is invalid.
- * @retval         TLS_SPI_STATUS_ENOMEM			if there is no enough memory.
- * @retval         TLS_SPI_STATUS_ESHUTDOWN		if SPI driver does not installed.
+ * @retval         TLS_SPI_STATUS_OK            if write success.
+ * @retval         TLS_SPI_STATUS_EINVAL        if argument is invalid.
+ * @retval         TLS_SPI_STATUS_ENOMEM            if there is no enough memory.
+ * @retval         TLS_SPI_STATUS_ESHUTDOWN        if SPI driver does not installed.
  *
  * @note           None
  */
@@ -911,18 +903,18 @@ int tls_spi_read_with_cmd(const u8 * txbuf, u32 n_tx, u8 * rxbuf, u32 n_rx)
         }
         tls_os_sem_acquire(spi_port->lock, 0);
         tls_open_peripheral_clock(TLS_PERIPHERAL_TYPE_LSPI);
-		if (SPI_DMA_CMD_ADDR && SPI_DMA_BUF_ADDR)
-		{
-	        MEMCPY((u8 *) SPI_DMA_CMD_ADDR, txbuf, n_tx);
-	        SpiDmaBlockRead((u8 *) SPI_DMA_BUF_ADDR, n_rx, (u8 *) SPI_DMA_CMD_ADDR,
-	                        n_tx);
-	        MEMCPY(rxbuf, (u8 *) SPI_DMA_BUF_ADDR, n_rx);
-			status = TLS_SPI_STATUS_OK;
-		}
-		else
-		{
-			status = TLS_SPI_STATUS_ENOMEM;
-    	}
+        if (SPI_DMA_CMD_ADDR && SPI_DMA_BUF_ADDR)
+        {
+            MEMCPY((u8 *) SPI_DMA_CMD_ADDR, txbuf, n_tx);
+            SpiDmaBlockRead((u8 *) SPI_DMA_BUF_ADDR, n_rx, (u8 *) SPI_DMA_CMD_ADDR,
+                            n_tx);
+            MEMCPY(rxbuf, (u8 *) SPI_DMA_BUF_ADDR, n_rx);
+            status = TLS_SPI_STATUS_OK;
+        }
+        else
+        {
+            status = TLS_SPI_STATUS_ENOMEM;
+        }
 
         tls_close_peripheral_clock(TLS_PERIPHERAL_TYPE_LSPI);
         tls_os_sem_release(spi_port->lock);
@@ -958,10 +950,10 @@ int tls_spi_read_with_cmd(const u8 * txbuf, u32 n_tx, u8 * rxbuf, u32 n_rx)
  * @param[in]      buf          is the buffer for saving SPI data.
  * @param[in]      len          is the data length.
  *
- * @retval         TLS_SPI_STATUS_OK			if write success.
- * @retval         TLS_SPI_STATUS_EINVAL		if argument is invalid.
- * @retval         TLS_SPI_STATUS_ENOMEM			if there is no enough memory.
- * @retval         TLS_SPI_STATUS_ESHUTDOWN		if SPI driver does not installed.
+ * @retval         TLS_SPI_STATUS_OK            if write success.
+ * @retval         TLS_SPI_STATUS_EINVAL        if argument is invalid.
+ * @retval         TLS_SPI_STATUS_ENOMEM            if there is no enough memory.
+ * @retval         TLS_SPI_STATUS_ESHUTDOWN        if SPI driver does not installed.
  *
  * @note           None
  */
@@ -1017,17 +1009,17 @@ int tls_spi_read(u8 * buf, u32 len)
                 tls_os_sem_release(spi_port->lock);
                 return TLS_SPI_STATUS_EINVAL;
             }
-			if (SPI_DMA_BUF_ADDR)
-			{
-	            SpiDmaBlockRead((u8 *) SPI_DMA_BUF_ADDR, len, NULL, 0);
-	            MEMCPY(buf, (u8 *) SPI_DMA_BUF_ADDR, len);
-			}
-			else
-			{
-		        tls_close_peripheral_clock(TLS_PERIPHERAL_TYPE_LSPI);
-		        tls_os_sem_release(spi_port->lock);
-		        return TLS_SPI_STATUS_ENOMEM;
-			}
+            if (SPI_DMA_BUF_ADDR)
+            {
+                SpiDmaBlockRead((u8 *) SPI_DMA_BUF_ADDR, len, NULL, 0);
+                MEMCPY(buf, (u8 *) SPI_DMA_BUF_ADDR, len);
+            }
+            else
+            {
+                tls_close_peripheral_clock(TLS_PERIPHERAL_TYPE_LSPI);
+                tls_os_sem_release(spi_port->lock);
+                return TLS_SPI_STATUS_ENOMEM;
+            }
         }
         tls_close_peripheral_clock(TLS_PERIPHERAL_TYPE_LSPI);
         tls_os_sem_release(spi_port->lock);
@@ -1052,10 +1044,10 @@ int tls_spi_read(u8 * buf, u32 len)
  * @param[in]      buf          is the user data.
  * @param[in]      len          is the data length.
  *
- * @retval         TLS_SPI_STATUS_OK			if write success.
- * @retval         TLS_SPI_STATUS_EINVAL		if argument is invalid.
- * @retval         TLS_SPI_STATUS_ENOMEM			if there is no enough memory.
- * @retval         TLS_SPI_STATUS_ESHUTDOWN		if SPI driver does not installed.
+ * @retval         TLS_SPI_STATUS_OK            if write success.
+ * @retval         TLS_SPI_STATUS_EINVAL        if argument is invalid.
+ * @retval         TLS_SPI_STATUS_ENOMEM            if there is no enough memory.
+ * @retval         TLS_SPI_STATUS_ESHUTDOWN        if SPI driver does not installed.
  *
  * @note           None
  */
@@ -1108,17 +1100,17 @@ int tls_spi_write(const u8 * buf, u32 len)
                 tls_os_sem_release(spi_port->lock);
                 return TLS_SPI_STATUS_EINVAL;
             }
-			if (SPI_DMA_BUF_ADDR)
-			{
-	            MEMCPY((u8 *) SPI_DMA_BUF_ADDR, buf, len);
-	            SpiDmaBlockWrite((u8 *) SPI_DMA_BUF_ADDR, len, 0, 0);
-			}
-			else
-			{
-				tls_close_peripheral_clock(TLS_PERIPHERAL_TYPE_LSPI);
-				tls_os_sem_release(spi_port->lock);
-				return TLS_SPI_STATUS_ENOMEM;
-			}
+            if (SPI_DMA_BUF_ADDR)
+            {
+                MEMCPY((u8 *) SPI_DMA_BUF_ADDR, buf, len);
+                SpiDmaBlockWrite((u8 *) SPI_DMA_BUF_ADDR, len, 0, 0);
+            }
+            else
+            {
+                tls_close_peripheral_clock(TLS_PERIPHERAL_TYPE_LSPI);
+                tls_os_sem_release(spi_port->lock);
+                return TLS_SPI_STATUS_ENOMEM;
+            }
         }
         tls_close_peripheral_clock(TLS_PERIPHERAL_TYPE_LSPI);
         tls_os_sem_release(spi_port->lock);
@@ -1141,14 +1133,14 @@ int tls_spi_write(const u8 * buf, u32 len)
  * @brief          This function is used to synchronous write 32bit command then write data by SPI.
  *
  * @param[in]      cmd                     is the command data.
- * @param[in]      n_cmd          	    is the command len,can not bigger than four
+ * @param[in]      n_cmd                  is the command len,can not bigger than four
  * @param[in]      txbuf                   is the write data buffer.
  * @param[in]      n_tx                    is the write data length.
  *
- * @retval         TLS_SPI_STATUS_OK			if write success.
- * @retval         TLS_SPI_STATUS_EINVAL		if argument is invalid.
- * @retval         TLS_SPI_STATUS_ENOMEM			if there is no enough memory.
- * @retval         TLS_SPI_STATUS_ESHUTDOWN		if SPI driver does not installed.
+ * @retval         TLS_SPI_STATUS_OK            if write success.
+ * @retval         TLS_SPI_STATUS_EINVAL        if argument is invalid.
+ * @retval         TLS_SPI_STATUS_ENOMEM            if there is no enough memory.
+ * @retval         TLS_SPI_STATUS_ESHUTDOWN        if SPI driver does not installed.
  *
  * @note           None
  */
@@ -1174,20 +1166,20 @@ int tls_spi_write_with_cmd(const u8 * cmd, u32 n_cmd, const u8 * txbuf,
         }
         tls_os_sem_acquire(spi_port->lock, 0);
         tls_open_peripheral_clock(TLS_PERIPHERAL_TYPE_LSPI);
-		if (SPI_DMA_BUF_ADDR)
-		{
-	        MEMCPY((u8 *) SPI_DMA_BUF_ADDR, (u8 *) cmd, n_cmd);
-	        MEMCPY((u8 *) (SPI_DMA_BUF_ADDR + n_cmd), txbuf, n_tx);
-	        SpiDmaBlockWrite((u8 *) SPI_DMA_BUF_ADDR, (n_cmd + n_tx), 0, 0);
-			status = TLS_SPI_STATUS_OK;
-		}
-		else
-		{
-			status = TLS_SPI_STATUS_ENOMEM;			
-		}
-		tls_close_peripheral_clock(TLS_PERIPHERAL_TYPE_LSPI);
-		tls_os_sem_release(spi_port->lock);
-		return status;
+        if (SPI_DMA_BUF_ADDR)
+        {
+            MEMCPY((u8 *) SPI_DMA_BUF_ADDR, (u8 *) cmd, n_cmd);
+            MEMCPY((u8 *) (SPI_DMA_BUF_ADDR + n_cmd), txbuf, n_tx);
+            SpiDmaBlockWrite((u8 *) SPI_DMA_BUF_ADDR, (n_cmd + n_tx), 0, 0);
+            status = TLS_SPI_STATUS_OK;
+        }
+        else
+        {
+            status = TLS_SPI_STATUS_ENOMEM;            
+        }
+        tls_close_peripheral_clock(TLS_PERIPHERAL_TYPE_LSPI);
+        tls_os_sem_release(spi_port->lock);
+        return status;
     }
 #endif
 
@@ -1304,21 +1296,20 @@ int tls_spi_async(struct tls_spi_message *message)
 
     if (need_sched == 1)
     {
-		tls_spi_queue_send(SPI_SCHED_MSG_START_ENGINE);
+        tls_spi_queue_send(SPI_SCHED_MSG_START_ENGINE);
     }
 
     return TLS_SPI_STATUS_OK;
 }
-
 
 /**
  * @brief          This function is used to initialize the SPI master driver.
  *
  * @param[in]      None
  *
- * @retval         TLS_SPI_STATUS_OK			if initialize success
- * @retval         TLS_SPI_STATUS_EBUSY		if SPI is already initialized
- * @retval         TLS_SPI_STATUS_ENOMEM		if malloc SPI memory fail
+ * @retval         TLS_SPI_STATUS_OK            if initialize success
+ * @retval         TLS_SPI_STATUS_EBUSY        if SPI is already initialized
+ * @retval         TLS_SPI_STATUS_ENOMEM        if malloc SPI memory fail
  *
  * @note           None
  */
@@ -1326,7 +1317,6 @@ int tls_spi_init(void)
 {
     u8 err;
     struct tls_spi_port *port;
-
 
     if (spi_port != NULL)
     {
@@ -1342,7 +1332,7 @@ int tls_spi_init(void)
         TLS_DBGPRT_ERR("allocate \"struct tls_spi_port\" fail!\n");
         return TLS_SPI_STATUS_ENOMEM;
     }
-	memset(port, 0, sizeof(struct tls_spi_port));
+    memset(port, 0, sizeof(struct tls_spi_port));
     err = tls_os_sem_create(&port->lock, 1);
     if (err != TLS_OS_SUCCESS)
     {
@@ -1350,7 +1340,6 @@ int tls_spi_init(void)
         tls_mem_free(port);
         return TLS_SPI_STATUS_ENOMEM;
     }
-
 
     port->speed_hz = SPI_DEFAULT_SPEED;
     port->cs_active = SPI_CS_ACTIVE_MODE;
@@ -1388,7 +1377,6 @@ int tls_spi_init(void)
     TLS_DBGPRT_SPI_INFO("register spi master interrupt handler.\n");
     tls_irq_enable(SPI_LS_IRQn);
 
-
     TLS_DBGPRT_SPI_INFO("spi master driver module initialization finish.\n");
 
     return TLS_SPI_STATUS_OK;
@@ -1397,15 +1385,15 @@ int tls_spi_init(void)
 int tls_spi_task_init(void)
 {
     u8 err;
-	if (NULL == spi_port)
-	{
-		return TLS_SPI_STATUS_ENOMEM;
-	}
+    if (NULL == spi_port)
+    {
+        return TLS_SPI_STATUS_ENOMEM;
+    }
 
-	if (spi_port->msg_queue)
-	{
-		return TLS_SPI_STATUS_OK;
-	}
+    if (spi_port->msg_queue)
+    {
+        return TLS_SPI_STATUS_OK;
+    }
 
     err = tls_os_queue_create(&spi_port->msg_queue, MSG_QUEUE_SIZE);
     if (err != TLS_OS_SUCCESS)
@@ -1414,53 +1402,53 @@ int tls_spi_task_init(void)
         return TLS_SPI_STATUS_ENOMEM;
     }
 #if TLS_OS_LITEOS
-	err = tls_os_task_create(NULL, "hostspi",
-							 spi_scheduler,
-							 (void *) spi_port,
-							 (void *) NULL,
-							 SPI_SCHEDULER_STK_SIZE * sizeof(u32),
-							 TLS_SPI_SCHEDULER_TASK_PRIO, 0);
-	if (err != TLS_OS_SUCCESS)
-	{
-		TLS_DBGPRT_ERR("create spi master driver scheduler task fail!\n");
-		tls_os_queue_delete(spi_port->msg_queue);
-		return TLS_SPI_STATUS_ENOMEM;
-	}
-#else
-	spi_scheduler_stk = tls_mem_alloc(SPI_SCHEDULER_STK_SIZE * sizeof(u32));
-	if (NULL == spi_scheduler_stk)
-	{
-		tls_os_queue_delete(spi_port->msg_queue);
-		TLS_DBGPRT_ERR("spi_scheduler_stk allocated fail!\n");
+    err = tls_os_task_create(NULL, "hostspi",
+                             spi_scheduler,
+                             (void *) spi_port,
+                             (void *) NULL,
+                             SPI_SCHEDULER_STK_SIZE * sizeof(u32),
+                             TLS_SPI_SCHEDULER_TASK_PRIO, 0);
+    if (err != TLS_OS_SUCCESS)
+    {
+        TLS_DBGPRT_ERR("create spi master driver scheduler task fail!\n");
+        tls_os_queue_delete(spi_port->msg_queue);
         return TLS_SPI_STATUS_ENOMEM;
-	}
-	err = tls_os_task_create(NULL, "hostspi",
-							 spi_scheduler,
-							 (void *) spi_port,
-							 (void *) spi_scheduler_stk,
-							 SPI_SCHEDULER_STK_SIZE * sizeof(u32),
-							 TLS_SPI_SCHEDULER_TASK_PRIO, 0);
-	if (err != TLS_OS_SUCCESS)
-	{
-		TLS_DBGPRT_ERR("create spi master driver scheduler task fail!\n");
-		tls_os_queue_delete(spi_port->msg_queue);
-		tls_mem_free(spi_scheduler_stk);
-		spi_scheduler_stk = NULL;
-		return TLS_SPI_STATUS_ENOMEM;
-	}
+    }
+#else
+    spi_scheduler_stk = tls_mem_alloc(SPI_SCHEDULER_STK_SIZE * sizeof(u32));
+    if (NULL == spi_scheduler_stk)
+    {
+        tls_os_queue_delete(spi_port->msg_queue);
+        TLS_DBGPRT_ERR("spi_scheduler_stk allocated fail!\n");
+        return TLS_SPI_STATUS_ENOMEM;
+    }
+    err = tls_os_task_create(NULL, "hostspi",
+                             spi_scheduler,
+                             (void *) spi_port,
+                             (void *) spi_scheduler_stk,
+                             SPI_SCHEDULER_STK_SIZE * sizeof(u32),
+                             TLS_SPI_SCHEDULER_TASK_PRIO, 0);
+    if (err != TLS_OS_SUCCESS)
+    {
+        TLS_DBGPRT_ERR("create spi master driver scheduler task fail!\n");
+        tls_os_queue_delete(spi_port->msg_queue);
+        tls_mem_free(spi_scheduler_stk);
+        spi_scheduler_stk = NULL;
+        return TLS_SPI_STATUS_ENOMEM;
+    }
 #endif
 
-	return TLS_SPI_STATUS_OK;
+    return TLS_SPI_STATUS_OK;
 
 }
 
 void tls_spi_queue_send(u32 msg)
 {
-	if (TLS_SPI_STATUS_OK == tls_spi_task_init())
-	{
-		tls_os_queue_send(spi_port->msg_queue,
-									  (void *) msg, 4);
-	}
+    if (TLS_SPI_STATUS_OK == tls_spi_task_init())
+    {
+        tls_os_queue_send(spi_port->msg_queue,
+                                      (void *) msg, 4);
+    }
 }
 
 /**
@@ -1474,16 +1462,14 @@ int tls_spi_exit(void)
     return TLS_SPI_STATUS_EPERM;
 }
 
-
-
 /**********************************************************************************************************
-* Description: 	This function is used to select SPI slave type.
+* Description:     This function is used to select SPI slave type.
 *
-* Arguments  : 	slave					is the slave type,defined as follow:
-* 							slave == SPI_SLAVE_FLASH	:flash
-* 							slave == SPI_SLAVE_CARD		: sd card
+* Arguments  :     slave                    is the slave type,defined as follow:
+*                             slave == SPI_SLAVE_FLASH    :flash
+*                             slave == SPI_SLAVE_CARD        : sd card
 *
-* Returns    : 	Before communicate with different SPI device, must call the function.
+* Returns    :     Before communicate with different SPI device, must call the function.
 **********************************************************************************************************/
 void tls_spi_slave_sel(u16 slave)
 {
@@ -1505,67 +1491,67 @@ void tls_spi_slave_sel(u16 slave)
 }
 
 /**********************************************************************************************************
-* Description: 	This function is used to spi data tx/rx without irq.
+* Description:     This function is used to spi data tx/rx without irq.
 *
 * Arguments  :  data_out-------data to be sent to slave
 *               data_in -------data to be received from slave
 *               num_out -------number to be sent to slave  unit:byte
 *               num_in  -------number to be received from slave unit:byte
-* Returns    : 	Before communicate with different SPI device, must call the function.
+* Returns    :     Before communicate with different SPI device, must call the function.
 **********************************************************************************************************/
 int32_t tls_spi_xfer(const void *data_out, void *data_in, uint32_t num_out, uint32_t num_in)
 {
     int ret = 0;
-	uint32_t length = 0;
+    uint32_t length = 0;
     uint32_t remain_length ;
-    uint32_t int_status;	
+    uint32_t int_status;    
     struct tls_spi_transfer tls_transfer;
-	uint32_t tot_num = 0;
+    uint32_t tot_num = 0;
 
     if (data_in == NULL || num_out == 0 || num_in == 0 || data_out == NULL) {
         return -1;
     }
-	tls_open_peripheral_clock(TLS_PERIPHERAL_TYPE_LSPI);
+    tls_open_peripheral_clock(TLS_PERIPHERAL_TYPE_LSPI);
     tls_transfer.tx_buf = data_out;
     tls_transfer.rx_buf = data_in;
 
     tot_num = (num_out > num_in) ? num_out : num_in;
-	remain_length = tot_num;
-    tls_transfer.len = tot_num;	
-	tls_irq_disable(SPI_LS_IRQn);
-    //spi_set_rx_channel(1);
-    //spi_set_tx_channel(1);	
-	length = spi_fill_txfifo(&tls_transfer, remain_length);
-	spi_set_sclk_length(length * 8, 0);
-	spi_sclk_start();
+    remain_length = tot_num;
+    tls_transfer.len = tot_num;    
+    tls_irq_disable(SPI_LS_IRQn);
+    // spi_set_rx_channel(1);
+    // spi_set_tx_channel(1);    
+    length = spi_fill_txfifo(&tls_transfer, remain_length);
+    spi_set_sclk_length(length * 8, 0);
+    spi_sclk_start();
 
-	while (remain_length > 0)
-	{
-		while (spi_get_busy_status() == 1);
-		length = spi_get_rxfifo(&tls_transfer, remain_length);
-		remain_length -= length;
+    while (remain_length > 0)
+    {
+        while (spi_get_busy_status() == 1);
+        length = spi_get_rxfifo(&tls_transfer, remain_length);
+        remain_length -= length;
 
-		if (remain_length == 0)
-		{
-			while (spi_get_busy_status() == 1);
-			break;
-		}
-		while (spi_get_busy_status() == 1);
-		length = spi_fill_txfifo(&tls_transfer, remain_length);
-		if (length)
-		{
-			spi_set_sclk_length(length * 8, 0);
-			spi_sclk_start();
-		}
-	}
+        if (remain_length == 0)
+        {
+            while (spi_get_busy_status() == 1);
+            break;
+        }
+        while (spi_get_busy_status() == 1);
+        length = spi_fill_txfifo(&tls_transfer, remain_length);
+        if (length)
+        {
+            spi_set_sclk_length(length * 8, 0);
+            spi_sclk_start();
+        }
+    }
 
-	while (spi_get_busy_status() == 1);
-	int_status = spi_get_int_status();
-	spi_clear_int_status(int_status);
-	tls_irq_enable(SPI_LS_IRQn);
-	tls_close_peripheral_clock(TLS_PERIPHERAL_TYPE_LSPI);
+    while (spi_get_busy_status() == 1);
+    int_status = spi_get_int_status();
+    spi_clear_int_status(int_status);
+    tls_irq_enable(SPI_LS_IRQn);
+    tls_close_peripheral_clock(TLS_PERIPHERAL_TYPE_LSPI);
 
     return (ret == TLS_SPI_STATUS_OK) ? 0 : -1;
-}	
-	
+}    
+    
 

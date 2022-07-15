@@ -28,17 +28,16 @@
 /**FLASH MAP**/
 
 /**Flash Base Address */
-#define FLASH_BASE_ADDR						(0x8000000UL)
+#define FLASH_BASE_ADDR                        (0x8000000UL)
 
 /**Upgrade image area*/
-#define CODE_UPD_START_ADDR					(0x8010000UL)
+#define CODE_UPD_START_ADDR                    (0x8010000UL)
 
 /**Run-time image header area*/
 #define CODE_RUN_START_ADDR                 (0x80D0000UL)
 
 /**Area can be used by User*/
-#define USER_ADDR_START						(0x81E0000UL)
-
+#define USER_ADDR_START                        (0x81E0000UL)
 
 /**System parameter defined in wm_internal_fls.c*/
 extern unsigned int TLS_FLASH_PARAM_DEFAULT;
@@ -48,7 +47,7 @@ extern unsigned int TLS_FLASH_PARAM_RESTORE_ADDR;
 extern unsigned int TLS_FLASH_OTA_FLAG_ADDR;
 extern unsigned int TLS_FLASH_END_ADDR;
 
-#define SIGNATURE_WORD      				(0xA0FFFF9FUL)
-#define IMAGE_START_ADDR_MSK			    (0x400)
+#define SIGNATURE_WORD                      (0xA0FFFF9FUL)
+#define IMAGE_START_ADDR_MSK                (0x400)
 #endif /*__WM_CONFIG_H__*/
 

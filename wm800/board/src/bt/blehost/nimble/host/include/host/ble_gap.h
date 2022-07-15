@@ -1531,7 +1531,6 @@ int ble_gap_clear_periodic_adv_list(void);
 int ble_gap_read_periodic_adv_list_size(uint8_t *per_adv_list_size);
 #endif
 
-
 /**
  * Performs the Limited or General Discovery Procedures.
  *
@@ -2040,7 +2039,6 @@ int ble_gap_event_listener_unregister(struct ble_gap_event_listener *listener);
 
 void
 ble_gap_init_conn_params(struct ble_gap_conn_params *conn_params);
-
 
 #ifdef __cplusplus
 }

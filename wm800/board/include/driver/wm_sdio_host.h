@@ -20,26 +20,26 @@
 #include "wm_regs.h"
 
 typedef struct {
-	__IOM uint32_t MMC_CTL;
-	__IOM uint32_t MMC_IO;
-	__IOM uint32_t MMC_BYTECNTL;
-	__IM  uint32_t MMC_TR_BLOCKCNT;
-	__IOM uint32_t MMC_CRCCTL;                       /*!< Offset: 0x010 */
-	__IM  uint32_t CMD_CRC;
-	__IM  uint32_t DAT_CRCL;
-	__IM  uint32_t DAT_CRCH;
-	__IOM uint32_t MMC_PORT;                          /*!< Offset: 0x020 */
-	__IOM uint32_t MMC_INT_MASK;
-	__IOM uint32_t MMC_INT_SRC;
-	__IOM uint32_t MMC_CARDSEL;
-	__IM  uint32_t MMC_SIG;                          /*!< Offset: 0x030 */
-	__IOM uint32_t MMC_IO_MBCTL;
-	__IOM uint32_t MMC_BLOCKCNT;
-	__IOM uint32_t MMC_TIMEOUTCNT;
-	__IOM uint32_t CMD_BUF[16];                      /*!< Offset: 0x040 */
-	__IOM uint32_t BUF_CTL;                          /*!< Offset: 0x080 */
-	uint32_t RESERVED3[31U];
-	__IOM uint32_t  DATA_BUF[128];                    /*!< Offset: 0x100 */
+    __IOM uint32_t MMC_CTL;
+    __IOM uint32_t MMC_IO;
+    __IOM uint32_t MMC_BYTECNTL;
+    __IM  uint32_t MMC_TR_BLOCKCNT;
+    __IOM uint32_t MMC_CRCCTL;                       /*!< Offset: 0x010 */
+    __IM  uint32_t CMD_CRC;
+    __IM  uint32_t DAT_CRCL;
+    __IM  uint32_t DAT_CRCH;
+    __IOM uint32_t MMC_PORT;                          /*!< Offset: 0x020 */
+    __IOM uint32_t MMC_INT_MASK;
+    __IOM uint32_t MMC_INT_SRC;
+    __IOM uint32_t MMC_CARDSEL;
+    __IM  uint32_t MMC_SIG;                          /*!< Offset: 0x030 */
+    __IOM uint32_t MMC_IO_MBCTL;
+    __IOM uint32_t MMC_BLOCKCNT;
+    __IOM uint32_t MMC_TIMEOUTCNT;
+    __IOM uint32_t CMD_BUF[16];                      /*!< Offset: 0x040 */
+    __IOM uint32_t BUF_CTL;                          /*!< Offset: 0x080 */
+    uint32_t RESERVED3[31U];
+    __IOM uint32_t  DATA_BUF[128];                    /*!< Offset: 0x100 */
 }SDIO_HOST_Type;
 
 #define SDIO_HOST     ((SDIO_HOST_Type *)HR_SDIO_HOST_BASE_ADDR)

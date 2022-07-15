@@ -39,7 +39,7 @@ ble_hs_periodic_sync_alloc(void)
     struct ble_hs_periodic_sync *psync;
     psync = os_memblock_get(&ble_hs_periodic_sync_pool);
 
-    if(psync) {
+    if (psync) {
         memset(psync, 0, sizeof(*psync));
     }
 
@@ -51,7 +51,7 @@ ble_hs_periodic_sync_free(struct ble_hs_periodic_sync *psync)
 {
     int rc;
 
-    if(psync == NULL) {
+    if (psync == NULL) {
         return;
     }
 
@@ -85,7 +85,7 @@ ble_hs_periodic_sync_find_by_handle(uint16_t sync_handle)
     struct ble_hs_periodic_sync *psync;
     BLE_HS_DBG_ASSERT(ble_hs_locked_by_cur_task());
     SLIST_FOREACH(psync, &g_ble_hs_periodic_sync_handles, next) {
-        if(psync->sync_handle == sync_handle) {
+        if (psync->sync_handle == sync_handle) {
             return psync;
         }
     }
@@ -98,12 +98,12 @@ ble_hs_periodic_sync_find(const ble_addr_t *addr, uint8_t sid)
     struct ble_hs_periodic_sync *psync;
     BLE_HS_DBG_ASSERT(ble_hs_locked_by_cur_task());
 
-    if(!addr) {
+    if (!addr) {
         return NULL;
     }
 
     SLIST_FOREACH(psync, &g_ble_hs_periodic_sync_handles, next) {
-        if((ble_addr_cmp(&psync->advertiser_addr, addr) == 0) &&
+        if ((ble_addr_cmp(&psync->advertiser_addr, addr) == 0) &&
                 (psync->adv_sid == sid)) {
             return psync;
         }
@@ -133,7 +133,7 @@ ble_hs_periodic_sync_init(void)
                          sizeof(struct ble_hs_periodic_sync),
                          ble_hs_psync_elem_mem, "ble_hs_periodic_disc_pool");
 
-    if(rc != 0) {
+    if (rc != 0) {
         return BLE_HS_EOS;
     }
 

@@ -24,7 +24,6 @@
 extern "C" {
 #endif
 
-
 struct _snode {
     struct _snode *next;
 };
@@ -273,7 +272,7 @@ static inline void sys_slist_prepend(sys_slist_t *list,
     node->next = list->head;
     list->head = node;
 
-    if(!list->tail) {
+    if (!list->tail) {
         list->tail = list->head;
     }
 }
@@ -291,7 +290,7 @@ static inline void sys_slist_append(sys_slist_t *list,
 {
     node->next = NULL;
 
-    if(!list->tail) {
+    if (!list->tail) {
         list->tail = node;
         list->head = node;
     } else {
@@ -314,7 +313,7 @@ static inline void sys_slist_append(sys_slist_t *list,
 static inline void sys_slist_append_list(sys_slist_t *list,
         void *head, void *tail)
 {
-    if(!list->tail) {
+    if (!list->tail) {
         list->head = (sys_snode_t *)head;
         list->tail = (sys_snode_t *)tail;
     } else {
@@ -353,9 +352,9 @@ static inline void sys_slist_insert(sys_slist_t *list,
                                     sys_snode_t *prev,
                                     sys_snode_t *node)
 {
-    if(!prev) {
+    if (!prev) {
         sys_slist_prepend(list, node);
-    } else if(!prev->next) {
+    } else if (!prev->next) {
         sys_slist_append(list, node);
     } else {
         node->next = prev->next;
@@ -378,7 +377,7 @@ static inline sys_snode_t *sys_slist_get_not_empty(sys_slist_t *list)
     sys_snode_t *node = list->head;
     list->head = node->next;
 
-    if(list->tail == node) {
+    if (list->tail == node) {
         list->tail = list->head;
     }
 
@@ -413,18 +412,18 @@ static inline void sys_slist_remove(sys_slist_t *list,
                                     sys_snode_t *prev_node,
                                     sys_snode_t *node)
 {
-    if(!prev_node) {
+    if (!prev_node) {
         list->head = node->next;
 
         /* Was node also the tail? */
-        if(list->tail == node) {
+        if (list->tail == node) {
             list->tail = list->head;
         }
     } else {
         prev_node->next = node->next;
 
         /* Was node the tail? */
-        if(list->tail == node) {
+        if (list->tail == node) {
             list->tail = prev_node;
         }
     }
@@ -448,7 +447,7 @@ static inline bool sys_slist_find_and_remove(sys_slist_t *list,
     sys_snode_t *prev = NULL;
     sys_snode_t *test;
     SYS_SLIST_FOR_EACH_NODE(list, test) {
-        if(test == node) {
+        if (test == node) {
             sys_slist_remove(list, prev, node);
             return true;
         }
@@ -457,7 +456,6 @@ static inline bool sys_slist_find_and_remove(sys_slist_t *list,
     }
     return false;
 }
-
 
 #ifdef __cplusplus
 }

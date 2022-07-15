@@ -280,8 +280,6 @@ tls_bt_status_t tls_ble_client_get_gatt_db(uint16_t conn_id);
  * @}
  */
 
-
-
 /**
  * @defgroup BLE_GATT_Server_APIs BLE GATT Server APIs
  * @brief BLE GATT Server APIs

@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 
-
 #include <assert.h>
 #include "syscfg/syscfg.h"
 #include "nimble/nimble_port.h"
@@ -56,7 +55,7 @@ static void free_host_task_stack()
 #if TLS_OS_LITEOS
 #else
 
-    if(tls_host_task_stack_ptr) {
+    if (tls_host_task_stack_ptr) {
         tls_mem_free(tls_host_task_stack_ptr);
         tls_host_task_stack_ptr = NULL;
     }
@@ -65,7 +64,7 @@ static void free_host_task_stack()
 }
 void tls_nimble_stop(void)
 {
-    if(host_task_ptr) {
+    if (host_task_ptr) {
         tls_os_task_del_by_task_handle(host_task_ptr, free_host_task_stack);
     }
 }

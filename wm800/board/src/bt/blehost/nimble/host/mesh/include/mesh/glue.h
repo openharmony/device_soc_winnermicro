@@ -365,7 +365,7 @@ static inline unsigned int find_lsb_set(u32_t op)
 
 static inline unsigned int find_msb_set(u32_t op)
 {
-    if(!op)
+    if (!op)
     { return 0; }
 
     return 32 - __builtin_clz(op);
@@ -413,7 +413,6 @@ static inline unsigned int find_msb_set(u32_t op)
 
 #define CONTAINER_OF(ptr, type, field) \
     ((type *)(((char *)(ptr)) - offsetof(type, field)))
-
 
 #define k_sem ble_npl_sem
 

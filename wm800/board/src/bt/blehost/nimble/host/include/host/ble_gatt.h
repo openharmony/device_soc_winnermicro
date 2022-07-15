@@ -886,7 +886,6 @@ int ble_gatts_reset(void);
 int ble_gatts_start(void);
 void ble_gatts_stop(void);
 
-
 #ifdef __cplusplus
 }
 #endif

@@ -68,7 +68,7 @@ ble_svc_gatt_access(uint16_t conn_handle, uint16_t attr_handle,
     assert(ctxt->chr == &ble_svc_gatt_defs[0].characteristics[0]);
     u8p = os_mbuf_extend(ctxt->om, 4);
 
-    if(u8p == NULL) {
+    if (u8p == NULL) {
         return BLE_HS_ENOMEM;
     }
 

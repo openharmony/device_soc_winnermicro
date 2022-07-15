@@ -32,7 +32,6 @@
 #include "wm_cpu.h"
 #include "tls_common.h"
 
-
 typedef void (*pwm_irq_callback)(void);
 static pwm_irq_callback pwm_callback;
 
@@ -74,17 +73,17 @@ int tls_pwm_duty_config(u8 channel, u8 duty)
 {
     u32 temp = 0;
     
-	if(channel > (PWM_CHANNEL_MAX_NUM - 1))
-	{
-		TLS_DBGPRT_ERR("duty param err\n");
-		return WM_FAILED;
-	}
+    if (channel > (PWM_CHANNEL_MAX_NUM - 1))
+    {
+        TLS_DBGPRT_ERR("duty param err\n");
+        return WM_FAILED;
+    }
 
-	if (duty == 0)
-	{
-		tls_pwm_stop(channel);
-		return WM_SUCCESS;
-	}
+    if (duty == 0)
+    {
+        tls_pwm_stop(channel);
+        return WM_SUCCESS;
+    }
 
     if (4 == channel)
     {
@@ -118,11 +117,11 @@ int tls_pwm_freq_config(u8 channel, u16 clkdiv, u8 period)
 {
     u32 temp = 0;
     
-	if(channel > (PWM_CHANNEL_MAX_NUM - 1))
-	{
-		TLS_DBGPRT_ERR("freq param err\n");
-		return WM_FAILED;
-	}
+    if (channel > (PWM_CHANNEL_MAX_NUM - 1))
+    {
+        TLS_DBGPRT_ERR("freq param err\n");
+        return WM_FAILED;
+    }
 
     if (4 == channel)
     {
@@ -161,8 +160,8 @@ int tls_pwm_freq_config(u8 channel, u16 clkdiv, u8 period)
  */
 int tls_pwm_out_mode_config(u8 channel, enum tls_pwm_out_mode mode)
 {
-    if(channel > (PWM_CHANNEL_MAX_NUM - 1))
-		return WM_FAILED;
+    if (channel > (PWM_CHANNEL_MAX_NUM - 1))
+        return WM_FAILED;
 
     if (WM_PWM_OUT_MODE_BRAKE == mode)
         tls_reg_write32(HR_PWM_BRKCTL, tls_reg_read32(HR_PWM_BRKCTL) | BIT(11 + channel));/* the brake mode */
@@ -190,7 +189,7 @@ int tls_pwm_out_mode_config(u8 channel, enum tls_pwm_out_mode mode)
         tls_reg_write32(HR_PWM_CTL,  tls_reg_read32(HR_PWM_CTL) & ~BIT(14 + channel / 2)); /* disable the two channel synchronous mode */
         tls_reg_write32(HR_PWM_CTL,  tls_reg_read32(HR_PWM_CTL) | BIT(0 + channel / 2));   /* enable the complementary mode */
     }
-    else if(WM_PWM_OUT_MODE_INDPT == mode)
+    else if (WM_PWM_OUT_MODE_INDPT == mode)
     {
         tls_reg_write32(HR_PWM_CTL,    tls_reg_read32(HR_PWM_CTL)    & (~BIT(6)));
         if (channel != 4 )
@@ -219,8 +218,8 @@ int tls_pwm_out_mode_config(u8 channel, enum tls_pwm_out_mode mode)
  */
 int tls_pwm_cnt_type_config(u8 channel, enum tls_pwm_cnt_type cnt_type)
 {
-    if(channel > (PWM_CHANNEL_MAX_NUM - 1))
-		return WM_FAILED;
+    if (channel > (PWM_CHANNEL_MAX_NUM - 1))
+        return WM_FAILED;
 
     if (4 == channel)
     {
@@ -278,8 +277,8 @@ int tls_pwm_cnt_type_config(u8 channel, enum tls_pwm_cnt_type cnt_type)
  */
 int tls_pwm_loop_mode_config(u8 channel, enum tls_pwm_loop_type loop_mode)
 {
-    if(channel > (PWM_CHANNEL_MAX_NUM - 1))
-		return WM_FAILED;
+    if (channel > (PWM_CHANNEL_MAX_NUM - 1))
+        return WM_FAILED;
 
     if (4 == channel)
     {
@@ -313,8 +312,8 @@ int tls_pwm_loop_mode_config(u8 channel, enum tls_pwm_loop_type loop_mode)
  */
 int tls_pwm_out_inverse_cmd(u8 channel, bool en)
 {
-    if(channel > (PWM_CHANNEL_MAX_NUM - 1))
-		return WM_FAILED;
+    if (channel > (PWM_CHANNEL_MAX_NUM - 1))
+        return WM_FAILED;
 
     if (4 == channel)
     {
@@ -349,8 +348,8 @@ int tls_pwm_stoptime_by_period_config(u8 channel, u8 pnum)
 {
     u32 temp = 0;
     
-    if(channel > (PWM_CHANNEL_MAX_NUM - 1))
-		return WM_FAILED;
+    if (channel > (PWM_CHANNEL_MAX_NUM - 1))
+        return WM_FAILED;
 
     if (4 == channel)
     {
@@ -382,8 +381,8 @@ int tls_pwm_stoptime_by_period_config(u8 channel, u8 pnum)
  */
 int tls_pwm_output_en_cmd(u8 channel, bool en)
 {
-    if(channel != 0 && channel != 4)
-		return WM_FAILED;
+    if (channel != 0 && channel != 4)
+        return WM_FAILED;
 
     if (4 == channel)
     {
@@ -423,7 +422,7 @@ int tls_pwm_deadzone_config(u8 channel, bool dten, u8 dtclkdiv, u8 dtcnt)
     if ((channel !=0 && channel != 2) || dtclkdiv > 3)
         return WM_FAILED;
 
-    if(ENABLE == dten)
+    if (ENABLE == dten)
     {
         temp = tls_reg_read32(HR_PWM_DTCTL) & ~0x00030000;
         temp |= (dtclkdiv<<16);
@@ -510,8 +509,8 @@ int tls_pwm_capture_inverse_cmd(u8 channel, bool en)
  */
 int tls_pwm_brake_mode_config(u8 channel, bool en, enum tls_pwm_brake_out_level brok)
 {
-    if(channel > (PWM_CHANNEL_MAX_NUM - 1))
-		return WM_FAILED;
+    if (channel > (PWM_CHANNEL_MAX_NUM - 1))
+        return WM_FAILED;
 
     if (ENABLE == en)
     {
@@ -568,8 +567,8 @@ int tls_pwm_capture_mode_config(u8 channel)
  */
 int tls_pwm_stoptime_irq_cmd(u8 channel, bool en)
 {
-    if(channel > (PWM_CHANNEL_MAX_NUM - 1))
-		return WM_FAILED;
+    if (channel > (PWM_CHANNEL_MAX_NUM - 1))
+        return WM_FAILED;
 
     if (4 == channel)
     {
@@ -626,7 +625,7 @@ int tls_pwm_capture_irq_type_config(u8 channel, enum tls_pwm_cap_int_type int_ty
             tls_reg_write32(HR_PWM_INTEN, tls_reg_read32(HR_PWM_INTEN) & (~BIT(5)));
             tls_reg_write32(HR_PWM_INTEN, tls_reg_read32(HR_PWM_INTEN) & (~BIT(7)));
         }
-        else if(WM_PWM_CAP_DMA_INT == int_type)
+        else if (WM_PWM_CAP_DMA_INT == int_type)
         {
             tls_reg_write32(HR_PWM_INTEN, tls_reg_read32(HR_PWM_INTEN) |   BIT(7));
             tls_reg_write32(HR_PWM_INTEN, tls_reg_read32(HR_PWM_INTEN) & (~BIT(5)));
@@ -653,7 +652,7 @@ int tls_pwm_capture_irq_type_config(u8 channel, enum tls_pwm_cap_int_type int_ty
             tls_reg_write32(HR_PWM_CAP2CTL, tls_reg_read32(HR_PWM_CAP2CTL) & (~BIT(8)));
             tls_reg_write32(HR_PWM_CAP2CTL, tls_reg_read32(HR_PWM_CAP2CTL) & (~BIT(10)));
         }
-        else if(WM_PWM_CAP_DMA_INT == int_type)
+        else if (WM_PWM_CAP_DMA_INT == int_type)
         {
             tls_reg_write32(HR_PWM_CAP2CTL, tls_reg_read32(HR_PWM_CAP2CTL) |   BIT(10));
             tls_reg_write32(HR_PWM_CAP2CTL, tls_reg_read32(HR_PWM_CAP2CTL) & (~BIT(8)));
@@ -678,8 +677,8 @@ int tls_pwm_out_init(pwm_init_param * pwm_param)
 {
     int ret=0;
 
-	if (pwm_param->channel > (PWM_CHANNEL_MAX_NUM - 1))
-		return WM_FAILED;
+    if (pwm_param->channel > (PWM_CHANNEL_MAX_NUM - 1))
+        return WM_FAILED;
 
     /* set output mode */
     ret = tls_pwm_out_mode_config(pwm_param->channel, pwm_param->mode);
@@ -752,7 +751,7 @@ int tls_pwm_cap_init(u8 channel, u16 clkdiv, bool inverse_en, enum tls_pwm_cap_i
     tls_pwm_cnt_type_config(channel, WM_PWM_CNT_TYPE_EDGE_ALLGN_CAP);
 
     /* set output status */
-    if(channel == 0)
+    if (channel == 0)
         tls_pwm_output_en_cmd(channel, WM_PWM_OUT_EN_STATE_TRI);
 
     /* set cycle mode (must be set int the capture mode) */
@@ -776,8 +775,8 @@ int tls_pwm_cap_init(u8 channel, u16 clkdiv, bool inverse_en, enum tls_pwm_cap_i
  */
 int tls_pwm_start(u8 channel)
 {
-    if(channel > (PWM_CHANNEL_MAX_NUM - 1))
-		return WM_FAILED;
+    if (channel > (PWM_CHANNEL_MAX_NUM - 1))
+        return WM_FAILED;
 
     tls_reg_write32(HR_PWM_CTL, tls_reg_read32(HR_PWM_CTL) | BIT(27 + channel)); /* start counter */
 
@@ -796,8 +795,8 @@ int tls_pwm_start(u8 channel)
  */
 int tls_pwm_stop(u8 channel)
 {
-    if(channel > (PWM_CHANNEL_MAX_NUM - 1))
-		return WM_FAILED;
+    if (channel > (PWM_CHANNEL_MAX_NUM - 1))
+        return WM_FAILED;
 
     tls_reg_write32(HR_PWM_CTL, tls_reg_read32(HR_PWM_CTL) & (~BIT(27 + channel)));/* stop counter */
 
@@ -817,12 +816,12 @@ int tls_pwm_stop(u8 channel)
 void tls_pwm_freq_set(u8 channel, u32 freq)
 {
     u16 clkdiv=0;
-	tls_sys_clk sysclk;
-	
-    if(channel > (PWM_CHANNEL_MAX_NUM - 1))
-		return;
+    tls_sys_clk sysclk;
+    
+    if (channel > (PWM_CHANNEL_MAX_NUM - 1))
+        return;
 
-	tls_sys_clk_get(&sysclk);
+    tls_sys_clk_get(&sysclk);
 
     clkdiv = sysclk.apbclk*UNIT_MHZ/256/freq;
     tls_pwm_stop(channel);
@@ -842,27 +841,26 @@ void tls_pwm_freq_set(u8 channel, u32 freq)
  */
 void tls_pwm_duty_set(u8 channel, u8 duty)
 {
-    if(channel > (PWM_CHANNEL_MAX_NUM - 1))
-		return;
-	if (duty == 0)
-	{
-		tls_pwm_stop(channel);
-	}
-	else
-	{
-    	tls_pwm_duty_config(channel, duty);
-		tls_pwm_start(channel);
-	}
+    if (channel > (PWM_CHANNEL_MAX_NUM - 1))
+        return;
+    if (duty == 0)
+    {
+        tls_pwm_stop(channel);
+    }
+    else
+    {
+        tls_pwm_duty_config(channel, duty);
+        tls_pwm_start(channel);
+    }
 }
-
 
 /**
  * @brief          This function is used to initial pwm
  *
- * @param[in]      	channel    pwm channel, range from 0 to 4
- * @param[in]      	freq       freq range from 1 to 156250
- * @param[in]      	duty       duty range from 0 to 255
- * @param[in]      	pnum       period num,range from 0 to 255
+ * @param[in]          channel    pwm channel, range from 0 to 4
+ * @param[in]          freq       freq range from 1 to 156250
+ * @param[in]          duty       duty range from 0 to 255
+ * @param[in]          pnum       period num,range from 0 to 255
  *
  * @retval         WM_SUCCESS success
  * @retval         WM_FAILED  failed
@@ -873,9 +871,9 @@ int tls_pwm_init(u8 channel,u32 freq, u8 duty, u8 pnum)
 {
     pwm_init_param pwm_param;
     int ret;
-	tls_sys_clk sysclk;
-	
-	tls_sys_clk_get(&sysclk);
+    tls_sys_clk sysclk;
+    
+    tls_sys_clk_get(&sysclk);
 
     memset(&pwm_param, 0, sizeof(pwm_init_param));
     pwm_param.period = 255;
@@ -888,10 +886,10 @@ int tls_pwm_init(u8 channel,u32 freq, u8 duty, u8 pnum)
     pwm_param.duty = duty;
     pwm_param.channel = channel;
     pwm_param.clkdiv = sysclk.apbclk*UNIT_MHZ/256/freq;
-//	printf("clkdiv:%d\n", pwm_param.clkdiv);
+//   printf("clkdiv:%d\n", pwm_param.clkdiv);
     ret = tls_pwm_out_init(&pwm_param);
-//    tls_pwm_start(channel);
+//   tls_pwm_start(channel);
 
-    return 	ret;
+    return     ret;
 }
 

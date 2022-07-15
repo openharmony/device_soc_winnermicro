@@ -47,7 +47,6 @@
  * @{
  */
 
-
 /**
  * @brief          reply the pin request
  *
@@ -56,7 +55,7 @@
  * @param[in]      pin_len
  * @param[in]      *pin_code
  *
- * @return		@ref tls_bt_status_t
+ * @return         @ref tls_bt_status_t
 
  *
  * @note           None
@@ -73,7 +72,7 @@ tls_bt_status_t tls_bt_pin_reply(const tls_bt_addr_t *bd_addr, uint8_t accept,
  * @param[in]      accept
  * @param[in]      passkey
  *
- * @return		@ref tls_bt_status_t
+ * @return         @ref tls_bt_status_t
  *
  * @note           None
  */
@@ -87,7 +86,7 @@ tls_bt_status_t tls_bt_ssp_reply(const tls_bt_addr_t *bd_addr, tls_bt_ssp_varian
  * @param[in]      *property         remote device address
  * @param[in]      update_to_flash  save the property to flash or not
  *
- * @return	       @ref tls_bt_status_t
+ * @return         @ref tls_bt_status_t
  *
  * @note           None
  */
@@ -98,7 +97,7 @@ tls_bt_status_t tls_bt_set_adapter_property(const tls_bt_property_t *property, u
  *
  * @param[in]      type         @ref tls_bt_property_type_t
  *
- * @return	       @ref tls_bt_status_t
+ * @return         @ref tls_bt_status_t
  *
  * @note           None
  */
@@ -132,7 +131,7 @@ tls_bt_status_t tls_bt_cancel_discovery(void);
  * @param[in]      *bd_addr
  * @param[in]      transport
  *
- * @return	       @ref tls_bt_status_t
+ * @return         @ref tls_bt_status_t
  *
  * @note           None
  */
@@ -143,7 +142,7 @@ tls_bt_status_t tls_bt_create_bond(const tls_bt_addr_t *bd_addr, int transport);
  *
  * @param[in]      *bd_addr
  *
- * @return	       @ref tls_bt_status_t
+ * @return         @ref tls_bt_status_t
  *
  * @note           None
  */
@@ -154,7 +153,7 @@ tls_bt_status_t tls_bt_cancel_bond(const tls_bt_addr_t *bd_addr);
  *
  * @param[in]      *bd_addr
  *
- * @return	       @ref tls_bt_status_t
+ * @return         @ref tls_bt_status_t
  *
  * @note           None
  */
@@ -178,7 +177,7 @@ tls_bt_status_t tls_bt_host_cleanup(void);
  * @param[in]      *p_hci_if
  * @param[in]      log_level
  *
- * @return	       @ref tls_bt_status_t
+ * @return         @ref tls_bt_status_t
  *
  * @note           None
  */
@@ -195,12 +194,9 @@ tls_bt_status_t tls_bt_enable(tls_bt_host_callback_t callback, tls_bt_hci_if_t *
  */
 tls_bt_status_t tls_bt_disable();
 
-
 /**
  * @}
  */
-
-
 
 /**
  * @defgroup BT_Controller_APIs BT Controller APIs
@@ -223,7 +219,6 @@ tls_bt_status_t tls_bt_disable();
  * @note           None
  */
 tls_bt_status_t tls_bt_ctrl_enable(tls_bt_hci_if_t *p_hci_if, tls_bt_log_level_t log_level);
-
 
 /**
  * @brief          disable the bluetooth controller stack
@@ -340,7 +335,6 @@ tls_bt_status_t tls_bt_ctrl_if_register(const tls_bt_host_if_t *p_host_if);
  * @note           None
  */
 tls_bt_status_t tls_bt_ctrl_if_unregister();
-
 
 /**
  * @brief          this function configure the controller enter into sleep mode when controller

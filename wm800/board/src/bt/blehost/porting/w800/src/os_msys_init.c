@@ -106,7 +106,7 @@ os_msys_deinit()
 #if MYNEWT_VAL(MSYS_1_BLOCK_COUNT) > 0
 #if MYNEWT_VAL(SYS_MEM_DYNAMIC)
 
-    if(os_msys_init_1_data) {
+    if (os_msys_init_1_data) {
         tls_mem_free(os_msys_init_1_data);
         os_msys_init_1_data = NULL;
     }
@@ -116,7 +116,7 @@ os_msys_deinit()
 #if MYNEWT_VAL(MSYS_2_BLOCK_COUNT) > 0
 #if MYNEWT_VAL(SYS_MEM_DYNAMIC)
 
-    if(os_msys_init_2_data) {
+    if (os_msys_init_2_data) {
         tls_mem_free(os_msys_init_2_data);
         os_msys_init_2_data = NULL;
     }

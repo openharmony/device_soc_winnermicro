@@ -92,7 +92,6 @@ ble_svc_bas_access(uint16_t conn_handle, uint16_t attr_handle,
     }
 }
 
-
 /**
  * Set the battery level, must be between 0 and 100.
  * If greater than 100, it will be silently set to 100.
@@ -100,10 +99,10 @@ ble_svc_bas_access(uint16_t conn_handle, uint16_t attr_handle,
 int
 ble_svc_bas_battery_level_set(uint8_t level)
 {
-    if(level > 100)
+    if (level > 100)
     { level = 100; }
 
-    if(ble_svc_bas_battery_level != level) {
+    if (ble_svc_bas_battery_level != level) {
         ble_svc_bas_battery_level = level;
 #if MYNEWT_VAL(BLE_SVC_BAS_BATTERY_LEVEL_NOTIFY_ENABLE) > 0
         ble_gatts_chr_updated(ble_svc_bas_battery_handle);
