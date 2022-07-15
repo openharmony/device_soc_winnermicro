@@ -39,86 +39,85 @@ extern "C" {
  */
 typedef struct
 {
-	/** Control Register */
-	__IO uint32_t CTRL;
-	/** Refresh Rate Prescaler Register */
-	__IO uint32_t FRAMECNT;
-	__IO uint32_t COM0;
-	__IO uint32_t COM1;
-	__IO uint32_t COM2;
-	__IO uint32_t COM3;
-	__IO uint32_t COM4;
-	__IO uint32_t COM5;
-	__IO uint32_t COM6;
-	__IO uint32_t COM7;
-	/** LCD COM Control Register */
-	__IO uint32_t COM_EN;
-	/** LCD SEG Control Register */
-	__IO uint32_t SEG_EN;
+    /** Control Register */
+    __IO uint32_t CTRL;
+    /** Refresh Rate Prescaler Register */
+    __IO uint32_t FRAMECNT;
+    __IO uint32_t COM0;
+    __IO uint32_t COM1;
+    __IO uint32_t COM2;
+    __IO uint32_t COM3;
+    __IO uint32_t COM4;
+    __IO uint32_t COM5;
+    __IO uint32_t COM6;
+    __IO uint32_t COM7;
+    /** LCD COM Control Register */
+    __IO uint32_t COM_EN;
+    /** LCD SEG Control Register */
+    __IO uint32_t SEG_EN;
 } LCD_T;
 /** LCD base pointer */
-#define LCD 		((LCD_T *)HR_LCD_REG_BASE)
+#define LCD         ((LCD_T *)HR_LCD_REG_BASE)
 
 typedef enum
 {
-	/** Static (2 levels) */
-	BIAS_STATIC		= LCD_BIAS_STATIC,
-	/** 1/2 Bias (3 levels) */
-	BIAS_ONEHALF 		= LCD_BIAS_ONEHALF,
-	/** 1/3 Bias (4 levels) */
-	BIAS_ONETHIRD 		= LCD_BIAS_ONETHIRD,
-	/** 1/4 Bias (4 levels) */
-	BIAS_ONEFOURTH	= LCD_BIAS_ONEFOURTH,
+    /** Static (2 levels) */
+    BIAS_STATIC        = LCD_BIAS_STATIC,
+    /** 1/2 Bias (3 levels) */
+    BIAS_ONEHALF         = LCD_BIAS_ONEHALF,
+    /** 1/3 Bias (4 levels) */
+    BIAS_ONETHIRD         = LCD_BIAS_ONETHIRD,
+    /** 1/4 Bias (4 levels) */
+    BIAS_ONEFOURTH    = LCD_BIAS_ONEFOURTH,
 } LCD_BiasDef;
 
 typedef enum
 {
-	/** VLCD 2.7v */
-	VLCD27		= LCD_VLCD_27,
-	/** VLCD 2.9v */
-	VLCD29		= LCD_VLCD_29,
-	/** VLCD 3.1v */
-	VLCD31		= LCD_VLCD_31,
-	/** VLCD 3.3v */
-	VLCD33		= LCD_VLCD_33,
+    /** VLCD 2.7v */
+    VLCD27        = LCD_VLCD_27,
+    /** VLCD 2.9v */
+    VLCD29        = LCD_VLCD_29,
+    /** VLCD 3.1v */
+    VLCD31        = LCD_VLCD_31,
+    /** VLCD 3.3v */
+    VLCD33        = LCD_VLCD_33,
 } LCD_VlcdDef;
 
 typedef enum
 {
-	/** Static (segments can be multiplexed with LCD_COM[0]) */
-	DUTY_STATIC		= LCD_DUTY_STATIC,
-	/**  1/2 Duty cycle (segments can be multiplexed with LCD_COM[0:1]) */
-	DUTY_ONEHALF		= LCD_DUTY_ONEHALF,
-	/**  1/3 Duty cycle (segments can be multiplexed with LCD_COM[0:2]) */
-	DUTY_ONETHIRD		= LCD_DUTY_ONETHIRD,
-	/**  1/4 Duty cycle (segments can be multiplexed with LCD_COM[0:3]) */
-	DUTY_ONEFOURTH	= LCD_DUTY_ONEFOURTH,
-	/**  1/5 Duty cycle (segments can be multiplexed with LCD_COM[0:4]) */
-	DUTY_ONEFIFTH	  	= LCD_DUTY_ONEFIFTH,
-	/**  1/6 Duty cycle (segments can be multiplexed with LCD_COM[0:5]) */
-	DUTY_ONESIXTH		= LCD_DUTY_ONESIXTH,
-	/**  1/7 Duty cycle (segments can be multiplexed with LCD_COM[0:6]) */
-	DUTY_ONESEVENTH	= LCD_DUTY_ONESEVENTH,
-	/**  1/8 Duty cycle (segments can be multiplexed with LCD_COM[0:7]) */
-	DUTY_ONEEIGHTH	= LCD_DUTY_ONEEIGHTH,
+    /** Static (segments can be multiplexed with LCD_COM[0]) */
+    DUTY_STATIC        = LCD_DUTY_STATIC,
+    /**  1/2 Duty cycle (segments can be multiplexed with LCD_COM[0:1]) */
+    DUTY_ONEHALF        = LCD_DUTY_ONEHALF,
+    /**  1/3 Duty cycle (segments can be multiplexed with LCD_COM[0:2]) */
+    DUTY_ONETHIRD        = LCD_DUTY_ONETHIRD,
+    /**  1/4 Duty cycle (segments can be multiplexed with LCD_COM[0:3]) */
+    DUTY_ONEFOURTH    = LCD_DUTY_ONEFOURTH,
+    /**  1/5 Duty cycle (segments can be multiplexed with LCD_COM[0:4]) */
+    DUTY_ONEFIFTH          = LCD_DUTY_ONEFIFTH,
+    /**  1/6 Duty cycle (segments can be multiplexed with LCD_COM[0:5]) */
+    DUTY_ONESIXTH        = LCD_DUTY_ONESIXTH,
+    /**  1/7 Duty cycle (segments can be multiplexed with LCD_COM[0:6]) */
+    DUTY_ONESEVENTH    = LCD_DUTY_ONESEVENTH,
+    /**  1/8 Duty cycle (segments can be multiplexed with LCD_COM[0:7]) */
+    DUTY_ONEEIGHTH    = LCD_DUTY_ONEEIGHTH,
 } LCD_DutyDef;
 
 typedef struct tls_lcd_options
 {
-	/** */
-	bool enable;
-	/** Bias configuration */
-	LCD_BiasDef  bias;
-	/** Duty configuration */
-	LCD_DutyDef  duty;
-	/** Vlcd configuration */
-	LCD_VlcdDef  vlcd;
-	/** com number */
-	uint8_t	com_number;
-	/** Fresh rate configuration */
-	uint16_t fresh_rate;
+    /** */
+    bool enable;
+    /** Bias configuration */
+    LCD_BiasDef  bias;
+    /** Duty configuration */
+    LCD_DutyDef  duty;
+    /** Vlcd configuration */
+    LCD_VlcdDef  vlcd;
+    /** com number */
+    uint8_t com_number;
+    /** Fresh rate configuration */
+    uint16_t fresh_rate;
 } tls_lcd_options_t;
-
 
 /**
  * @defgroup Driver_APIs Driver APIs
@@ -189,7 +188,7 @@ void tls_lcd_vlcd_sel(LCD_VlcdDef vlcd);
  *     - \ref DUTY_ONEFIFTH
  *     - \ref DUTY_ONESIXTH
  *     - \ref DUTY_ONESEVENTH
- *	   - \ref DUTY_ONEEIGHTH
+ *     - \ref DUTY_ONEEIGHTH
  *
  */
 void tls_lcd_duty_set(LCD_DutyDef duty);
@@ -210,30 +209,29 @@ void tls_lcd_bias_set(LCD_BiasDef bias);
  * @param[in] enable   When one enable the clock of LCD module, when zero disable
  */
 #define TLS_LCD_CLK_ENABLE(enable) \
-		do { \
-			tls_bitband_write(HR_CLK_BASE_ADDR, HR_CLK_LCD_GATE_Pos, enable); \
-		} while(0)
-
+        do { \
+            tls_bitband_write(HR_CLK_BASE_ADDR, HR_CLK_LCD_GATE_Pos, enable); \
+        } while(0)
 
 /**
  * @brief   Enable or disable the LCD module
  * @param[in] enable   When one enable the LCD module, when zero disable
  *
  */
-#define TLS_LCD_ENABLE(enable)	\
-		do { \
-			tls_bitband_write(HR_LCD_CR, LCD_CR_EN_Pos, enable); \
-		} while(0)
+#define TLS_LCD_ENABLE(enable) \
+        do { \
+            tls_bitband_write(HR_LCD_CR, LCD_CR_EN_Pos, enable); \
+        } while(0)
 
 /**
  * @brief   Enable or disable the LCD module
  * @param[in] enable   When one close LCD module, when zero open the LCD module
  *
  */
-#define TLS_LCD_POWERDOWM(enable)	\
-		do { \
-			tls_bitband_write(HR_LCD_CR, LCD_CR_PD_Pos, enable); \
-		} while(0)		
+#define TLS_LCD_POWERDOWM(enable) \
+        do { \
+            tls_bitband_write(HR_LCD_CR, LCD_CR_PD_Pos, enable); \
+        } while(0)        
 
 /**
  * @}
@@ -248,6 +246,5 @@ void tls_lcd_bias_set(LCD_BiasDef bias);
 #endif
 
 #endif
-
 
 /*** (C) COPYRIGHT 2014 Winner Microelectronics Co., Ltd. ***/

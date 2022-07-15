@@ -45,7 +45,6 @@ extern "C" {
 #define NIMBLE_BLE_CONNECT                      \
     (MYNEWT_VAL(BLE_ROLE_CENTRAL) || MYNEWT_VAL(BLE_ROLE_PERIPHERAL))
 
-
 /** Supported client ATT commands. */
 
 #undef NIMBLE_BLE_ATT_CLT_FIND_INFO

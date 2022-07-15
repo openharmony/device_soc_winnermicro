@@ -101,7 +101,7 @@ ble_hs_hci_unlock(void)
 int
 ble_hs_hci_set_buf_sz(uint16_t pktlen, uint16_t max_pkts)
 {
-    if(pktlen == 0 || max_pkts == 0) {
+    if (pktlen == 0 || max_pkts == 0) {
         return BLE_HS_EINVAL;
     }
 
@@ -113,7 +113,7 @@ ble_hs_hci_set_buf_sz(uint16_t pktlen, uint16_t max_pkts)
 int
 ble_hs_hci_set_tx_buf_sz(uint16_t pktlen)
 {
-    if(pktlen > BLE_HCI_SET_DATALEN_TX_OCTETS_MAX || pktlen < BLE_HCI_SET_DATALEN_TX_OCTETS_MIN) {
+    if (pktlen > BLE_HCI_SET_DATALEN_TX_OCTETS_MAX || pktlen < BLE_HCI_SET_DATALEN_TX_OCTETS_MIN) {
         return BLE_HS_EINVAL;
     }
 
@@ -129,7 +129,7 @@ ble_hs_hci_add_avail_pkts(uint16_t delta)
 {
     BLE_HS_DBG_ASSERT(ble_hs_locked_by_cur_task());
 
-    if(ble_hs_hci_avail_pkts + delta > UINT16_MAX) {
+    if (ble_hs_hci_avail_pkts + delta > UINT16_MAX) {
         ble_hs_sched_reset(BLE_HS_ECONTROLLER);
     } else {
         ble_hs_hci_avail_pkts += delta;
@@ -144,15 +144,15 @@ ble_hs_hci_rx_cmd_complete(const void *data, int len,
     const struct ble_hci_ev_command_complete_nop *nop = data;
     uint16_t opcode;
 
-    if(len < sizeof(*ev)) {
-        if(len < sizeof(*nop)) {
+    if (len < sizeof(*ev)) {
+        if (len < sizeof(*nop)) {
             return BLE_HS_ECONTROLLER;
         }
 
         /* nop is special as it doesn't have status and response */
         opcode = le16toh(nop->opcode);
 
-        if(opcode != BLE_HCI_OPCODE_NOP) {
+        if (opcode != BLE_HCI_OPCODE_NOP) {
             return BLE_HS_ECONTROLLER;
         }
 
@@ -169,7 +169,7 @@ ble_hs_hci_rx_cmd_complete(const void *data, int len,
     out_ack->bha_status = BLE_HS_HCI_ERR(ev->status);
     out_ack->bha_params_len = len - sizeof(*ev);
 
-    if(out_ack->bha_params_len) {
+    if (out_ack->bha_params_len) {
         out_ack->bha_params = ev->return_params;
     } else {
         out_ack->bha_params = NULL;
@@ -184,7 +184,7 @@ ble_hs_hci_rx_cmd_status(const void *data, int len,
 {
     const struct ble_hci_ev_command_status *ev = data;
 
-    if(len != sizeof(*ev)) {
+    if (len != sizeof(*ev)) {
         return BLE_HS_ECONTROLLER;
     }
 
@@ -225,11 +225,11 @@ ble_hs_hci_process_ack(uint16_t expected_opcode,
             break;
     }
 
-    if(rc == 0) {
-        if(params_buf == NULL || out_ack->bha_params == NULL) {
+    if (rc == 0) {
+        if (params_buf == NULL || out_ack->bha_params == NULL) {
             out_ack->bha_params_len = 0;
         } else {
-            if(out_ack->bha_params_len > params_buf_len) {
+            if (out_ack->bha_params_len > params_buf_len) {
                 out_ack->bha_params_len = params_buf_len;
                 rc = BLE_HS_ECONTROLLER;
             }
@@ -239,12 +239,12 @@ ble_hs_hci_process_ack(uint16_t expected_opcode,
 
         out_ack->bha_params = params_buf;
 
-        if(out_ack->bha_opcode != expected_opcode) {
+        if (out_ack->bha_opcode != expected_opcode) {
             rc = BLE_HS_ECONTROLLER;
         }
     }
 
-    if(rc != 0) {
+    if (rc != 0) {
         STATS_INC(ble_hs_stats, hci_invalid_ack);
     }
 
@@ -257,7 +257,7 @@ ble_hs_hci_wait_for_ack(void)
     int rc;
 #if MYNEWT_VAL(BLE_HS_PHONY_HCI_ACKS)
 
-    if(ble_hs_hci_phony_ack_cb == NULL) {
+    if (ble_hs_hci_phony_ack_cb == NULL) {
         rc = BLE_HS_ETIMEOUT_HCI;
     } else {
         ble_hs_hci_ack =
@@ -303,20 +303,20 @@ ble_hs_hci_cmd_tx(uint16_t opcode, const void *cmd, uint8_t cmd_len,
     ble_hs_hci_lock();
     rc = ble_hs_hci_cmd_send_buf(opcode, cmd, cmd_len);
 
-    if(rc != 0) {
+    if (rc != 0) {
         goto done;
     }
 
     rc = ble_hs_hci_wait_for_ack();
 
-    if(rc != 0) {
+    if (rc != 0) {
         ble_hs_sched_reset(rc);
         goto done;
     }
 
     rc = ble_hs_hci_process_ack(opcode, rsp, rsp_len, &ack);
 
-    if(rc != 0) {
+    if (rc != 0) {
         ble_hs_sched_reset(rc);
         goto done;
     }
@@ -324,14 +324,14 @@ ble_hs_hci_cmd_tx(uint16_t opcode, const void *cmd, uint8_t cmd_len,
     rc = ack.bha_status;
 
     /* on success we should always get full response */
-    if(!rc && (ack.bha_params_len != rsp_len)) {
+    if (!rc && (ack.bha_params_len != rsp_len)) {
         ble_hs_sched_reset(rc);
         goto done;
     }
 
 done:
 
-    if(ble_hs_hci_ack != NULL) {
+    if (ble_hs_hci_ack != NULL) {
         ble_hci_trans_buf_free((uint8_t *) ble_hs_hci_ack);
         ble_hs_hci_ack = NULL;
     }
@@ -343,7 +343,7 @@ done:
 static void
 ble_hs_hci_rx_ack(uint8_t *ack_ev)
 {
-    if(ble_npl_sem_get_count(&ble_hs_hci_sem) > 0) {
+    if (ble_npl_sem_get_count(&ble_hs_hci_sem) > 0) {
         /* This ack is unexpected; ignore it. */
         ble_hci_trans_buf_free(ack_ev);
         return;
@@ -380,7 +380,7 @@ ble_hs_hci_rx_evt(uint8_t *hci_ev, void *arg)
             break;
     }
 
-    if(enqueue) {
+    if (enqueue) {
         ble_hs_enqueue_hci_event(hci_ev);
     } else {
         ble_hs_hci_rx_ack(hci_ev);
@@ -403,7 +403,7 @@ ble_hs_hci_max_acl_payload_sz(struct ble_hs_conn *conn)
     * data portion of HCI LE ACL Data Packets sent from the Host to the
     * Controller.
     */
-    if(conn->supported_feat & BLE_HS_HCI_LE_FEAT_DATA_PACKET_LENGTH_EXT) {
+    if (conn->supported_feat & BLE_HS_HCI_LE_FEAT_DATA_PACKET_LENGTH_EXT) {
         return ble_hs_hci_buf_sz;
     } else {
         return 27;
@@ -420,7 +420,7 @@ ble_hs_hci_frag_alloc(uint16_t frag_size, void *arg)
     /* Prefer the dedicated one-element fragment pool. */
     om = os_mbuf_get_pkthdr(&ble_hs_hci_frag_mbuf_pool, 0);
 
-    if(om != NULL) {
+    if (om != NULL) {
         om->om_data += BLE_HCI_DATA_HDR_SZ;
         return om;
     }
@@ -428,7 +428,7 @@ ble_hs_hci_frag_alloc(uint16_t frag_size, void *arg)
     /* Otherwise, fall back to msys. */
     om = ble_hs_mbuf_acl_pkt();
 
-    if(om != NULL) {
+    if (om != NULL) {
         return om;
     }
 
@@ -464,14 +464,14 @@ ble_hs_hci_acl_hdr_prepend(struct os_mbuf *om, uint16_t handle,
     put_le16(&hci_hdr.hdh_len, OS_MBUF_PKTHDR(om)->omp_len);
     om2 = os_mbuf_prepend(om, sizeof hci_hdr);
 
-    if(om2 == NULL) {
+    if (om2 == NULL) {
         return NULL;
     }
 
     om = om2;
     om = os_mbuf_pullup(om, sizeof hci_hdr);
 
-    if(om == NULL) {
+    if (om == NULL) {
         return NULL;
     }
 
@@ -494,7 +494,7 @@ ble_hs_hci_acl_tx_now(struct ble_hs_conn *conn, struct os_mbuf **om)
     txom = *om;
     *om = NULL;
 
-    if(!(conn->bhc_flags & BLE_HS_CONN_F_TX_FRAG)) {
+    if (!(conn->bhc_flags & BLE_HS_CONN_F_TX_FRAG)) {
         /* The first fragment uses the first-non-flush packet boundary value.
          * After sending the first fragment, pb gets set appropriately for all
          * subsequent fragments in this packet.
@@ -509,14 +509,14 @@ ble_hs_hci_acl_tx_now(struct ble_hs_conn *conn, struct os_mbuf **om)
         frag = mem_split_frag(&txom, ble_hs_hci_max_acl_payload_sz(conn),
                               ble_hs_hci_frag_alloc, NULL);
 
-        if(frag == NULL) {
+        if (frag == NULL) {
             *om = txom;
             return BLE_HS_EAGAIN;
         }
 
         frag = ble_hs_hci_acl_hdr_prepend(frag, conn->bhc_handle, pb);
 
-        if(frag == NULL) {
+        if (frag == NULL) {
             rc = BLE_HS_ENOMEM;
             goto err;
         }
@@ -528,7 +528,7 @@ ble_hs_hci_acl_tx_now(struct ble_hs_conn *conn, struct os_mbuf **om)
 #endif
         rc = ble_hs_tx_data(frag);
 
-        if(rc != 0) {
+        if (rc != 0) {
             goto err;
         }
 
@@ -542,7 +542,7 @@ ble_hs_hci_acl_tx_now(struct ble_hs_conn *conn, struct os_mbuf **om)
         ble_hs_hci_avail_pkts--;
     }
 
-    if(txom != NULL) {
+    if (txom != NULL) {
         /* The controller couldn't accommodate some or all of the packet. */
         *om = txom;
         return BLE_HS_EAGAIN;
@@ -577,7 +577,7 @@ ble_hs_hci_acl_tx(struct ble_hs_conn *conn, struct os_mbuf **om)
     BLE_HS_DBG_ASSERT(ble_hs_locked_by_cur_task());
 
     /* If this conn is already backed up, don't even try to send. */
-    if(STAILQ_FIRST(&conn->bhc_tx_q) != NULL) {
+    if (STAILQ_FIRST(&conn->bhc_tx_q) != NULL) {
         return BLE_HS_EAGAIN;
     }
 

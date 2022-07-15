@@ -32,7 +32,7 @@
 #include "wm_mem.h"
 #include "wm_osal.h"
 #include "wm_irq.h"
-//#include "lwip/mem.h"
+// #include "lwip/mem.h"
 #include "wm_io.h"
 
 #if TLS_CONFIG_HS_SPI
@@ -40,7 +40,6 @@
 struct tls_slave_hspi g_slave_hspi;
 #define SET_BIT(x) (1UL << (x))
 void hspi_free_rxdesc(struct tls_hspi_rx_desc *rx_desc);
-
 
 void hspi_rx_init(struct tls_slave_hspi *hspi)
 {
@@ -135,7 +134,6 @@ static int slave_spi_rx_data(struct tls_slave_hspi *hspi)
 
 }
 
-
 void SDIO_RX_IRQHandler(void)
 {
     struct tls_slave_hspi *hspi = (struct tls_slave_hspi *) &g_slave_hspi;
@@ -153,7 +151,7 @@ void SDIO_TX_IRQHandler(void)
 {
     struct tls_slave_hspi *hspi = (struct tls_slave_hspi *) &g_slave_hspi;
 
-//用户模式下，直接给出数据，链表的操作不对外开放，避免造成链表操作错误
+// 用户模式下，直接给出数据，链表的操作不对外开放，避免造成链表操作错误
     if (hspi->ifusermode)
     {
         slave_spi_rx_data(hspi);
@@ -167,7 +165,6 @@ void SDIO_TX_IRQHandler(void)
 /* clear interrupt */
     tls_reg_write32(HR_SDIO_INT_SRC, SDIO_WP_INT_SRC_DATA_DOWN);
 }
-
 
 void SDIO_RX_CMD_IRQHandler(void)
 {
@@ -185,7 +182,6 @@ void SDIO_RX_CMD_IRQHandler(void)
     tls_reg_write32(HR_SDIO_INT_SRC, SDIO_WP_INT_SRC_CMD_DOWN);
 }
 
-
 ATTRIBUTE_ISR void HSPI_IRQHandler(void)
 {
     printf("spi HS irqhandle\n");
@@ -193,25 +189,25 @@ ATTRIBUTE_ISR void HSPI_IRQHandler(void)
 
 ATTRIBUTE_ISR void SDIOA_IRQHandler(void)
 {
-	u32 int_src = tls_reg_read32(HR_SDIO_INT_SRC);
-	csi_kernel_intrpt_enter();
-	if(int_src & SDIO_WP_INT_SRC_CMD_DOWN)
-	{
-		SDIO_RX_CMD_IRQHandler();
-	}
-	else if(int_src & SDIO_WP_INT_SRC_DATA_UP)
-	{
-		SDIO_RX_IRQHandler();
-	}
-	else if(int_src & SDIO_WP_INT_SRC_DATA_DOWN)
-	{
-		SDIO_TX_IRQHandler();
-	}
-	else if(int_src & SDIO_WP_INT_SRC_CMD_UP)
-	{
-		tls_reg_write32(HR_SDIO_INT_SRC, SDIO_WP_INT_SRC_CMD_UP);
-	}
-	csi_kernel_intrpt_exit();
+    u32 int_src = tls_reg_read32(HR_SDIO_INT_SRC);
+    csi_kernel_intrpt_enter();
+    if (int_src & SDIO_WP_INT_SRC_CMD_DOWN)
+    {
+        SDIO_RX_CMD_IRQHandler();
+    }
+    else if (int_src & SDIO_WP_INT_SRC_DATA_UP)
+    {
+        SDIO_RX_IRQHandler();
+    }
+    else if (int_src & SDIO_WP_INT_SRC_DATA_DOWN)
+    {
+        SDIO_TX_IRQHandler();
+    }
+    else if (int_src & SDIO_WP_INT_SRC_CMD_UP)
+    {
+        tls_reg_write32(HR_SDIO_INT_SRC, SDIO_WP_INT_SRC_CMD_UP);
+    }
+    csi_kernel_intrpt_exit();
 }
 
 void hspi_free_rxdesc(struct tls_hspi_rx_desc *rx_desc)
@@ -220,7 +216,6 @@ void hspi_free_rxdesc(struct tls_hspi_rx_desc *rx_desc)
 /* 设置hspi/sdio tx enable寄存器，让sdio硬件知道有可用的tx descriptor */
     tls_reg_write32(HR_SDIO_TXEN, SET_BIT(0));
 }
-
 
 void hspi_regs_cfg(void)
 {
@@ -270,16 +265,15 @@ void hsdio_regs_cfg(void)
     tls_reg_write32(HR_SDIO_PROG, 0x02FD);
 }
 
-
 /**
- * @brief          	This function is used to initial HSPI register.
+ * @brief              This function is used to initial HSPI register.
  *
- * @param[in]      	None
+ * @param[in]          None
  *
- * @retval         	0     success
- * @retval         	other failed
+ * @retval             0     success
+ * @retval             other failed
  *
- * @note           	When the system is initialized, the function has been called, so users can not call the function.
+ * @note               When the system is initialized, the function has been called, so users can not call the function.
  */
 int tls_slave_spi_init(void)
 {
@@ -294,8 +288,8 @@ int tls_slave_spi_init(void)
 /* regiseter hspi tx rx cmd interrupt handler */
 
 /* setting hw interrupt module isr enable regiset */
-	tls_irq_enable(SDIO_IRQn);
-	tls_irq_enable(SPI_HS_IRQn);
+    tls_irq_enable(SDIO_IRQn);
+    tls_irq_enable(SPI_HS_IRQn);
 
     /********************************************
      * setting hspi wrapper registers
@@ -319,19 +313,17 @@ int tls_slave_spi_init(void)
     return 0;
 }
 
-
 /**
- * @brief         	This function is used to set high speed interface type.
+ * @brief             This function is used to set high speed interface type.
  *
- * @param[in]     	type    is the interface type. HSPI_INTERFACE_SPI or HSPI_INTERFACE_SDIO
+ * @param[in]         type    is the interface type. HSPI_INTERFACE_SPI or HSPI_INTERFACE_SDIO
  *
- * @return        	None
+ * @return            None
  *
- * @note           	None
+ * @note               None
  */
 void tls_set_high_speed_interface_type(int type)
 {
-
 
     if (HSPI_INTERFACE_SPI == type)
     {
@@ -344,15 +336,15 @@ void tls_set_high_speed_interface_type(int type)
 }
 
 /**
- * @brief          	This function is used to enable or disable user mode.
+ * @brief              This function is used to enable or disable user mode.
  *
- * @param[in]      	ifenable     TRUE or FALSE
+ * @param[in]          ifenable     TRUE or FALSE
  *
- * @return         	None
+ * @return             None
  *
- * @note           	If the user enables the user mode, RICM instruction in the system will not be used by SPI.
- *		        	If the user wants to use the SPI interface as other use, need to enable the user mode.
- *		        	This function must be called before the register function.
+ * @note               If the user enables the user mode, RICM instruction in the system will not be used by SPI.
+ *                    If the user wants to use the SPI interface as other use, need to enable the user mode.
+ *                    This function must be called before the register function.
  */
 void tls_set_hspi_user_mode(u8 ifenable)
 {
@@ -369,13 +361,13 @@ void tls_set_hspi_user_mode(u8 ifenable)
 }
 
 /**
- * @brief          	This function is used to register hspi rx command interrupt.
+ * @brief              This function is used to register hspi rx command interrupt.
  *
- * @param[in]      	rx_cmd_callback		is the hspi rx interrupt call back function.
+ * @param[in]          rx_cmd_callback        is the hspi rx interrupt call back function.
  *
- * @return         	None
+ * @return             None
  *
- * @note           	None
+ * @note               None
  */
  void tls_hspi_rx_cmd_callback_register(s16(*rx_cmd_callback) (char *buf))
 {
@@ -383,13 +375,13 @@ void tls_set_hspi_user_mode(u8 ifenable)
 }
 
 /**
- * @brief          	This function is used to register hspi rx data interrupt.
+ * @brief              This function is used to register hspi rx data interrupt.
  *
- * @param[in]      	rx_data_callback		is the hspi rx interrupt call back function.
+ * @param[in]          rx_data_callback        is the hspi rx interrupt call back function.
  *
- * @return         	None
+ * @return             None
  *
- * @note           	None
+ * @note               None
  */
 void tls_hspi_rx_data_callback_register(s16(*rx_data_callback) (char *buf))
 {
@@ -397,13 +389,13 @@ void tls_hspi_rx_data_callback_register(s16(*rx_data_callback) (char *buf))
 }
 
 /**
- * @brief          	This function is used to register hspi tx data interrupt.
+ * @brief              This function is used to register hspi tx data interrupt.
  *
- * @param[in]     	tx_data_callback		is the hspi tx interrupt call back function.
+ * @param[in]         tx_data_callback        is the hspi tx interrupt call back function.
  *
- * @return         	None
+ * @return             None
  *
- * @note           	None
+ * @note               None
  */
 void tls_hspi_tx_data_callback_register(s16(*tx_data_callback) (char *buf))
 {
@@ -411,15 +403,15 @@ void tls_hspi_tx_data_callback_register(s16(*tx_data_callback) (char *buf))
 }
 
 /**
- * @brief          	This function is used to transfer data.
+ * @brief              This function is used to transfer data.
  *
- * @param[in]      	txbuf			is a buf for saving user data.
- * @param[in]      	len                 	is the data length.
+ * @param[in]          txbuf            is a buf for saving user data.
+ * @param[in]          len                     is the data length.
  *
- * @retval         	transfer data len    success
- * @retval         	0                          	failed
+ * @retval             transfer data len    success
+ * @retval             0                              failed
  *
- * @note           	None
+ * @note               None
  */
 int tls_hspi_tx_data(char *txbuf, int len)
 {
@@ -479,5 +471,4 @@ int tls_hspi_tx_data(char *txbuf, int len)
 }
 
 #endif
-
 

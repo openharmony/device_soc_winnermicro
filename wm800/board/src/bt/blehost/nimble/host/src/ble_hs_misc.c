@@ -34,24 +34,24 @@ ble_hs_misc_conn_chan_find(uint16_t conn_handle, uint16_t cid,
     int rc;
     conn = ble_hs_conn_find(conn_handle);
 
-    if(conn == NULL) {
+    if (conn == NULL) {
         chan = NULL;
         rc = BLE_HS_ENOTCONN;
     } else {
         chan = ble_hs_conn_chan_find_by_scid(conn, cid);
 
-        if(chan == NULL) {
+        if (chan == NULL) {
             rc = BLE_HS_ENOTCONN;
         } else {
             rc = 0;
         }
     }
 
-    if(out_conn != NULL) {
+    if (out_conn != NULL) {
         *out_conn = conn;
     }
 
-    if(out_chan != NULL) {
+    if (out_chan != NULL) {
         *out_chan = chan;
     }
 
@@ -69,11 +69,11 @@ ble_hs_misc_conn_chan_find_reqd(uint16_t conn_handle, uint16_t cid,
     rc = ble_hs_misc_conn_chan_find(conn_handle, cid, &conn, &chan);
     BLE_HS_DBG_ASSERT_EVAL(rc == 0);
 
-    if(out_conn != NULL) {
+    if (out_conn != NULL) {
         *out_conn = conn;
     }
 
-    if(out_chan != NULL) {
+    if (out_chan != NULL) {
         *out_chan = chan;
     }
 }
@@ -122,11 +122,11 @@ ble_hs_misc_restore_one_irk(int obj_type, union ble_store_value *val,
     BLE_HS_DBG_ASSERT(obj_type == BLE_STORE_OBJ_TYPE_PEER_SEC);
     sec = &val->sec;
 
-    if(sec->irk_present) {
+    if (sec->irk_present) {
         int rc = ble_hs_pvcy_add_entry(sec->peer_addr.val, sec->peer_addr.type,
                                    sec->irk);
 
-        if(rc != 0) {
+        if (rc != 0) {
             BLE_HS_LOG(ERROR, "failed to configure restored IRK\n");
         }
     }

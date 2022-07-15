@@ -54,7 +54,7 @@ ble_l2cap_sig_reject_tx(uint16_t conn_handle, uint8_t id, uint16_t reason,
     cmd = ble_l2cap_sig_cmd_get(BLE_L2CAP_SIG_OP_REJECT, id,
                                 sizeof(*cmd) + data_len, &txom);
 
-    if(!cmd) {
+    if (!cmd) {
         return BLE_HS_ENOMEM;
     }
 
@@ -87,11 +87,11 @@ ble_l2cap_sig_cmd_get(uint8_t opcode, uint8_t id, uint16_t len,
     struct ble_l2cap_sig_hdr *hdr;
     *txom = ble_hs_mbuf_l2cap_pkt();
 
-    if(*txom == NULL) {
+    if (*txom == NULL) {
         return NULL;
     }
 
-    if(os_mbuf_extend(*txom, sizeof(*hdr) + len) == NULL) {
+    if (os_mbuf_extend(*txom, sizeof(*hdr) + len) == NULL) {
         os_mbuf_free_chain(*txom);
         return NULL;
     }

@@ -73,7 +73,6 @@ enum tls_gpio_irq_trig {
  * @{
  */
 
-
 /**
  * @brief          	This function is used to config gpio function
  *
@@ -87,7 +86,6 @@ enum tls_gpio_irq_trig {
  */
 void tls_gpio_cfg(enum tls_io_name gpio_pin, enum tls_gpio_dir dir, enum tls_gpio_attr attr);
 
-
 /**
  * @brief          This function is used to read gpio status
  *
@@ -99,7 +97,6 @@ void tls_gpio_cfg(enum tls_io_name gpio_pin, enum tls_gpio_dir dir, enum tls_gpi
  * @note           None
  */
 u8 tls_gpio_read(enum tls_io_name gpio_pin);
-
 
 /**
  * @brief          	This function is used to modify gpio status
@@ -115,7 +112,6 @@ u8 tls_gpio_read(enum tls_io_name gpio_pin);
  */
 void tls_gpio_write(enum tls_io_name gpio_pin, u8 value);
 
-
 /**
  * @brief          This function is used to config gpio interrupt
  *
@@ -128,7 +124,6 @@ void tls_gpio_write(enum tls_io_name gpio_pin, u8 value);
  */
 void tls_gpio_irq_enable(enum tls_io_name gpio_pin, enum tls_gpio_irq_trig mode);
 
-
 /**
  * @brief          This function is used to disable gpio interrupt
  *
@@ -139,7 +134,6 @@ void tls_gpio_irq_enable(enum tls_io_name gpio_pin, enum tls_gpio_irq_trig mode)
  * @note           None
  */
 void tls_gpio_irq_disable(enum tls_io_name gpio_pin);
-
 
 /**
  * @brief          This function is used to get gpio interrupt status
@@ -153,7 +147,6 @@ void tls_gpio_irq_disable(enum tls_io_name gpio_pin);
  */
 u8 tls_get_gpio_irq_status(enum tls_io_name gpio_pin);
 
-
 /**
  * @brief          This function is used to clear gpio interrupt flag
  *
@@ -164,7 +157,6 @@ u8 tls_get_gpio_irq_status(enum tls_io_name gpio_pin);
  * @note           None
  */
 void tls_clr_gpio_irq_status(enum tls_io_name gpio_pin);
-
 
 /**
  * @brief          This function is used to register gpio interrupt
@@ -190,7 +182,6 @@ void tls_gpio_isr_register(enum tls_io_name gpio_pin,
 /**
  * @}
  */
-
 
 #endif /* end of WM_GPIO_H */
 

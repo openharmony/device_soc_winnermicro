@@ -34,14 +34,14 @@
 #endif
 
 #define WM_TOOL_PATH_MAX                      256
-#define WM_TOOL_ONCE_READ_LEN	              1024
+#define WM_TOOL_ONCE_READ_LEN                 1024
 
 #define WM_TOOL_RUN_IMG_HEADER_LEN            0x100
 
 #define WM_TOOL_SECBOOT_IMG_ADDR             (0x2100)
 #define WM_TOOL_SECBOOT_HEADER_LEN           (0x100)
 #define WM_TOOL_SECBOOT_HEADER_POS           (WM_TOOL_SECBOOT_IMG_ADDR - WM_TOOL_SECBOOT_HEADER_LEN)
-//#define WM_TOOL_SECBOOT_IMG_AREA_TOTAL_LEN    9216//(56 * 1024)
+// #define WM_TOOL_SECBOOT_IMG_AREA_TOTAL_LEN    9216// (56 * 1024)
 
 #define WM_TOOL_IMG_HEAD_MAGIC_NO            (0xA0FFFF9F)
 
@@ -130,7 +130,7 @@ typedef struct {
     unsigned char  ver[WM_TOOL_IMAGE_VERSION_LEN];
     unsigned int   reserved0;
     unsigned int   reserved1;
-    unsigned int   next_boot;	
+    unsigned int   next_boot; 
     unsigned int   hd_checksum;
 } wm_tool_firmware_booter_t;
 
@@ -215,7 +215,6 @@ static int wm_tool_uart_fd = -1;
 
 static struct termios wm_tool_saved_serial_cfg;
 
-
 const static int wm_tool_uart_speed_array[] = {B2000000, B1000000, B921600, B460800, B115200, B38400,
                                                B19200,   B9600,    B4800,   B2400,   B1200};
 
@@ -233,57 +232,57 @@ const static unsigned char wm_tool_chip_cmd_b2000000[] = {0x21, 0x0a, 0x00, 0xef
 const static unsigned char wm_tool_chip_cmd_get_mac[]  = {0x21, 0x06, 0x00, 0xea, 0x2d, 0x38, 0x00, 0x00, 0x00};
 
 static const unsigned int wm_tool_crc32_tab[] = {0x00000000L, 0x77073096L, 0xee0e612cL,
-        0x990951baL, 0x076dc419L, 0x706af48fL, 0xe963a535L, 0x9e6495a3L,
-        0x0edb8832L, 0x79dcb8a4L, 0xe0d5e91eL, 0x97d2d988L, 0x09b64c2bL,
-        0x7eb17cbdL, 0xe7b82d07L, 0x90bf1d91L, 0x1db71064L, 0x6ab020f2L,
-        0xf3b97148L, 0x84be41deL, 0x1adad47dL, 0x6ddde4ebL, 0xf4d4b551L,
-        0x83d385c7L, 0x136c9856L, 0x646ba8c0L, 0xfd62f97aL, 0x8a65c9ecL,
-        0x14015c4fL, 0x63066cd9L, 0xfa0f3d63L, 0x8d080df5L, 0x3b6e20c8L,
-        0x4c69105eL, 0xd56041e4L, 0xa2677172L, 0x3c03e4d1L, 0x4b04d447L,
-        0xd20d85fdL, 0xa50ab56bL, 0x35b5a8faL, 0x42b2986cL, 0xdbbbc9d6L,
-        0xacbcf940L, 0x32d86ce3L, 0x45df5c75L, 0xdcd60dcfL, 0xabd13d59L,
-        0x26d930acL, 0x51de003aL, 0xc8d75180L, 0xbfd06116L, 0x21b4f4b5L,
-        0x56b3c423L, 0xcfba9599L, 0xb8bda50fL, 0x2802b89eL, 0x5f058808L,
-        0xc60cd9b2L, 0xb10be924L, 0x2f6f7c87L, 0x58684c11L, 0xc1611dabL,
-        0xb6662d3dL, 0x76dc4190L, 0x01db7106L, 0x98d220bcL, 0xefd5102aL,
-        0x71b18589L, 0x06b6b51fL, 0x9fbfe4a5L, 0xe8b8d433L, 0x7807c9a2L,
-        0x0f00f934L, 0x9609a88eL, 0xe10e9818L, 0x7f6a0dbbL, 0x086d3d2dL,
-        0x91646c97L, 0xe6635c01L, 0x6b6b51f4L, 0x1c6c6162L, 0x856530d8L,
-        0xf262004eL, 0x6c0695edL, 0x1b01a57bL, 0x8208f4c1L, 0xf50fc457L,
-        0x65b0d9c6L, 0x12b7e950L, 0x8bbeb8eaL, 0xfcb9887cL, 0x62dd1ddfL,
-        0x15da2d49L, 0x8cd37cf3L, 0xfbd44c65L, 0x4db26158L, 0x3ab551ceL,
-        0xa3bc0074L, 0xd4bb30e2L, 0x4adfa541L, 0x3dd895d7L, 0xa4d1c46dL,
-        0xd3d6f4fbL, 0x4369e96aL, 0x346ed9fcL, 0xad678846L, 0xda60b8d0L,
-        0x44042d73L, 0x33031de5L, 0xaa0a4c5fL, 0xdd0d7cc9L, 0x5005713cL,
-        0x270241aaL, 0xbe0b1010L, 0xc90c2086L, 0x5768b525L, 0x206f85b3L,
-        0xb966d409L, 0xce61e49fL, 0x5edef90eL, 0x29d9c998L, 0xb0d09822L,
-        0xc7d7a8b4L, 0x59b33d17L, 0x2eb40d81L, 0xb7bd5c3bL, 0xc0ba6cadL,
-        0xedb88320L, 0x9abfb3b6L, 0x03b6e20cL, 0x74b1d29aL, 0xead54739L,
-        0x9dd277afL, 0x04db2615L, 0x73dc1683L, 0xe3630b12L, 0x94643b84L,
-        0x0d6d6a3eL, 0x7a6a5aa8L, 0xe40ecf0bL, 0x9309ff9dL, 0x0a00ae27L,
-        0x7d079eb1L, 0xf00f9344L, 0x8708a3d2L, 0x1e01f268L, 0x6906c2feL,
-        0xf762575dL, 0x806567cbL, 0x196c3671L, 0x6e6b06e7L, 0xfed41b76L,
-        0x89d32be0L, 0x10da7a5aL, 0x67dd4accL, 0xf9b9df6fL, 0x8ebeeff9L,
-        0x17b7be43L, 0x60b08ed5L, 0xd6d6a3e8L, 0xa1d1937eL, 0x38d8c2c4L,
-        0x4fdff252L, 0xd1bb67f1L, 0xa6bc5767L, 0x3fb506ddL, 0x48b2364bL,
-        0xd80d2bdaL, 0xaf0a1b4cL, 0x36034af6L, 0x41047a60L, 0xdf60efc3L,
-        0xa867df55L, 0x316e8eefL, 0x4669be79L, 0xcb61b38cL, 0xbc66831aL,
-        0x256fd2a0L, 0x5268e236L, 0xcc0c7795L, 0xbb0b4703L, 0x220216b9L,
-        0x5505262fL, 0xc5ba3bbeL, 0xb2bd0b28L, 0x2bb45a92L, 0x5cb36a04L,
-        0xc2d7ffa7L, 0xb5d0cf31L, 0x2cd99e8bL, 0x5bdeae1dL, 0x9b64c2b0L,
-        0xec63f226L, 0x756aa39cL, 0x026d930aL, 0x9c0906a9L, 0xeb0e363fL,
-        0x72076785L, 0x05005713L, 0x95bf4a82L, 0xe2b87a14L, 0x7bb12baeL,
-        0x0cb61b38L, 0x92d28e9bL, 0xe5d5be0dL, 0x7cdcefb7L, 0x0bdbdf21L,
-        0x86d3d2d4L, 0xf1d4e242L, 0x68ddb3f8L, 0x1fda836eL, 0x81be16cdL,
-        0xf6b9265bL, 0x6fb077e1L, 0x18b74777L, 0x88085ae6L, 0xff0f6a70L,
-        0x66063bcaL, 0x11010b5cL, 0x8f659effL, 0xf862ae69L, 0x616bffd3L,
-        0x166ccf45L, 0xa00ae278L, 0xd70dd2eeL, 0x4e048354L, 0x3903b3c2L,
-        0xa7672661L, 0xd06016f7L, 0x4969474dL, 0x3e6e77dbL, 0xaed16a4aL,
-        0xd9d65adcL, 0x40df0b66L, 0x37d83bf0L, 0xa9bcae53L, 0xdebb9ec5L,
-        0x47b2cf7fL, 0x30b5ffe9L, 0xbdbdf21cL, 0xcabac28aL, 0x53b39330L,
-        0x24b4a3a6L, 0xbad03605L, 0xcdd70693L, 0x54de5729L, 0x23d967bfL,
-        0xb3667a2eL, 0xc4614ab8L, 0x5d681b02L, 0x2a6f2b94L, 0xb40bbe37L,
-        0xc30c8ea1L, 0x5a05df1bL, 0x2d02ef8dL};
+    0x990951baL, 0x076dc419L, 0x706af48fL, 0xe963a535L, 0x9e6495a3L,
+    0x0edb8832L, 0x79dcb8a4L, 0xe0d5e91eL, 0x97d2d988L, 0x09b64c2bL,
+    0x7eb17cbdL, 0xe7b82d07L, 0x90bf1d91L, 0x1db71064L, 0x6ab020f2L,
+    0xf3b97148L, 0x84be41deL, 0x1adad47dL, 0x6ddde4ebL, 0xf4d4b551L,
+    0x83d385c7L, 0x136c9856L, 0x646ba8c0L, 0xfd62f97aL, 0x8a65c9ecL,
+    0x14015c4fL, 0x63066cd9L, 0xfa0f3d63L, 0x8d080df5L, 0x3b6e20c8L,
+    0x4c69105eL, 0xd56041e4L, 0xa2677172L, 0x3c03e4d1L, 0x4b04d447L,
+    0xd20d85fdL, 0xa50ab56bL, 0x35b5a8faL, 0x42b2986cL, 0xdbbbc9d6L,
+    0xacbcf940L, 0x32d86ce3L, 0x45df5c75L, 0xdcd60dcfL, 0xabd13d59L,
+    0x26d930acL, 0x51de003aL, 0xc8d75180L, 0xbfd06116L, 0x21b4f4b5L,
+    0x56b3c423L, 0xcfba9599L, 0xb8bda50fL, 0x2802b89eL, 0x5f058808L,
+    0xc60cd9b2L, 0xb10be924L, 0x2f6f7c87L, 0x58684c11L, 0xc1611dabL,
+    0xb6662d3dL, 0x76dc4190L, 0x01db7106L, 0x98d220bcL, 0xefd5102aL,
+    0x71b18589L, 0x06b6b51fL, 0x9fbfe4a5L, 0xe8b8d433L, 0x7807c9a2L,
+    0x0f00f934L, 0x9609a88eL, 0xe10e9818L, 0x7f6a0dbbL, 0x086d3d2dL,
+    0x91646c97L, 0xe6635c01L, 0x6b6b51f4L, 0x1c6c6162L, 0x856530d8L,
+    0xf262004eL, 0x6c0695edL, 0x1b01a57bL, 0x8208f4c1L, 0xf50fc457L,
+    0x65b0d9c6L, 0x12b7e950L, 0x8bbeb8eaL, 0xfcb9887cL, 0x62dd1ddfL,
+    0x15da2d49L, 0x8cd37cf3L, 0xfbd44c65L, 0x4db26158L, 0x3ab551ceL,
+    0xa3bc0074L, 0xd4bb30e2L, 0x4adfa541L, 0x3dd895d7L, 0xa4d1c46dL,
+    0xd3d6f4fbL, 0x4369e96aL, 0x346ed9fcL, 0xad678846L, 0xda60b8d0L,
+    0x44042d73L, 0x33031de5L, 0xaa0a4c5fL, 0xdd0d7cc9L, 0x5005713cL,
+    0x270241aaL, 0xbe0b1010L, 0xc90c2086L, 0x5768b525L, 0x206f85b3L,
+    0xb966d409L, 0xce61e49fL, 0x5edef90eL, 0x29d9c998L, 0xb0d09822L,
+    0xc7d7a8b4L, 0x59b33d17L, 0x2eb40d81L, 0xb7bd5c3bL, 0xc0ba6cadL,
+    0xedb88320L, 0x9abfb3b6L, 0x03b6e20cL, 0x74b1d29aL, 0xead54739L,
+    0x9dd277afL, 0x04db2615L, 0x73dc1683L, 0xe3630b12L, 0x94643b84L,
+    0x0d6d6a3eL, 0x7a6a5aa8L, 0xe40ecf0bL, 0x9309ff9dL, 0x0a00ae27L,
+    0x7d079eb1L, 0xf00f9344L, 0x8708a3d2L, 0x1e01f268L, 0x6906c2feL,
+    0xf762575dL, 0x806567cbL, 0x196c3671L, 0x6e6b06e7L, 0xfed41b76L,
+    0x89d32be0L, 0x10da7a5aL, 0x67dd4accL, 0xf9b9df6fL, 0x8ebeeff9L,
+    0x17b7be43L, 0x60b08ed5L, 0xd6d6a3e8L, 0xa1d1937eL, 0x38d8c2c4L,
+    0x4fdff252L, 0xd1bb67f1L, 0xa6bc5767L, 0x3fb506ddL, 0x48b2364bL,
+    0xd80d2bdaL, 0xaf0a1b4cL, 0x36034af6L, 0x41047a60L, 0xdf60efc3L,
+    0xa867df55L, 0x316e8eefL, 0x4669be79L, 0xcb61b38cL, 0xbc66831aL,
+    0x256fd2a0L, 0x5268e236L, 0xcc0c7795L, 0xbb0b4703L, 0x220216b9L,
+    0x5505262fL, 0xc5ba3bbeL, 0xb2bd0b28L, 0x2bb45a92L, 0x5cb36a04L,
+    0xc2d7ffa7L, 0xb5d0cf31L, 0x2cd99e8bL, 0x5bdeae1dL, 0x9b64c2b0L,
+    0xec63f226L, 0x756aa39cL, 0x026d930aL, 0x9c0906a9L, 0xeb0e363fL,
+    0x72076785L, 0x05005713L, 0x95bf4a82L, 0xe2b87a14L, 0x7bb12baeL,
+    0x0cb61b38L, 0x92d28e9bL, 0xe5d5be0dL, 0x7cdcefb7L, 0x0bdbdf21L,
+    0x86d3d2d4L, 0xf1d4e242L, 0x68ddb3f8L, 0x1fda836eL, 0x81be16cdL,
+    0xf6b9265bL, 0x6fb077e1L, 0x18b74777L, 0x88085ae6L, 0xff0f6a70L,
+    0x66063bcaL, 0x11010b5cL, 0x8f659effL, 0xf862ae69L, 0x616bffd3L,
+    0x166ccf45L, 0xa00ae278L, 0xd70dd2eeL, 0x4e048354L, 0x3903b3c2L,
+    0xa7672661L, 0xd06016f7L, 0x4969474dL, 0x3e6e77dbL, 0xaed16a4aL,
+    0xd9d65adcL, 0x40df0b66L, 0x37d83bf0L, 0xa9bcae53L, 0xdebb9ec5L,
+    0x47b2cf7fL, 0x30b5ffe9L, 0xbdbdf21cL, 0xcabac28aL, 0x53b39330L,
+    0x24b4a3a6L, 0xbad03605L, 0xcdd70693L, 0x54de5729L, 0x23d967bfL,
+    0xb3667a2eL, 0xc4614ab8L, 0x5d681b02L, 0x2a6f2b94L, 0xb40bbe37L,
+    0xc30c8ea1L, 0x5a05df1bL, 0x2d02ef8dL};
 
 static void wm_tool_signal_proc_entry(void);
 static void wm_tool_stdin_to_uart(void);
@@ -419,7 +418,7 @@ static void wm_tool_stdin_to_uart(void);
 
 #define FLUSH_BLOCK_ONLY(s, eof) { \
    ct_flush_block(s, (s->block_start >= 0L ? \
-	       (char*)&s->window[(unsigned)s->block_start] : \
+               (char*)&s->window[(unsigned)s->block_start] : \
                (char*)Z_NULL), (long)s->strstart - s->block_start, (eof)); \
    s->block_start = s->strstart; \
    flush_pending(s->strm); \
@@ -441,7 +440,7 @@ static void wm_tool_stdin_to_uart(void);
    (tree[n].Freq == tree[m].Freq && depth[n] <= depth[m]))
 
 #define pqremove(s, tree, top) \
-{\
+{ \
     top = s->heap[SMALLEST]; \
     s->heap[SMALLEST] = s->heap[s->heap_len--]; \
     pqdownheap(s, tree, SMALLEST); \
@@ -565,83 +564,82 @@ struct inflate_huft_s {
 struct inflate_codes_state {
 
   /* mode */
-  enum {	/* waiting for "i:"=input, "o:"=output, "x:"=nothing */
-      START,	/* x: set up for LEN */
-      LEN,	/* i: get length/literal/eob next */
-      LENEXT,	/* i: getting length extra (have base) */
-      DIST,	/* i: get distance next */
-      DISTEXT,	/* i: getting distance extra */
-      COPY,	/* o: copying bytes in window, waiting for space */
-      LIT,	/* o: got literal, waiting for output space */
-      WASH,	/* o: got eob, possibly still output waiting */
-      END,	/* x: got eob and all data flushed */
-      BAD}	/* x: got error */
-    mode;		/* current inflate_codes mode */
+  enum {       /* waiting for "i:"=input, "o:"=output, "x:"=nothing */
+      START,   /* x: set up for LEN */
+      LEN,     /* i: get length/literal/eob next */
+      LENEXT,  /* i: getting length extra (have base) */
+      DIST,    /* i: get distance next */
+      DISTEXT, /* i: getting distance extra */
+      COPY,    /* o: copying bytes in window, waiting for space */
+      LIT,     /* o: got literal, waiting for output space */
+      WASH,    /* o: got eob, possibly still output waiting */
+      END,     /* x: got eob and all data flushed */
+      BAD}     /* x: got error */
+    mode;      /* current inflate_codes mode */
 
   /* mode dependent information */
   uInt len;
   union {
     struct {
-      inflate_huft *tree;	/* pointer into tree */
-      uInt need;		/* bits needed */
-    } code;		/* if LEN or DIST, where in tree */
-    uInt lit;		/* if LIT, literal */
+      inflate_huft *tree;    /* pointer into tree */
+      uInt need;        /* bits needed */
+    } code;        /* if LEN or DIST, where in tree */
+    uInt lit;        /* if LIT, literal */
     struct {
-      uInt get;			/* bits to get for extra */
-      uInt dist;		/* distance back to copy from */
-    } copy;		/* if EXT or COPY, where and how much */
-  } sub;		/* submode */
+      uInt get;            /* bits to get for extra */
+      uInt dist;        /* distance back to copy from */
+    } copy;        /* if EXT or COPY, where and how much */
+  } sub;        /* submode */
 
   /* mode independent information */
-  Byte lbits;		/* ltree bits decoded per branch */
-  Byte dbits;		/* dtree bits decoder per branch */
-  inflate_huft *ltree;		/* literal/length/eob tree */
-  inflate_huft *dtree;		/* distance tree */
+  Byte lbits;        /* ltree bits decoded per branch */
+  Byte dbits;        /* dtree bits decoder per branch */
+  inflate_huft *ltree;        /* literal/length/eob tree */
+  inflate_huft *dtree;        /* distance tree */
 
 };
-
 
 /* inflate blocks semi-private state */
 struct inflate_blocks_state {
 
   /* mode */
   enum {
-      TYPE,	/* get type bits (3, including end bit) */
-      LENS,	/* get lengths for stored */
-      STORED,	/* processing stored block */
-      TABLE,	/* get table lengths */
-      BTREE,	/* get bit lengths tree for a dynamic block */
-      DTREE,	/* get length, distance trees for a dynamic block */
-      CODES,	/* processing fixed or dynamic block */
-      DRY,	/* output remaining window bytes */
-      DONE,	/* finished last block, done */
+      TYPE,    /* get type bits (3, including end bit) */
+      LENS,    /* get lengths for stored */
+      STORED,    /* processing stored block */
+      TABLE,    /* get table lengths */
+      BTREE,    /* get bit lengths tree for a dynamic block */
+      DTREE,    /* get length, distance trees for a dynamic block */
+      CODES,    /* processing fixed or dynamic block */
+      DRY,    /* output remaining window bytes */
+      DONE,    /* finished last block, done */
       INF_ERROR}/* got a data error--stuck here */
-    mode;		/* current inflate_block mode */
+    mode;        /* current inflate_block mode */
 
   /* mode dependent information */
   union {
-    uInt left;		/* if STORED, bytes left to copy */
+    uInt left;        /* if STORED, bytes left to copy */
     struct {
-      uInt table;		/* table lengths (14 bits) */
-      uInt index;		/* index into blens (or border) */
-      uInt *blens;		/* bit lengths of codes */
-      uInt bb;			/* bit length tree depth */
-      inflate_huft *tb;		/* bit length decoding tree */
-    } trees;		/* if DTREE, decoding info for trees */
+      uInt table;        /* table lengths (14 bits) */
+      uInt index;        /* index into blens (or border) */
+      uInt *blens;        /* bit lengths of codes */
+      uInt bb;            /* bit length tree depth */
+      inflate_huft *tb;        /* bit length decoding tree */
+    } trees;        /* if DTREE, decoding info for trees */
     struct inflate_codes_state
-      *codes;		/* if CODES, current state */
-  } sub;		/* submode */
-  uInt last;		/* true if this block is the last block */
+      *codes;        /* if CODES, current state */
+  } sub;        /* submode */
+  uInt last;        /* true if this block is the last block */
 
   /* mode independent information */
-  uInt bitk;		/* bits in bit buffer */
-  uLong bitb;		/* bit buffer */
-  Byte *window;		/* sliding window */
-  Byte *end;		/* one byte after sliding window */
-  Byte *read;		/* window read pointer */
-  Byte *write;		/* window write pointer */
+  uInt bitk;        /* bits in bit buffer */
+  uLong bitb;        /* bit buffer */
+  Byte *window;        /* sliding window */
+  Byte *end;        /* one byte after sliding window */
+  Byte *read;        /* window read pointer */
+  Byte *write;        /* window write pointer */
   check_func checkfn;   /* check function */
-  uLong check;		/* check on output */
+  uLong check;        /* check on output */
 
 };
 
@@ -656,7 +654,7 @@ typedef struct internal_state {
     Byte  data_type;     /* UNKNOWN, BINARY or ASCII */
     Byte  method;        /* STORED (for zip only) or DEFLATED */
 
-    		/* used by deflate.c: */
+            /* used by deflate.c: */
 
     uInt  w_size;        /* LZ77 window size (32K by default) */
     uInt  w_bits;        /* log2(w_size)  (8..16) */
@@ -739,7 +737,7 @@ typedef struct internal_state {
 
      int nice_match; /* Stop searching when current match exceeds this */
 
-    		/* used by trees.c: */
+            /* used by trees.c: */
 
     ct_data dyn_ltree[HEAP_SIZE];   /* literal and length tree */
     ct_data dyn_dtree[2*D_CODES+1]; /* distance tree */
@@ -813,33 +811,33 @@ typedef struct internal_state {
 
     /* mode */
   enum {
-      METHOD,	/* waiting for method byte */
-      FLAG,	/* waiting for flag byte */
-      //START,	/* make new blocks state */
-      BLOCKS,	/* decompressing blocks */
-      CHECK4,	/* four check bytes to go */
-      CHECK3,	/* three check bytes to go */
-      CHECK2,	/* two check bytes to go */
-      CHECK1,	/* one check byte to go */
-      //DONE,	/* finished check, done */
-      //INF_ERROR/* got an error--stay here */
+      METHOD,    /* waiting for method byte */
+      FLAG,    /* waiting for flag byte */
+      // START,    /* make new blocks state */
+      BLOCKS,    /* decompressing blocks */
+      CHECK4,    /* four check bytes to go */
+      CHECK3,    /* three check bytes to go */
+      CHECK2,    /* two check bytes to go */
+      CHECK1,    /* one check byte to go */
+      // DONE,    /* finished check, done */
+      // INF_ERROR/* got an error--stay here */
       }
-    mode;		/* current inflate mode */
+    mode;        /* current inflate mode */
 
   /* mode dependent information */
   union {
-    uInt method;	/* if FLAGS, method byte */
+    uInt method;    /* if FLAGS, method byte */
     struct inflate_blocks_state
-      *blocks;		/* if BLOCKS, current state */
+      *blocks;        /* if BLOCKS, current state */
     struct {
-      uLong was;		/* computed check value */
-      uLong need;		/* stream check value */
-    } check;		/* if CHECK, check values to compare */
-  } sub;	/* submode */
+      uLong was;        /* computed check value */
+      uLong need;        /* stream check value */
+    } check;        /* if CHECK, check values to compare */
+  } sub;    /* submode */
 
   /* mode independent information */
-  int  nowrap;		/* flag for no wrapper */
-  uInt wbits;  		/* log2(window size)  (8..15, defaults to 15) */
+  int  nowrap;        /* flag for no wrapper */
+  uInt wbits;          /* log2(window size)  (8..15, defaults to 15) */
 } deflate_state;
 
 typedef struct config_s {
@@ -900,7 +898,7 @@ local config configuration_table[10] = {
 /* 8 */ {32, 128, 258, 1024},
 /* 9 */ {32, 258, 258, 4096}}; /* maximum compression */
 
-#define FIXEDH 530	/* number of hufts used by fixed tables */
+#define FIXEDH 530    /* number of hufts used by fixed tables */
 local inflate_huft fixed_mem[FIXEDH];
 
 #define next more.Next
@@ -933,7 +931,7 @@ local uLong crc32(crc, buf, len)
     if (buf == Z_NULL) return 0L;
     crc = crc ^ 0xffffffffL;
     if (len) do {
-	crc = wm_tool_crc32_tab[((int)crc ^ (*buf++)) & 0xff] ^ (crc >> 8);
+        crc = wm_tool_crc32_tab[((int)crc ^ (*buf++)) & 0xff] ^ (crc >> 8);
     } while (--len);
     return crc ^ 0xffffffffL;
 }
@@ -945,7 +943,7 @@ local void zmemcpy(dest, source, len)
 {
     if (len == 0) return;
     do {
-	*dest++ = *source++; /* ??? to be unrolled */
+    *dest++ = *source++; /* ??? to be unrolled */
     } while (--len != 0);
 }
 
@@ -955,7 +953,7 @@ local void zmemzero(dest, len)
 {
     if (len == 0) return;
     do {
-	*dest++ = 0;  /* ??? to be unrolled */
+        *dest++ = 0;  /* ??? to be unrolled */
     } while (--len != 0);
 }
 
@@ -971,17 +969,17 @@ local uLong adler32(adler, buf, len)
     if (buf == Z_NULL) return 1L;
 
     while (len > 0) {
-	k = len < NMAX ? len : NMAX;
-	len -= k;
-	while (k >= 16) {
-	    DO16(buf);
-	    k -= 16;
-	}
-	if (k != 0) do {
-	    DO1(buf);
-	} while (--k);
-	s1 %= BASE;
-	s2 %= BASE;
+        k = len < NMAX ? len : NMAX;
+        len -= k;
+        while (k >= 16) {
+            DO16(buf);
+            k -= 16;
+        }
+        if (k != 0) do {
+            DO1(buf);
+        } while (--k);
+        s1 %= BASE;
+        s2 %= BASE;
     }
     return (s2 << 16) | s1;
 }
@@ -999,7 +997,7 @@ local int read_buf(strm, buf, size)
     strm->avail_in  -= len;
 
     if (!strm->state->noheader) {
-	strm->state->adler = adler32(strm->state->adler, strm->next_in, len);
+        strm->state->adler = adler32(strm->state->adler, strm->next_in, len);
     }
     zmemcpy((Byte *)buf, strm->next_in, len);
     strm->next_in  += len;
@@ -1009,8 +1007,8 @@ local int read_buf(strm, buf, size)
 }
 
 local int inflate_trees_free(t, z)
-inflate_huft *t;	/* table to free */
-z_stream *z;		/* for zfree function */
+inflate_huft *t;    /* table to free */
+z_stream *z;        /* for zfree function */
 /* Free the malloc'ed tables built by huft_build(), which makes a linked
    list of the tables it made, with the links in a dummy first entry of
    each table. */
@@ -1023,8 +1021,7 @@ z_stream *z;		/* for zfree function */
 
   /* Go through linked list, freeing from the malloced (t[-1]) address. */
   p = t;
-  while (p != Z_NULL)
-  {
+  while (p != Z_NULL) {
     q = (--p)->next;
     ZFREE(z,p);
     p = q;
@@ -1100,14 +1097,14 @@ local int destroy (s)
     TRYFREE((voidp)s->msg);
 
     if (s->stream.state != NULL) {
-       if (s->mode == 'w') {
-	   err = deflateEnd(&(s->stream));
-       } else if (s->mode == 'r') {
-	   err = inflateEnd(&(s->stream));
-       }
+        if (s->mode == 'w') {
+            err = deflateEnd(&(s->stream));
+        } else if (s->mode == 'r') {
+            err = inflateEnd(&(s->stream));
+        }
     }
     if (s->file != NULL && fclose(s->file)) {
-	err = Z_ERRNO;
+        err = Z_ERRNO;
     }
     if (s->z_err < 0) err = s->z_err;
     zcfree((voidp)0, (voidp)s);
@@ -1120,8 +1117,8 @@ local void putLong (file, x)
 {
     int n;
     for (n = 0; n < 4; n++) {
-	fputc((int)(x & 0xff), file);
-	x >>= 8;
+        fputc((int)(x & 0xff), file);
+        x >>= 8;
     }
 }
 
@@ -1132,8 +1129,8 @@ local uLong getLong (buf)
     Byte *p = buf+4;
 
     do {
-	x <<= 8;
-	x |= *--p;
+        x <<= 8;
+        x |= *--p;
     } while (p != buf);
     return x;
 }
@@ -1262,7 +1259,7 @@ local void ct_init(s)
     deflate_state *s;
 {
     if (static_dtree[0].Len == 0) {
-	ct_static_init();              /* To do: at compile time */
+        ct_static_init();              /* To do: at compile time */
     }
 
     s->compressed_len = 0L;
@@ -1292,7 +1289,6 @@ local void lm_init (s)
     register unsigned j;
 
     s->window_size = (ulg)2L*s->w_size;
-
 
     /* Initialize the hash table (avoiding 64K overflow for 16 bit systems).
      * prev[] will be initialized on the fly.
@@ -1329,7 +1325,7 @@ local int deflateReset (strm)
     deflate_state *s;
 
     if (strm == Z_NULL || strm->state == Z_NULL ||
-	strm->zalloc == Z_NULL || strm->zfree == Z_NULL) return Z_STREAM_ERROR;
+        strm->zalloc == Z_NULL || strm->zfree == Z_NULL) return Z_STREAM_ERROR;
 
     strm->total_in = strm->total_out = 0;
     strm->msg = Z_NULL; /* use zfree if we ever allocate msg dynamically */
@@ -1368,12 +1364,12 @@ local int deflateInit2 (strm, level, method, windowBits, memLevel, strategy)
     if (level == Z_DEFAULT_COMPRESSION) level = 6;
 
     if (windowBits < 0) { /* undocumented feature: suppress zlib header */
-	noheader = 1;
-	windowBits = -windowBits;
+        noheader = 1;
+        windowBits = -windowBits;
     }
     if (memLevel < 1 || memLevel > MAX_MEM_LEVEL || method != DEFLATED ||
-	windowBits < 8 || windowBits > 15 || level < 1 || level > 9) {
-	return Z_STREAM_ERROR;
+        windowBits < 8 || windowBits > 15 || level < 1 || level > 9) {
+        return Z_STREAM_ERROR;
     }
     s = (deflate_state *) ZALLOC(strm, 1, sizeof(deflate_state));
     if (s == Z_NULL) return Z_MEM_ERROR;
@@ -1399,10 +1395,10 @@ local int deflateInit2 (strm, level, method, windowBits, memLevel, strategy)
     s->pending_buf = (uch*) ZALLOC(strm, s->lit_bufsize, 2*sizeof(ush));
 
     if (s->window == Z_NULL || s->prev == Z_NULL || s->head == Z_NULL ||
-	s->pending_buf == Z_NULL) {
-	strm->msg = z_errmsg[1-Z_MEM_ERROR];
-	deflateEnd (strm);
-	return Z_MEM_ERROR;
+        s->pending_buf == Z_NULL) {
+    strm->msg = z_errmsg[1-Z_MEM_ERROR];
+    deflateEnd (strm);
+    return Z_MEM_ERROR;
     }
     s->d_buf = (ush*) &(s->pending_buf[s->lit_bufsize]);
     s->l_buf = (uch*) &(s->pending_buf[3*s->lit_bufsize]);
@@ -1436,16 +1432,14 @@ int w;
 
   /* handle undocumented nowrap option (no zlib header or check) */
   z->state->nowrap = 0;
-  if (w < 0)
-  {
+  if (w < 0) {
     w = - w;
     z->state->nowrap = 1;
     z->state->mode = START;
   }
 
   /* set window size */
-  if (w < 8 || w > 15)
-  {
+  if (w < 8 || w > 15) {
     inflateEnd(z);
     return Z_STREAM_ERROR;
   }
@@ -1476,7 +1470,7 @@ local void flush_pending(strm)
     strm->avail_out  -= len;
     strm->state->pending -= len;
     if (strm->state->pending == 0) {
-	strm->state->pending_out = strm->state->pending_buf;
+    strm->state->pending_out = strm->state->pending_buf;
     }
 }
 
@@ -1487,11 +1481,11 @@ local void fill_window(s)
     unsigned more;    /* Amount of free space at the end of the window. */
 
     do {
-	more = (unsigned)(s->window_size -(ulg)s->lookahead -(ulg)s->strstart);
+        more = (unsigned)(s->window_size -(ulg)s->lookahead -(ulg)s->strstart);
 
-	/* Deal with !@#$% 64K limit: */
-	if (more == 0 && s->strstart == 0 && s->lookahead == 0) {
-	    more = s->w_size;
+        /* Deal with !@#$% 64K limit: */
+        if (more == 0 && s->strstart == 0 && s->lookahead == 0) {
+            more = s->w_size;
         } else if (more == (unsigned)(-1)) {
             /* Very unlikely, but possible on 16 bit machine if strstart == 0
              * and lookahead == 1 (input done one byte at time)
@@ -1507,7 +1501,7 @@ local void fill_window(s)
              * more == 0 with more == 64K on a 16 bit machine.
              */
             memcpy((char*)s->window, (char*)s->window+s->w_size,
-		   (unsigned)s->w_size);
+                   (unsigned)s->w_size);
             s->match_start -= s->w_size;
             s->strstart    -= s->w_size; /* we now have strstart >= MAX_DIST */
 
@@ -1542,8 +1536,8 @@ local void fill_window(s)
         Assert(more >= 2, "more < 2");
 
         n = read_buf(s->strm, (char*)s->window + s->strstart + s->lookahead,
-		     more);
-	s->lookahead += n;
+                     more);
+        s->lookahead += n;
 
     } while (s->lookahead < MIN_LOOKAHEAD && s->strm->avail_in != 0);
 }
@@ -1561,7 +1555,7 @@ local int longest_match(s, cur_match)
     register int len;                           /* length of current match */
     int best_len = s->prev_length;              /* best match length so far */
     IPos limit = s->strstart > (IPos)MAX_DIST(s) ?
-	s->strstart - (IPos)MAX_DIST(s) : NIL;
+        s->strstart - (IPos)MAX_DIST(s) : NIL;
     /* Stop when cur_match becomes <= limit. To simplify the code,
      * we prevent matches with the string of window index 0.
      */
@@ -1689,7 +1683,7 @@ local int ct_tally (s, dist, lc)
         /* lc is the unmatched char */
         s->dyn_ltree[lc].Freq++;
     } else {
-	s->matches++;
+        s->matches++;
         /* Here, lc is the match length - MIN_MATCH */
         dist--;             /* dist = match distance - 1 */
         Assert((ush)dist < (ush)MAX_DIST(s) &&
@@ -1708,7 +1702,7 @@ local int ct_tally (s, dist, lc)
         int dcode;
         for (dcode = 0; dcode < D_CODES; dcode++) {
             out_length += (ulg)s->dyn_dtree[dcode].Freq *
-		(5L+extra_dbits[dcode]);
+            (5L+extra_dbits[dcode]);
         }
         out_length >>= 3;
 
@@ -1743,9 +1737,9 @@ local void pqdownheap(s, tree, k)
     while (j <= s->heap_len) {
         /* Set j to the smallest of the two sons: */
         if (j < s->heap_len &&
-	    smaller(tree, s->heap[j+1], s->heap[j], s->depth)) {
-	    j++;
-	}
+            smaller(tree, s->heap[j+1], s->heap[j], s->depth)) {
+            j++;
+        }
         /* Exit if v is smaller than both sons */
         if (smaller(tree, v, s->heap[j], s->depth)) break;
 
@@ -1828,7 +1822,7 @@ local void gen_bitlen(s, desc)
             if (tree[m].Len != (unsigned) bits) {
 
                 s->opt_len += ((long)bits - (long)tree[m].Len)
-		              *(long)tree[m].Freq;
+                              *(long)tree[m].Freq;
                 tree[m].Len = (ush)bits;
             }
             n--;
@@ -2046,7 +2040,7 @@ local void copy_block(s, buf, len, header)
     s->bits_sent += (ulg)len<<3;
 #endif
     while (len--) {
-	put_byte(s, *buf++);
+        put_byte(s, *buf++);
     }
 }
 
@@ -2062,7 +2056,7 @@ local void compress_block(s, ltree, dtree)
     int extra;          /* number of extra bits to send */
 
     if (s->last_lit != 0) do {
-	dist = s->d_buf[lx];
+    dist = s->d_buf[lx];
         lc = s->l_buf[lx++];
         if (dist == 0) {
             send_code(s, lc, ltree); /* send a literal byte */
@@ -2075,7 +2069,7 @@ local void compress_block(s, ltree, dtree)
                 lc -= base_length[code];
                 send_bits(s, lc, extra);       /* send the extra length bits */
             }
-	    dist--; /* dist is now the match distance - 1 */
+            dist--; /* dist is now the match distance - 1 */
             code = d_code(dist);
             Assert (code < D_CODES, "bad d_code");
 
@@ -2087,8 +2081,8 @@ local void compress_block(s, ltree, dtree)
             }
         } /* literal or match pair ? */
 
-	/* Check that the overlay between pending_buf and d_buf+l_buf is ok: */
-	Assert(s->pending < s->lit_bufsize + 2*lx, "pendingBuf overflow");
+        /* Check that the overlay between pending_buf and d_buf+l_buf is ok: */
+        Assert(s->pending < s->lit_bufsize + 2*lx, "pendingBuf overflow");
 
     } while (lx < s->last_lit);
 
@@ -2178,7 +2172,6 @@ ulg ct_flush_block(s, buf, stored_len, eof)
     /* Construct the literal and distance trees */
     build_tree(s, (tree_desc *)(&(s->l_desc)));
 
-
     build_tree(s, (tree_desc *)(&(s->d_desc)));
 
     /* At this point, opt_len and static_len are the total bit lengths of
@@ -2221,7 +2214,7 @@ ulg ct_flush_block(s, buf, stored_len, eof)
     } else {
         send_bits(s, (DYN_TREES<<1)+eof, 3);
         send_all_trees(s, s->l_desc.max_code+1, s->d_desc.max_code+1,
-		       max_blindex+1);
+                       max_blindex+1);
         compress_block(s, (ct_data *)s->dyn_ltree, (ct_data *)s->dyn_dtree);
         s->compressed_len += 3 + s->opt_len;
     }
@@ -2252,11 +2245,11 @@ local int deflate_fast(s, flush)
          * string following the next match.
          */
         if (s->lookahead < MIN_LOOKAHEAD) {
-	    fill_window(s);
-	    if (s->lookahead < MIN_LOOKAHEAD && flush == Z_NO_FLUSH) return 1;
+            fill_window(s);
+            if (s->lookahead < MIN_LOOKAHEAD && flush == Z_NO_FLUSH) return 1;
 
-	    if (s->lookahead == 0) break; /* flush the current block */
-	}
+            if (s->lookahead == 0) break; /* flush the current block */
+        }
 
         /* Insert the string window[strstart .. strstart+2] in the
          * dictionary, and set hash_head to the head of the hash chain:
@@ -2271,9 +2264,9 @@ local int deflate_fast(s, flush)
              * of window index 0 (in particular we have to avoid a match
              * of the string with itself at the start of the input file).
              */
-	    if (s->strategy != Z_HUFFMAN_ONLY) {
-		s->match_length = longest_match (s, hash_head);
-	    }
+            if (s->strategy != Z_HUFFMAN_ONLY) {
+            s->match_length = longest_match (s, hash_head);
+            }
             /* longest_match() sets match_start */
 
             if (s->match_length > s->lookahead) s->match_length = s->lookahead;
@@ -2282,7 +2275,7 @@ local int deflate_fast(s, flush)
             check_match(s, s->strstart, s->match_start, s->match_length);
 
             bflush = ct_tally(s, s->strstart - s->match_start,
-		 	      s->match_length - MIN_MATCH);
+                              s->match_length - MIN_MATCH);
 
             s->lookahead -= s->match_length;
 
@@ -2337,11 +2330,11 @@ local int deflate_slow(s, flush)
          * string following the next match.
          */
         if (s->lookahead < MIN_LOOKAHEAD) {
-	    fill_window(s);
-	    if (s->lookahead < MIN_LOOKAHEAD && flush == Z_NO_FLUSH) return 1;
+            fill_window(s);
+            if (s->lookahead < MIN_LOOKAHEAD && flush == Z_NO_FLUSH) return 1;
 
-	    if (s->lookahead == 0) break; /* flush the current block */
-	}
+            if (s->lookahead == 0) break; /* flush the current block */
+        }
 
         /* Insert the string window[strstart .. strstart+2] in the
          * dictionary, and set hash_head to the head of the hash chain:
@@ -2359,15 +2352,15 @@ local int deflate_slow(s, flush)
              * of window index 0 (in particular we have to avoid a match
              * of the string with itself at the start of the input file).
              */
-	    if (s->strategy != Z_HUFFMAN_ONLY) {
-		s->match_length = longest_match (s, hash_head);
-	    }
+            if (s->strategy != Z_HUFFMAN_ONLY) {
+            s->match_length = longest_match (s, hash_head);
+            }
             /* longest_match() sets match_start */
             if (s->match_length > s->lookahead) s->match_length = s->lookahead;
 
             if (s->match_length <= 5 && (s->strategy == Z_FILTERED ||
-	         (s->match_length == MIN_MATCH &&
-		  s->strstart - s->match_start > TOO_FAR))) {
+                 (s->match_length == MIN_MATCH &&
+                  s->strstart - s->match_start > TOO_FAR))) {
 
                 /* If prev_match is also MIN_MATCH, match_start is garbage
                  * but we will ignore the current match anyway.
@@ -2383,7 +2376,7 @@ local int deflate_slow(s, flush)
             check_match(s, s->strstart-1, s->prev_match, s->prev_length);
 
             bflush = ct_tally(s, s->strstart -1 - s->prev_match,
-			      s->prev_length - MIN_MATCH);
+                              s->prev_length - MIN_MATCH);
 
             /* Insert in hash table all strings up to the end of the match.
              * strstart-1 and strstart are already inserted.
@@ -2411,11 +2404,11 @@ local int deflate_slow(s, flush)
              * is longer, truncate the previous match to a single literal.
              */
             if (ct_tally (s, 0, s->window[s->strstart-1])) {
-	        FLUSH_BLOCK_ONLY(s, 0);
+                FLUSH_BLOCK_ONLY(s, 0);
             }
             s->strstart++;
             s->lookahead--;
-	    if (s->strm->avail_out == 0) return 1;
+            if (s->strm->avail_out == 0) return 1;
         } else {
             /* There is no previous match to compare with, wait for
              * the next step to decide.
@@ -2438,7 +2431,7 @@ local int deflate (strm, flush)
     if (strm == Z_NULL || strm->state == Z_NULL) return Z_STREAM_ERROR;
 
     if (strm->next_out == Z_NULL || strm->next_in == Z_NULL) {
-	ERR_RETURN(strm, Z_STREAM_ERROR);
+        ERR_RETURN(strm, Z_STREAM_ERROR);
     }
     if (strm->avail_out == 0) ERR_RETURN(strm, Z_BUF_ERROR);
 
@@ -2447,41 +2440,41 @@ local int deflate (strm, flush)
     /* Write the zlib header */
     if (strm->state->status == INIT_STATE) {
 
-	uInt header = (DEFLATED + ((strm->state->w_bits-8)<<4)) << 8;
+        uInt header = (DEFLATED + ((strm->state->w_bits-8)<<4)) << 8;
         uInt level_flags = (strm->state->level-1) >> 1;
 
-	if (level_flags > 3) level_flags = 3;
-	header |= (level_flags << 6);
-	header += 31 - (header % 31);
+        if (level_flags > 3) level_flags = 3;
+        header |= (level_flags << 6);
+        header += 31 - (header % 31);
 
-	strm->state->status = BUSY_STATE;
-	putShortMSB(strm->state, header);
+        strm->state->status = BUSY_STATE;
+        putShortMSB(strm->state, header);
     }
 
     /* Flush as much pending output as possible */
     if (strm->state->pending != 0) {
-	flush_pending(strm);
-	if (strm->avail_out == 0) return Z_OK;
+        flush_pending(strm);
+        if (strm->avail_out == 0) return Z_OK;
     }
 
     /* User must not provide more input after the first FINISH: */
     if (strm->state->status == FINISH_STATE && strm->avail_in != 0) {
-	ERR_RETURN(strm, Z_BUF_ERROR);
+        ERR_RETURN(strm, Z_BUF_ERROR);
     }
 
     /* Start a new block or continue the current one.
      */
     if (strm->avail_in != 0 ||
-	(flush == Z_FINISH && strm->state->status != FINISH_STATE)) {
+        (flush == Z_FINISH && strm->state->status != FINISH_STATE)) {
 
-	if (flush == Z_FINISH) {
-	    strm->state->status = FINISH_STATE;
-	}
+        if (flush == Z_FINISH) {
+            strm->state->status = FINISH_STATE;
+        }
         if (strm->state->level <= 3) {
-	    if (deflate_fast(strm->state, flush)) return Z_OK;
-	} else {
-	    if (deflate_slow(strm->state, flush)) return Z_OK;
-	}
+            if (deflate_fast(strm->state, flush)) return Z_OK;
+        } else {
+            if (deflate_slow(strm->state, flush)) return Z_OK;
+        }
     }
     Assert(strm->avail_out > 0, "bug2");
 
@@ -2512,25 +2505,25 @@ local int gzflush (file, flush)
     s->stream.avail_in = 0; /* should be zero already anyway */
 
     for (;;) {
-	len = Z_BUFSIZE - s->stream.avail_out;
+        len = Z_BUFSIZE - s->stream.avail_out;
 
-	if (len != 0) {
-	    if (fwrite(s->outbuf, 1, len, s->file) != len) {
-		s->z_err = Z_ERRNO;
-		return Z_ERRNO;
-	    }
-	    s->stream.next_out = s->outbuf;
-	    s->stream.avail_out = Z_BUFSIZE;
-	}
-	if (done) break;
-	s->z_err = deflate(&(s->stream), flush);
+        if (len != 0) {
+            if (fwrite(s->outbuf, 1, len, s->file) != len) {
+            s->z_err = Z_ERRNO;
+            return Z_ERRNO;
+            }
+            s->stream.next_out = s->outbuf;
+            s->stream.avail_out = Z_BUFSIZE;
+        }
+        if (done) break;
+        s->z_err = deflate(&(s->stream), flush);
 
         /* deflate has finished flushing only when it hasn't used up
          * all the available space in the output buffer:
          */
         done = (s->stream.avail_out != 0 || s->z_err == Z_STREAM_END);
 
-	if (s->z_err != Z_OK && s->z_err != Z_STREAM_END) break;
+        if (s->z_err != Z_OK && s->z_err != Z_STREAM_END) break;
     }
     return  s->z_err == Z_STREAM_END ? Z_OK : s->z_err;
 }
@@ -2560,34 +2553,34 @@ local gzFile gz_open (path, mode, fd)
 
     s->path = (char*)ALLOC(strlen(path)+1);
     if (s->path == NULL) {
-	return destroy(s), (gzFile)Z_NULL;
+        return destroy(s), (gzFile)Z_NULL;
     }
     strcpy(s->path, path); /* do this early for debugging */
 
     s->mode = '\0';
     do {
-	if (*p == 'r') s->mode = 'r';
-	if (*p == 'w') s->mode = 'w';
+        if (*p == 'r') s->mode = 'r';
+        if (*p == 'w') s->mode = 'w';
     } while (*p++);
     if (s->mode == '\0') return destroy(s), (gzFile)Z_NULL;
 
     if (s->mode == 'w') {
-	err = deflateInit2(&(s->stream), Z_BEST_COMPRESSION,
-			   DEFLATED, -WBITS, MEM_LEVEL, 0);
-	/* windowBits is passed < 0 to suppress zlib header */
+        err = deflateInit2(&(s->stream), Z_BEST_COMPRESSION,
+                           DEFLATED, -WBITS, MEM_LEVEL, 0);
+        /* windowBits is passed < 0 to suppress zlib header */
 
-	s->stream.next_out = s->outbuf = ALLOC(Z_BUFSIZE);
+        s->stream.next_out = s->outbuf = ALLOC(Z_BUFSIZE);
 
-	if (err != Z_OK || s->outbuf == Z_NULL) {
-	    return destroy(s), (gzFile)Z_NULL;
-	}
+        if (err != Z_OK || s->outbuf == Z_NULL) {
+            return destroy(s), (gzFile)Z_NULL;
+        }
     } else {
-	err = inflateInit2(&(s->stream), -WBITS);
-	s->stream.next_in  = s->inbuf = ALLOC(Z_BUFSIZE);
+        err = inflateInit2(&(s->stream), -WBITS);
+        s->stream.next_in  = s->inbuf = ALLOC(Z_BUFSIZE);
 
-	if (err != Z_OK || s->inbuf == Z_NULL) {
-	    return destroy(s), (gzFile)Z_NULL;
-	}
+        if (err != Z_OK || s->inbuf == Z_NULL) {
+            return destroy(s), (gzFile)Z_NULL;
+        }
     }
     s->stream.avail_out = Z_BUFSIZE;
 
@@ -2595,55 +2588,55 @@ local gzFile gz_open (path, mode, fd)
     s->file = fd < 0 ? fopen(path, mode) : fdopen(fd, mode);
 
     if (s->file == NULL) {
-	return destroy(s), (gzFile)Z_NULL;
+        return destroy(s), (gzFile)Z_NULL;
     }
     if (s->mode == 'w') {
-	/* Write a very simple .gz header:
-	 */
-	fprintf(s->file, "%c%c%c%c%c%c%c%c%c%c", GZ_MAGIC_1, GZ_MAGIC_2,
-	       DEFLATED, 0 /*flags*/, 0,0,0,0 /*time*/, 0 /*xflags*/, OS_CODE);
-    } else {
-	/* Check and skip the header:
+        /* Write a very simple .gz header:
          */
-	Byte c1 = 0, c2 = 0;
-	Byte method = 0;
-	Byte flags = 0;
-	Byte xflags = 0;
-	Byte time[4];
-	Byte osCode;
-	int c;
+        fprintf(s->file, "%c%c%c%c%c%c%c%c%c%c", GZ_MAGIC_1, GZ_MAGIC_2,
+                DEFLATED, 0 /*flags*/, 0,0,0,0 /*time*/, 0 /*xflags*/, OS_CODE);
+    } else {
+        /* Check and skip the header:
+         */
+        Byte c1 = 0, c2 = 0;
+        Byte method = 0;
+        Byte flags = 0;
+        Byte xflags = 0;
+        Byte time[4];
+        Byte osCode;
+        int c;
 
-	s->stream.avail_in = fread(s->inbuf, 1, 2, s->file);
-	if (s->stream.avail_in != 2 || s->inbuf[0] != GZ_MAGIC_1
-	    || s->inbuf[1] != GZ_MAGIC_2) {
-	    s->transparent = 1;
-	    return (gzFile)s;
-	}
-	s->stream.avail_in = 0;
-	err = fscanf(s->file,"%c%c%4c%c%c", &method, &flags, time, &xflags, &osCode);
+        s->stream.avail_in = fread(s->inbuf, 1, 2, s->file);
+        if (s->stream.avail_in != 2 || s->inbuf[0] != GZ_MAGIC_1
+            || s->inbuf[1] != GZ_MAGIC_2) {
+            s->transparent = 1;
+            return (gzFile)s;
+        }
+        s->stream.avail_in = 0;
+        err = fscanf(s->file,"%c%c%4c%c%c", &method, &flags, time, &xflags, &osCode);
 
-	if (method != DEFLATED || feof(s->file) || (flags & RESERVED) != 0) {
-	    s->z_err = Z_DATA_ERROR;
-	    return (gzFile)s;
-	}
-	if ((flags & EXTRA_FIELD) != 0) { /* skip the extra field */
-	    long len;
-	    err = fscanf(s->file, "%c%c", &c1, &c2);
-	    len = c1 + ((long)c2<<8);
-	    fseek(s->file, len, SEEK_CUR);
-	}
-	if ((flags & ORIG_NAME) != 0) { /* skip the original file name */
-	    while ((c = getc(s->file)) != 0 && c != EOF) ;
-	}
-	if ((flags & COMMENT) != 0) {   /* skip the .gz file comment */
-	    while ((c = getc(s->file)) != 0 && c != EOF) ;
-	}
-	if ((flags & HEAD_CRC) != 0) {  /* skip the header crc */
-	    err = fscanf(s->file, "%c%c", &c1, &c2);
-	}
-	if (feof(s->file)) {
-	    s->z_err = Z_DATA_ERROR;
-	}
+        if (method != DEFLATED || feof(s->file) || (flags & RESERVED) != 0) {
+            s->z_err = Z_DATA_ERROR;
+            return (gzFile)s;
+        }
+        if ((flags & EXTRA_FIELD) != 0) { /* skip the extra field */
+            long len;
+            err = fscanf(s->file, "%c%c", &c1, &c2);
+            len = c1 + ((long)c2<<8);
+            fseek(s->file, len, SEEK_CUR);
+        }
+        if ((flags & ORIG_NAME) != 0) { /* skip the original file name */
+            while ((c = getc(s->file)) != 0 && c != EOF) ;
+        }
+        if ((flags & COMMENT) != 0) {   /* skip the .gz file comment */
+            while ((c = getc(s->file)) != 0 && c != EOF) ;
+        }
+        if ((flags & HEAD_CRC) != 0) {  /* skip the header crc */
+            err = fscanf(s->file, "%c%c", &c1, &c2);
+        }
+        if (feof(s->file)) {
+            s->z_err = Z_DATA_ERROR;
+        }
     }
     return (gzFile)s;
 }
@@ -2669,18 +2662,18 @@ local int gzwrite (file, buf, len)
 
     while (s->stream.avail_in != 0) {
 
-	if (s->stream.avail_out == 0) {
+        if (s->stream.avail_out == 0) {
 
-	    s->stream.next_out = s->outbuf;
-	    if (fwrite(s->outbuf, 1, Z_BUFSIZE, s->file) != Z_BUFSIZE) {
-		s->z_err = Z_ERRNO;
-		break;
-	    }
-	    s->stream.avail_out = Z_BUFSIZE;
-	}
-	s->z_err = deflate(&(s->stream), Z_NO_FLUSH);
+            s->stream.next_out = s->outbuf;
+            if (fwrite(s->outbuf, 1, Z_BUFSIZE, s->file) != Z_BUFSIZE) {
+                s->z_err = Z_ERRNO;
+                break;
+            }
+            s->stream.avail_out = Z_BUFSIZE;
+        }
+        s->z_err = deflate(&(s->stream), Z_NO_FLUSH);
 
-	if (s->z_err != Z_OK) break;
+        if (s->z_err != Z_OK) break;
     }
     s->crc = crc32(s->crc, buf, len);
 
@@ -2697,31 +2690,31 @@ local int gzclose (file)
     if (s == NULL) return Z_STREAM_ERROR;
 
     if (s->mode == 'w') {
-	err = gzflush (file, Z_FINISH);
-	if (err != Z_OK) return destroy((gz_stream *)file);
+        err = gzflush (file, Z_FINISH);
+        if (err != Z_OK) return destroy((gz_stream *)file);
 
-	putLong (s->file, s->crc);
-	putLong (s->file, s->stream.total_in);
+        putLong (s->file, s->crc);
+        putLong (s->file, s->stream.total_in);
 
     } else if (s->mode == 'r' && s->z_err == Z_STREAM_END) {
 
-	/* slide CRC and original size if they are at the end of inbuf */
-	if ((n = s->stream.avail_in) < 8  && !s->z_eof) {
-	    Byte *p = s->inbuf;
-	    Byte *q = s->stream.next_in;
-	    while (n--) { *p++ = *q++; };
+        /* slide CRC and original size if they are at the end of inbuf */
+        if ((n = s->stream.avail_in) < 8  && !s->z_eof) {
+            Byte *p = s->inbuf;
+            Byte *q = s->stream.next_in;
+            while (n--) { *p++ = *q++; };
 
-	    n = s->stream.avail_in;
-	    n += fread(p, 1, 8, s->file);
-	    s->stream.next_in = s->inbuf;
-	}
-	/* check CRC and original size */
-	if (n < 8 ||
-	    getLong(s->stream.next_in) != s->crc ||
-	    getLong(s->stream.next_in + 4) != s->stream.total_out) {
+            n = s->stream.avail_in;
+            n += fread(p, 1, 8, s->file);
+            s->stream.next_in = s->inbuf;
+        }
+        /* check CRC and original size */
+        if (n < 8 ||
+            getLong(s->stream.next_in) != s->crc ||
+            getLong(s->stream.next_in + 4) != s->stream.total_out) {
 
-	    s->z_err = Z_DATA_ERROR;
-	}
+            s->z_err = Z_DATA_ERROR;
+        }
     }
     return destroy((gz_stream *)file);
 }
@@ -2733,166 +2726,146 @@ static int wm_tool_printf(const char *format, ...)
     int ret;
     va_list ap;
 
-	va_start(ap, format);
-	ret = vprintf(format, ap);
-	va_end(ap);
-
-	fflush(stdout);
-
-	return ret;
+        va_start(ap, format);
+        ret = vprintf(format, ap);
+        va_end(ap);
+    
+        fflush(stdout);
+    
+        return ret;
 }
 
 static unsigned long long wm_tool_crc32_reflect(unsigned long long ref, unsigned char ch)
 {
-	int i;
-	unsigned long long value = 0;
+    int i;
+    unsigned long long value = 0;
 
-	for ( i = 1; i < ( ch + 1 ); i++ )
-	{
-		if( ref & 1 )
-			value |= 1 << ( ch - i );
-		ref >>= 1;
-	}
+    for ( i = 1; i < ( ch + 1 ); i++ ) {
+        if ( ref & 1 )
+                value |= 1 << ( ch - i );
+        ref >>= 1;
+    }
 
-	return value;
+    return value;
 }
 
 static unsigned int wm_tool_crc32(unsigned int crc, unsigned char *buffer, int size, wm_tool_crc32_reflect_e mode)
 {
-	int i;
-	unsigned char temp;
+    int i;
+    unsigned char temp;
 
-	for (i = 0; i < size; i++)
-	{
-		if (mode & WM_TOOL_CRC32_REFLECT_INPUT)
-		{
-			temp = wm_tool_crc32_reflect(buffer[i], 8);
-		}
-		else
-		{
-			temp = buffer[i];
-		}
-		crc = wm_tool_crc32_tab[(crc ^ temp) & 0xff] ^ (crc >> 8);
-	}
+    for (i = 0; i < size; i++) {
+        if (mode & WM_TOOL_CRC32_REFLECT_INPUT) {
+            temp = wm_tool_crc32_reflect(buffer[i], 8);
+        } else {
+            temp = buffer[i];
+        }
+        crc = wm_tool_crc32_tab[(crc ^ temp) & 0xff] ^ (crc >> 8);
+    }
 
-	return crc ;
+    return crc ;
 }
 
 static unsigned int wm_tool_get_crc32(unsigned char *buffer, int size, wm_tool_crc32_reflect_e mode)
 {
-	wm_tool_file_crc = wm_tool_crc32(wm_tool_file_crc, buffer, size, mode);
-	if (mode & WM_TOOL_CRC32_REFLECT_OUTPUT)
-	{
-		wm_tool_file_crc = wm_tool_crc32_reflect(wm_tool_file_crc, 32);
-	}
-	return wm_tool_file_crc;
+    wm_tool_file_crc = wm_tool_crc32(wm_tool_file_crc, buffer, size, mode);
+    if (mode & WM_TOOL_CRC32_REFLECT_OUTPUT) {
+        wm_tool_file_crc = wm_tool_crc32_reflect(wm_tool_file_crc, 32);
+    }
+    return wm_tool_file_crc;
 }
 
 static unsigned short wm_tool_get_crc16(unsigned char *ptr, unsigned short count)
 {
-	unsigned short crc, i;
+    unsigned short crc, i;
 
-	crc = 0;
+    crc = 0;
 
-	while (count--)
-	{
-		crc = crc ^ (int) *ptr++ << 8;
+    while (count--) {
+        crc = crc ^ (int) *ptr++ << 8;
 
-		for (i = 0; i < 8; i++)
-		{
-			if (crc & 0x8000)
-			    crc = crc << 1 ^ 0x1021;
-			else
-			    crc = crc << 1;
-		}
-	}
+        for (i = 0; i < 8; i++) {
+            if (crc & 0x8000)
+                crc = crc << 1 ^ 0x1021;
+            else
+                crc = crc << 1;
+        }
+    }
 
-	return (crc & 0xFFFF);
+    return (crc & 0xFFFF);
 }
 
 static int wm_tool_char_to_hex(char ch)
 {
-	int hex;
+    int hex;
 
-	hex = -1;
+    hex = -1;
 
-	if ((ch >= '0') && (ch <= '9'))
-	{
-	    hex = ch - '0';
-	}
-	else if ((ch >= 'a') && (ch <= 'f'))
-	{
-	    hex = ch - 'a' + 0xa;
-	}
-	else if ((ch >= 'A') && (ch <= 'F'))
-	{
-	    hex = ch - 'A' + 0xa;
-	}
+    if ((ch >= '0') && (ch <= '9')) {
+        hex = ch - '0';
+    } else if ((ch >= 'a') && (ch <= 'f')) {
+        hex = ch - 'a' + 0xa;
+    } else if ((ch >= 'A') && (ch <= 'F')) {
+        hex = ch - 'A' + 0xa;
+    }
 
-	return hex;
+    return hex;
 }
 
 static int wm_tool_str_to_hex_array(char *str, int cnt, unsigned char array[])
 {
-	int hex;
-	unsigned char tmp;
-	unsigned char *des;
+    int hex;
+    unsigned char tmp;
+    unsigned char *des;
 
-	des = array;
+    des = array;
 
-	while (cnt-- > 0)
-	{
-		hex = wm_tool_char_to_hex(*str++);
+    while (cnt-- > 0) {
+        hex = wm_tool_char_to_hex(*str++);
 
-		if (hex < 0)
-		{
-		    return -1;
-		}
-		else
-		{
-		    tmp = (hex << 4) & 0xf0;
-		}
+        if (hex < 0) {
+            return -1;
+        } else {
+            tmp = (hex << 4) & 0xf0;
+        }
 
-		hex = wm_tool_char_to_hex(*str++);
+        hex = wm_tool_char_to_hex(*str++);
 
-		if (hex < 0)
-		{
-		    return -1;
-		}
-		else
-		{
-		    tmp = tmp | (hex & 0x0f);
-		}
+        if (hex < 0) {
+            return -1;
+        } else {
+            tmp = tmp | (hex & 0x0f);
+        }
 
-		*des++ = (unsigned char) tmp;
-	}
+        *des++ = (unsigned char) tmp;
+    }
 
-	return ((*str == 0) ? 0 : -1);
+    return ((*str == 0) ? 0 : -1);
 }
 
 static char *wm_tool_strcasestr(const char *str1, const char *str2)
 {
-  char *cp = (char *) str1;
-  char *s1, *s2;
+    char *cp = (char *) str1;
+    char *s1, *s2;
 
-  if (!*str2) return (char *) str1;
+    if (!*str2) return (char *) str1;
 
-  while (*cp) {
-    s1 = cp;
-    s2 = (char *) str2;
+    while (*cp) {
+        s1 = cp;
+        s2 = (char *) str2;
 
-    while (*s1 && *s2 && !(tolower((int)*s1) - tolower((int)*s2))) s1++, s2++;
-    if (!*s2) return cp;
-    cp++;
-  }
+        while (*s1 && *s2 && !(tolower((int)*s1) - tolower((int)*s2))) s1++, s2++;
+        if (!*s2) return cp;
+        cp++;
+    }
 
-  return NULL;
+    return NULL;
 }
 
 static int wm_tool_get_file_size(const char* filename)
 {
     FILE *fp = fopen(filename, "r");
-    if(!fp) return -1;
+    if (!fp) return -1;
     fseek(fp,0L,SEEK_END);
     int size = ftell(fp);
     fclose(fp);
@@ -2912,8 +2885,7 @@ static char *wm_tool_get_name(const char *name)
 #else
         p = strchr(p, '/');
 #endif
-        if (p)
-        {
+        if (p) {
             p++;
             q = p;
         }
@@ -3032,12 +3004,10 @@ static int wm_tool_parse_arv(int argc, char *argv[])
        {0,    0,                 NULL, 0}
     };
 
-    while ( (opt = getopt_long_only(argc, argv, opt_string, long_options, &option_index)) != -1)
-    {
+    while ( (opt = getopt_long_only(argc, argv, opt_string, long_options, &option_index)) != -1) {
         WM_TOOL_DBG_PRINT("%c-%s\r\n", opt, optarg);
 
-        switch (opt)
-        {
+        switch (opt) {
             case '?':
             case 'h':
             {
@@ -3138,7 +3108,7 @@ static int wm_tool_parse_arv(int argc, char *argv[])
 #endif
                 {
                     if (isdigit((int)optarg[0]))
-                        wm_tool_image_type = atoi(optarg);//optarg[0] - 0x30;
+                        wm_tool_image_type = atoi(optarg);// optarg[0] - 0x30;
                     else
                         wm_tool_show_usage = 1;
                 }
@@ -3224,93 +3194,85 @@ static int wm_tool_parse_arv(int argc, char *argv[])
 static int wm_tool_pack_image(const char *outfile)
 {
     FILE *fpbin;
-	FILE *fpimg;
-	int readlen = 0;
-	int filelen = 0;
-	int patch = 0;
-	wm_tool_firmware_booter_t fbooter;
-	unsigned char buf[WM_TOOL_ONCE_READ_LEN + 1];
+    FILE *fpimg;
+    int readlen = 0;
+    int filelen = 0;
+    int patch = 0;
+    wm_tool_firmware_booter_t fbooter;
+    unsigned char buf[WM_TOOL_ONCE_READ_LEN + 1];
 
     fpbin = fopen(wm_tool_input_binary, "rb");
-	if (NULL == fpbin)
-	{
-		wm_tool_printf("can not open input file [%s].\r\n", wm_tool_input_binary);
-		return -2;
-	}
+    if (NULL == fpbin) {
+        wm_tool_printf("can not open input file [%s].\r\n", wm_tool_input_binary);
+        return -2;
+    }
 
-	fpimg = fopen(outfile, "wb+");
-	if (NULL == fpimg)
-	{
-		wm_tool_printf("open img file error: [%s].\r\n", outfile);
-		fclose(fpbin);
-		return -3;
-	}
+    fpimg = fopen(outfile, "wb+");
+    if (NULL == fpimg) {
+        wm_tool_printf("open img file error: [%s].\r\n", outfile);
+        fclose(fpbin);
+        return -3;
+    }
 
     /* --------deal with upgrade image's CRC begin---- */
     wm_tool_file_crc = 0xFFFFFFFF;
-	while (!feof(fpbin))
-	{
-		memset(buf, 0, sizeof(buf));
-		readlen = fread(buf, 1, WM_TOOL_ONCE_READ_LEN, fpbin);
-		if(readlen % WM_TOOL_ONCE_READ_LEN != 0)
-		{
-			patch = WM_TOOL_ONCE_READ_LEN - readlen%WM_TOOL_ONCE_READ_LEN;
-			readlen += patch;
-		}
-		filelen += readlen;
-		wm_tool_get_crc32((unsigned char*)buf, readlen, 0);
-	}
-	/* --------deal with upgrade image's CRC end---- */
+    while (!feof(fpbin)) {
+        memset(buf, 0, sizeof(buf));
+        readlen = fread(buf, 1, WM_TOOL_ONCE_READ_LEN, fpbin);
+        if (readlen % WM_TOOL_ONCE_READ_LEN != 0) {
+            patch = WM_TOOL_ONCE_READ_LEN - readlen%WM_TOOL_ONCE_READ_LEN;
+            readlen += patch;
+        }
+        filelen += readlen;
+        wm_tool_get_crc32((unsigned char*)buf, readlen, 0);
+    }
+    /* --------deal with upgrade image's CRC end---- */
 
-	wm_tool_src_binary_len = filelen;
-	wm_tool_src_binary_crc = wm_tool_file_crc;
+    wm_tool_src_binary_len = filelen;
+    wm_tool_src_binary_crc = wm_tool_file_crc;
 
     memset(&fbooter, 0, sizeof(wm_tool_firmware_booter_t));
     strcpy((char *)fbooter.ver, wm_tool_image_version);
-	fbooter.magic_no = WM_TOOL_IMG_HEAD_MAGIC_NO;
+    fbooter.magic_no = WM_TOOL_IMG_HEAD_MAGIC_NO;
 
     fbooter.run_org_checksum = wm_tool_file_crc;
-	fbooter.img_type         = wm_tool_image_type;
-	fbooter.run_img_len      = filelen;
-	fbooter.run_img_addr     = wm_tool_run_addr;
-	fbooter.zip_type         = WM_TOOL_ZIP_TYPE_UNCOMPRESS;
+    fbooter.img_type         = wm_tool_image_type;
+    fbooter.run_img_len      = filelen;
+    fbooter.run_img_addr     = wm_tool_run_addr;
+    fbooter.zip_type         = WM_TOOL_ZIP_TYPE_UNCOMPRESS;
     fbooter.img_header_addr  = wm_tool_image_header;
     fbooter.upgrade_img_addr = wm_tool_upd_addr;
     fbooter.upd_no           = wm_tool_image_upd_no;
     fbooter.next_boot        = wm_tool_next_image_header;
 
     /* calculate image's header's CRC */
-	wm_tool_file_crc = 0xFFFFFFFF;
-	wm_tool_get_crc32((unsigned char *)&fbooter, sizeof(wm_tool_firmware_booter_t) - 4, 0);
+    wm_tool_file_crc = 0xFFFFFFFF;
+    wm_tool_get_crc32((unsigned char *)&fbooter, sizeof(wm_tool_firmware_booter_t) - 4, 0);
     fbooter.hd_checksum = wm_tool_file_crc;
 
     /* write image's header to output file */
-	fwrite(&fbooter, 1, sizeof(wm_tool_firmware_booter_t), fpimg);
+    fwrite(&fbooter, 1, sizeof(wm_tool_firmware_booter_t), fpimg);
 
-	/* write image to output file */
-	fseek(fpbin, 0, SEEK_SET);
-	while (!feof(fpbin))
-	{
-		readlen = fread(buf, 1, WM_TOOL_ONCE_READ_LEN, fpbin);
-		fwrite(buf, 1, readlen, fpimg);
-	}
+    /* write image to output file */
+    fseek(fpbin, 0, SEEK_SET);
+    while (!feof(fpbin)) {
+        readlen = fread(buf, 1, WM_TOOL_ONCE_READ_LEN, fpbin);
+        fwrite(buf, 1, readlen, fpimg);
+    }
 
-	/* write dummy data to pad 4byte-aligned */
-	if (patch > 0)
-	{
-		memset(buf, 0, patch);
-		fwrite(buf, 1, patch, fpimg);
-	}
+    /* write dummy data to pad 4byte-aligned */
+    if (patch > 0) {
+        memset(buf, 0, patch);
+        fwrite(buf, 1, patch, fpimg);
+    }
 
-	if (fpbin)
-	{
-		fclose(fpbin);
-	}
+    if (fpbin) {
+        fclose(fpbin);
+    }
 
-	if (fpimg)
-	{
-		fclose(fpimg);
-	}
+    if (fpimg) {
+        fclose(fpimg);
+    }
 
     wm_tool_printf("generate normal image completed.\r\n");
 
@@ -3320,90 +3282,82 @@ static int wm_tool_pack_image(const char *outfile)
 static int wm_tool_pack_gz_image(const char *gzbin, const char *outfile)
 {
     FILE *fpbin;
-	FILE *fpimg;
-	int readlen = 0;
-	int filelen = 0;
-	int patch = 0;
-	wm_tool_firmware_booter_t fbooter;
-	unsigned char buf[WM_TOOL_ONCE_READ_LEN + 1];
+    FILE *fpimg;
+    int readlen = 0;
+    int filelen = 0;
+    int patch = 0;
+    wm_tool_firmware_booter_t fbooter;
+    unsigned char buf[WM_TOOL_ONCE_READ_LEN + 1];
 
     fpbin = fopen(gzbin, "rb");
-	if (NULL == fpbin)
-	{
-		wm_tool_printf("can not open input file [%s].\r\n", gzbin);
-		return -2;
-	}
+    if (NULL == fpbin) {
+        wm_tool_printf("can not open input file [%s].\r\n", gzbin);
+        return -2;
+    }
 
-	fpimg = fopen(outfile, "wb+");
-	if (NULL == fpimg)
-	{
-		wm_tool_printf("create img file error: [%s].\r\n", outfile);
-		fclose(fpbin);
-		return -3;
-	}
+    fpimg = fopen(outfile, "wb+");
+    if (NULL == fpimg) {
+        wm_tool_printf("create img file error: [%s].\r\n", outfile);
+        fclose(fpbin);
+        return -3;
+    }
 
     /* --------deal with upgrade image's CRC begin---- */
     wm_tool_file_crc = 0xFFFFFFFF;
-	while (!feof(fpbin))
-	{
-		memset(buf, 0, sizeof(buf));
-		readlen = fread(buf, 1, WM_TOOL_ONCE_READ_LEN, fpbin);
-		if(readlen % 4 != 0)
-		{
-			patch = 4 - readlen%4;
-			readlen += patch;
-		}
-		filelen += readlen;
-		wm_tool_get_crc32((unsigned char*)buf, readlen, 0);
-	}
-	/* --------deal with upgrade image's CRC end---- */
+    while (!feof(fpbin)) {
+        memset(buf, 0, sizeof(buf));
+        readlen = fread(buf, 1, WM_TOOL_ONCE_READ_LEN, fpbin);
+        if (readlen % 4 != 0) {
+            patch = 4 - readlen%4;
+            readlen += patch;
+        }
+        filelen += readlen;
+        wm_tool_get_crc32((unsigned char*)buf, readlen, 0);
+    }
+    /* --------deal with upgrade image's CRC end---- */
 
     memset(&fbooter, 0, sizeof(wm_tool_firmware_booter_t));
     strcpy((char *)fbooter.ver, wm_tool_image_version);
-	fbooter.magic_no = WM_TOOL_IMG_HEAD_MAGIC_NO;
+    fbooter.magic_no = WM_TOOL_IMG_HEAD_MAGIC_NO;
 
     fbooter.run_org_checksum = wm_tool_file_crc;
-	fbooter.img_type         = wm_tool_image_type;
-	fbooter.run_img_len      = filelen;
-	fbooter.run_img_addr     = wm_tool_run_addr;
-	fbooter.zip_type         = wm_tool_zip_type;
-	fbooter.img_header_addr  = wm_tool_image_header;
+    fbooter.img_type         = wm_tool_image_type;
+    fbooter.run_img_len      = filelen;
+    fbooter.run_img_addr     = wm_tool_run_addr;
+    fbooter.zip_type         = wm_tool_zip_type;
+    fbooter.img_header_addr  = wm_tool_image_header;
     fbooter.upgrade_img_addr = wm_tool_upd_addr;
     fbooter.upd_no           = wm_tool_image_upd_no;
     fbooter.next_boot        = wm_tool_next_image_header;
 
     /* calculate image's header's CRC */
-	wm_tool_file_crc = 0xFFFFFFFF;
-	wm_tool_get_crc32((unsigned char *)&fbooter, sizeof(wm_tool_firmware_booter_t) - 4, 0);
+    wm_tool_file_crc = 0xFFFFFFFF;
+    wm_tool_get_crc32((unsigned char *)&fbooter, sizeof(wm_tool_firmware_booter_t) - 4, 0);
     fbooter.hd_checksum = wm_tool_file_crc;
 
     /* write image's header to output file */
-	fwrite(&fbooter, 1, sizeof(wm_tool_firmware_booter_t), fpimg);
+    fwrite(&fbooter, 1, sizeof(wm_tool_firmware_booter_t), fpimg);
 
-	/* write image to output file */
-	fseek(fpbin, 0, SEEK_SET);
-	while (!feof(fpbin))
-	{
-		readlen = fread(buf, 1, WM_TOOL_ONCE_READ_LEN, fpbin);
-		fwrite(buf, 1, readlen, fpimg);
-	}
+    /* write image to output file */
+    fseek(fpbin, 0, SEEK_SET);
+    while (!feof(fpbin)) {
+        readlen = fread(buf, 1, WM_TOOL_ONCE_READ_LEN, fpbin);
+        fwrite(buf, 1, readlen, fpimg);
+    }
 
-	/* write dummy data to pad 4byte-aligned */
-	if (patch > 0)
-	{
-		memset(buf, 0, patch);
-		fwrite(buf, 1, patch, fpimg);
-	}
+    /* write dummy data to pad 4byte-aligned */
+    if (patch > 0) {
+        memset(buf, 0, patch);
+        fwrite(buf, 1, patch, fpimg);
+    }
 
-	if (fpbin)
-	{
-		fclose(fpbin);
-	}
+    if (fpbin) {
+        fclose(fpbin);
+    }
 
-	if (fpimg)
-	{
-		fclose(fpimg);
-	}
+    if (fpimg) {
+        fclose(fpimg);
+    }
 
     wm_tool_printf("generate compressed image completed.\r\n");
 
@@ -3413,76 +3367,69 @@ static int wm_tool_pack_gz_image(const char *gzbin, const char *outfile)
 static int wm_tool_pack_dbg_image(const char *image, const char *outfile)
 {
     FILE *fpimg;
-	FILE *fout;
-	unsigned char buf[WM_TOOL_ONCE_READ_LEN + 1];
-	int readlen = 0;
-	int i;
-	wm_tool_firmware_booter_t fbooter;
-	int appimg_len = 0;
-	int final_len = 0;
-	int magic_word = 0;
+    FILE *fout;
+    unsigned char buf[WM_TOOL_ONCE_READ_LEN + 1];
+    int readlen = 0;
+    int i;
+    wm_tool_firmware_booter_t fbooter;
+    int appimg_len = 0;
+    int final_len = 0;
+    int magic_word = 0;
 
-	fpimg = fopen(image, "rb");
-	if (NULL == fpimg)
-	{
-		wm_tool_printf("open img file error: [%s].\r\n", image);
-		return -4;
-	}
+    fpimg = fopen(image, "rb");
+    if (NULL == fpimg) {
+        wm_tool_printf("open img file error: [%s].\r\n", image);
+        return -4;
+    }
 
-	magic_word = 0;
-	readlen = fread(&magic_word, 1, 4, fpimg);
-	if (magic_word != WM_TOOL_IMG_HEAD_MAGIC_NO)
-	{
-		wm_tool_printf("input [%s] file magic error.\n", image);
-		fclose(fpimg);
-		return -5;
-	}
+    magic_word = 0;
+    readlen = fread(&magic_word, 1, 4, fpimg);
+    if (magic_word != WM_TOOL_IMG_HEAD_MAGIC_NO) {
+        wm_tool_printf("input [%s] file magic error.\n", image);
+        fclose(fpimg);
+        return -5;
+    }
 
-	fout = fopen(outfile, "wb+");
-	if (NULL == fout)
-	{
-		wm_tool_printf("create img file error [%s].\r\n", outfile);
-		fclose(fpimg);
-		return -6;
-	}
+    fout = fopen(outfile, "wb+");
+    if (NULL == fout) {
+        wm_tool_printf("create img file error [%s].\r\n", outfile);
+        fclose(fpimg);
+        return -6;
+    }
 
-	appimg_len = wm_tool_get_file_size(image);
+    appimg_len = wm_tool_get_file_size(image);
 
-	/* write 0xFF to output file */
-	final_len = WM_TOOL_RUN_IMG_HEADER_LEN + (appimg_len - sizeof(wm_tool_firmware_booter_t));
-	for (i = 0; i < (final_len /WM_TOOL_ONCE_READ_LEN); i++)
-	{
-		memset(buf, 0xff, WM_TOOL_ONCE_READ_LEN);
-		fwrite(buf, 1, WM_TOOL_ONCE_READ_LEN, fout);
-	}
-	memset(buf, 0xff, final_len % WM_TOOL_ONCE_READ_LEN);
-	fwrite(buf, 1, final_len % WM_TOOL_ONCE_READ_LEN, fout);
+    /* write 0xFF to output file */
+    final_len = WM_TOOL_RUN_IMG_HEADER_LEN + (appimg_len - sizeof(wm_tool_firmware_booter_t));
+    for (i = 0; i < (final_len /WM_TOOL_ONCE_READ_LEN); i++) {
+        memset(buf, 0xff, WM_TOOL_ONCE_READ_LEN);
+        fwrite(buf, 1, WM_TOOL_ONCE_READ_LEN, fout);
+    }
+    memset(buf, 0xff, final_len % WM_TOOL_ONCE_READ_LEN);
+    fwrite(buf, 1, final_len % WM_TOOL_ONCE_READ_LEN, fout);
 
-	memset(&fbooter, 0, sizeof(wm_tool_firmware_booter_t));
+    memset(&fbooter, 0, sizeof(wm_tool_firmware_booter_t));
 
-	/* write sec img to output file */
-	fseek(fpimg, 0, SEEK_SET);
-	readlen = fread((unsigned char *)&fbooter, 1, sizeof(wm_tool_firmware_booter_t), fpimg);
+    /* write sec img to output file */
+    fseek(fpimg, 0, SEEK_SET);
+    readlen = fread((unsigned char *)&fbooter, 1, sizeof(wm_tool_firmware_booter_t), fpimg);
 
-	fseek(fout, 0, SEEK_SET);
-	fwrite(&fbooter, 1, sizeof(wm_tool_firmware_booter_t), fout);
-	fseek(fout, WM_TOOL_RUN_IMG_HEADER_LEN, SEEK_SET);
+    fseek(fout, 0, SEEK_SET);
+    fwrite(&fbooter, 1, sizeof(wm_tool_firmware_booter_t), fout);
+    fseek(fout, WM_TOOL_RUN_IMG_HEADER_LEN, SEEK_SET);
 
-	while (!feof(fpimg))
-	{
-		readlen = fread(buf, 1, WM_TOOL_ONCE_READ_LEN, fpimg);
-		fwrite(buf, 1, readlen, fout);
-	}
+    while (!feof(fpimg)) {
+        readlen = fread(buf, 1, WM_TOOL_ONCE_READ_LEN, fpimg);
+        fwrite(buf, 1, readlen, fout);
+    }
 
-	if (fpimg)
-	{
-		fclose(fpimg);
-	}
+    if (fpimg) {
+        fclose(fpimg);
+    }
 
-	if (fout)
-	{
-		fclose(fout);
-	}
+    if (fout) {
+        fclose(fout);
+    }
 
     wm_tool_printf("generate debug image completed.\r\n");
 
@@ -3491,90 +3438,80 @@ static int wm_tool_pack_dbg_image(const char *image, const char *outfile)
 
 static int wm_tool_pack_fls(const char *image, const char *outfile)
 {
-	FILE *fpsec;
-	FILE *fpimg;
-	FILE *fout;
-	unsigned char buf[WM_TOOL_ONCE_READ_LEN + 1];
-	int readlen = 0;
-	int magic_word = 0;
+    FILE *fpsec;
+    FILE *fpimg;
+    FILE *fout;
+    unsigned char buf[WM_TOOL_ONCE_READ_LEN + 1];
+    int readlen = 0;
+    int magic_word = 0;
 
-	fpsec = fopen(wm_tool_secboot_image,"rb");
-	if (NULL == fpsec)
-	{
-		wm_tool_printf("can not open input file [%s].\r\n", wm_tool_secboot_image);
-		return -2;
-	}
+    fpsec = fopen(wm_tool_secboot_image,"rb");
+    if (NULL == fpsec) {
+        wm_tool_printf("can not open input file [%s].\r\n", wm_tool_secboot_image);
+        return -2;
+    }
 
-	magic_word = 0;
-	readlen = fread(&magic_word, 1, 4, fpsec);
-	if (magic_word != WM_TOOL_IMG_HEAD_MAGIC_NO)
-	{
-		wm_tool_printf("input [%s] file magic error.\r\n", wm_tool_secboot_image);
-		fclose(fpsec);
-		return -3;
-	}
+    magic_word = 0;
+    readlen = fread(&magic_word, 1, 4, fpsec);
+    if (magic_word != WM_TOOL_IMG_HEAD_MAGIC_NO) {
+        wm_tool_printf("input [%s] file magic error.\r\n", wm_tool_secboot_image);
+        fclose(fpsec);
+        return -3;
+    }
 
-	fpimg = fopen(image, "rb");
-	if (NULL == fpimg)
-	{
-		wm_tool_printf("open img file error [%s].\r\n", image);
-		fclose(fpsec);
-		return -4;
-	}
+    fpimg = fopen(image, "rb");
+    if (NULL == fpimg) {
+        wm_tool_printf("open img file error [%s].\r\n", image);
+        fclose(fpsec);
+        return -4;
+    }
 
-	magic_word = 0;
-	readlen = fread(&magic_word, 1, 4, fpimg);
-	if (magic_word != WM_TOOL_IMG_HEAD_MAGIC_NO)
-	{
-		wm_tool_printf("input [%s] file magic error.\r\n", image);
-		fclose(fpsec);
-		fclose(fpimg);
-		return -5;
-	}
+    magic_word = 0;
+    readlen = fread(&magic_word, 1, 4, fpimg);
+    if (magic_word != WM_TOOL_IMG_HEAD_MAGIC_NO) {
+        wm_tool_printf("input [%s] file magic error.\r\n", image);
+        fclose(fpsec);
+        fclose(fpimg);
+        return -5;
+    }
 
-	fout = fopen(outfile, "wb+");
-	if (NULL == fout)
-	{
-		wm_tool_printf("create img file error [%s].\r\n", outfile);
-		fclose(fpsec);
-		fclose(fpimg);
-		return -6;
-	}
+    fout = fopen(outfile, "wb+");
+    if (NULL == fout) {
+        wm_tool_printf("create img file error [%s].\r\n", outfile);
+        fclose(fpsec);
+        fclose(fpimg);
+        return -6;
+    }
 
-	fseek(fpsec, 0, SEEK_SET);
+    fseek(fpsec, 0, SEEK_SET);
 
-    while (!feof(fpsec))
-	{
-		readlen = fread(buf, 1, WM_TOOL_ONCE_READ_LEN, fpsec);
-		fwrite(buf, 1, readlen, fout);
-	}
+    while (!feof(fpsec)) {
+        readlen = fread(buf, 1, WM_TOOL_ONCE_READ_LEN, fpsec);
+        fwrite(buf, 1, readlen, fout);
+    }
 
     fseek(fpimg, 0, SEEK_SET);
 
-    while (!feof(fpimg))
-	{
-		readlen = fread(buf, 1, WM_TOOL_ONCE_READ_LEN, fpimg);
-		fwrite(buf, 1, readlen, fout);
-	}
+    while (!feof(fpimg)) {
+        readlen = fread(buf, 1, WM_TOOL_ONCE_READ_LEN, fpimg);
+        fwrite(buf, 1, readlen, fout);
+    }
 
-	if (fpsec)
-	{
-		fclose(fpsec);
-	}
+    if (fpsec) {
+        fclose(fpsec);
+    }
 
-	if (fpimg)
-	{
-		fclose(fpimg);
-	}
+    if (fpimg) {
+        fclose(fpimg);
+    }
 
-	if (fout)
-	{
-		fclose(fout);
-	}
+    if (fout) {
+        fclose(fout);
+    }
 
     wm_tool_printf("generate flash file completed.\r\n");
 
-	return 0;
+    return 0;
 }
 
 static int wm_tool_gzip_bin(const char *binary, const char *gzbin)
@@ -3585,28 +3522,24 @@ static int wm_tool_gzip_bin(const char *binary, const char *gzbin)
     char buf[1024];
 
     bfp = fopen(binary, "rb");
-    if (!bfp)
-    {
+    if (!bfp) {
         wm_tool_printf("can not open binary.\r\n");
-		return -1;
+        return -1;
     }
-	
+    
     gzfp = gzopen((char *)gzbin, "wb+");
 
-    if (!gzfp)
-    {
+    if (!gzfp) {
         wm_tool_printf("can not gzip binary.\r\n");
         fclose(bfp);
-		return -1;
+        return -1;
     }
 
     do {
         ret = fread(buf, 1, sizeof(buf), bfp);
-        if (ret > 0)
-        {
+        if (ret > 0) {
             ret = gzwrite(gzfp, (voidp)buf, ret);
-            if (ret <= 0)
-            {
+            if (ret <= 0) {
                 wm_tool_printf("can not write gzip binary.\r\n");
                 return -2;
             }
@@ -3635,15 +3568,13 @@ static int wm_tool_pack_firmware(void)
     if (!wm_tool_input_binary)
         return 1;
 
-    if (!wm_tool_output_image)
-    {
+    if (!wm_tool_output_image) {
         char *r = wm_tool_input_binary;
         char *t = wm_tool_input_binary;
         do
         {
             r = strchr(r, '.');
-            if (r)
-            {
+            if (r) {
                 t = r;
                 r++;
             }
@@ -3661,8 +3592,7 @@ static int wm_tool_pack_firmware(void)
     do
     {
         p = strchr(p, '/');
-        if (p)
-        {
+        if (p) {
             p++;
             q = p;
         }
@@ -3677,15 +3607,13 @@ static int wm_tool_pack_firmware(void)
     if (!image)
         return -1;
     sprintf(image, "%s%s.img", path, name);
-	if (WM_TOOL_ZIP_TYPE_UNCOMPRESS == wm_tool_zip_type)
-	{
+    if (WM_TOOL_ZIP_TYPE_UNCOMPRESS == wm_tool_zip_type) {
         ret = wm_tool_pack_image(image);
         if (ret)
             return ret;
-	}
+    }
 
-    if (WM_TOOL_ZIP_TYPE_COMPRESS == wm_tool_zip_type)
-    {
+    if (WM_TOOL_ZIP_TYPE_COMPRESS == wm_tool_zip_type) {
         gzbin = malloc(strlen(path) + strlen(name) + strlen("_gz.bin") + 1);
         gzimg = malloc(strlen(path) + strlen(name) + strlen("_gz.img") + 1);
         if (!gzbin || !gzimg)
@@ -3694,12 +3622,11 @@ static int wm_tool_pack_firmware(void)
         sprintf(gzimg, "%s%s_gz.img", path, name);
 
         ret = wm_tool_gzip_bin(wm_tool_input_binary, gzbin);
-        if (ret)
-		{
+        if (ret) {
             free(gzbin);
             free(gzimg);
-			return ret;
-		}
+            return ret;
+        }
 
         ret = wm_tool_pack_gz_image(gzbin, gzimg);
         free(gzbin);
@@ -3708,8 +3635,7 @@ static int wm_tool_pack_firmware(void)
             return ret;
     }
 
-    if (wm_tool_is_debug)
-    {
+    if (wm_tool_is_debug) {
         dbgimg = malloc(strlen(path) + strlen(name) + strlen("_dbg.img") + 1);
         if (!dbgimg)
             return -1;
@@ -3721,8 +3647,7 @@ static int wm_tool_pack_firmware(void)
             return ret;
     }
 
-    if (wm_tool_secboot_image)
-    {
+    if (wm_tool_secboot_image) {
         fls = malloc(strlen(path) + strlen(name) + strlen(".fls") + 1);
         if (!fls)
             return -1;
@@ -3741,14 +3666,13 @@ static int wm_tool_pack_firmware(void)
 #ifdef __MINGW32__
 static BOOL wm_tool_signal_proc(DWORD no)
 {
-	switch (no)
-	{
-    	case CTRL_C_EVENT:
-    		wm_tool_signal_proc_entry();
-    		return(FALSE);
-    	default:
-    		return FALSE;
-	}
+    switch (no) {
+        case CTRL_C_EVENT:
+            wm_tool_signal_proc_entry();
+            return(FALSE);
+        default:
+            return FALSE;
+    }
 }
 
 static void wm_tool_signal_init(void)
@@ -3778,15 +3702,15 @@ static int wm_tool_uart_set_timeout(void)
     BOOL ret;
     COMMTIMEOUTS timeout;
 
-	timeout.ReadIntervalTimeout         = MAXDWORD;
-	timeout.ReadTotalTimeoutConstant    = 0;
-	timeout.ReadTotalTimeoutMultiplier  = 0;
-	timeout.WriteTotalTimeoutConstant   = 0;
-	timeout.WriteTotalTimeoutMultiplier = 0;
+    timeout.ReadIntervalTimeout         = MAXDWORD;
+    timeout.ReadTotalTimeoutConstant    = 0;
+    timeout.ReadTotalTimeoutMultiplier  = 0;
+    timeout.WriteTotalTimeoutConstant   = 0;
+    timeout.WriteTotalTimeoutMultiplier = 0;
 
-	ret = SetCommTimeouts(wm_tool_uart_handle, &timeout);
-	if (ret)
-	    ret = SetCommMask(wm_tool_uart_handle, EV_TXEMPTY);
+    ret = SetCommTimeouts(wm_tool_uart_handle, &timeout);
+    if (ret)
+        ret = SetCommMask(wm_tool_uart_handle, EV_TXEMPTY);
 
     return ret ? 0 : -1;
 }
@@ -3805,45 +3729,40 @@ static int wm_tool_uart_set_speed(int speed)
 {
     int i;
     int size;
-	DCB cfg;
+    DCB cfg;
 
-	size = sizeof(wm_tool_uart_speed_array) / sizeof(int);
+    size = sizeof(wm_tool_uart_speed_array) / sizeof(int);
 
-    for (i= 0; i < size; i++)
-    {
-        if (speed == wm_tool_uart_name_array[i])
-        {
-            if (GetCommState(wm_tool_uart_handle, &cfg))
-            {
-            	cfg.DCBlength		= sizeof(DCB);
-            	cfg.BaudRate		= wm_tool_uart_speed_array[i];
-            	cfg.fBinary		    = TRUE;
-            	cfg.fParity         = FALSE;
-            	cfg.fDtrControl	    = DTR_CONTROL_DISABLE;
-            	cfg.fDsrSensitivity = FALSE;
-            	cfg.fRtsControl	    = RTS_CONTROL_DISABLE;
-            	cfg.ByteSize		= 8;
-            	cfg.StopBits 		= ONESTOPBIT;
-            	cfg.fAbortOnError	= FALSE;
-            	cfg.fOutX			= FALSE;
-            	cfg.fInX			= FALSE;
-            	cfg.fErrorChar      = FALSE;
-            	cfg.fNull           = FALSE;
-            	cfg.fOutxCtsFlow    = FALSE;
-	            cfg.fOutxDsrFlow    = FALSE;
-	            cfg.Parity          = NOPARITY;
-	            cfg.fTXContinueOnXoff = FALSE;
+    for (i= 0; i < size; i++) {
+        if (speed == wm_tool_uart_name_array[i]) {
+            if (GetCommState(wm_tool_uart_handle, &cfg)) {
+                cfg.DCBlength       = sizeof(DCB);
+                cfg.BaudRate        = wm_tool_uart_speed_array[i];
+                cfg.fBinary         = TRUE;
+                cfg.fParity         = FALSE;
+                cfg.fDtrControl     = DTR_CONTROL_DISABLE;
+                cfg.fDsrSensitivity = FALSE;
+                cfg.fRtsControl        = RTS_CONTROL_DISABLE;
+                cfg.ByteSize        = 8;
+                cfg.StopBits        = ONESTOPBIT;
+                cfg.fAbortOnError   = FALSE;
+                cfg.fOutX            = FALSE;
+                cfg.fInX            = FALSE;
+                cfg.fErrorChar      = FALSE;
+                cfg.fNull           = FALSE;
+                cfg.fOutxCtsFlow    = FALSE;
+                cfg.fOutxDsrFlow    = FALSE;
+                cfg.Parity          = NOPARITY;
+                cfg.fTXContinueOnXoff = FALSE;
 
-            	return SetCommState(wm_tool_uart_handle, &cfg) ? 0 : -1;
-        	}
-        	else
-        	{
+                return SetCommState(wm_tool_uart_handle, &cfg) ? 0 : -1;
+            } else {
                 return -3;
-        	}
+            }
         }
     }
 
-	return -2;
+    return -2;
 }
 
 static void wm_tool_uart_clear(void)
@@ -3858,26 +3777,22 @@ static int wm_tool_uart_open(const char *device)
     BOOL ret;
     char name[40];
 
-	sprintf(name,"\\\\.\\%s", device);
+    sprintf(name,"\\\\.\\%s", device);
 
-	wm_tool_uart_handle = CreateFile(name, GENERIC_WRITE | GENERIC_READ,
+    wm_tool_uart_handle = CreateFile(name, GENERIC_WRITE | GENERIC_READ,
                                      0, NULL, OPEN_EXISTING,
                                      FILE_ATTRIBUTE_NORMAL | FILE_FLAG_OVERLAPPED,
                                      NULL);
 
-	if (wm_tool_uart_handle == INVALID_HANDLE_VALUE)
-	{
-		return -1;
-	}
+    if (wm_tool_uart_handle == INVALID_HANDLE_VALUE) {
+        return -1;
+    }
 
     ret = SetupComm(wm_tool_uart_handle, 4096, 4096);
-    if (ret)
-    {
+    if (ret) {
         ret  = wm_tool_uart_set_speed(WM_TOOL_DEFAULT_BAUD_RATE);
         ret |= wm_tool_uart_set_timeout();
-    }
-    else
-    {
+    } else {
         ret = -1;
     }
 
@@ -3888,38 +3803,35 @@ static int wm_tool_uart_read(void *data, unsigned int size)
 {
     BOOL ret;
     DWORD wait;
-	unsigned long len = 0;
-	COMSTAT state;
-	DWORD error;
+    unsigned long len = 0;
+    COMSTAT state;
+    DWORD error;
     OVERLAPPED event;
 
     do
     {
-    	memset(&event, 0, sizeof(OVERLAPPED));
+        memset(&event, 0, sizeof(OVERLAPPED));
 
-    	event.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+        event.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
 
-    	ClearCommError(wm_tool_uart_handle, &error, &state);
+        ClearCommError(wm_tool_uart_handle, &error, &state);
 
         ret = ReadFile(wm_tool_uart_handle, data, size, &len, &event);
-        if (!ret)
-        {
-            if (ERROR_IO_PENDING == GetLastError())
-    		{
-    			wait = WaitForSingleObject(event.hEvent, wm_tool_uart_block);
-    			if (WAIT_OBJECT_0 == wait)
-    			    ret = TRUE;
-    		}
+        if (!ret) {
+            if (ERROR_IO_PENDING == GetLastError()) {
+                wait = WaitForSingleObject(event.hEvent, wm_tool_uart_block);
+                if (WAIT_OBJECT_0 == wait)
+                    ret = TRUE;
+            }
         }
     } while (wm_tool_uart_block && !len);
 
-	if (ret)
-	{
+    if (ret) {
         if (len > 0)
             return (int)len;
-	}
+    }
 
-	return -1;
+    return -1;
 }
 
 static int wm_tool_uart_write(const void *data, unsigned int size)
@@ -3928,9 +3840,9 @@ static int wm_tool_uart_write(const void *data, unsigned int size)
     DWORD wait;
     OVERLAPPED event;
     COMSTAT state;
-	DWORD error;
+    DWORD error;
     unsigned int snd = 0;
-	unsigned long len = 0;
+    unsigned long len = 0;
 
     memset(&event, 0, sizeof(OVERLAPPED));
 
@@ -3941,43 +3853,35 @@ static int wm_tool_uart_write(const void *data, unsigned int size)
         ClearCommError(wm_tool_uart_handle, &error, &state);
 
         ret = WriteFile(wm_tool_uart_handle, data + snd, size - snd, &len, &event);
-        if (!ret)
-        {
-            if (ERROR_IO_PENDING == GetLastError())
-    		{
-    			wait = WaitForSingleObject(event.hEvent, INFINITE);
-    			if (WAIT_OBJECT_0 == wait)
-			        ret = TRUE;
-    		}
+        if (!ret) {
+            if (ERROR_IO_PENDING == GetLastError()) {
+                wait = WaitForSingleObject(event.hEvent, INFINITE);
+                if (WAIT_OBJECT_0 == wait)
+                    ret = TRUE;
+            }
         }
 
-        if (ret)
-    	{
-            if ((len > 0) && (snd != size))
-            {
+        if (ret) {
+            if ((len > 0) && (snd != size)) {
                 snd += len;
+            } else {
+                return size;
             }
-            else
-            {
-    	        return size;
-    	    }
-    	}
-    	else
-    	{
+        } else {
             break;
-    	}
+        }
     } while (1);
 
-	return -1;
+    return -1;
 }
 
 static void wm_tool_uart_close(void)
 {
-	FlushFileBuffers(wm_tool_uart_handle);
-	CloseHandle(wm_tool_uart_handle);
-	wm_tool_uart_handle = NULL;
+    FlushFileBuffers(wm_tool_uart_handle);
+    CloseHandle(wm_tool_uart_handle);
+    wm_tool_uart_handle = NULL;
 
-	return;
+    return;
 }
 
 static DWORD WINAPI wm_tool_uart_tx_thread(LPVOID arg)
@@ -4020,18 +3924,13 @@ static int wm_tool_uart_set_rts(int boolflag)
     int controlbits;
 
     ret = ioctl(wm_tool_uart_fd, TIOCMGET, &controlbits);
-    if (ret < 0)
-    {
+    if (ret < 0) {
         WM_TOOL_DBG_PRINT("TIOCMGET failed!\r\n");
-        return ret;
-    }
+        return ret; }
 
-    if (controlbits & TIOCM_RTS)
-    {
+    if (controlbits & TIOCM_RTS) {
         WM_TOOL_DBG_PRINT("TIOCM_RTS!, %d!\r\n", boolflag);
-    }
-    else
-    {
+    } else {
         WM_TOOL_DBG_PRINT("~TIOCM_RTS!, %d!\r\n", boolflag);
     }
 
@@ -4041,8 +3940,7 @@ static int wm_tool_uart_set_rts(int boolflag)
         controlbits &= ~TIOCM_RTS;
 
     ret = ioctl(wm_tool_uart_fd, TIOCMSET, &controlbits);
-    if (ret < 0)
-    {
+    if (ret < 0) {
         WM_TOOL_DBG_PRINT("TIOCMSET failed!\r\n");
     }
 
@@ -4058,20 +3956,15 @@ static int wm_tool_uart_set_dtr(int boolflag)
     int controlbits;
 
     ret = ioctl(wm_tool_uart_fd, TIOCMGET, &controlbits);
-    if (ret < 0)
-    {
+    if (ret < 0) {
         WM_TOOL_DBG_PRINT("TIOCMGET failed!\r\n");
         return ret;
     }
 
-    if (controlbits & TIOCM_DTR)
-    {
+    if (controlbits & TIOCM_DTR) {
         WM_TOOL_DBG_PRINT("TIOCM_DTR, %d!\r\n", boolflag);
-    }
-    else
-    {
-        WM_TOOL_DBG_PRINT("~TIOCM_DTR, %d!\r\n", boolflag);
-    }
+    } else {
+        WM_TOOL_DBG_PRINT("~TIOCM_DTR, %d!\r\n", boolflag); }
 
     if (boolflag)
         controlbits |= TIOCM_DTR;
@@ -4079,8 +3972,7 @@ static int wm_tool_uart_set_dtr(int boolflag)
         controlbits &= ~TIOCM_DTR;
 
     ret = ioctl(wm_tool_uart_fd, TIOCMSET, &controlbits);
-    if (ret < 0)
-    {
+    if (ret < 0) {
         WM_TOOL_DBG_PRINT("TIOCMSET failed!\r\n");
     }
 
@@ -4116,10 +4008,8 @@ static int wm_tool_uart_set_speed(int speed)
 
     size = sizeof(wm_tool_uart_speed_array) / sizeof(int);
 
-    for (i= 0; i < size; i++)
-    {
-        if (speed == wm_tool_uart_name_array[i])
-        {
+    for (i= 0; i < size; i++) {
+        if (speed == wm_tool_uart_name_array[i]) {
             cfsetispeed(&opt, wm_tool_uart_speed_array[i]);
             cfsetospeed(&opt, wm_tool_uart_speed_array[i]);
 
@@ -4144,9 +4034,8 @@ static int wm_tool_uart_open(const char *device)
     struct termios tty;
 
     wm_tool_uart_fd = open(device, O_RDWR | O_NOCTTY | O_NDELAY);
-    if (-1 == wm_tool_uart_fd)
-    {
-		return -1;
+    if (-1 == wm_tool_uart_fd) {
+        return -1;
     }
 
     tcgetattr(wm_tool_uart_fd, &wm_tool_saved_serial_cfg);
@@ -4183,7 +4072,7 @@ static int wm_tool_uart_open(const char *device)
 
 static int wm_tool_uart_read(void *data, unsigned int size)
 {
-	return read(wm_tool_uart_fd, data, size);
+    return read(wm_tool_uart_fd, data, size);
 }
 
 static int wm_tool_uart_write(const void *data, unsigned int size)
@@ -4194,22 +4083,18 @@ static int wm_tool_uart_write(const void *data, unsigned int size)
     do
     {
         ret = write(wm_tool_uart_fd, data + snd, size - snd);
-        if (ret > 0)
-        {
+        if (ret > 0) {
             snd += ret;
 
-            if (snd == size)
-            {
+            if (snd == size) {
                 return size;
             }
-        }
-        else
-        {
+        } else {
             break;
         }
     } while (1);
 
-	return -1;
+    return -1;
 }
 
 static void wm_tool_uart_close(void)
@@ -4219,10 +4104,10 @@ static void wm_tool_uart_close(void)
     tcdrain(wm_tool_uart_fd);
     tcflush(wm_tool_uart_fd, TCIOFLUSH);
 
-	close(wm_tool_uart_fd);
+    close(wm_tool_uart_fd);
     wm_tool_uart_fd = -1;
 
-	return;
+    return;
 }
 
 static void *wm_tool_uart_tx_thread(void *arg)
@@ -4234,8 +4119,8 @@ static void *wm_tool_uart_tx_thread(void *arg)
 
 static int wm_tool_create_thread(void)
 {
-    //pthread_t thread_id;
-    return 0; //pthread_create(&thread_id, NULL, wm_tool_uart_tx_thread, NULL);
+    // pthread_t thread_id;
+    return 0; // pthread_create(&thread_id, NULL, wm_tool_uart_tx_thread, NULL);
 }
 #endif
 
@@ -4250,13 +4135,10 @@ static void wm_tool_stdin_to_uart(void)
     int ret;
     char buf[WM_TOOL_ONCE_READ_LEN];
 
-    while (1)
-    {
-        if (fgets(buf, WM_TOOL_ONCE_READ_LEN, stdin))
-        {
+    while (1) {
+        if (fgets(buf, WM_TOOL_ONCE_READ_LEN, stdin)) {
             ret = wm_tool_uart_write(buf, strlen(buf));
-            if (ret <= 0)
-            {
+            if (ret <= 0) {
                 WM_TOOL_DBG_PRINT("failed to write [%s].\r\n", buf);
             }
         }
@@ -4273,17 +4155,14 @@ static int wm_tool_show_log_from_serial(void)
     unsigned char buf[WM_TOOL_ONCE_READ_LEN + 1];
 
     ret = wm_tool_uart_open(wm_tool_serial_path);
-    if (ret)
-    {
+    if (ret) {
         wm_tool_printf("can not open serial\r\n");
         return ret;
     }
 
-    if (WM_TOOL_DEFAULT_BAUD_RATE != wm_tool_normal_serial_rate)
-    {
+    if (WM_TOOL_DEFAULT_BAUD_RATE != wm_tool_normal_serial_rate) {
         ret = wm_tool_uart_set_speed(wm_tool_normal_serial_rate);
-        if (ret)
-        {
+        if (ret) {
             wm_tool_printf("can not set serial baud rate.\r\n");
             wm_tool_uart_close();
             return ret;
@@ -4291,8 +4170,7 @@ static int wm_tool_show_log_from_serial(void)
     }
 
     ret = wm_tool_create_thread();
-    if (ret)
-    {
+    if (ret) {
         wm_tool_printf("can not create thread.\r\n");
         wm_tool_uart_close();
         return ret;
@@ -4302,34 +4180,23 @@ static int wm_tool_show_log_from_serial(void)
 
     wm_tool_signal_init();
 
-    while (1)
-    {
+    while (1) {
         ret = wm_tool_uart_read(buf, WM_TOOL_ONCE_READ_LEN);
-        if (ret > 0)
-        {
-            if (WM_TOOL_SHOW_LOG_STR == wm_tool_show_log_type)
-            {
+        if (ret > 0) {
+            if (WM_TOOL_SHOW_LOG_STR == wm_tool_show_log_type) {
                 buf[ret] = '\0';
                 wm_tool_printf("%s", (char *)buf);
-            }
-            else if (WM_TOOL_SHOW_LOG_HEX == wm_tool_show_log_type)
-            {
-                for (i = 0; i < ret; i++, j++)
-                {
+            } else if (WM_TOOL_SHOW_LOG_HEX == wm_tool_show_log_type) {
+                for (i = 0; i < ret; i++, j++) {
                     wm_tool_printf("%02X ", buf[i]);
-                    if ((j + 1) % 16 == 0)
-                    {
+                    if ((j + 1) % 16 == 0) {
                         wm_tool_printf("\r\n");
                     }
                 }
-            }
-            else
-            {
+            } else {
                 break;
             }
-        }
-        else
-        {
+        } else {
             wm_tool_delay_ms(1);
         }
     }
@@ -4341,43 +4208,33 @@ static int wm_tool_show_log_from_serial(void)
 
 static int wm_tool_set_wifi_chip_speed(int speed)
 {
-	int ret;
+    int ret;
 
-	if (2000000 == speed)
-	{
-		ret = wm_tool_uart_write(wm_tool_chip_cmd_b2000000, sizeof(wm_tool_chip_cmd_b2000000));
-	}
-	else if (1000000 == speed)
-	{
-		ret = wm_tool_uart_write(wm_tool_chip_cmd_b1000000, sizeof(wm_tool_chip_cmd_b1000000));
-	}
-	else if (921600 == speed)
-	{
-		ret = wm_tool_uart_write(wm_tool_chip_cmd_b921600, sizeof(wm_tool_chip_cmd_b921600));
-	}
-	else if (460800 == speed)
-	{
-		ret = wm_tool_uart_write(wm_tool_chip_cmd_b460800, sizeof(wm_tool_chip_cmd_b460800));
-	}
-	else
-	{
-		ret = wm_tool_uart_write(wm_tool_chip_cmd_b115200, sizeof(wm_tool_chip_cmd_b115200));
-	}
+    if (2000000 == speed) {
+        ret = wm_tool_uart_write(wm_tool_chip_cmd_b2000000, sizeof(wm_tool_chip_cmd_b2000000));
+    } else if (1000000 == speed) {
+        ret = wm_tool_uart_write(wm_tool_chip_cmd_b1000000, sizeof(wm_tool_chip_cmd_b1000000));
+    } else if (921600 == speed) {
+        ret = wm_tool_uart_write(wm_tool_chip_cmd_b921600, sizeof(wm_tool_chip_cmd_b921600));
+    } else if (460800 == speed) {
+        ret = wm_tool_uart_write(wm_tool_chip_cmd_b460800, sizeof(wm_tool_chip_cmd_b460800));
+    } else {
+        ret = wm_tool_uart_write(wm_tool_chip_cmd_b115200, sizeof(wm_tool_chip_cmd_b115200));
+    }
 
-	return ret;
+    return ret;
 }
 
 static int wm_tool_send_esc2uart(int ms)
 {
     int i;
-	int err = 0;
+    int err = 0;
     unsigned char esc_key = 27;
 
-    for (i = 0; i < (ms / 10); i++)
-	{
+    for (i = 0; i < (ms / 10); i++) {
         err = wm_tool_uart_write(&esc_key, 1);
-		wm_tool_delay_ms(10);/* 10-50ms */
-	}
+        wm_tool_delay_ms(10);/* 10-50ms */
+    }
 
     return err;
 }
@@ -4391,8 +4248,7 @@ static int wm_tool_erase_image(wm_tool_dl_erase_e type)
 
     WM_TOOL_DBG_PRINT("start erase.\r\n");
 
-    if (WM_TOOL_DL_ERASE_ALL == type)
-    {
+    if (WM_TOOL_DL_ERASE_ALL == type) {
         wm_tool_printf("erase flash...\r\n");
         ret = wm_tool_uart_write(rom_cmd, sizeof(rom_cmd));
     }
@@ -4404,21 +4260,18 @@ static int wm_tool_erase_image(wm_tool_dl_erase_e type)
     wm_tool_uart_set_block(1);
 
     do
-	{
-		ret = wm_tool_uart_read(&ch, 1);
-		if (ret > 0)
-	    {
-		    if (('C' == ch) || ('P' == ch))
-		        cnt++;
-		    else
-		        cnt = 0;
-		}
-		else
-		{
-		    wm_tool_printf("erase error, errno = %d.\r\n", errno);
+    {
+        ret = wm_tool_uart_read(&ch, 1);
+        if (ret > 0) {
+            if (('C' == ch) || ('P' == ch))
+                cnt++;
+            else
+                cnt = 0;
+        } else {
+            wm_tool_printf("erase error, errno = %d.\r\n", errno);
             return -2;
-		}
-	} while (cnt < 3);
+        }
+    } while (cnt < 3);
 
     wm_tool_uart_set_block(0);
 
@@ -4440,40 +4293,30 @@ static int wm_tool_query_mac(void)
 
     wm_tool_uart_set_block(1);
 
-	err = wm_tool_uart_write(wm_tool_chip_cmd_get_mac, sizeof(wm_tool_chip_cmd_get_mac));
-    if (err > 0)
-    {
+    err = wm_tool_uart_write(wm_tool_chip_cmd_get_mac, sizeof(wm_tool_chip_cmd_get_mac));
+    if (err > 0) {
         do
         {
             err = wm_tool_uart_read((unsigned char *)(macstr + offset), sizeof(macstr) - 1 - offset);
-            if (err > 0)
-            {
+            if (err > 0) {
                 offset += err;
-                if (offset >= len)
-                {
+                if (offset >= len) {
                     macstr[len - 1] = '\0';/* \n -> 0 */
-					if (strstr(macstr, "Mac:"))
-					{
-                    	err = wm_tool_str_to_hex_array(macstr + strlen("MAC:"), 6, macaddr);
-					}
-					else
-					{
-						err = 0;
-					}
+                    if (strstr(macstr, "Mac:")) {
+                        err = wm_tool_str_to_hex_array(macstr + strlen("MAC:"), 6, macaddr);
+                    } else {
+                        err = 0;
+                    }
 
-                    if (!err)
-                    {
+                    if (!err) {
                         wm_tool_printf("mac %02X-%02X-%02X-%02X-%02X-%02X.\r\n", macaddr[0],
                                        macaddr[1], macaddr[2], macaddr[3], macaddr[4], macaddr[5]);
 
                         if (!strncmp(macstr, "Mac:", strlen("Mac:")) && 
                             (WM_TOOL_DL_TYPE_FLS != wm_tool_dl_type) && 
-                            !wm_tool_dl_erase)
-                        {
+                            !wm_tool_dl_erase) {
                             wm_tool_printf("please download the firmware in .fls format.\r\n");
-                        }
-                        else
-                        {
+                        } else {
                             ret = 0;
                         }
                     }
@@ -4491,215 +4334,183 @@ static int wm_tool_query_mac(void)
 static int wm_tool_xmodem_download(const char *image)
 {
     FILE *imgfp;
-	unsigned char packet_data[XMODEM_DATA_SIZE];
-	unsigned char frame_data[XMODEM_DATA_SIZE + XMODEM_CRC_SIZE + XMODEM_FRAME_ID_SIZE + 1];
-	int complete, retry_num, pack_counter, read_number, write_number = 0, i;
-	unsigned short crc_value;
-	unsigned char ack_id;
-	int sndlen;
-	int total_size;
-	int ret = -111;
-	int percent = 0;
-	int curImgLen = 0;
-	wm_tool_firmware_booter_t fbooter;
-	int packet_data_len = 0;
-	int packet_data_offset = 0;
+    unsigned char packet_data[XMODEM_DATA_SIZE];
+    unsigned char frame_data[XMODEM_DATA_SIZE + XMODEM_CRC_SIZE + XMODEM_FRAME_ID_SIZE + 1];
+    int complete, retry_num, pack_counter, read_number, write_number = 0, i;
+    unsigned short crc_value;
+    unsigned char ack_id;
+    int sndlen;
+    int total_size;
+    int ret = -111;
+    int percent = 0;
+    int curImgLen = 0;
+    wm_tool_firmware_booter_t fbooter;
+    int packet_data_len = 0;
+    int packet_data_offset = 0;
 
-	imgfp = fopen(image, "rb");
-    if (!imgfp)
-    {
+    imgfp = fopen(image, "rb");
+    if (!imgfp) {
         wm_tool_printf("can not open image to download.\r\n");
-		return -1;
+        return -1;
     }
-	total_size=wm_tool_get_file_size(image);
-	wm_tool_printf("file size %d\r\n", total_size);
-	sndlen = 0;
-	pack_counter = 0;
-	complete = 0;
-	retry_num = 0;
+    total_size=wm_tool_get_file_size(image);
+    wm_tool_printf("file size %d\r\n", total_size);
+    sndlen = 0;
+    pack_counter = 0;
+    complete = 0;
+    retry_num = 0;
 
-	wm_tool_printf("start download.\r\n");
-	wm_tool_printf("0%% [");
+    wm_tool_printf("start download.\r\n");
+    wm_tool_printf("0%% [");
 
     wm_tool_uart_clear();
 
     wm_tool_uart_set_block(1);
 
-	ack_id = XMODEM_ACK;
+    ack_id = XMODEM_ACK;
 
-	while (!complete)
-	{
-	    WM_TOOL_DBG_PRINT("switch ack_id = %x\r\n", ack_id);
+    while (!complete) {
+        WM_TOOL_DBG_PRINT("switch ack_id = %x\r\n", ack_id);
 
-        switch(ack_id)
-        {
-        	case XMODEM_ACK:
-        	{
-	            retry_num = 0;
-				if(curImgLen == -1)
-				{
-					read_number = 0;
-					curImgLen = 0;
-					pack_counter = 0;
-				}
-				else
-				{
-		            pack_counter++;
-					
-					if(packet_data_offset > 0 && packet_data_len > 0)
-					{
-						WM_TOOL_DBG_PRINT("packet_data_offset = %d, packet_data_len = %d\r\n", packet_data_offset, packet_data_len);
-						WM_TOOL_DBG_PRINT("header %x %x %x %x\r\n", packet_data[packet_data_offset], packet_data[packet_data_offset+1], 
-							packet_data[packet_data_offset+2], packet_data[packet_data_offset+3]);
-						memmove(packet_data, packet_data + packet_data_offset, packet_data_len);
-						WM_TOOL_DBG_PRINT("header %x %x %x %x\r\n", packet_data[0], packet_data[1], 
-							packet_data[2], packet_data[3]);
-						packet_data_offset = 0;
-					}
-		            read_number = fread(packet_data + packet_data_len, sizeof(char), XMODEM_DATA_SIZE-packet_data_len, imgfp);
-					read_number += packet_data_len;
-					packet_data_len = 0;
+        switch(ack_id) {
+            case XMODEM_ACK:
+            {
+                retry_num = 0;
+                if (curImgLen == -1) {
+                    read_number = 0;
+                    curImgLen = 0;
+                    pack_counter = 0;
+                } else {
+                    pack_counter++;
+                    
+                    if (packet_data_offset > 0 && packet_data_len > 0) {
+                        WM_TOOL_DBG_PRINT("packet_data_offset = %d, packet_data_len = %d\r\n", packet_data_offset, packet_data_len);
+                        WM_TOOL_DBG_PRINT("header %x %x %x %x\r\n", packet_data[packet_data_offset], packet_data[packet_data_offset+1], 
+                            packet_data[packet_data_offset+2], packet_data[packet_data_offset+3]);
+                        memmove(packet_data, packet_data + packet_data_offset, packet_data_len);
+                        WM_TOOL_DBG_PRINT("header %x %x %x %x\r\n", packet_data[0], packet_data[1], 
+                            packet_data[2], packet_data[3]);
+                        packet_data_offset = 0;
+                    }
+                    read_number = fread(packet_data + packet_data_len, sizeof(char), XMODEM_DATA_SIZE-packet_data_len, imgfp);
+                    read_number += packet_data_len;
+                    packet_data_len = 0;
 
-		            WM_TOOL_DBG_PRINT("fread = %d\r\n", read_number);
-				}
-	            if (read_number > 0)
-	            {
-					if(curImgLen == 0)
-					{
-						memcpy(&fbooter, packet_data, sizeof(wm_tool_firmware_booter_t));
-						curImgLen = fbooter.run_img_len;
-						curImgLen += sizeof(wm_tool_firmware_booter_t);
-						if((fbooter.img_type & 256) > 0)
-						{
-							curImgLen += 128;
-						}
-						WM_TOOL_DBG_PRINT("curImgLen %d\r\n", curImgLen);
-					}
-					if(read_number > curImgLen)
-					{
-						WM_TOOL_DBG_PRINT("read_number %d, curImgLen %d\r\n", read_number, curImgLen);
-						packet_data_len = read_number - curImgLen;
-						packet_data_offset = curImgLen;
-						read_number = curImgLen;
-						curImgLen = -1;
-					}
-					else
-					{
-						curImgLen -= read_number;
-					}
-					sndlen += read_number;
+                    WM_TOOL_DBG_PRINT("fread = %d\r\n", read_number);
+                }
+                if (read_number > 0) {
+                    if (curImgLen == 0) {
+                        memcpy(&fbooter, packet_data, sizeof(wm_tool_firmware_booter_t));
+                        curImgLen = fbooter.run_img_len;
+                        curImgLen += sizeof(wm_tool_firmware_booter_t);
+                        if ((fbooter.img_type & 256) > 0)
+                        {
+                            curImgLen += 128;
+                        }
+                        WM_TOOL_DBG_PRINT("curImgLen %d\r\n", curImgLen);
+                    }
+                    if (read_number > curImgLen) {
+                        WM_TOOL_DBG_PRINT("read_number %d, curImgLen %d\r\n", read_number, curImgLen);
+                        packet_data_len = read_number - curImgLen;
+                        packet_data_offset = curImgLen;
+                        read_number = curImgLen;
+                        curImgLen = -1;
+                    } else {
+                        curImgLen -= read_number;
+                    }
+                    sndlen += read_number;
 
-					memset(&frame_data[0], 0, sizeof(frame_data));
-	                frame_data[0] = XMODEM_HEAD;
-	                frame_data[1] = (char)pack_counter;
-	                frame_data[2] = (char)(255 - frame_data[1]);
+                    memset(&frame_data[0], 0, sizeof(frame_data));
+                    frame_data[0] = XMODEM_HEAD;
+                    frame_data[1] = (char)pack_counter;
+                    frame_data[2] = (char)(255 - frame_data[1]);
 
-	                for (i = 0; i < read_number; i++)
-	                    frame_data[i + 3] = packet_data[i];
+                    for (i = 0; i < read_number; i++)
+                        frame_data[i + 3] = packet_data[i];
 
-	                crc_value = wm_tool_get_crc16(&frame_data[3], XMODEM_DATA_SIZE);
+                    crc_value = wm_tool_get_crc16(&frame_data[3], XMODEM_DATA_SIZE);
 
-					frame_data[XMODEM_DATA_SIZE + 3]=(unsigned char)(crc_value >> 8);
-	                frame_data[XMODEM_DATA_SIZE + 4]=(unsigned char)(crc_value);
+                    frame_data[XMODEM_DATA_SIZE + 3]=(unsigned char)(crc_value >> 8);
+                    frame_data[XMODEM_DATA_SIZE + 4]=(unsigned char)(crc_value);
 
-	                write_number = wm_tool_uart_write(frame_data, XMODEM_DATA_SIZE + 5);
-	                if (write_number <= 0)
-	                    wm_tool_printf("write serial error, errno = %d.\r\n", errno);
+                    write_number = wm_tool_uart_write(frame_data, XMODEM_DATA_SIZE + 5);
+                    if (write_number <= 0)
+                        wm_tool_printf("write serial error, errno = %d.\r\n", errno);
 
-	                WM_TOOL_DBG_PRINT("waiting for ack, %d, %d ...\r\n", pack_counter, write_number);
+                    WM_TOOL_DBG_PRINT("waiting for ack, %d, %d ...\r\n", pack_counter, write_number);
 
-	                if ((wm_tool_uart_read(&ack_id, 1)) <= 0)
-					{
-						WM_TOOL_DBG_PRINT("waiting ack timeout\r\n");
-						complete = 1;
-	                }
-					else
-					{
-		                if (ack_id == XMODEM_ACK)
-		                {
-		                	int start_percent = 0;
-							int step = 10;
-		                	WM_TOOL_DBG_PRINT("Ok!\r\n");
-							if (sndlen * step / total_size > percent)
-							{
-								percent = sndlen * step / total_size;
-								wm_tool_printf("#");
-							}
-		                	if (sndlen % 10240 == 0)
-	                        {
-	    						//wm_tool_printf("#");
-							}
-		                }
-						else
-						{
-	                    	WM_TOOL_DBG_PRINT("error = %x!\r\n", ack_id);
-						}
-					}
-	            }
-	            else
-	            {
-	                ack_id = XMODEM_EOT;
+                    if ((wm_tool_uart_read(&ack_id, 1)) <= 0) {
+                        WM_TOOL_DBG_PRINT("waiting ack timeout\r\n");
+                        complete = 1;
+                    } else {
+                        if (ack_id == XMODEM_ACK) {
+                            int start_percent = 0;
+                            int step = 10;
+                            WM_TOOL_DBG_PRINT("Ok!\r\n");
+                            if (sndlen * step / total_size > percent) {
+                                percent = sndlen * step / total_size;
+                                wm_tool_printf("#");
+                            }
+                            if (sndlen % 10240 == 0) {
+                                // wm_tool_printf("#");
+                            }
+                        } else {
+                            WM_TOOL_DBG_PRINT("error = %x!\r\n", ack_id);
+                        }
+                    }
+                } else {
+                    ack_id = XMODEM_EOT;
 
-	                WM_TOOL_DBG_PRINT("waiting for complete ack ...\r\n");
+                    WM_TOOL_DBG_PRINT("waiting for complete ack ...\r\n");
 
-	                while (ack_id != XMODEM_ACK)
-	                {
-	                    ack_id = XMODEM_EOT;
+                    while (ack_id != XMODEM_ACK) {
+                        ack_id = XMODEM_EOT;
 
-	                    write_number = wm_tool_uart_write(&ack_id, 1);
-	                    if (write_number <= 0)
-	                        wm_tool_printf("write serial error, errno = %d.\r\n", errno);
+                        write_number = wm_tool_uart_write(&ack_id, 1);
+                        if (write_number <= 0)
+                            wm_tool_printf("write serial error, errno = %d.\r\n", errno);
 
-	                    while ((wm_tool_uart_read(&ack_id, 1)) <= 0);
-	                }
+                        while ((wm_tool_uart_read(&ack_id, 1)) <= 0);
+                    }
 
-					if(sndlen >= total_size)
-					{
-		                complete = 1;
+                    if (sndlen >= total_size) {
+                        complete = 1;
 
-		                WM_TOOL_DBG_PRINT("ok\r\n");
+                        WM_TOOL_DBG_PRINT("ok\r\n");
 
-	                wm_tool_printf("] 100%%\r\n");
+                        wm_tool_printf("] 100%%\r\n");
 
-		                wm_tool_printf("download completed.\r\n");
+                        wm_tool_printf("download completed.\r\n");
 
-		                ret = 0;
-					}
-					else
-					{
-						wm_tool_delay_ms(100);
-						wm_tool_uart_clear();
-					}
-	            }
-	            break;
+                        ret = 0;
+                    } else {
+                        wm_tool_delay_ms(100);
+                        wm_tool_uart_clear();
+                    }
+                }
+                break;
             }
             case XMODEM_NAK:
             {
-                if ( retry_num++ > 100)
-                {
+                if ( retry_num++ > 100) {
                     WM_TOOL_DBG_PRINT("retry too many times, quit!\r\n");
                     wm_tool_printf("download firmware timeout.\r\n");
 
                     complete = 1;
-                }
-                else
-                {
+                } else {
                     write_number = wm_tool_uart_write(frame_data, XMODEM_DATA_SIZE + 5);
                     if (write_number <= 0)
-	                    wm_tool_printf("write serial error, errno = %d.\r\n", errno);
+                        wm_tool_printf("write serial error, errno = %d.\r\n", errno);
 
                     WM_TOOL_DBG_PRINT("retry for ack, %d, %d ...\r\n", pack_counter, write_number);
 
                     while ((wm_tool_uart_read(&ack_id, 1)) <= 0);
 
-                    if (ack_id == XMODEM_ACK)
-                    {
-                    	WM_TOOL_DBG_PRINT("ok\r\n");
+                    if (ack_id == XMODEM_ACK) {
+                        WM_TOOL_DBG_PRINT("ok\r\n");
+                    } else {
+                        WM_TOOL_DBG_PRINT("error!\r\n");
                     }
-    				else
-    				{
-                    	WM_TOOL_DBG_PRINT("error!\r\n");
-    				}
                 }
                 break;
             }
@@ -4734,8 +4545,7 @@ static int wm_tool_download_firmware(void)
     wm_tool_printf("connecting serial...\r\n");
 
     ret = wm_tool_uart_open(wm_tool_serial_path);
-    if (ret)
-    {
+    if (ret) {
         wm_tool_printf("can not open serial\r\n");
         return ret;
     }
@@ -4745,14 +4555,12 @@ static int wm_tool_download_firmware(void)
 
     wm_tool_printf("serial connected.\r\n");
 
-    if (WM_TOOL_DL_ACTION_AT == wm_tool_dl_action)
-    {
+    if (WM_TOOL_DL_ACTION_AT == wm_tool_dl_action) {
         if (WM_TOOL_DEFAULT_BAUD_RATE != wm_tool_normal_serial_rate)
             wm_tool_uart_set_speed(wm_tool_normal_serial_rate);
 
 #if 0 /* use erase option */
-        if (WM_TOOL_DL_TYPE_FLS == wm_tool_dl_type)
-        {
+        if (WM_TOOL_DL_TYPE_FLS == wm_tool_dl_type) {
             ret = wm_tool_uart_write("AT+&FLSW=8002000,0\r\n", strlen("AT+&FLSW=8002000,0\r\n"));
             if (ret <= 0)
             {
@@ -4765,8 +4573,7 @@ static int wm_tool_download_firmware(void)
 #endif
 
         ret = wm_tool_uart_write("AT+Z\r\n", strlen("AT+Z\r\n"));
-        if (ret <= 0)
-        {
+        if (ret <= 0) {
             wm_tool_printf("reset error.\r\n");
             wm_tool_uart_close();
             return -4;
@@ -4774,18 +4581,15 @@ static int wm_tool_download_firmware(void)
 
         if (WM_TOOL_DEFAULT_BAUD_RATE != wm_tool_normal_serial_rate)
             wm_tool_uart_set_speed(WM_TOOL_DEFAULT_BAUD_RATE);
-    }
-    else if (WM_TOOL_DL_ACTION_RTS == wm_tool_dl_action)
-    {
+    } else if (WM_TOOL_DL_ACTION_RTS == wm_tool_dl_action) {
         ret  = wm_tool_uart_set_dtr(0);
         ret |= wm_tool_uart_set_rts(1);
         wm_tool_delay_ms(50);
         ret |= wm_tool_uart_set_dtr(1);
         ret |= wm_tool_uart_set_rts(0);
         wm_tool_delay_ms(50);
-		ret |= wm_tool_uart_set_dtr(0);
-		if (ret < 0)
-        {
+        ret |= wm_tool_uart_set_dtr(0);
+        if (ret < 0) {
             wm_tool_printf("set rts to reboot error.\r\n");
             wm_tool_uart_close();
             return -5;
@@ -4799,109 +4603,90 @@ static int wm_tool_download_firmware(void)
     start = time(NULL);
 
     do
-	{
-		ret = wm_tool_uart_read(&ch, 1);
+    {
+        ret = wm_tool_uart_read(&ch, 1);
 
-		WM_TOOL_DBG_PRINT("ret=%d, %x-%c\r\n", ret, ch, ch);
+        WM_TOOL_DBG_PRINT("ret=%d, %x-%c\r\n", ret, ch, ch);
 
-		if (ret > 0)
-	    {
-		    if (('C' == ch) || ('P' == ch))
-		        cnt++;
-		    else
-		        cnt = 0;
-		}
-		else
-		{
+        if (ret > 0) {
+            if (('C' == ch) || ('P' == ch))
+                cnt++;
+            else
+                cnt = 0;
+        } else {
             wm_tool_send_esc2uart(30);
-		}
+        }
 
-		end = time(NULL);
-		timeuse = difftime(end, start);
-		if (timeuse >= 1)
-		{
-		    wm_tool_printf(".");
+        end = time(NULL);
+        timeuse = difftime(end, start);
+        if (timeuse >= 1) {
+            wm_tool_printf(".");
 
             timeout++;
-            if ((timeout >= (WM_TOOL_DOWNLOAD_TIMEOUT_SEC / 10)) && note)
-            {
+            if ((timeout >= (WM_TOOL_DOWNLOAD_TIMEOUT_SEC / 10)) && note){
                 wm_tool_printf("\r\nplease manually reset the device.\r\n");
                 note = 0;
-            }
-            else if (timeout > WM_TOOL_DOWNLOAD_TIMEOUT_SEC)
-            {
+            } else if (timeout > WM_TOOL_DOWNLOAD_TIMEOUT_SEC) {
                 wm_tool_uart_close();
                 wm_tool_printf("\r\nserial sync timeout.\r\n");
-        		return -6;
+                return -6;
             }
 
-		    start = time(NULL);
-		}
-	} while (cnt < 3);
+            start = time(NULL);
+        }
+    } while (cnt < 3);
 
-	wm_tool_printf("\r\nserial sync sucess.\r\n");
+    wm_tool_printf("\r\nserial sync sucess.\r\n");
 
-	ret = wm_tool_query_mac();
-	if (ret)
-    {
+    ret = wm_tool_query_mac();
+    if (ret) {
         wm_tool_uart_close();
         wm_tool_printf("download failed.\r\n");
         return ret;
     }
 
-	if (WM_TOOL_DL_ERASE_ALL == wm_tool_dl_erase)
-	{
+    if (WM_TOOL_DL_ERASE_ALL == wm_tool_dl_erase) {
         ret = wm_tool_erase_image(WM_TOOL_DL_ERASE_ALL);
-        if (ret)
-        {
+        if (ret) {
             wm_tool_uart_close();
             wm_tool_printf("failed to erase.\r\n");
             return ret;
         }
-	}
+    }
 
-    if (!wm_tool_download_image && wm_tool_dl_erase)
-    {
+    if (!wm_tool_download_image && wm_tool_dl_erase) {
         return 0;
     }
 
-    if (WM_TOOL_DEFAULT_BAUD_RATE != wm_tool_download_serial_rate)
-    {
+    if (WM_TOOL_DEFAULT_BAUD_RATE != wm_tool_download_serial_rate) {
         ret = wm_tool_set_wifi_chip_speed(wm_tool_download_serial_rate);
-    	if (ret > 0)
-    	{
-    		wm_tool_delay_ms(1 * 1000);
-    		wm_tool_uart_set_speed(wm_tool_download_serial_rate);
-    	}
-	}
+        if (ret > 0) {
+            wm_tool_delay_ms(1 * 1000);
+            wm_tool_uart_set_speed(wm_tool_download_serial_rate);
+        }
+    }
 
     ret = wm_tool_xmodem_download(wm_tool_download_image);
 
-    if (WM_TOOL_DEFAULT_BAUD_RATE != wm_tool_download_serial_rate)
-    {
+    if (WM_TOOL_DEFAULT_BAUD_RATE != wm_tool_download_serial_rate) {
         wm_tool_delay_ms(1 * 1000);
-		wm_tool_set_wifi_chip_speed(WM_TOOL_DEFAULT_BAUD_RATE);
-		wm_tool_delay_ms(1 * 1000);
+        wm_tool_set_wifi_chip_speed(WM_TOOL_DEFAULT_BAUD_RATE);
+        wm_tool_delay_ms(1 * 1000);
     }
 
-    if (!ret)
-    {
-        if (WM_TOOL_DL_TYPE_FLS == wm_tool_dl_type)
-        {
-            if (WM_TOOL_DL_ACTION_RTS == wm_tool_dl_action)/* auto reset */
-            {
+    if (!ret) {
+        if (WM_TOOL_DL_TYPE_FLS == wm_tool_dl_type) {
+            if (WM_TOOL_DL_ACTION_RTS == wm_tool_dl_action)/* auto reset */ {
                 wm_tool_uart_set_dtr(0);
                 wm_tool_uart_set_rts(1);
                 wm_tool_delay_ms(50);
                 wm_tool_uart_set_dtr(1);
                 wm_tool_uart_set_rts(0);
                 wm_tool_delay_ms(50);
-        		wm_tool_uart_set_dtr(0);
-    		}
-    		else
-    		{
+                wm_tool_uart_set_dtr(0);
+            } else {
                 wm_tool_printf("please manually reset the device.\r\n");
-    		}
+            }
         }
     }
 
@@ -4924,70 +4709,63 @@ static void wm_tool_show_local_com(void)
 #if defined(__APPLE__) || defined(__MACH__) || defined(__CYGWIN__) || defined(__linux__)
 
     DIR *dir;
-	struct dirent *file;
+    struct dirent *file;
 
-	dir = opendir("/dev");
+    dir = opendir("/dev");
 
-	if (dir)
-	{
-		while (NULL != (file = readdir(dir)))
-		{
+    if (dir) {
+        while (NULL != (file = readdir(dir))) {
 
-			if ((0 == strncmp(file->d_name, comstr, strlen(comstr))) && (DT_CHR == file->d_type))
-			{
+            if ((0 == strncmp(file->d_name, comstr, strlen(comstr))) && (DT_CHR == file->d_type)) {
 #if defined(__CYGWIN__)
                 num = atoi(file->d_name + strlen(comstr));
-	        	wm_tool_printf("COM%d ", num + 1);
+                wm_tool_printf("COM%d ", num + 1);
 #else
                 wm_tool_printf("%s ", file->d_name);
 #endif
-			}
-		}
-		closedir(dir);
-		wm_tool_printf("\r\n");
-	}
+            }
+        }
+        closedir(dir);
+        wm_tool_printf("\r\n");
+    }
 
 #elif defined(__MINGW32__)
 
     LONG ret;
     HKEY key;
-	DWORD i = 0;
-	DWORD knlen;
+    DWORD i = 0;
+    DWORD knlen;
     char kname[WM_TOOL_PATH_MAX] = {0};
-	DWORD kvlen;
+    DWORD kvlen;
     char kvalue[WM_TOOL_PATH_MAX] = {0};
     REGSAM kmask = KEY_READ;
 
 #if defined(KEY_WOW64_64KEY)
     BOOL is_64;
 
-    if (IsWow64Process(GetCurrentProcess(), &is_64))
-    {
+    if (IsWow64Process(GetCurrentProcess(), &is_64)) {
         if (is_64)
             kmask |= KEY_WOW64_64KEY;
     }
 #endif
 
     ret = RegCreateKeyEx(HKEY_LOCAL_MACHINE, TEXT("HARDWARE\\DEVICEMAP\\SERIALCOMM"), 0, NULL, 0, kmask, NULL, &key, NULL);
-    if (ret != ERROR_SUCCESS)
-    {
+    if (ret != ERROR_SUCCESS) {
         return;
     }
 
-	do{
-	    knlen = sizeof(kname);
-	    kvlen = sizeof(kvalue);
-		ret = RegEnumValue(key, i, kname, &knlen, 0, NULL, (LPBYTE)kvalue, &kvlen);
-		if (ret == ERROR_SUCCESS)
-		{
-            if (strcmp(kvalue, "") != 0)
-            {
-    			wm_tool_printf("%s ", kvalue);
-		    }
-		}
+    do {
+        knlen = sizeof(kname);
+        kvlen = sizeof(kvalue);
+        ret = RegEnumValue(key, i, kname, &knlen, 0, NULL, (LPBYTE)kvalue, &kvlen);
+        if (ret == ERROR_SUCCESS) {
+            if (strcmp(kvalue, "") != 0) {
+                wm_tool_printf("%s ", kvalue);
+            }
+        }
 
-		i++;
-	} while (ret != ERROR_NO_MORE_ITEMS);
+        i++;
+    } while (ret != ERROR_NO_MORE_ITEMS);
 
     RegCloseKey(key);
 
@@ -5022,47 +4800,40 @@ int main(int argc, char *argv[])
 {
     int ret = 0;
 
-    if (!wm_tool_parse_arv(argc, argv))
-    {
+    if (!wm_tool_parse_arv(argc, argv)) {
         wm_tool_print_usage(argv[0]);
         wm_tool_free_res();
         return 0;
     }
 
-    if (wm_tool_show_usage)
-    {
+    if (wm_tool_show_usage) {
         wm_tool_print_usage(argv[0]);
         wm_tool_free_res();
         return 0;
     }
 
-    if (wm_tool_show_ver)
-    {
+    if (wm_tool_show_ver) {
         wm_tool_print_version(argv[0]);
         wm_tool_free_res();
         return 0;
     }
 
-    if (wm_tool_list_com)
-    {
+    if (wm_tool_list_com) {
         wm_tool_show_local_com();
         wm_tool_free_res();
         return 0;
     }
 
-    if (wm_tool_input_binary)
-    {
+    if (wm_tool_input_binary) {
         ret = wm_tool_pack_firmware();
     }
 
-    if (wm_tool_download_image || wm_tool_dl_erase)
-    {
+    if (wm_tool_download_image || wm_tool_dl_erase) {
         ret = wm_tool_download_firmware();
     }
 
-    if (wm_tool_show_log_type)
-    {
-        //ret = wm_tool_show_log_from_serial();
+    if (wm_tool_show_log_type) {
+        // ret = wm_tool_show_log_from_serial();
     }
 
     if (ret > 0)

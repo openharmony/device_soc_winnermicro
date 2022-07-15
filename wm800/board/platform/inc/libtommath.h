@@ -28,12 +28,12 @@ typedef signed short int16;
 
 #define BN_MP_INVMOD_C
 #define BN_S_MP_EXPTMOD_C /* Note: #undef in tommath_superclass.h; this would
-			   * require BN_MP_EXPTMOD_FAST_C instead */
+               * require BN_MP_EXPTMOD_FAST_C instead */
 #define BN_S_MP_MUL_DIGS_C
 #define BN_MP_INVMOD_SLOW_C
 #define BN_S_MP_SQR_C
 #define BN_S_MP_MUL_HIGH_DIGS_C /* Note: #undef in tommath_superclass.h; this
-				 * would require other than mp_reduce */
+                 * would require other than mp_reduce */
 
 #ifdef LTM_FAST
 
@@ -74,14 +74,13 @@ typedef signed short int16;
 
 #define  OPT_CAST(x)
 
-typedef unsigned int	 mp_digit;
-//typedef u64 mp_word;
+typedef unsigned int     mp_digit;
+// typedef u64 mp_word;
 typedef unsigned long long mp_word;
 
 #define XMALLOC  tls_mem_alloc
 #define XFREE    tls_mem_free
 #define XREALLOC os_realloc
-
 
 #define MP_MASK          ((((mp_digit)1)<<((mp_digit)DIGIT_BIT))-((mp_digit)1))
 
@@ -121,7 +120,6 @@ typedef struct  {
     int16 used, alloc, sign;
     mp_digit *dp;
 } mp_int;
-
 
 /* ---> Basic Manipulations <--- */
 #define mp_iszero(a) (((a)->used == 0) ? MP_YES : MP_NO)
@@ -203,5 +201,5 @@ int mp_montgomery_calc_normalization (mp_int * a, mp_int * b);
 int fast_mp_montgomery_reduce (mp_int * x, mp_int * n, mp_digit rho);
 #endif
 
-#endif //__LIBTOMMATH_H__
+#endif // __LIBTOMMATH_H__
 

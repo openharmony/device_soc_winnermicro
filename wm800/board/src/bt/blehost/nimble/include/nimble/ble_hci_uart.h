@@ -27,7 +27,6 @@ extern "C" {
 extern int ble_hci_vuart_init(uint8_t uart_idx);
 extern int ble_hci_vuart_deinit(void);
 
-
 #ifdef __cplusplus
 }
 #endif

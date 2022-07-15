@@ -406,7 +406,6 @@ typedef union {
 
 /*@} end of group CSI_CORE */
 
-
 /**
   \ingroup    CSI_core_register
   \defgroup   CSI_VIC Vectored Interrupt Controller (VIC)
@@ -541,7 +540,6 @@ typedef struct
 
 /*@} end of group CSI_CACHE */
 
-
 /**
   \ingroup  CSI_core_register
   \defgroup CSI_SysTick     System Tick Timer (CORET)
@@ -674,7 +672,6 @@ typedef struct {
 
 /*@} */
 
-
 /*******************************************************************************
  *                Hardware Abstraction Layer
   Core Function Interface contains:
@@ -704,7 +701,6 @@ extern uint32_t irq_vectors[];
 
 /*Forward declaration*/
 __STATIC_INLINE void csi_icache_invalid (void);
-
 
 /**
   \brief   Enable External Interrupt
@@ -912,7 +908,6 @@ __STATIC_INLINE uint32_t csi_vic_get_prio(int32_t IRQn)
     return ((uint32_t)(((VIC->IPR[_IP_IDX(IRQn)] >> _BIT_SHIFT(IRQn)) & (uint32_t)0xFFUL) >> (8U - __VIC_PRIO_BITS)));
 }
 
-
 /**
   \brief   Set interrupt handler
   \details Set the interrupt handler according to the interrupt num, the handler will be filled in __Vectors[].
@@ -921,7 +916,7 @@ __STATIC_INLINE uint32_t csi_vic_get_prio(int32_t IRQn)
  */
 __STATIC_INLINE void csi_vic_set_vector(int32_t IRQn, uint32_t handler)
 {
-	OsSetVector(IRQn, handler);
+    OsSetVector(IRQn, handler);
 
     csi_icache_invalid();
 }
@@ -949,7 +944,6 @@ __STATIC_INLINE uint32_t csi_vic_get_vector(int32_t IRQn)
   \brief    Functions that configure the System.
   @{
  */
-
 
 /**
   \brief   CORE timer Configuration
@@ -1020,7 +1014,6 @@ __STATIC_INLINE uint32_t csi_had_send_char(uint32_t ch)
     return (ch);
 }
 
-
 /**
   \brief   HAD Receive Character
   \details Inputs a character via the external variable \ref HAD_RxBuffer.
@@ -1037,7 +1030,6 @@ __STATIC_INLINE int32_t csi_had_receive_char(void)
 
     return (ch);
 }
-
 
 /**
   \brief   HAD Check Character
@@ -1072,7 +1064,6 @@ __STATIC_INLINE void csi_icache_enable (void)
 #endif
 }
 
-
 /**
   \brief   Disable I-Cache
   \details Turns off I-Cache
@@ -1085,7 +1076,6 @@ __STATIC_INLINE void csi_icache_disable (void)
 #endif
 }
 
-
 /**
   \brief   Invalidate I-Cache
   \details Invalidates I-Cache
@@ -1096,7 +1086,6 @@ __STATIC_INLINE void csi_icache_invalid (void)
     CACHE->CIR = CACHE_CIR_INV_ALL_Msk;         /* invalidate all Cache */
 #endif
 }
-
 
 /**
   \brief   Enable D-Cache
@@ -1111,7 +1100,6 @@ __STATIC_INLINE void csi_dcache_enable (void)
 #endif
 }
 
-
 /**
   \brief   Disable D-Cache
   \details Turns off D-Cache
@@ -1125,7 +1113,6 @@ __STATIC_INLINE void csi_dcache_disable (void)
 #endif
 }
 
-
 /**
   \brief   Invalidate D-Cache
   \details Invalidates D-Cache
@@ -1137,7 +1124,6 @@ __STATIC_INLINE void csi_dcache_invalid (void)
     CACHE->CIR = CACHE_CIR_INV_ALL_Msk;         /* invalidate all Cache */
 #endif
 }
-
 
 /**
   \brief   Clean D-Cache
@@ -1151,7 +1137,6 @@ __STATIC_INLINE void csi_dcache_clean (void)
 #endif
 }
 
-
 /**
   \brief   Clean & Invalidate D-Cache
   \details Cleans and Invalidates D-Cache
@@ -1163,7 +1148,6 @@ __STATIC_INLINE void csi_dcache_clean_invalid (void)
     CACHE->CIR = _VAL2FLD(CACHE_CIR_INV_ALL, 1) | _VAL2FLD(CACHE_CIR_CLR_ALL, 1);         /* clean and inv all Cache */
 #endif
 }
-
 
 /**
   \brief   D-Cache Invalidate by address
@@ -1209,7 +1193,6 @@ __STATIC_INLINE void csi_dcache_invalid_range (uint32_t *addr, int32_t dsize)
 #endif
 }
 
-
 /**
   \brief   D-Cache Clean by address
   \details Cleans D-Cache for the given address
@@ -1253,7 +1236,6 @@ __STATIC_INLINE void csi_dcache_clean_range (uint32_t *addr, int32_t dsize)
     }
 #endif
 }
-
 
 /**
   \brief   D-Cache Clean and Invalidate by address
@@ -1306,7 +1288,7 @@ __STATIC_INLINE void csi_dcache_clean_invalid_range (uint32_t *addr, int32_t dsi
 __STATIC_INLINE void csi_cache_set_range (uint32_t index, uint32_t baseAddr, uint32_t se, uint32_t size, uint32_t enable)
 {
     CACHE->CRCR[index] =  ((baseAddr & CACHE_CRCR_BASE_ADDR_Msk) |
-           				   (_VAL2FLD(CACHE_CRCR_SE, se)) |
+                           (_VAL2FLD(CACHE_CRCR_SE, se)) |
                            (_VAL2FLD(CACHE_CRCR_SIZE, size)) |
                            (_VAL2FLD(CACHE_CRCR_EN, enable)));
 }
@@ -1499,7 +1481,6 @@ __STATIC_INLINE void csi_mpu_disable_region(uint32_t idx)
 }
 
 /*@} end of CSI_Core_MMUFunctions */
-
 
 /* ##################################    IRQ Functions  ############################################ */
 

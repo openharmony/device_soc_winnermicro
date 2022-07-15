@@ -36,5 +36,4 @@ extern void ble_server_retrieve_id_by_service_id(uint16_t svc_handle, uint16_t *
 extern void ble_server_retrieve_id_by_uuid(ble_uuid_t *uuid, uint16_t *server_id);
 extern void ble_server_retrieve_service_handle_by_server_id(uint16_t server_id, uint16_t *service_handle);
 
-
 #endif

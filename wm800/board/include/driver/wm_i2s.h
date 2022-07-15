@@ -19,50 +19,48 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-	
+
 #include <stdbool.h>
-//#include "wm_regs_cm3.h"
+// #include "wm_regs_cm3.h"
 #include "wm_regs.h"
 #include "wm_debug.h"
 #include "wm_dma.h"
 
-
 typedef void (*tls_i2s_callback)(uint32_t *data, uint16_t *len);
 
 typedef struct {
-	__IO uint32_t CTRL;
-	__IO uint32_t INT_MASK;
-	__IO uint32_t INT_SRC;
-	__I  uint32_t INT_STATUS;
-	__O  uint32_t TX;
-	__I	 uint32_t RX;
+    __IO uint32_t CTRL;
+    __IO uint32_t INT_MASK;
+    __IO uint32_t INT_SRC;
+    __I  uint32_t INT_STATUS;
+    __O  uint32_t TX;
+    __I uint32_t RX;
 } I2S_T;
 
-
 typedef struct {
-	uint32_t I2S_Mode_MS; //master or slave mode
-	uint32_t I2S_Mode_SS; //stereo or single channel
-	uint32_t I2S_Mode_LR; //left or right channel
-	uint32_t I2S_Trans_STD;
-	uint32_t I2S_DataFormat;
-	uint32_t I2S_AudioFreq;
-	uint32_t I2S_MclkFreq;
+    uint32_t I2S_Mode_MS; // master or slave mode
+    uint32_t I2S_Mode_SS; // stereo or single channel
+    uint32_t I2S_Mode_LR; // left or right channel
+    uint32_t I2S_Trans_STD;
+    uint32_t I2S_DataFormat;
+    uint32_t I2S_AudioFreq;
+    uint32_t I2S_MclkFreq;
 } I2S_InitDef;
 
 typedef struct _wm_dma_desc
 {
-	unsigned int valid;
-	unsigned int dma_ctrl;
-	unsigned int src_addr;
-	unsigned int dest_addr;
-	struct _wm_dma_desc * next;
+    unsigned int valid;
+    unsigned int dma_ctrl;
+    unsigned int src_addr;
+    unsigned int dest_addr;
+    struct _wm_dma_desc * next;
 }wm_dma_desc;
 
 typedef struct _dma_handler_type
 {
-	uint8_t channel;
-	void    (* XferCpltCallback)( struct _dma_handler_type * hdma);         /*!< DMA transfer complete callback         */
-	void    (* XferHalfCpltCallback)( struct _dma_handler_type * hdma);     /*!< DMA Half transfer complete callback    */
+    uint8_t channel;
+    void    (* XferCpltCallback)( struct _dma_handler_type * hdma);         /*!< DMA transfer complete callback         */
+    void    (* XferHalfCpltCallback)( struct _dma_handler_type * hdma);     /*!< DMA Half transfer complete callback    */
 }wm_dma_handler_type;
 
 #define I2S			            ((I2S_T *)HR_I2S_REG_BASE)
@@ -129,19 +127,18 @@ typedef struct _dma_handler_type
 #define WM_I2S_TX_DMA_CHANNEL       (1)
 #define WM_I2S_RX_DMA_CHANNEL       (5)
 
-
 typedef struct wm_i2s_buf_s {
-	volatile uint32_t *txbuf;
-	volatile uint32_t txlen;
-	volatile uint32_t txtail;
-	volatile uint32_t *rxbuf;
-	volatile uint32_t rxlen;
-	volatile uint32_t int_txlen;
-	volatile uint32_t rxhead;
-	volatile uint8_t rxdata_ready;
-	volatile uint8_t txdata_done;
+    volatile uint32_t *txbuf;
+    volatile uint32_t txlen;
+    volatile uint32_t txtail;
+    volatile uint32_t *rxbuf;
+    volatile uint32_t rxlen;
+    volatile uint32_t int_txlen;
+    volatile uint32_t rxhead;
+    volatile uint8_t rxdata_ready;
+    volatile uint8_t txdata_done;
 
-	/** function pointer for data receiver  */
+    /** function pointer for data receiver  */
     void (*rx_callback)(void);
     /** function pointer for data transmit  */
     void (*tx_callback)(uint32_t *data, uint16_t *len);
@@ -306,7 +303,6 @@ int wm_i2s_receive_dma(wm_dma_handler_type *hdma, uint16_t *data, uint16_t len);
 /**
  * @}
  */
-
 
 #ifdef __cplusplus 
 }

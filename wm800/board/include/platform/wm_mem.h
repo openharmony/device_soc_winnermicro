@@ -27,16 +27,15 @@
 * Date : 2014-6-12 
 *****************************************************************************/ 
 
-
 #ifndef WM_MEM_H
 #define WM_MEM_H
 
 #include "csi_config.h"
 #include "wm_type_def.h"
 
-#if 1//for doxygen
-//#ifdef CONFIG_KERNEL_FREERTOS
-//#define WM_MEM_DEBUG 1
+#if 1// for doxygen
+// #ifdef CONFIG_KERNEL_FREERTOS
+// #define WM_MEM_DEBUG 1
 #if WM_MEM_DEBUG
 
 #include "list.h"
@@ -49,10 +48,10 @@ extern u32 alloc_heap_mem_bytes;
 extern u32 alloc_heap_mem_blk_cnt;
 extern u32 alloc_heap_mem_max_size;
 
-//
+// 
 // Note: it's important that the size of MP_MEMORY_BLOCK structure
 //       be multiple of 16 bytes.
-//
+// 
 typedef struct _MEMORY_BLOCK {
 
     struct dl_list  list;    /**< Pointer to next and previous blocks */
@@ -64,9 +63,9 @@ typedef struct _MEMORY_BLOCK {
 } MEMORY_BLOCK, *PMEMORY_BLOCK;
 typedef struct _MEMORY_PATTERN{
     u32 pattern0;
-    //u32 pattern1;
-    //u32 pattern2;
-    //u32 pattern3;
+    // u32 pattern1;
+    // u32 pattern2;
+    // u32 pattern3;
 }MEMORY_PATTERN, *PMEMORY_PATTERN;
 void mem_free_debug(void *p, char* file, int line);
 #define tls_mem_free(p)   mem_free_debug( p, __FILE__, __LINE__)
@@ -86,12 +85,12 @@ int  is_safe_addr_debug(void* p, u32 len, char* file, int line);
 #define SMEMCPY MEMCPY
 #else
 #define MEMCPY(dst,src,len)             do { \
-	if(tls_is_safe_addr(dst, len)){ \
-	memcpy(dst,src,len);}}while(0)
+    if (tls_is_safe_addr(dst, len)){ \
+    memcpy(dst,src,len);}}while(0)
 
 #define SMEMCPY(dst,src,len)            do { \
-	if(tls_is_safe_addr(dst, len)){ \
-	memcpy(dst,src,len);}}while(0)
+    if (tls_is_safe_addr(dst, len)){ \
+    memcpy(dst,src,len);}}while(0)
 #endif
 #else /* WM_MEM_DEBUG */
 
@@ -146,7 +145,7 @@ void *mem_calloc_debug(u32 length, u32 size);
 /**
  * @brief          This function is used to realloc memory
  *
- * @param      	   None
+ * @param             None
  *
  * @retval         NULL    realloc failed
  * @retval         Pointer pointer to the address of the allocated memory
@@ -158,7 +157,7 @@ void *mem_calloc_debug(u32 length, u32 size);
 /**
  * @brief          This function is used to calloc memory
  *
- * @param      	   None
+ * @param             None
  *
  * @retval         NULL    realloc failed
  * @retval         Pointer pointer to the address of the allocated memory
@@ -179,7 +178,7 @@ void *mem_calloc_debug(u32 length, u32 size);
  * @note           None
  */
 #define MEMCPY(dst,src,len)      memcpy(dst,src,len)
-//#define MEMCPY(dst,src,len)      do{extern void delay_cnt(int count); delay_cnt(10); memcpy(dst,src,len); delay_cnt(100); }while(0)
+// #define MEMCPY(dst,src,len)      do{extern void delay_cnt(int count); delay_cnt(10); memcpy(dst,src,len); delay_cnt(100); }while(0)
 
 /**
  * @brief          This function is used to copy memory content from one address to another address

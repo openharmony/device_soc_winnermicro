@@ -24,13 +24,13 @@ static void gen_onoff_status(struct bt_mesh_model *model,
     bt_mesh_model_msg_init(msg, OP_GEN_ONOFF_STATUS);
     state = net_buf_simple_add(msg, 1);
 
-    if(cb && cb->get) {
+    if (cb && cb->get) {
         cb->get(model, state);
     }
 
     BT_DBG("state: %d", *state);
 
-    if(bt_mesh_model_send(model, ctx, msg, NULL, NULL)) {
+    if (bt_mesh_model_send(model, ctx, msg, NULL, NULL)) {
         BT_ERR("Send status failed");
     }
 
@@ -54,7 +54,7 @@ static void gen_onoff_set_unack(struct bt_mesh_model *model,
     state = buf->om_data[0];
     BT_DBG("state: %d", state);
 
-    if(cb && cb->set) {
+    if (cb && cb->set) {
         cb->set(model, state);
     }
 }
@@ -77,13 +77,13 @@ static void gen_level_status(struct bt_mesh_model *model,
     bt_mesh_model_msg_init(msg, OP_GEN_LEVEL_STATUS);
     level = net_buf_simple_add(msg, 2);
 
-    if(cb && cb->get) {
+    if (cb && cb->get) {
         cb->get(model, level);
     }
 
     BT_DBG("level: %d", *level);
 
-    if(bt_mesh_model_send(model, ctx, msg, NULL, NULL)) {
+    if (bt_mesh_model_send(model, ctx, msg, NULL, NULL)) {
         BT_ERR("Send status failed");
     }
 
@@ -107,7 +107,7 @@ static void gen_level_set_unack(struct bt_mesh_model *model,
     level = (s16_t) net_buf_simple_pull_le16(buf);
     BT_DBG("level: %d", level);
 
-    if(cb && cb->set) {
+    if (cb && cb->set) {
         cb->set(model, level);
     }
 }
@@ -129,13 +129,13 @@ static void light_lightness_status(struct bt_mesh_model *model,
     bt_mesh_model_msg_init(msg, OP_LIGHT_LIGHTNESS_STATUS);
     lightness = net_buf_simple_add(msg, 2);
 
-    if(cb && cb->get) {
+    if (cb && cb->get) {
         cb->get(model, lightness);
     }
 
     BT_DBG("lightness: %d", *lightness);
 
-    if(bt_mesh_model_send(model, ctx, msg, NULL, NULL)) {
+    if (bt_mesh_model_send(model, ctx, msg, NULL, NULL)) {
         BT_ERR("Send status failed");
     }
 
@@ -159,7 +159,7 @@ static void light_lightness_set_unack(struct bt_mesh_model *model,
     lightness = (s16_t) net_buf_simple_pull_le16(buf);
     BT_DBG("lightness: %d", lightness);
 
-    if(cb && cb->set) {
+    if (cb && cb->set) {
         cb->set(model, lightness);
     }
 }
@@ -198,7 +198,7 @@ static int onoff_srv_init(struct bt_mesh_model *model)
     struct bt_mesh_gen_onoff_srv *cfg = model->user_data;
     BT_DBG("");
 
-    if(!cfg) {
+    if (!cfg) {
         BT_ERR("No Generic OnOff Server context provided");
         return -EINVAL;
     }
@@ -217,7 +217,7 @@ static int level_srv_init(struct bt_mesh_model *model)
     struct bt_mesh_gen_level_srv *cfg = model->user_data;
     BT_DBG("");
 
-    if(!cfg) {
+    if (!cfg) {
         BT_ERR("No Generic Level Server context provided");
         return -EINVAL;
     }
@@ -236,7 +236,7 @@ static int lightness_srv_init(struct bt_mesh_model *model)
     struct bt_mesh_light_lightness_srv *cfg = model->user_data;
     BT_DBG("");
 
-    if(!cfg) {
+    if (!cfg) {
         BT_ERR("No Light Lightness Server context provided");
         return -EINVAL;
     }
