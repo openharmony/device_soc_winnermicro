@@ -41,7 +41,6 @@ struct os_mbuf;
                        (addr)[5], (addr)[4], (addr)[3], \
                        (addr)[2], (addr)[1], (addr)[0])
 
-
 void ble_hs_log_mbuf(const struct os_mbuf *om);
 void ble_hs_log_flat_buf(const void *data, int len);
 

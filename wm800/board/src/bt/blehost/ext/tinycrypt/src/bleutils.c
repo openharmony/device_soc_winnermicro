@@ -40,7 +40,7 @@
 unsigned int _copy(uint8_t *to, unsigned int to_len,
                    const uint8_t *from, unsigned int from_len)
 {
-    if(from_len <= to_len) {
+    if (from_len <= to_len) {
         (void)memcpy(to, from, from_len);
         return from_len;
     } else {

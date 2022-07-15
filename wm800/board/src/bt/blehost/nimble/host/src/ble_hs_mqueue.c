@@ -36,13 +36,13 @@ ble_mqueue_get(struct ble_mqueue *mq)
     OS_ENTER_CRITICAL(sr);
     mp = STAILQ_FIRST(&mq->head);
 
-    if(mp) {
+    if (mp) {
         STAILQ_REMOVE_HEAD(&mq->head, omp_next);
     }
 
     OS_EXIT_CRITICAL(sr);
 
-    if(mp) {
+    if (mp) {
         om = OS_MBUF_PKTHDR_TO_MBUF(mp);
     } else {
         om = NULL;
@@ -59,7 +59,7 @@ ble_mqueue_put(struct ble_mqueue *mq, struct ble_npl_eventq *evq, struct os_mbuf
     int rc;
 
     /* Can only place the head of a chained mbuf on the queue. */
-    if(!OS_MBUF_IS_PKTHDR(om)) {
+    if (!OS_MBUF_IS_PKTHDR(om)) {
         rc = OS_EINVAL;
         goto err;
     }
@@ -70,7 +70,7 @@ ble_mqueue_put(struct ble_mqueue *mq, struct ble_npl_eventq *evq, struct os_mbuf
     OS_EXIT_CRITICAL(sr);
 
     /* Only post an event to the queue if its specified */
-    if(evq) {
+    if (evq) {
         ble_npl_eventq_put(evq, &mq->ev);
     }
 

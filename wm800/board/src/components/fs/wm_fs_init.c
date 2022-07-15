@@ -67,7 +67,7 @@ static uint32_t FsGetResource(struct fs_cfg *fs, const struct DeviceResourceNode
 
 static int32_t FsDriverInit(struct HdfDeviceObject *object)
 {
-	int ret = HDF_FAILURE;
+    int ret = HDF_FAILURE;
     if (object == NULL) {
         return HDF_FAILURE;
     }
@@ -92,17 +92,16 @@ static int32_t FsDriverInit(struct HdfDeviceObject *object)
         fs[i].lfs_cfg.lookahead_size = 16;
         fs[i].lfs_cfg.block_cycles = 1000;
 
-
         ret = mount(NULL, fs[i].mount_point, "littlefs", 0, &fs[i].lfs_cfg);
-		if(!ret)
-		{
-			ret = mkdir(fs[i].mount_point, S_IRUSR | S_IWUSR | S_IXUSR);
-			HDF_LOGI("%s: mkdir %s %s\n", __func__, fs[i].mount_point, (ret == 0) ? "succeed" : "failed");
-		}
-		if(ret)
-		{
-			break;
-		}
+        if (!ret)
+        {
+            ret = mkdir(fs[i].mount_point, S_IRUSR | S_IWUSR | S_IXUSR);
+            HDF_LOGI("%s: mkdir %s %s\n", __func__, fs[i].mount_point, (ret == 0) ? "succeed" : "failed");
+        }
+        if (ret)
+        {
+            break;
+        }
     }
     HDF_LOGI("%s: mount littlefs %s\n", __func__, (ret == 0) ? "succeed" : "failed");
     return (ret == 0) ? HDF_SUCCESS : HDF_FAILURE;

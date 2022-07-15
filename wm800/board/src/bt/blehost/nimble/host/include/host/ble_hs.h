@@ -186,7 +186,6 @@ typedef void ble_hs_reset_fn(int reason);
  */
 typedef void ble_hs_shutdown_fn(int status);
 
-
 /** @brief Stack sync callback */
 typedef void ble_hs_sync_fn(void);
 
@@ -384,7 +383,6 @@ void ble_hs_evq_set(struct ble_npl_eventq *evq);
  */
 void ble_hs_init(void);
 void ble_hs_deinit(void);
-
 
 /**
  * @brief Called when the system is shutting down.  Stops the BLE host.

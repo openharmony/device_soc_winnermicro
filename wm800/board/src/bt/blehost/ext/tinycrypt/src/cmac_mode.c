@@ -86,7 +86,7 @@ void gf_double(uint8_t *out, uint8_t *in)
     for(;;) {
         *out-- = (*x << 1) ^ carry;
 
-        if(x == in) {
+        if (x == in) {
             break;
         }
 
@@ -97,7 +97,7 @@ void gf_double(uint8_t *out, uint8_t *in)
 int tc_cmac_setup(TCCmacState_t s, const uint8_t *key, TCAesKeySched_t sched)
 {
     /* input sanity check: */
-    if(s == (TCCmacState_t) 0 ||
+    if (s == (TCCmacState_t) 0 ||
             key == (const uint8_t *) 0) {
         return TC_CRYPTO_FAIL;
     }
@@ -119,7 +119,7 @@ int tc_cmac_setup(TCCmacState_t s, const uint8_t *key, TCAesKeySched_t sched)
 
 int tc_cmac_erase(TCCmacState_t s)
 {
-    if(s == (TCCmacState_t) 0) {
+    if (s == (TCCmacState_t) 0) {
         return TC_CRYPTO_FAIL;
     }
 
@@ -131,7 +131,7 @@ int tc_cmac_erase(TCCmacState_t s)
 int tc_cmac_init(TCCmacState_t s)
 {
     /* input sanity check: */
-    if(s == (TCCmacState_t) 0) {
+    if (s == (TCCmacState_t) 0) {
         return TC_CRYPTO_FAIL;
     }
 
@@ -150,29 +150,29 @@ int tc_cmac_update(TCCmacState_t s, const uint8_t *data, size_t data_length)
     unsigned int i;
 
     /* input sanity check: */
-    if(s == (TCCmacState_t) 0) {
+    if (s == (TCCmacState_t) 0) {
         return TC_CRYPTO_FAIL;
     }
 
-    if(data_length == 0) {
+    if (data_length == 0) {
         return  TC_CRYPTO_SUCCESS;
     }
 
-    if(data == (const uint8_t *) 0) {
+    if (data == (const uint8_t *) 0) {
         return TC_CRYPTO_FAIL;
     }
 
-    if(s->countdown == 0) {
+    if (s->countdown == 0) {
         return TC_CRYPTO_FAIL;
     }
 
     s->countdown--;
 
-    if(s->leftover_offset > 0) {
+    if (s->leftover_offset > 0) {
         /* last data added to s didn't end on a TC_AES_BLOCK_SIZE byte boundary */
         size_t remaining_space = TC_AES_BLOCK_SIZE - s->leftover_offset;
 
-        if(data_length < remaining_space) {
+        if (data_length < remaining_space) {
             /* still not enough data to encrypt this time either */
             _copy(&s->leftover[s->leftover_offset], data_length, data, data_length);
             s->leftover_offset += data_length;
@@ -206,7 +206,7 @@ int tc_cmac_update(TCCmacState_t s, const uint8_t *data, size_t data_length)
         data_length  -= TC_AES_BLOCK_SIZE;
     }
 
-    if(data_length > 0) {
+    if (data_length > 0) {
         /* save leftover data for next time */
         _copy(s->leftover, data_length, data, data_length);
         s->leftover_offset = data_length;
@@ -221,12 +221,12 @@ int tc_cmac_final(uint8_t *tag, TCCmacState_t s)
     unsigned int i;
 
     /* input sanity check: */
-    if(tag == (uint8_t *) 0 ||
+    if (tag == (uint8_t *) 0 ||
             s == (TCCmacState_t) 0) {
         return TC_CRYPTO_FAIL;
     }
 
-    if(s->leftover_offset == TC_AES_BLOCK_SIZE) {
+    if (s->leftover_offset == TC_AES_BLOCK_SIZE) {
         /* the last message block is a full-sized block */
         k = (uint8_t *) s->K1;
     } else {

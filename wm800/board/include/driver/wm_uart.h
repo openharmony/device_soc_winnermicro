@@ -25,7 +25,7 @@
 #ifndef WM_UART_H
 #define WM_UART_H
 #include "list.h"
-//#include "wm_regs.h"
+// #include "wm_regs.h"
 #include "wm_type_def.h"
 #include "wm_osal.h"
 
@@ -36,10 +36,9 @@
 #define MBOX_MSG_UART_RX       1
 #define MBOX_MSG_UART_TX       2
 
-
 /** baud rate definition */
 #define UART_BAUDRATE_B600          600
-#define UART_BAUDRATE_B1200	        1200
+#define UART_BAUDRATE_B1200         1200
 #define UART_BAUDRATE_B1800         1800
 #define UART_BAUDRATE_B2400         2400
 #define UART_BAUDRATE_B4800         4800
@@ -75,24 +74,24 @@
    accessing head and tail more than once, so they can change
    underneath us without returning inconsistent results.  */
 #define CIRC_CNT_TO_END(head,tail,size) \
-	({int end = (size) - (tail); \
-	  int n = ((head) + end) & ((size)-1); \
-	  n < end ? n : end;})
+    ({int end = (size) - (tail); \
+      int n = ((head) + end) & ((size)-1); \
+      n < end ? n : end;})
 
 /** Return space available up to the end of the buffer.  */
 #define CIRC_SPACE_TO_END(head,tail,size) \
-	({int end = (size) - 1 - (head); \
-	  int n = (end + (tail)) & ((size)-1); \
-	  n <= end ? n : end+1;})
+    ({int end = (size) - 1 - (head); \
+      int n = (end + (tail)) & ((size)-1); \
+      n <= end ? n : end+1;})
 
 #define CIRC_SPACE_TO_END_FULL(head,tail,size) \
-	({int end = (size) - 1 - (head); \
-	  int n = (end + (tail)) & ((size)-1); \
-	  n < end ? n : end+1;})
+    ({int end = (size) - 1 - (head); \
+      int n = (end + (tail)) & ((size)-1); \
+      n < end ? n : end+1;})
 
-#define uart_circ_empty(circ)		((circ)->head == (circ)->tail)
-#define uart_circ_chars_pending(circ)	\
-	(CIRC_CNT((circ)->head, (circ)->tail, TLS_UART_TX_BUF_SIZE))
+#define uart_circ_empty(circ)        ((circ)->head == (circ)->tail)
+#define uart_circ_chars_pending(circ) \
+    (CIRC_CNT((circ)->head, (circ)->tail, TLS_UART_TX_BUF_SIZE))
 
 /**
  * @struct tls_uart_baud_rate    baudrate define
@@ -103,7 +102,6 @@ struct tls_uart_baud_rate
     u16 ubdiv;
     u16 ubdiv_frac;
 };
-
 
 /**
  * @enum    uart number enum
@@ -118,7 +116,6 @@ enum
     TLS_UART_5 = 5,    
     TLS_UART_MAX = 6,
 };
-
 
 /**
  * @typedef enum TLS_UART_PMODE    Parity Mode
@@ -170,7 +167,6 @@ typedef enum TLS_UART_STOPBITS
     TLS_UART_TWO_STOPBITS,
 } TLS_UART_STOPBITS_T;
 
-
 /**
  * @typedef enum TLS_UART_STATUS
  */
@@ -179,7 +175,6 @@ typedef enum TLS_UART_STATUS
     TLS_UART_STATUS_OK,
     TLS_UART_STATUS_ERROR,
 } TLS_UART_STATUS_T;
-
 
 /**
  * @typedef enum TLS_UART_MODE   operation mode
@@ -208,8 +203,6 @@ struct tls_uart_icount
     u32 buf_overrun;
 };
 
-
-
 /**
  * @typedef struct tls_uart_options
  */
@@ -226,7 +219,6 @@ typedef struct tls_uart_options
     TLS_UART_STOPBITS_T stopbits;    /**< Number of stop bits */
 
 } tls_uart_options_t;
-
 
 /**
  * @typedef struct tls_uart_circ_buf
@@ -246,7 +238,7 @@ typedef struct tls_uart_net_buf
 {
     struct dl_list list;
     char *buf;
-	void *pbuf;
+    void *pbuf;
     u16 buflen;
     u16 offset;
 } tls_uart_net_buf_t;
@@ -256,7 +248,6 @@ typedef struct tls_uart_net_msg
     struct dl_list tx_msg_pending_list;
 } tls_uart_net_msg_t;
 #endif
-
 
 /**
  * @typedef struct TLS_UART_REGS
@@ -277,7 +268,6 @@ typedef struct TLS_UART_REGS
     u32 UR_RES2;
     u32 UR_RXW;                     /**< rx windows register */
 } TLS_UART_REGS_T;
-
 
 /**
  * @typedef struct tls_uart_port
@@ -326,9 +316,9 @@ typedef struct tls_uart_port
     s16(*tx_sent_callback) (struct tls_uart_port * port);
 
     bool tx_dma_on;
-	bool rx_dma_on;
+    bool rx_dma_on;
 
-	void *priv_data;
+    void *priv_data;
 } tls_uart_port_t;
 
 /**
@@ -365,21 +355,20 @@ typedef struct tls_uart_tx_msg
  */
 
 /**
- * @brief	This function is used to initial uart port.
+ * @brief    This function is used to initial uart port.
  *
  * @param[in] uart_no: is the uart number.
- *	- \ref TLS_UART_0 TLS_UART_1 TLS_UART_2 TLS_UART_3 TLS_UART_4 TLS_UART_5
+ *    - \ref TLS_UART_0 TLS_UART_1 TLS_UART_2 TLS_UART_3 TLS_UART_4 TLS_UART_5
  * @param[in] opts: is the uart setting options,if this param is NULL,this function will use the default options.
  * @param[in] modeChoose:; choose uart2 mode or 7816 mode when uart_no is TLS_UART_2, 0 for uart2 mode and 1 for 7816 mode.
  *
  * @retval
- *	- \ref WM_SUCCESS
- *	- \ref WM_FAILED
+ *    - \ref WM_SUCCESS
+ *    - \ref WM_FAILED
  *
  * @note When the system is initialized, the function has been called, so users can not call the function.
  */
 int tls_uart_port_init(u16 uart_no, tls_uart_options_t * opts, u8 modeChoose);
-
 
 /**
  * @brief          This function is used to register uart rx interrupt.
@@ -396,7 +385,7 @@ void tls_uart_rx_callback_register(u16 uart_no, s16(*rx_callback) (u16 len, void
 void tls_uart_rx_byte_callback_flag(u16 uart_no, u8 flag);
 
 /**
- * @brief	This function is used to register uart tx interrupt.
+ * @brief    This function is used to register uart tx interrupt.
  *
  * @param[in] uart_no: is the uart numer.
  * @param[in] callback: is the uart tx interrupt call back function.
@@ -404,7 +393,6 @@ void tls_uart_rx_byte_callback_flag(u16 uart_no, u8 flag);
  * @retval
  */
 void tls_uart_tx_callback_register(u16 uart_no, s16(*tx_callback) (struct tls_uart_port *port));
-
 
 /**
  * @brief          This function is used to copy circular buffer data to user buffer.
@@ -432,7 +420,6 @@ int tls_uart_read(u16 uart_no, u8 * buf, u16 readsize);
 
 int tls_uart_try_read(u16 uart_no, int32_t read_size);
 
-
 /**
  * @brief          This function is used to transfer data synchronously.
  *
@@ -446,7 +433,6 @@ int tls_uart_try_read(u16 uart_no, int32_t read_size);
  * @note           None
  */
 int tls_uart_write(u16 uart_no, char *buf, u16 writesize);
-
 
 /**
  * @brief          This function is used to transfer data with DMA.
@@ -462,20 +448,18 @@ int tls_uart_write(u16 uart_no, char *buf, u16 writesize);
  */
 int tls_uart_dma_write(char *buf, u16 writesize, void (*cmpl_callback) (void *p), u16 uart_no);
 
-
 /**
  * @brief          This function is used to set uart parity.
  *
  * @param[in]      uart_no      is the uart number
  * @param[in]      paritytype   is a parity type defined in TLS_UART_PMODE_T
  *
- * @retval         WM_SUCCESS	if setting success
- * @retval         WM_FAILED	 	if setting fail
+ * @retval         WM_SUCCESS    if setting success
+ * @retval         WM_FAILED         if setting fail
  *
  * @note           None
  */
 int tls_uart_set_parity(u16 uart_no, TLS_UART_PMODE_T paritytype);
-
 
 /**
  * @brief          This function is used to set uart baudrate.
@@ -483,8 +467,8 @@ int tls_uart_set_parity(u16 uart_no, TLS_UART_PMODE_T paritytype);
  * @param[in]      uart_no     is the uart number
  * @param[in]      baudrate    is the baudrate user want used,the unit is HZ.
  *
- * @retval         WM_SUCCESS	if setting success
- * @retval         WM_FAILED 	if setting fail
+ * @retval         WM_SUCCESS    if setting success
+ * @retval         WM_FAILED     if setting fail
  *
  * @note           None
  */
@@ -496,8 +480,8 @@ int tls_uart_set_baud_rate(u16 uart_no, u32 baudrate);
  * @param[in]      uart_no     is the uart number
  * @param[in]      stopbits    is a stop bit type defined in TLS_UART_STOPBITS_T
  *
- * @retval         WM_SUCCESS	if setting success
- * @retval         WM_FAILED	if setting fail
+ * @retval         WM_SUCCESS    if setting success
+ * @retval         WM_FAILED    if setting fail
  *
  * @note           None
  */
@@ -511,7 +495,6 @@ int tls_uart_set_stop_bits(u16 uart_no, TLS_UART_STOPBITS_T stopbits);
  * @}
  */
 void tls_uart_push(int uart_no, u8* data, int length);
-
 
 /**
  * @brief          This function is used to transfer data asynchronously.
@@ -529,7 +512,7 @@ void tls_uart_push(int uart_no, u8* data, int length);
 int tls_uart_write_async(u16 uart_no, char *buf, u16 writesize);
 
 /**
- * @brief	This function is used to register uart tx sent callback function.
+ * @brief    This function is used to register uart tx sent callback function.
  *
  * @param[in] uart_no: is the uart numer.
  * @param[in] callback: is the uart tx sent out call back function.
@@ -538,7 +521,5 @@ int tls_uart_write_async(u16 uart_no, char *buf, u16 writesize);
  */
 
 void tls_uart_tx_sent_callback_register(u16 uart_no, s16(*tx_callback) (struct tls_uart_port *port));
-
-
 
 #endif /* WM_UART_H */

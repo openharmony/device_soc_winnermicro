@@ -70,7 +70,7 @@ ble_uuid_cmp(const ble_uuid_t *uuid1, const ble_uuid_t *uuid2)
     VERIFY_UUID(uuid1);
     VERIFY_UUID(uuid2);
 
-    if(uuid1->type != uuid2->type) {
+    if (uuid1->type != uuid2->type) {
         return uuid1->type - uuid2->type;
     }
 
@@ -162,7 +162,7 @@ ble_uuid_init_from_att_mbuf(ble_uuid_any_t *uuid, struct os_mbuf *om, int off,
     int rc;
     rc = os_mbuf_copydata(om, off, len, val);
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
@@ -175,10 +175,10 @@ ble_uuid_init_from_att_buf(ble_uuid_any_t *uuid, const void *buf, size_t len)
 {
     int rc = 0;
 
-    if(len == 2) {
+    if (len == 2) {
         uuid->u.type = BLE_UUID_TYPE_16;
         uuid->u16.value = get_le16(buf);
-    } else if(len == 16) {
+    } else if (len == 16) {
         uuid->u.type = BLE_UUID_TYPE_128;
         memcpy(uuid->u128.value, buf, 16);
     } else {
@@ -223,7 +223,7 @@ ble_uuid_to_mbuf(const ble_uuid_t *uuid, struct os_mbuf *om)
     len = ble_uuid_length(uuid);
     buf = os_mbuf_extend(om, len);
 
-    if(buf == NULL) {
+    if (buf == NULL) {
         return BLE_HS_ENOMEM;
     }
 

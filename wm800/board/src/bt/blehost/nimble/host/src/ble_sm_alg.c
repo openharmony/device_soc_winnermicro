@@ -61,13 +61,13 @@ ble_sm_alg_encrypt(const uint8_t *key, const uint8_t *plaintext,
     uint8_t tmp[16];
     swap_buf(tmp, key, 16);
 
-    if(tc_aes128_set_encrypt_key(&s, tmp) == TC_CRYPTO_FAIL) {
+    if (tc_aes128_set_encrypt_key(&s, tmp) == TC_CRYPTO_FAIL) {
         return BLE_HS_EUNKNOWN;
     }
 
     swap_buf(tmp, plaintext, 16);
 
-    if(tc_aes_encrypt(enc_data, tmp, &s) == TC_CRYPTO_FAIL) {
+    if (tc_aes_encrypt(enc_data, tmp, &s) == TC_CRYPTO_FAIL) {
         return BLE_HS_EUNKNOWN;
     }
 
@@ -93,7 +93,7 @@ ble_sm_alg_s1(const uint8_t *k, const uint8_t *r1, const uint8_t *r2,
     /* s1(k, r1 , r2) = e(k, r') */
     rc = ble_sm_alg_encrypt(k, out, out);
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
@@ -143,7 +143,7 @@ ble_sm_alg_c1(const uint8_t *k, const uint8_t *r,
     ble_sm_alg_xor_128(r, p1, out_enc_data);
     rc = ble_sm_alg_encrypt(k, out_enc_data, out_enc_data);
 
-    if(rc != 0) {
+    if (rc != 0) {
         rc = BLE_HS_EUNKNOWN;
         goto done;
     }
@@ -157,7 +157,7 @@ ble_sm_alg_c1(const uint8_t *k, const uint8_t *r,
     ble_sm_alg_xor_128(out_enc_data, p2, out_enc_data);
     rc = ble_sm_alg_encrypt(k, out_enc_data, out_enc_data);
 
-    if(rc != 0) {
+    if (rc != 0) {
         rc = BLE_HS_EUNKNOWN;
         goto done;
     }
@@ -195,15 +195,15 @@ ble_sm_alg_aes_cmac(const uint8_t *key, const uint8_t *in, size_t len,
     struct tc_aes_key_sched_struct sched;
     struct tc_cmac_struct state;
 
-    if(tc_cmac_setup(&state, key, &sched) == TC_CRYPTO_FAIL) {
+    if (tc_cmac_setup(&state, key, &sched) == TC_CRYPTO_FAIL) {
         return BLE_HS_EUNKNOWN;
     }
 
-    if(tc_cmac_update(&state, in, len) == TC_CRYPTO_FAIL) {
+    if (tc_cmac_update(&state, in, len) == TC_CRYPTO_FAIL) {
         return BLE_HS_EUNKNOWN;
     }
 
-    if(tc_cmac_final(out, &state) == TC_CRYPTO_FAIL) {
+    if (tc_cmac_final(out, &state) == TC_CRYPTO_FAIL) {
         return BLE_HS_EUNKNOWN;
     }
 
@@ -239,7 +239,7 @@ ble_sm_alg_f4(const uint8_t *u, const uint8_t *v, const uint8_t *x,
     swap_buf(xs, x, 16);
     rc = ble_sm_alg_aes_cmac(xs, m, sizeof(m), out_enc_data);
 
-    if(rc != 0) {
+    if (rc != 0) {
         return BLE_HS_EUNKNOWN;
     }
 
@@ -280,7 +280,7 @@ ble_sm_alg_f5(const uint8_t *w, const uint8_t *n1, const uint8_t *n2,
     swap_buf(ws, w, 32);
     rc = ble_sm_alg_aes_cmac(salt, ws, 32, t);
 
-    if(rc != 0) {
+    if (rc != 0) {
         return BLE_HS_EUNKNOWN;
     }
 
@@ -293,7 +293,7 @@ ble_sm_alg_f5(const uint8_t *w, const uint8_t *n1, const uint8_t *n2,
     swap_buf(m + 45, a2, 6);
     rc = ble_sm_alg_aes_cmac(t, m, sizeof(m), mackey);
 
-    if(rc != 0) {
+    if (rc != 0) {
         return BLE_HS_EUNKNOWN;
     }
 
@@ -303,7 +303,7 @@ ble_sm_alg_f5(const uint8_t *w, const uint8_t *n1, const uint8_t *n2,
     m[0] = 0x01;
     rc = ble_sm_alg_aes_cmac(t, m, sizeof(m), ltk);
 
-    if(rc != 0) {
+    if (rc != 0) {
         return BLE_HS_EUNKNOWN;
     }
 
@@ -344,7 +344,7 @@ ble_sm_alg_f6(const uint8_t *w, const uint8_t *n1, const uint8_t *n2,
     swap_buf(ws, w, 16);
     rc = ble_sm_alg_aes_cmac(ws, m, sizeof(m), check);
 
-    if(rc != 0) {
+    if (rc != 0) {
         return BLE_HS_EUNKNOWN;
     }
 
@@ -371,7 +371,7 @@ ble_sm_alg_g2(const uint8_t *u, const uint8_t *v, const uint8_t *x,
     /* reuse xs (key) as buffer for result */
     rc = ble_sm_alg_aes_cmac(xs, m, sizeof(m), xs);
 
-    if(rc != 0) {
+    if (rc != 0) {
         return BLE_HS_EUNKNOWN;
     }
 
@@ -393,13 +393,13 @@ ble_sm_alg_gen_dhkey(const uint8_t *peer_pub_key_x, const uint8_t *peer_pub_key_
     swap_buf(&pk[32], peer_pub_key_y, 32);
     swap_buf(priv, our_priv_key, 32);
 
-    if(uECC_valid_public_key(pk, &curve_secp256r1) < 0) {
+    if (uECC_valid_public_key(pk, &curve_secp256r1) < 0) {
         return BLE_HS_EUNKNOWN;
     }
 
     rc = uECC_shared_secret(pk, priv, dh, &curve_secp256r1);
 
-    if(rc == TC_CRYPTO_FAIL) {
+    if (rc == TC_CRYPTO_FAIL) {
         return BLE_HS_EUNKNOWN;
     }
 
@@ -442,7 +442,7 @@ ble_sm_alg_gen_key_pair(uint8_t *pub, uint8_t *priv)
     uint8_t pk[64];
 
     do {
-        if(uECC_make_key(pk, priv, &curve_secp256r1) != TC_CRYPTO_SUCCESS) {
+        if (uECC_make_key(pk, priv, &curve_secp256r1) != TC_CRYPTO_SUCCESS) {
             return BLE_HS_EUNKNOWN;
         }
 
@@ -463,7 +463,7 @@ ble_sm_alg_rand(uint8_t *dst, unsigned int size)
 #if MYNEWT_VAL(TRNG)
     size_t num;
 
-    if(!g_trng) {
+    if (!g_trng) {
         g_trng = (struct trng_dev *)os_dev_open("trng", OS_WAIT_FOREVER, NULL);
         assert(g_trng);
     }
@@ -476,7 +476,7 @@ ble_sm_alg_rand(uint8_t *dst, unsigned int size)
 
 #else
 
-    if(ble_hs_hci_util_rand(dst, size)) {
+    if (ble_hs_hci_util_rand(dst, size)) {
         return 0;
     }
 

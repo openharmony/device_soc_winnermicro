@@ -32,11 +32,11 @@
 
 #include "wm_config.h"
 #include "los_config.h"
-//#include "los_base.h"
+// #include "los_base.h"
 #include "los_task.h"
 #include "los_mux.h"
 #include "los_queue.h"
-//#include "los_task_pri.h"
+// #include "los_task_pri.h"
 #include "los_swtmr.h"
 #include "los_sem.h"
 #include "los_swtmr.h"
@@ -84,9 +84,9 @@ u16 tls_os_priority_translate(u16 nPriority)
 *
 * Arguments  : task      is a pointer to the task'
 *
-*			name 	is the task's name
+*            name     is the task's name
 *
-*			entry	is the task's entry function
+*            entry    is the task's entry function
 *
 *              param     is a pointer to an optional data area which can be used to pass parameters to
 *                        the task when the task first executes.  Where the task is concerned it thinks
@@ -130,66 +130,65 @@ tls_os_status_t tls_os_task_create(tls_os_task_t *task,
     tls_os_status_t os_status;
     TSK_INIT_PARAM_S stInitParam={0};
     u32 TskID;
-	tls_os_handle_t *pHandle = NULL;
+    tls_os_handle_t *pHandle = NULL;
 
     if (stk_start != NULL) {
         printf(" --- task name %s\n", name);
         assert(stk_start == NULL);
     }
-	pHandle = tls_mem_alloc(sizeof(tls_os_handle_t));
-	if(!pHandle)
-	{
-		if (task)
-		{
-			*task = NULL;
-		}
-		printf("%s: malloc error\n", __FUNCTION__);
+    pHandle = tls_mem_alloc(sizeof(tls_os_handle_t));
+    if (!pHandle)
+    {
+        if (task)
+        {
+            *task = NULL;
+        }
+        printf("%s: malloc error\n", __FUNCTION__);
         return TLS_OS_ERROR;
-	}
+    }
     stInitParam.pfnTaskEntry = entry;
     stInitParam.usTaskPrio = tls_os_priority_translate(prio);
     stInitParam.uwArg = param;
     stInitParam.uwStackSize = stk_size;
 
-    if(name == NULL)
+    if (name == NULL)
     {
         tmp_name = tls_mem_alloc(20);
-        if(tmp_name == NULL)
+        if (tmp_name == NULL)
             printf("mallo c error\n");
         sprintf(tmp_name,"task%d", prio);
         stInitParam.pcName = tmp_name;
     }
     else
     {
-	    stInitParam.pcName = name;
+        stInitParam.pcName = name;
     }
     error = LOS_TaskCreate( &TskID, &stInitParam);
 
-    //printf("configMAX_PRIORITIES - prio:%d name:%s size:0x%x entry:0x%x taskid:%d\n",   prio, stInitParam.pcName, stk_size, entry, TskID);
+    // printf("configMAX_PRIORITIES - prio:%d name:%s size:0x%x entry:0x%x taskid:%d\n",   prio, stInitParam.pcName, stk_size, entry, TskID);
     if (error == LOS_OK)
-	{
-		if (task)
-		{
-			pHandle->handle = TskID;
-			*task = (tls_os_task_t)pHandle;
-		}
+    {
+        if (task)
+        {
+            pHandle->handle = TskID;
+            *task = (tls_os_task_t)pHandle;
+        }
         os_status = TLS_OS_SUCCESS;
-		printf("%s: TskID %d, task name %s\n", __FUNCTION__, TskID, stInitParam.pcName);
-	}
+        printf("%s: TskID %d, task name %s\n", __FUNCTION__, TskID, stInitParam.pcName);
+    }
     else
-	{
-		printf("configMAX_PRIORITIES - prio:%d name:%s size:0x%x entry:0x%x error:%d\n",   prio, stInitParam.pcName, stk_size, (u32)entry, error);
-		if (task)
-		{
-			*task = NULL;
-		}
-		tls_mem_free(pHandle);
+    {
+        printf("configMAX_PRIORITIES - prio:%d name:%s size:0x%x entry:0x%x error:%d\n",   prio, stInitParam.pcName, stk_size, (u32)entry, error);
+        if (task)
+        {
+            *task = NULL;
+        }
+        tls_mem_free(pHandle);
         os_status = TLS_OS_ERROR;
-	}
+    }
 
     return os_status;
 }
-
 
 /*
 *********************************************************************************************************
@@ -203,22 +202,22 @@ tls_os_status_t tls_os_task_create(tls_os_task_t *task,
 *                    freefun: function to free resource
 *
 * Returns    : TLS_OS_SUCCESS             if the call is successful
-*             	 TLS_OS_ERROR
+*                  TLS_OS_ERROR
 *********************************************************************************************************
 */
 tls_os_status_t tls_os_task_del(u8 prio,void (*freefun)(void))
 {
 #if 0
-	if (0 == vTaskDeleteByPriority(configMAX_PRIORITIES - prio)){
-		if (freefun){
-			freefun();
-		}
-		return TLS_OS_SUCCESS;
-	}
+    if (0 == vTaskDeleteByPriority(configMAX_PRIORITIES - prio)){
+        if (freefun){
+            freefun();
+        }
+        return TLS_OS_SUCCESS;
+    }
 #endif
-	printf("modify compile tls_os_task_del is null fun . \n");
-	assert(0);
-	return TLS_OS_ERROR;
+    printf("modify compile tls_os_task_del is null fun . \n");
+    assert(0);
+    return TLS_OS_ERROR;
 }
 
 /**
@@ -239,19 +238,19 @@ tls_os_status_t tls_os_task_del(u8 prio,void (*freefun)(void))
 tls_os_status_t tls_os_task_del_by_task_handle(tls_os_task_t task, void (*freefun)(void))
 {
     tls_os_status_t os_status;
-	tls_os_handle_t *pHandle = (tls_os_handle_t *)task;
-	int ret = LOS_TaskDelete(pHandle->handle);
-	if(ret == LOS_OK)
-	{
-		os_status = TLS_OS_SUCCESS;
-		tls_mem_free(pHandle);
-	}
-	else
-	{
-		os_status = TLS_OS_ERROR;
-	}
-	printf("%s: handle %d, ret %d\n", __FUNCTION__, (u32)task, ret);
-	return os_status;
+    tls_os_handle_t *pHandle = (tls_os_handle_t *)task;
+    int ret = LOS_TaskDelete(pHandle->handle);
+    if (ret == LOS_OK)
+    {
+        os_status = TLS_OS_SUCCESS;
+        tls_mem_free(pHandle);
+    }
+    else
+    {
+        os_status = TLS_OS_ERROR;
+    }
+    printf("%s: handle %d, ret %d\n", __FUNCTION__, (u32)task, ret);
+    return os_status;
 }
 
 /*
@@ -287,22 +286,22 @@ tls_os_status_t tls_os_mutex_create(u8 prio,
     u32 error;
     UINT32 mutexID = 0 ;
     tls_os_status_t os_status;
-	tls_os_handle_t *pHandle = tls_mem_alloc(sizeof(tls_os_handle_t));
-	if(!pHandle)
-	{
-		printf("%s: malloc error\n", __FUNCTION__);
+    tls_os_handle_t *pHandle = tls_mem_alloc(sizeof(tls_os_handle_t));
+    if (!pHandle)
+    {
+        printf("%s: malloc error\n", __FUNCTION__);
         return TLS_OS_ERROR;
-	}
+    }
 
     error = LOS_MuxCreate(&mutexID);
     if (error == LOS_OK){
-		pHandle->handle = mutexID;
+        pHandle->handle = mutexID;
         *mutex = (tls_os_mutex_t *)pHandle;
         os_status = TLS_OS_SUCCESS;
     }else {
-    	*mutex = NULL;
+        *mutex = NULL;
         os_status = TLS_OS_ERROR;
-		tls_mem_free(pHandle);
+        tls_mem_free(pHandle);
     }
     return os_status;
 }
@@ -337,13 +336,13 @@ tls_os_status_t tls_os_mutex_delete(tls_os_mutex_t *mutex)
 {
     u32 error;
     tls_os_status_t os_status;
-	tls_os_handle_t *pHandle = (tls_os_handle_t *)mutex;
+    tls_os_handle_t *pHandle = (tls_os_handle_t *)mutex;
 
     error = LOS_MuxDelete(pHandle->handle);
     if (error == LOS_OK)
     {
         os_status = TLS_OS_SUCCESS;
-		tls_mem_free(pHandle);
+        tls_mem_free(pHandle);
     }
     else
     {
@@ -381,10 +380,10 @@ tls_os_status_t tls_os_mutex_acquire(tls_os_mutex_t *mutex,
 {
     u8 error;
     tls_os_status_t os_status;
-	unsigned int time;
-	tls_os_handle_t *pHandle = (tls_os_handle_t *)mutex;
+    unsigned int time;
+    tls_os_handle_t *pHandle = (tls_os_handle_t *)mutex;
 
-    if(0 == wait_time)
+    if (0 == wait_time)
         time = LOS_WAIT_FOREVER;
     else
         time = wait_time;
@@ -407,14 +406,14 @@ tls_os_status_t tls_os_mutex_acquire(tls_os_mutex_t *mutex,
 *                                  mutex.
 *
 * Returns    : TLS_OS_SUCCESS             The call was successful and the mutex was signaled.
-*              	TLS_OS_ERROR
+*                  TLS_OS_ERROR
 *********************************************************************************************************
 */
 tls_os_status_t tls_os_mutex_release(tls_os_mutex_t *mutex)
 {
     u32 error;
     tls_os_status_t os_status;
-	tls_os_handle_t *pHandle = (tls_os_handle_t *)mutex;
+    tls_os_handle_t *pHandle = (tls_os_handle_t *)mutex;
 
     error = LOS_MuxPost(pHandle->handle);
     if (error == LOS_OK)
@@ -431,15 +430,15 @@ tls_os_status_t tls_os_mutex_release(tls_os_mutex_t *mutex)
 *
 * Description: This function creates a semaphore.
 *
-* Arguments  :sem		 is a pointer to the event control block (OS_EVENT) associated with the
+* Arguments  :sem         is a pointer to the event control block (OS_EVENT) associated with the
 *                            created semaphore
-*			cnt           is the initial value for the semaphore.  If the value is 0, no resource is
+*            cnt           is the initial value for the semaphore.  If the value is 0, no resource is
 *                            available (or no event has occurred).  You initialize the semaphore to a
 *                            non-zero value to specify how many resources are available (e.g. if you have
 *                            10 resources, you would initialize the semaphore to 10).
 *
-* Returns    : TLS_OS_SUCCESS	The call was successful
-*			TLS_OS_ERROR
+* Returns    : TLS_OS_SUCCESS    The call was successful
+*            TLS_OS_ERROR
 *********************************************************************************************************
 */
 tls_os_status_t tls_os_sem_create(tls_os_sem_t **sem, u32 cnt)
@@ -447,25 +446,25 @@ tls_os_status_t tls_os_sem_create(tls_os_sem_t **sem, u32 cnt)
     u32 error;
 
     tls_os_status_t os_status;
-	tls_os_handle_t *pHandle = tls_mem_alloc(sizeof(tls_os_handle_t));
-	if(!pHandle)
-	{
-		printf("%s: malloc error\n", __FUNCTION__);
+    tls_os_handle_t *pHandle = tls_mem_alloc(sizeof(tls_os_handle_t));
+    if (!pHandle)
+    {
+        printf("%s: malloc error\n", __FUNCTION__);
         return TLS_OS_ERROR;
-	}
+    }
 
     error = LOS_SemCreate(cnt, &pHandle->handle);
 
     if (error == LOS_OK)
     {
-    	*sem = (tls_os_sem_t *)pHandle;
+        *sem = (tls_os_sem_t *)pHandle;
         os_status = TLS_OS_SUCCESS;
     }
     else
     {
-    	*sem = NULL;
+        *sem = NULL;
         os_status = TLS_OS_ERROR;
-		tls_mem_free(pHandle);
+        tls_mem_free(pHandle);
     }
 
     return os_status;
@@ -489,14 +488,14 @@ tls_os_status_t tls_os_sem_delete(tls_os_sem_t *sem)
 {
     u32 error;
     tls_os_status_t os_status;
-	tls_os_handle_t *pHandle = (tls_os_handle_t *)sem;
+    tls_os_handle_t *pHandle = (tls_os_handle_t *)sem;
 
     error = LOS_SemDelete(pHandle->handle);
 
     if (error == LOS_OK)
     {
         os_status = TLS_OS_SUCCESS;
-		tls_mem_free(pHandle);
+        tls_mem_free(pHandle);
     }
     else
         os_status = TLS_OS_ERROR;
@@ -519,7 +518,7 @@ tls_os_status_t tls_os_sem_delete(tls_os_sem_t *sem)
 *                            semaphore or, until the resource becomes available (or the event occurs).
 *
 * Returns    : TLS_OS_SUCCESS
-*			TLS_OS_ERROR
+*            TLS_OS_ERROR
 *********************************************************************************************************
 */
 tls_os_status_t tls_os_sem_acquire(tls_os_sem_t *sem,
@@ -528,9 +527,9 @@ tls_os_status_t tls_os_sem_acquire(tls_os_sem_t *sem,
     u8 error;
     tls_os_status_t os_status;
     unsigned int time;
-	tls_os_handle_t *pHandle = (tls_os_handle_t *)sem;
+    tls_os_handle_t *pHandle = (tls_os_handle_t *)sem;
 
-    if(0 == wait_time)
+    if (0 == wait_time)
         time = LOS_WAIT_FOREVER;
     else
         time = wait_time;
@@ -553,15 +552,15 @@ tls_os_status_t tls_os_sem_acquire(tls_os_sem_t *sem,
 *                            semaphore.
 *
 * Returns    : TLS_OS_SUCCESS
-*			TLS_OS_ERROR
+*            TLS_OS_ERROR
 *********************************************************************************************************
 */
 tls_os_status_t tls_os_sem_release(tls_os_sem_t *sem)
 {
     u8 error;
     tls_os_status_t os_status;
-	tls_os_handle_t *pHandle = (tls_os_handle_t *)sem;
-	
+    tls_os_handle_t *pHandle = (tls_os_handle_t *)sem;
+    
     error = LOS_SemPost(pHandle->handle);
     if (error == LOS_OK)
         os_status = TLS_OS_SUCCESS;
@@ -571,7 +570,6 @@ tls_os_status_t tls_os_sem_release(tls_os_sem_t *sem)
     return os_status;
 
 }
-
 
 UINT32 LOS_SemCount(UINT32 semHandle)
 {
@@ -600,7 +598,6 @@ UINT32 LOS_SemCount(UINT32 semHandle)
     return intRet;
 }
 
-
 /*
 *********************************************************************************************************
 *                                         GET THE SEMPHORE COUNT
@@ -615,8 +612,8 @@ UINT32 LOS_SemCount(UINT32 semHandle)
 */
 u16 tls_os_sem_get_count(tls_os_sem_t *sem)
 {
-	tls_os_handle_t *pHandle = (tls_os_handle_t *)sem;
-	
+    tls_os_handle_t *pHandle = (tls_os_handle_t *)sem;
+    
     return (u16)LOS_SemCount(pHandle->handle);
 }
 
@@ -626,20 +623,20 @@ u16 tls_os_sem_get_count(tls_os_sem_t *sem)
 *
 * Description: This function creates a message queue if free event control blocks are available.
 *
-* Arguments  : queue	is a pointer to the event control clock (OS_EVENT) associated with the
+* Arguments  : queue    is a pointer to the event control clock (OS_EVENT) associated with the
 *                                created queue
 *
-*			queue_start         is a pointer to the base address of the message queue storage area.  The
+*            queue_start         is a pointer to the base address of the message queue storage area.  The
 *                            storage area MUST be declared as an array of pointers to 'void' as follows
 *
 *                            void *MessageStorage[size]
 *
-*              	queue_size          is the number of elements in the storage area
+*                  queue_size          is the number of elements in the storage area
 *
-*			msg_size
+*            msg_size
 *
 * Returns    : TLS_OS_SUCCESS
-*			TLS_OS_ERROR
+*            TLS_OS_ERROR
 *********************************************************************************************************
 */
 tls_os_status_t tls_os_queue_create(tls_os_queue_t **queue, u32 queue_size)
@@ -647,29 +644,28 @@ tls_os_status_t tls_os_queue_create(tls_os_queue_t **queue, u32 queue_size)
     tls_os_status_t os_status;
     u32 ret;
     UINT32 uwQueueID;
-	tls_os_handle_t *pHandle = tls_mem_alloc(sizeof(tls_os_handle_t));
-	if(!pHandle)
-	{
-		printf("%s: malloc error\n", __FUNCTION__);
+    tls_os_handle_t *pHandle = tls_mem_alloc(sizeof(tls_os_handle_t));
+    if (!pHandle)
+    {
+        printf("%s: malloc error\n", __FUNCTION__);
         return TLS_OS_ERROR;
-	}
+    }
 
     ret = LOS_QueueCreate(NULL, queue_size, &uwQueueID, 0, 4);
 
-
     if (ret == LOS_OK)
     {
-    	pHandle->handle = uwQueueID;
-    	*queue = (tls_os_queue_t *)pHandle;
+        pHandle->handle = uwQueueID;
+        *queue = (tls_os_queue_t *)pHandle;
         os_status = TLS_OS_SUCCESS;
     }
     else
     {
-    	*queue = NULL;
+        *queue = NULL;
         os_status = TLS_OS_ERROR;
-		tls_mem_free(pHandle);
+        tls_mem_free(pHandle);
     }
-		printf("%s: %d\n", __FUNCTION__, ret);
+        printf("%s: %d\n", __FUNCTION__, ret);
     return os_status;
 }
 
@@ -684,27 +680,27 @@ tls_os_status_t tls_os_queue_create(tls_os_queue_t **queue, u32 queue_size)
 *
 *
 * Returns    : TLS_OS_SUCCESS
-*			TLS_OS_ERROR
+*            TLS_OS_ERROR
 *********************************************************************************************************
 */
 tls_os_status_t tls_os_queue_delete(tls_os_queue_t *queue)
 {
     tls_os_status_t os_status;
     u32 ret;
-	tls_os_handle_t *pHandle = (tls_os_handle_t *)queue;
+    tls_os_handle_t *pHandle = (tls_os_handle_t *)queue;
 
     ret = LOS_QueueDelete(pHandle->handle);
 
     if (ret == LOS_OK)
     {
         os_status = TLS_OS_SUCCESS;
-		tls_mem_free(pHandle);
+        tls_mem_free(pHandle);
     }
     else
     {
         os_status = TLS_OS_ERROR;
     }
-		printf("%s: %d\n", __FUNCTION__, ret);
+        printf("%s: %d\n", __FUNCTION__, ret);
 
     return os_status;
 }
@@ -717,11 +713,11 @@ tls_os_status_t tls_os_queue_delete(tls_os_queue_t *queue)
 *
 * Arguments  : queue        is a pointer to the event control block associated with the desired queue
 *
-*              	msg          is a pointer to the message to send.
+*                  msg          is a pointer to the message to send.
 *
-*			msg_size
+*            msg_size
 * Returns    : TLS_OS_SUCCESS
-*			TLS_OS_ERROR
+*            TLS_OS_ERROR
 *********************************************************************************************************
 */
 tls_os_status_t tls_os_queue_send(tls_os_queue_t *queue,
@@ -730,7 +726,7 @@ tls_os_status_t tls_os_queue_send(tls_os_queue_t *queue,
 {
     u32 ret;
     tls_os_status_t os_status;
-	tls_os_handle_t *pHandle = (tls_os_handle_t *)queue;
+    tls_os_handle_t *pHandle = (tls_os_handle_t *)queue;
 
     if (msg_size == 0) {
         msg_size = sizeof(void *);
@@ -742,7 +738,7 @@ tls_os_status_t tls_os_queue_send(tls_os_queue_t *queue,
     else
     {
         os_status = TLS_OS_ERROR;
-		printf("tls_os_queue_send ret %d\n", ret);
+        printf("tls_os_queue_send ret %d\n", ret);
     }
     return os_status;
 }
@@ -755,9 +751,9 @@ tls_os_status_t tls_os_queue_send(tls_os_queue_t *queue,
 *
 * Arguments  : queue        is a pointer to the event control block associated with the desired queue
 *
-*			msg		is a pointer to the message received
+*            msg        is a pointer to the message received
 *
-*			msg_size
+*            msg_size
 *
 *              wait_time       is an optional timeout period (in clock ticks).  If non-zero, your task will
 *                            wait for a message to arrive at the queue up to the amount of time
@@ -765,7 +761,7 @@ tls_os_status_t tls_os_queue_send(tls_os_queue_t *queue,
 *                            forever at the specified queue or, until a message arrives.
 *
 * Returns    : TLS_OS_SUCCESS
-*			TLS_OS_ERROR
+*            TLS_OS_ERROR
 *********************************************************************************************************
 */
 tls_os_status_t tls_os_queue_receive(tls_os_queue_t *queue,
@@ -775,8 +771,8 @@ tls_os_status_t tls_os_queue_receive(tls_os_queue_t *queue,
 {
     u32 ret;
     tls_os_status_t os_status;
-	tls_os_handle_t *pHandle = (tls_os_handle_t *)queue;
-	
+    tls_os_handle_t *pHandle = (tls_os_handle_t *)queue;
+    
     if (0 == wait_time)
         wait_time = LOS_WAIT_FOREVER;
 
@@ -791,8 +787,8 @@ tls_os_status_t tls_os_queue_receive(tls_os_queue_t *queue,
     else
     {
         os_status = TLS_OS_ERROR;
-		if( ret != LOS_ERRNO_QUEUE_TIMEOUT)
-			printf("%s: %d\n", __FUNCTION__, ret);
+        if ( ret != LOS_ERRNO_QUEUE_TIMEOUT)
+            printf("%s: %d\n", __FUNCTION__, ret);
     }
 
     return os_status;
@@ -807,13 +803,13 @@ tls_os_status_t tls_os_queue_receive(tls_os_queue_t *queue,
 * Arguments   : none
 *
 * Returns    : TLS_OS_SUCCESS
-*			 TLS_OS_ERROR
+*             TLS_OS_ERROR
 *At present, no use for freeRTOS
 *********************************************************************************************************
 */
 tls_os_status_t tls_os_queue_flush(tls_os_queue_t *queue)
 {
-	return TLS_OS_SUCCESS;
+    return TLS_OS_SUCCESS;
 }
 
 /*
@@ -830,15 +826,15 @@ tls_os_status_t tls_os_queue_flush(tls_os_queue_t *queue)
 */
 u32 tls_os_get_time(void)
 {
-    //extern  UINT64      g_ullTickCount;
-    //return g_ullTickCount;
+    // extern  UINT64      g_ullTickCount;
+    // return g_ullTickCount;
     UINT64 cycle = LOS_SysCycleGet();
-	UINT64 nowNsec = (cycle / OS_SYS_CLOCK) * OS_SYS_NS_PER_SECOND +
-                 	(cycle % OS_SYS_CLOCK) * OS_SYS_NS_PER_SECOND / OS_SYS_CLOCK;
+    UINT64 nowNsec = (cycle / OS_SYS_CLOCK) * OS_SYS_NS_PER_SECOND +
+                     (cycle % OS_SYS_CLOCK) * OS_SYS_NS_PER_SECOND / OS_SYS_CLOCK;
 
-	UINT32 tv_sec = nowNsec * HZ / OS_SYS_NS_PER_SECOND;
-	//UINT32 tv_nsec = nowNsec % OS_SYS_NS_PER_SECOND;
-	return tv_sec;
+    UINT32 tv_sec = nowNsec * HZ / OS_SYS_NS_PER_SECOND;
+    // UINT32 tv_nsec = nowNsec % OS_SYS_NS_PER_SECOND;
+    return tv_sec;
 }
 
 /**********************************************************************************************************
@@ -888,27 +884,27 @@ static void tls_swtmr_common_callback(u32 para)
 *
 * Description: This function is called by your application code to create a timer.
 *
-* Arguments  : timer	A pointer to an OS_TMR data structure.This is the 'handle' that your application
-*						will use to reference the timer created.
+* Arguments  : timer    A pointer to an OS_TMR data structure.This is the 'handle' that your application
+*                        will use to reference the timer created.
 *
-*		        callback      Is a pointer to a callback function that will be called when the timer expires.  The
+*                callback      Is a pointer to a callback function that will be called when the timer expires.  The
 *                               callback function must be declared as follows:
 *
 *                               void MyCallback (OS_TMR *ptmr, void *p_arg);
 *
-* 	             callback_arg  Is an argument (a pointer) that is passed to the callback function when it is called.
+*                  callback_arg  Is an argument (a pointer) that is passed to the callback function when it is called.
 *
-*          	   	 period        The 'period' being repeated for the timer.
+*                      period        The 'period' being repeated for the timer.
 *                               If you specified 'OS_TMR_OPT_PERIODIC' as an option, when the timer expires, it will
 *                               automatically restart with the same period.
 *
-*			repeat	if repeat
+*            repeat    if repeat
 *
-*             	pname         Is a pointer to an ASCII string that is used to name the timer.  Names are useful for
+*                 pname         Is a pointer to an ASCII string that is used to name the timer.  Names are useful for
 *                               debugging.
 *
 *Returns    : TLS_OS_SUCCESS
-*			TLS_OS_ERROR
+*            TLS_OS_ERROR
 ************************************************************************************************************************
 */
 tls_os_status_t tls_os_timer_create(tls_os_timer_t **timer,
@@ -923,39 +919,39 @@ tls_os_status_t tls_os_timer_create(tls_os_timer_t **timer,
     tls_os_status_t os_status;
     UINT8 ucMode;
 
-    if(0 == period)
+    if (0 == period)
         period = 1;
 
-    if(repeat)
+    if (repeat)
         ucMode = LOS_SWTMR_MODE_PERIOD;
     else
         ucMode = LOS_SWTMR_MODE_NO_SELFDELETE;
 
     tls_swtmr_cb_t *swtmr_cb = tls_mem_alloc(sizeof(tls_swtmr_cb_t));
-	if(!swtmr_cb)
-	{
-		printf("%s: malloc error\n", __FUNCTION__);
-		return TLS_OS_ERROR;
-	}
+    if (!swtmr_cb)
+    {
+        printf("%s: malloc error\n", __FUNCTION__);
+        return TLS_OS_ERROR;
+    }
     swtmr_cb->callback_fn = callback;
     swtmr_cb->arg = callback_arg;
     
 #if (LOSCFG_BASE_CORE_SWTMR_ALIGN == 1)
     ret = LOS_SwtmrCreate(period, ucMode, tls_swtmr_common_callback, &uwTimerID, swtmr_cb, OS_SWTMR_ROUSES_IGNORE, OS_SWTMR_ALIGN_SENSITIVE);
-#else	
+#else    
     ret = LOS_SwtmrCreate(period, ucMode, tls_swtmr_common_callback, &uwTimerID, swtmr_cb);
 #endif
     if (ret  == LOS_OK)
     {
-	    *timer = (tls_os_timer_t *)swtmr_cb;
-	    swtmr_cb->swtmrId = uwTimerID;
+        *timer = (tls_os_timer_t *)swtmr_cb;
+        swtmr_cb->swtmrId = uwTimerID;
         os_status = TLS_OS_SUCCESS;
     }
     else
     {
-    	tls_mem_free(swtmr_cb);
+        tls_mem_free(swtmr_cb);
         os_status = TLS_OS_ERROR;
-		printf("%s: %d\n", __FUNCTION__, ret);
+        printf("%s: %d\n", __FUNCTION__, ret);
     }
     return os_status;
 }
@@ -997,7 +993,7 @@ tls_os_status_t tls_os_timer_start(tls_os_timer_t *timer)
 *
 * Arguments  : timer          Is a pointer to an OS_TMR
 *
-*			ticks			is the wait time
+*            ticks            is the wait time
 ************************************************************************************************************************
 */
 extern LITE_OS_SEC_BSS SWTMR_CTRL_S     *g_swtmrCBArray;
@@ -1006,10 +1002,10 @@ extern LITE_OS_SEC_BSS SWTMR_CTRL_S     *g_swtmrCBArray;
 {\
    uvIntSave = LOS_IntLock();\
    pstSwtmr = g_swtmrCBArray + usSwTmrID % LOSCFG_BASE_CORE_SWTMR_LIMIT;\
-   if(pstSwtmr->usTimerID % LOSCFG_BASE_CORE_SWTMR_LIMIT != usSwTmrID % LOSCFG_BASE_CORE_SWTMR_LIMIT)  \
+   if (pstSwtmr->usTimerID % LOSCFG_BASE_CORE_SWTMR_LIMIT != usSwTmrID % LOSCFG_BASE_CORE_SWTMR_LIMIT)  \
    {                                     \
        LOS_IntRestore(uvIntSave);        \
-	   printf("0x%x-%d-%d",(u32)pstSwtmr, pstSwtmr->usTimerID, usSwTmrID ); assert(0);                        \
+       printf("0x%x-%d-%d",(u32)pstSwtmr, pstSwtmr->usTimerID, usSwTmrID ); assert(0);                        \
    }                                     \
    pstSwtmr->uwInterval = ticks;\
    LOS_IntRestore(uvIntSave);\
@@ -1017,7 +1013,7 @@ extern LITE_OS_SEC_BSS SWTMR_CTRL_S     *g_swtmrCBArray;
 
 tls_os_status_t tls_os_timer_change(tls_os_timer_t *timer, u32 ticks)
 {
-//TODO: must need
+// TODO: must need
     tls_swtmr_cb_t *swtmr_cb = (tls_swtmr_cb_t *)timer;
     if (swtmr_cb == NULL) {
         return;
@@ -1028,7 +1024,7 @@ tls_os_status_t tls_os_timer_change(tls_os_timer_t *timer, u32 ticks)
     SWTMR_CTRL_S *pstSwtmr;
     UINT32 err = 0;
     tls_os_status_t os_status;
-    if(0 == ticks)
+    if (0 == ticks)
         ticks = 1;
     err = LOS_SwtmrStop(usSwTmrID);
     SET_PERIOD(usSwTmrID, uvIntSave, pstSwtmr, ticks);
@@ -1041,8 +1037,7 @@ tls_os_status_t tls_os_timer_change(tls_os_timer_t *timer, u32 ticks)
     return os_status;
 }
 
-
-///< return 1 active while 0 not active
+// /< return 1 active while 0 not active
 int LOS_SwtmrIsActive(UINT32 swtmrId)
 {
     SWTMR_CTRL_S *swtmr = NULL;
@@ -1119,12 +1114,12 @@ tls_os_status_t tls_os_timer_delete(tls_os_timer_t *timer)
     }
     uwTimerID = swtmr_cb->swtmrId;
     tls_os_status_t os_status;
-	LOS_SwtmrStop(uwTimerID);
+    LOS_SwtmrStop(uwTimerID);
     ret = LOS_SwtmrDelete(uwTimerID);
     if (ret  == LOS_OK)
     {
         os_status = TLS_OS_SUCCESS;
-    	tls_mem_free(swtmr_cb);
+        tls_mem_free(swtmr_cb);
     }
     else
     {
@@ -1164,12 +1159,11 @@ u32 tls_os_timer_expirytime(tls_os_timer_t *timer)
         return 0;
     }
     uwTimerID = swtmr_cb->swtmrId;
-    if(LOS_OK == LOS_SwtmrTimeGet(uwTimerID, &ret)) {
-	    ret += tls_os_get_time();
+    if (LOS_OK == LOS_SwtmrTimeGet(uwTimerID, &ret)) {
+        ret += tls_os_get_time();
     }
     return ret;
 }
-
 
 /*
 *********************************************************************************************************
@@ -1247,8 +1241,8 @@ void tls_os_start_scheduler(void)
 * Arguments  : None;
 *
 * Returns    : TLS_OS_TYPE
-*                	 OS_UCOSII = 0,
-*	             OS_FREERTOS = 1,
+*                     OS_UCOSII = 0,
+*                 OS_FREERTOS = 1,
 *********************************************************************************************************
 */
 int tls_os_get_type(void)
@@ -1288,21 +1282,21 @@ static uint32_t CK_IN_INTRP(void)
 }
 
 /**
- * @brief          	get isr count
+ * @brief              get isr count
  *
- * @param[in]      	None
+ * @param[in]          None
  *
- * @retval         	count
+ * @retval             count
  *
- * @note           	None
+ * @note               None
  */
 
-//extern int portGET_IPSR(void);
+// extern int portGET_IPSR(void);
 u8 tls_get_isr_count(void)
-{	 
+{     
 //    return intr_counter;
-	//return (portGET_IPSR() > 13);
-	return (u8)CK_IN_INTRP();
+    // return (portGET_IPSR() > 13);
+    return (u8)CK_IN_INTRP();
 }
 #if 0
 int csi_kernel_intrpt_enter(void)
@@ -1312,7 +1306,7 @@ int csi_kernel_intrpt_enter(void)
 
 int csi_kernel_intrpt_exit(void)
 {
-    //portYIELD_FROM_ISR(pdTRUE);
+    // portYIELD_FROM_ISR(pdTRUE);
     return 0;
 }
 #endif
@@ -1340,29 +1334,29 @@ HalTickIdleKalCallback idleTaskCB, tickCB;
 
 void xPortSysTickHandler( void )
 {
-	extern void OsTickHandler(void);
-	OsTickHandler();
+    extern void OsTickHandler(void);
+    OsTickHandler();
 
-	if (tickCB != NULL)
-		tickCB();
+    if (tickCB != NULL)
+        tickCB();
 }
 
 void los_tick_register_callback(HalTickIdleKalCallback cb)
 {
-	tickCB = cb;
+    tickCB = cb;
 }
 
 void los_task_register_idle_callback(HalTickIdleKalCallback cb)
 {
-	idleTaskCB = cb;
+    idleTaskCB = cb;
 }
 
 void OsIdleTask(void)
 {
-	while(1) {
-		if (idleTaskCB != NULL)
-			idleTaskCB();
-	}
+    while(1) {
+        if (idleTaskCB != NULL)
+            idleTaskCB();
+    }
 }
 #endif
 static  int ulCriticalNesting = 0;
@@ -1403,6 +1397,5 @@ void HalHwiHandleReInit(UINT32 hwiFormAddr)
     p_hwiForm[0] = (HWI_PROC_FUNC)Reset_Handler;
     p_hwiForm[PendSV_IRQn] = (HWI_PROC_FUNC)tspend_handler;
 }
-
 
 #endif /* end of WM_OS_LITEOS_H */

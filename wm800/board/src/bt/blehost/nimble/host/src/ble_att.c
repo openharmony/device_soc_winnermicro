@@ -131,11 +131,11 @@ ble_att_rx_dispatch_entry_find(uint8_t op)
     for(i = 0; i < BLE_ATT_RX_DISPATCH_SZ; i++) {
         entry = ble_att_rx_dispatch + i;
 
-        if(entry->bde_op == op) {
+        if (entry->bde_op == op) {
             return entry;
         }
 
-        if(entry->bde_op > op) {
+        if (entry->bde_op > op) {
             break;
         }
     }
@@ -394,7 +394,7 @@ ble_att_truncate_to_mtu(const struct ble_l2cap_chan *att_chan,
     mtu = ble_att_chan_mtu(att_chan);
     extra_len = OS_MBUF_PKTLEN(txom) - mtu;
 
-    if(extra_len > 0) {
+    if (extra_len > 0) {
         os_mbuf_adj(txom, -extra_len);
     }
 }
@@ -409,7 +409,7 @@ ble_att_mtu(uint16_t conn_handle)
     ble_hs_lock();
     rc = ble_att_conn_chan_find(conn_handle, &conn, &chan);
 
-    if(rc == 0) {
+    if (rc == 0) {
         mtu = ble_att_chan_mtu(chan);
     } else {
         mtu = 0;
@@ -422,7 +422,7 @@ ble_att_mtu(uint16_t conn_handle)
 void
 ble_att_set_peer_mtu(struct ble_l2cap_chan *chan, uint16_t peer_mtu)
 {
-    if(peer_mtu < BLE_ATT_MTU_DFLT) {
+    if (peer_mtu < BLE_ATT_MTU_DFLT) {
         peer_mtu = BLE_ATT_MTU_DFLT;
     }
 
@@ -437,7 +437,7 @@ ble_att_chan_mtu(const struct ble_l2cap_chan *chan)
     /* If either side has not exchanged MTU size, use the default.  Otherwise,
      * use the lesser of the two exchanged values.
      */
-    if(!(ble_l2cap_is_mtu_req_sent(chan)) ||
+    if (!(ble_l2cap_is_mtu_req_sent(chan)) ||
             chan->peer_mtu == 0) {
         mtu = BLE_ATT_MTU_DFLT;
     } else {
@@ -453,7 +453,7 @@ ble_att_rx_handle_unknown_request(uint8_t op, uint16_t conn_handle,
                                   struct os_mbuf **om)
 {
     /* If this is command (bit6 is set to 1), do nothing */
-    if(op & 0x40) {
+    if (op & 0x40) {
         return;
     }
 
@@ -473,7 +473,7 @@ ble_att_rx(struct ble_l2cap_chan *chan)
     int rc;
     conn_handle = ble_l2cap_get_conn_handle(chan);
 
-    if(conn_handle == BLE_HS_CONN_HANDLE_NONE) {
+    if (conn_handle == BLE_HS_CONN_HANDLE_NONE) {
         return BLE_HS_ENOTCONN;
     }
 
@@ -481,13 +481,13 @@ ble_att_rx(struct ble_l2cap_chan *chan)
     BLE_HS_DBG_ASSERT(*om != NULL);
     rc = os_mbuf_copydata(*om, 0, 1, &op);
 
-    if(rc != 0) {
+    if (rc != 0) {
         return BLE_HS_EMSGSIZE;
     }
 
     entry = ble_att_rx_dispatch_entry_find(op);
 
-    if(entry == NULL) {
+    if (entry == NULL) {
         ble_att_rx_handle_unknown_request(op, conn_handle, om);
         return BLE_HS_ENOTSUP;
     }
@@ -497,8 +497,8 @@ ble_att_rx(struct ble_l2cap_chan *chan)
     os_mbuf_adj(*om, 1);
     rc = entry->bde_fn(conn_handle, om);
 
-    if(rc != 0) {
-        if(rc == BLE_HS_ENOTSUP) {
+    if (rc != 0) {
+        if (rc == BLE_HS_ENOTSUP) {
             ble_att_rx_handle_unknown_request(op, conn_handle, om);
         }
 
@@ -520,11 +520,11 @@ ble_att_set_preferred_mtu(uint16_t mtu)
     struct ble_hs_conn *conn;
     int i;
 
-    if(mtu < BLE_ATT_MTU_DFLT) {
+    if (mtu < BLE_ATT_MTU_DFLT) {
         return BLE_HS_EINVAL;
     }
 
-    if(mtu > BLE_ATT_MTU_MAX) {
+    if (mtu > BLE_ATT_MTU_MAX) {
         return BLE_HS_EINVAL;
     }
 
@@ -537,7 +537,7 @@ ble_att_set_preferred_mtu(uint16_t mtu)
         struct ble_l2cap_chan *chan = ble_hs_conn_chan_find_by_scid(conn, BLE_L2CAP_CID_ATT);
         BLE_HS_DBG_ASSERT(chan != NULL);
 
-        if(!(chan->flags & BLE_L2CAP_CHAN_F_TXED_MTU)) {
+        if (!(chan->flags & BLE_L2CAP_CHAN_F_TXED_MTU)) {
             chan->my_mtu = mtu;
         }
 
@@ -554,7 +554,7 @@ ble_att_create_chan(uint16_t conn_handle)
     struct ble_l2cap_chan *chan;
     chan = ble_l2cap_chan_alloc(conn_handle);
 
-    if(chan == NULL) {
+    if (chan == NULL) {
         return NULL;
     }
 
@@ -574,7 +574,7 @@ ble_att_init(void)
                          STATS_HDR(ble_att_stats), STATS_SIZE_INIT_PARMS(ble_att_stats,
                                  STATS_SIZE_32), STATS_NAME_INIT_PARMS(ble_att_stats), "ble_att");
 
-    if(rc != 0) {
+    if (rc != 0) {
         return BLE_HS_EOS;
     }
 

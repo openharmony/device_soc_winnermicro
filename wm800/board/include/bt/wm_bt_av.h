@@ -82,7 +82,6 @@ tls_bt_status_t tls_bt_av_sink_deinit(void);
  */
 tls_bt_status_t tls_bt_av_sink_connect_src(tls_bt_addr_t *bd_addr);
 
-
 /**
  * @brief          Tears down the AV signalling channel with the source side
  *
@@ -204,7 +203,6 @@ tls_bt_status_t tls_btrc_get_element_attr_rsp(uint8_t num_attr, tls_btrc_element
 tls_bt_status_t tls_btrc_register_notification_rsp(tls_btrc_event_id_t event_id,
         tls_btrc_notification_type_t type, tls_btrc_register_notification_t *p_param);
 
-
 /**
  * @brief          Send current volume setting to remote side
  *
@@ -213,7 +211,7 @@ tls_bt_status_t tls_btrc_register_notification_rsp(tls_btrc_event_id_t event_id,
  * @retval         @ref tls_bt_status_t
  *
  * @note           Support limited to SetAbsoluteVolume
- * 			 This can be enhanced to support Relative Volume (AVRCP 1.0).
+ *              This can be enhanced to support Relative Volume (AVRCP 1.0).
  *                   With RelateVolume, we will send VOLUME_UP/VOLUME_DOWN
  *                   as opposed to absolute volume level
  */
@@ -283,7 +281,6 @@ tls_bt_status_t tls_btrc_ctrl_send_groupnavigation_cmd(tls_bt_addr_t *bd_addr, u
  */
 tls_bt_status_t tls_btrc_ctrl_change_player_app_setting(tls_bt_addr_t *bd_addr, uint8_t num_attrib, uint8_t *attrib_ids, uint8_t *attrib_vals);
 
-
 /**
  * @brief          Rsp for SetAbsoluteVolume Command
  *
@@ -296,7 +293,6 @@ tls_bt_status_t tls_btrc_ctrl_change_player_app_setting(tls_bt_addr_t *bd_addr, 
  * @note           None
  */
 tls_bt_status_t tls_btrc_ctrl_set_volume_rsp(tls_bt_addr_t *bd_addr, uint8_t abs_vol, uint8_t label);
-
 
 /**
  * @brief          Rsp for Notification of Absolute Volume

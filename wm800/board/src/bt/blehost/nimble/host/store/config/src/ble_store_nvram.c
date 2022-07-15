@@ -18,7 +18,6 @@
 * under the License.
 */
 
-
 #include "syscfg/syscfg.h"
 
 #if MYNEWT_VAL(BLE_STORE_CONFIG_PERSIST)
@@ -33,20 +32,17 @@
 
 #define NIMBLE_NVS_STR_NAME_MAX_LEN              16
 
-
 typedef struct ble_store_value_noaddr_cccd {
     uint16_t chr_val_handle;
     uint16_t flags;
     unsigned value_changed: 1;
 } ble_store_value_t;
 
-
 typedef struct cccd_nvram {
     ble_addr_t addr;
     uint8_t offset;
     ble_store_value_t value[MYNEWT_VAL(BLE_STORE_MAX_CCCDS)];
 } cccd_nvram_t;
-
 
 /*****************************************************************************
  * $ NVS                                                                     *
@@ -67,7 +63,6 @@ ble_hs_log_flat_buf_tmp(const void *data, int len)
     }
 }
 
-
 static void
 ble_store_nvram_print_value_sec(const struct ble_store_value_sec *sec)
 {
@@ -76,20 +71,20 @@ ble_store_nvram_print_value_sec(const struct ble_store_value_sec *sec)
     BLE_HS_LOG(ERROR, " ");
     BLE_HS_LOG(ERROR, "peer_addr_type=%d ", sec->peer_addr.type);
 
-    if(sec->ltk_present) {
+    if (sec->ltk_present) {
         BLE_HS_LOG(ERROR, "ediv=%u rand=%llu authenticated=%d ltk=",
                    sec->ediv, sec->rand_num, sec->authenticated);
         ble_hs_log_flat_buf_tmp(sec->ltk, 16);
         BLE_HS_LOG(ERROR, " ");
     }
 
-    if(sec->irk_present) {
+    if (sec->irk_present) {
         BLE_HS_LOG(ERROR, "irk=");
         ble_hs_log_flat_buf_tmp(sec->irk, 16);
         BLE_HS_LOG(ERROR, " ");
     }
 
-    if(sec->csrk_present) {
+    if (sec->csrk_present) {
         BLE_HS_LOG(ERROR, "csrk=");
         ble_hs_log_flat_buf_tmp(sec->csrk, 16);
         BLE_HS_LOG(ERROR, " ");
@@ -130,8 +125,8 @@ ble_nvs_restore_sec_keys()
         nv_tag_valid = btif_config_get_sec_cccd_item(i, &addr, &our_sec, sizeof(our_sec), &peer_sec,
                        sizeof(peer_sec), &cccd_info[0], sizeof(cccd_info));
 
-        if(nv_tag_valid) {
-            if(nv_tag_valid & OUR_SEC_VALID_BIT_MASK) {
+        if (nv_tag_valid) {
+            if (nv_tag_valid & OUR_SEC_VALID_BIT_MASK) {
                 BLE_HS_LOG(ERROR, "load our  sec; ");
                 ble_store_nvram_print_value_sec(&our_sec);
                 ble_store_config_our_secs[ble_store_config_num_our_secs] = our_sec;
@@ -139,7 +134,7 @@ ble_nvs_restore_sec_keys()
                 restore_count++;
             }
 
-            if(nv_tag_valid & PEER_SEC_VALID_BIT_MASK) {
+            if (nv_tag_valid & PEER_SEC_VALID_BIT_MASK) {
                 BLE_HS_LOG(ERROR, "load peer sec; ");
                 ble_store_nvram_print_value_sec(&peer_sec);
                 ble_store_config_peer_secs[ble_store_config_num_peer_secs] = peer_sec;
@@ -147,11 +142,11 @@ ble_nvs_restore_sec_keys()
                 restore_count++;
             }
 
-            if(nv_tag_valid & CCCD_VALID_BITS_MASK) {
+            if (nv_tag_valid & CCCD_VALID_BITS_MASK) {
                 int j = 0;
                 ble_store_value_t *ptr_value = (ble_store_value_t *)&cccd_info[0];
                 cccd_count = nv_tag_valid >> 2;
-                //nvdump_hexstring("load raw cccd info", cccd_info, sizeof(ble_store_value_t)*MYNEWT_VAL(BLE_STORE_MAX_CCCDS));
+                // nvdump_hexstring("load raw cccd info", cccd_info, sizeof(ble_store_value_t)*MYNEWT_VAL(BLE_STORE_MAX_CCCDS));
                 assert(cccd_count <= 6);
 
                 for(j = 0; j < cccd_count; j++) {
@@ -185,21 +180,21 @@ int ble_store_config_persist_cccds(bool flush)
     uint8_t found = 0;
 
     for(i = 0; i < ble_store_config_num_cccds; i++) {
-        //BLE_HS_LOG(ERROR, "save our cccd; ");
-        //ble_store_nvram_print_value_cccd(&ble_store_config_cccds[i]);
+        // BLE_HS_LOG(ERROR, "save our cccd; ");
+        // ble_store_nvram_print_value_cccd(&ble_store_config_cccds[i]);
         cccd_nvram_array[i].offset = 0;
     }
 
     /*prepare the nvram information*/
     for(i = 0; i < ble_store_config_num_cccds; i++) {
         ptr_byte = (uint8_t *)&ble_store_config_cccds[i];
-        ptr_byte += 8; //value offset; dword alignment
+        ptr_byte += 8; // value offset; dword alignment
         found = 0;
 
         for(j = 0; j < prefer_index; j++) {
             rc = ble_addr_cmp(&ble_store_config_cccds[i].peer_addr, &cccd_nvram_array[j].addr);
 
-            if(!rc) {
+            if (!rc) {
                 memcpy(&cccd_nvram_array[j].value[cccd_nvram_array[j].offset], ptr_byte, sizeof(ble_store_value_t));
                 cccd_nvram_array[j].offset++;
                 found = 1;
@@ -207,9 +202,9 @@ int ble_store_config_persist_cccds(bool flush)
             }
         }
 
-        if(found) { continue; }
+        if (found) { continue; }
 
-        if(j == prefer_index) {
+        if (j == prefer_index) {
             memcpy(&cccd_nvram_array[j].addr, &ble_store_config_cccds[i].peer_addr, sizeof(ble_addr_t));
             memcpy(&cccd_nvram_array[j].value[cccd_nvram_array[j].offset], ptr_byte, sizeof(ble_store_value_t));
             cccd_nvram_array[j].offset++;
@@ -224,14 +219,14 @@ int ble_store_config_persist_cccds(bool flush)
     for(i = 0; i < prefer_index; i++) {
         nv_idx  = btif_config_get_sec_index(&cccd_nvram_array[i].addr, &found);
 
-        if(nv_idx < 0) {
+        if (nv_idx < 0) {
             BLE_HS_LOG(DEBUG, "CCCD Full, impossible\r\n");
             return -1;
         }
-        if(found) nv_idx = i;
+        if (found) nv_idx = i;
 
         ptr_byte = (uint8_t *)&cccd_nvram_array[i].value[0];
-        //nvdump_hexstring("write raw cccd info", ptr_byte, sizeof(ble_store_value_t)*MYNEWT_VAL(BLE_STORE_MAX_CCCDS));
+        // nvdump_hexstring("write raw cccd info", ptr_byte, sizeof(ble_store_value_t)*MYNEWT_VAL(BLE_STORE_MAX_CCCDS));
         btif_config_store_cccd(nv_idx, &cccd_nvram_array[i].addr, cccd_nvram_array[i].offset, ptr_byte,
                                sizeof(ble_store_value_t)*MYNEWT_VAL(BLE_STORE_MAX_CCCDS));
     }
@@ -240,7 +235,7 @@ int ble_store_config_persist_cccds(bool flush)
         btif_config_delete_cccd(i);
     }
 
-    if(flush)ble_store_config_persist_flush();
+    if (flush)ble_store_config_persist_flush();
     return 0;
 }
 
@@ -253,11 +248,11 @@ int ble_store_config_persist_peer_secs(bool flush)
     for(i = 0; i < ble_store_config_num_peer_secs; i++) {
         nv_idx  = btif_config_get_sec_index(&ble_store_config_peer_secs[i].peer_addr, &found);
 
-        if(nv_idx < 0) {
+        if (nv_idx < 0) {
             BLE_HS_LOG(ERROR, "PEER SEC Full, impossible[i=%d][%d]\r\n",i, ble_store_config_num_peer_secs);
             return -1;
         }
-        if(found) nv_idx = i;
+        if (found) nv_idx = i;
 
         btif_config_store_peer_sec(nv_idx, &ble_store_config_peer_secs[i].peer_addr,
                                    (void *)&ble_store_config_peer_secs[i], sizeof(ble_store_config_peer_secs[i]));
@@ -267,7 +262,7 @@ int ble_store_config_persist_peer_secs(bool flush)
         btif_config_delete_peer_sec(i);
     }
 
-    if(flush)ble_store_config_persist_flush();
+    if (flush)ble_store_config_persist_flush();
     return 0;
 }
 
@@ -280,13 +275,13 @@ int ble_store_config_persist_our_secs(bool flush)
     for(i = 0; i < ble_store_config_num_our_secs; i++) {
         nv_idx  = btif_config_get_sec_index((void *)&ble_store_config_our_secs[i].peer_addr, &found);
 
-        if(nv_idx < 0) {
+        if (nv_idx < 0) {
             BLE_HS_LOG(ERROR, "OUR SEC Full, impossible[i=%d][%d]\r\n",i, ble_store_config_num_our_secs);
             return -1;
         }
-        if(found) nv_idx = i;
+        if (found) nv_idx = i;
         
-        //printf("ble_store_config_persist_our_secs, i=%d,found =%d, nv_idx=%d,addr=%s\r\n",i, found, nv_idx, bt_hex(ble_store_config_our_secs[i].peer_addr.val,6));
+        // printf("ble_store_config_persist_our_secs, i=%d,found =%d, nv_idx=%d,addr=%s\r\n",i, found, nv_idx, bt_hex(ble_store_config_our_secs[i].peer_addr.val,6));
         btif_config_store_our_sec(nv_idx, &ble_store_config_our_secs[i].peer_addr,
                                   (void *)&ble_store_config_our_secs[i], sizeof(ble_store_config_our_secs[i]));
     }
@@ -295,12 +290,12 @@ int ble_store_config_persist_our_secs(bool flush)
         btif_config_delete_our_sec(i);
     }
 
-    if(flush)ble_store_config_persist_flush();
+    if (flush)ble_store_config_persist_flush();
     return 0;
 }
 void ble_store_config_persist_flush()
 {
-    //printf(">>>>>>>>>>>>>>>>>flush flash...\r\n");
+    // printf(">>>>>>>>>>>>>>>>>flush flash...\r\n");
     btif_config_flush(1);
 
 }

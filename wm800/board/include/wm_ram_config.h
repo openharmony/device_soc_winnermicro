@@ -42,8 +42,7 @@ extern unsigned int __heap_start;
 #endif
 
 /*Wi-Fi use buffer to exchange data*/
-#define WIFI_MEM_START_ADDR		(SLAVE_HSPI_SDIO_ADDR + SLAVE_HSPI_MAX_SIZE)
-
+#define WIFI_MEM_START_ADDR        (SLAVE_HSPI_SDIO_ADDR + SLAVE_HSPI_MAX_SIZE)
 
 #endif /*__WM_RAM_CONFIG_H__*/
 

@@ -116,19 +116,19 @@ ble_svc_gap_device_name_write_access(struct ble_gatt_access_ctxt *ctxt)
     int rc;
     om_len = OS_MBUF_PKTLEN(ctxt->om);
 
-    if(om_len > BLE_SVC_GAP_NAME_MAX_LEN) {
+    if (om_len > BLE_SVC_GAP_NAME_MAX_LEN) {
         return BLE_ATT_ERR_INVALID_ATTR_VALUE_LEN;
     }
 
     rc = ble_hs_mbuf_to_flat(ctxt->om, ble_svc_gap_name, om_len, NULL);
 
-    if(rc != 0) {
+    if (rc != 0) {
         return BLE_ATT_ERR_UNLIKELY;
     }
 
     ble_svc_gap_name[om_len] = '\0';
 
-    if(ble_svc_gap_chr_changed_cb_fn) {
+    if (ble_svc_gap_chr_changed_cb_fn) {
         ble_svc_gap_chr_changed_cb_fn(BLE_SVC_GAP_CHR_UUID16_DEVICE_NAME);
     }
 
@@ -156,19 +156,19 @@ ble_svc_gap_appearance_write_access(struct ble_gatt_access_ctxt *ctxt)
     int rc;
     om_len = OS_MBUF_PKTLEN(ctxt->om);
 
-    if(om_len != sizeof(ble_svc_gap_appearance)) {
+    if (om_len != sizeof(ble_svc_gap_appearance)) {
         return BLE_ATT_ERR_INVALID_ATTR_VALUE_LEN;
     }
 
     rc = ble_hs_mbuf_to_flat(ctxt->om, &ble_svc_gap_appearance, om_len, NULL);
 
-    if(rc != 0) {
+    if (rc != 0) {
         return BLE_ATT_ERR_UNLIKELY;
     }
 
     ble_svc_gap_appearance = le16toh(ble_svc_gap_appearance);
 
-    if(ble_svc_gap_chr_changed_cb_fn) {
+    if (ble_svc_gap_chr_changed_cb_fn) {
         ble_svc_gap_chr_changed_cb_fn(BLE_SVC_GAP_CHR_UUID16_APPEARANCE);
     }
 
@@ -198,9 +198,9 @@ ble_svc_gap_access(uint16_t conn_handle, uint16_t attr_handle,
 
     switch(uuid16) {
         case BLE_SVC_GAP_CHR_UUID16_DEVICE_NAME:
-            if(ctxt->op == BLE_GATT_ACCESS_OP_READ_CHR) {
+            if (ctxt->op == BLE_GATT_ACCESS_OP_READ_CHR) {
                 rc = ble_svc_gap_device_name_read_access(ctxt);
-            } else if(ctxt->op == BLE_GATT_ACCESS_OP_WRITE_CHR) {
+            } else if (ctxt->op == BLE_GATT_ACCESS_OP_WRITE_CHR) {
                 rc = ble_svc_gap_device_name_write_access(ctxt);
             } else {
                 assert(0);
@@ -210,9 +210,9 @@ ble_svc_gap_access(uint16_t conn_handle, uint16_t attr_handle,
             return rc;
 
         case BLE_SVC_GAP_CHR_UUID16_APPEARANCE:
-            if(ctxt->op == BLE_GATT_ACCESS_OP_READ_CHR) {
+            if (ctxt->op == BLE_GATT_ACCESS_OP_READ_CHR) {
                 rc = ble_svc_gap_appearance_read_access(ctxt);
-            } else if(ctxt->op == BLE_GATT_ACCESS_OP_WRITE_CHR) {
+            } else if (ctxt->op == BLE_GATT_ACCESS_OP_WRITE_CHR) {
                 rc = ble_svc_gap_appearance_write_access(ctxt);
             } else {
                 assert(0);
@@ -253,7 +253,7 @@ ble_svc_gap_device_name_set(const char *name)
     int len;
     len = strlen(name);
 
-    if(len > BLE_SVC_GAP_NAME_MAX_LEN) {
+    if (len > BLE_SVC_GAP_NAME_MAX_LEN) {
         return BLE_HS_EINVAL;
     }
 

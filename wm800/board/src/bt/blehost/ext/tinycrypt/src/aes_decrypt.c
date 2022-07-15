@@ -149,11 +149,11 @@ int tc_aes_decrypt(uint8_t *out, const uint8_t *in, const TCAesKeySched_t s)
     uint8_t state[Nk * Nb];
     unsigned int i;
 
-    if(out == (uint8_t *) 0) {
+    if (out == (uint8_t *) 0) {
         return TC_CRYPTO_FAIL;
-    } else if(in == (const uint8_t *) 0) {
+    } else if (in == (const uint8_t *) 0) {
         return TC_CRYPTO_FAIL;
-    } else if(s == (TCAesKeySched_t) 0) {
+    } else if (s == (TCAesKeySched_t) 0) {
         return TC_CRYPTO_FAIL;
     }
 

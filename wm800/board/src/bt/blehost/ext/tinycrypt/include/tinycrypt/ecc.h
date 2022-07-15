@@ -205,7 +205,6 @@ uECC_Curve uECC_secp256r1(void);
 int uECC_generate_random_int(uECC_word_t *random, const uECC_word_t *top,
                              wordcount_t num_words);
 
-
 /* uECC_RNG_Function type
  * The RNG function should fill 'size' random bytes into 'dest'. It should
  * return 1 if 'dest' was filled with random data, or 0 if the random data could
