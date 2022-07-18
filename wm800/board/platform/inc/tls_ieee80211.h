@@ -13,8 +13,6 @@
  * limitations under the License.
  */
 
-
-
 #ifndef TLS_IEEE80211_H
 #define TLS_IEEE80211_H
 

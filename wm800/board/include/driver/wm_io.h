@@ -78,7 +78,7 @@ enum tls_io_name {
     WM_IO_PB_28,        /**< gpio b28 */
     WM_IO_PB_29,        /**< gpio b29 */
     WM_IO_PB_30,        /**< gpio b30 */
-    WM_IO_PB_31			/**< gpio b31 */
+    WM_IO_PB_31            /**< gpio b31 */
 };
 
 /** option 1 of the io */
@@ -95,9 +95,6 @@ enum tls_io_name {
 #define WM_IO_OPTION6               6
 /** option 7 of the io */
 #define WM_IO_OPTION7               7
-
-
-
 
 /* io option1 */
 #define WM_IO_OPT1_I2C_DAT          WM_IO_OPTION1
@@ -184,36 +181,31 @@ enum tls_io_name {
 #define WM_IO_OPT6_LCD_COM          WM_IO_OPTION6
 #define WM_IO_OPT6_LCD_SEG          WM_IO_OPTION6
 
-
 /* io option7 */
 #define WM_IO_OPT7_TOUCH_SENSOR     WM_IO_OPTION7
 
-
-
 /**
- * @brief          	This function is used to config io function
+ * @brief              This function is used to config io function
  *
- * @param[in]      	name      io name
- * @param[in]      	option    io function option, value is WM_IO_OPT*_*, also is WM_IO_OPTION1~6
+ * @param[in]          name      io name
+ * @param[in]          option    io function option, value is WM_IO_OPT*_*, also is WM_IO_OPTION1~6
  *
- * @return         	None
+ * @return             None
  *
- * @note           	None
+ * @note               None
  */
 void tls_io_cfg_set(enum tls_io_name name, u8 option);
 
-
 /**
- * @brief          	This function is used to get io function config 
+ * @brief              This function is used to get io function config 
  *
- * @param[in]      	name      io name
+ * @param[in]          name      io name
  *
- * @retval         	WM_IO_OPTION1~6  Mapping io function
+ * @retval             WM_IO_OPTION1~6  Mapping io function
  *
- * @note           	None
+ * @note               None
  */
 int tls_io_cfg_get(enum tls_io_name name);
-
 
 #endif  /* end of WM_IO_H */
 

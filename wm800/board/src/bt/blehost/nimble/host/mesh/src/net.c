@@ -97,7 +97,7 @@ static bool check_dup(struct os_mbuf *data)
     val = sys_get_be32(tail - 4) ^ sys_get_be32(tail - 8);
 
     for(i = 0; i < ARRAY_SIZE(dup_cache); i++) {
-        if(dup_cache[i] == val) {
+        if (dup_cache[i] == val) {
             return true;
         }
     }
@@ -124,7 +124,7 @@ static bool msg_cache_match(struct bt_mesh_net_rx *rx,
     u16_t i;
 
     for(i = 0; i < ARRAY_SIZE(msg_cache); i++) {
-        if(msg_cache[i] == hash) {
+        if (msg_cache[i] == hash) {
             return true;
         }
     }
@@ -140,12 +140,12 @@ struct bt_mesh_subnet *bt_mesh_subnet_get(u16_t net_idx)
 {
     int i;
 
-    if(net_idx == BT_MESH_KEY_ANY) {
+    if (net_idx == BT_MESH_KEY_ANY) {
         return &bt_mesh.sub[0];
     }
 
     for(i = 0; i < ARRAY_SIZE(bt_mesh.sub); i++) {
-        if(bt_mesh.sub[i].net_idx == net_idx) {
+        if (bt_mesh.sub[i].net_idx == net_idx) {
             return &bt_mesh.sub[i];
         }
     }
@@ -161,7 +161,7 @@ int bt_mesh_net_keys_create(struct bt_mesh_subnet_keys *keys,
     int err;
     err = bt_mesh_k2(key, p, sizeof(p), &nid, keys->enc, keys->privacy);
 
-    if(err) {
+    if (err) {
         BT_ERR("Unable to generate NID, EncKey & PrivacyKey");
         return err;
     }
@@ -172,7 +172,7 @@ int bt_mesh_net_keys_create(struct bt_mesh_subnet_keys *keys,
     BT_DBG("PrivacyKey %s", bt_hex(keys->privacy, 16));
     err = bt_mesh_k3(key, keys->net_id);
 
-    if(err) {
+    if (err) {
         BT_ERR("Unable to generate Net ID");
         return err;
     }
@@ -181,7 +181,7 @@ int bt_mesh_net_keys_create(struct bt_mesh_subnet_keys *keys,
 #if (MYNEWT_VAL(BLE_MESH_GATT_PROXY))
     err = bt_mesh_identity_key(key, keys->identity);
 
-    if(err) {
+    if (err) {
         BT_ERR("Unable to generate IdentityKey");
         return err;
     }
@@ -190,7 +190,7 @@ int bt_mesh_net_keys_create(struct bt_mesh_subnet_keys *keys,
 #endif /* GATT_PROXY */
     err = bt_mesh_beacon_key(key, keys->beacon);
 
-    if(err) {
+    if (err) {
         BT_ERR("Unable to generate beacon key");
         return err;
     }
@@ -206,7 +206,7 @@ int friend_cred_set(struct friend_cred *cred, u8_t idx, const u8_t net_key[16])
     u8_t p[9];
 #if (MYNEWT_VAL(BLE_MESH_LOW_POWER))
 
-    if(cred->addr == bt_mesh.lpn.frnd) {
+    if (cred->addr == bt_mesh.lpn.frnd) {
         lpn_addr = bt_mesh_primary_addr();
         frnd_addr = cred->addr;
     } else {
@@ -229,7 +229,7 @@ int friend_cred_set(struct friend_cred *cred, u8_t idx, const u8_t net_key[16])
     err = bt_mesh_k2(net_key, p, sizeof(p), &cred->cred[idx].nid,
                      cred->cred[idx].enc, cred->cred[idx].privacy);
 
-    if(err) {
+    if (err) {
         BT_ERR("Unable to generate NID, EncKey & PrivacyKey");
         return err;
     }
@@ -247,7 +247,7 @@ void friend_cred_refresh(u16_t net_idx)
     for(i = 0; i < ARRAY_SIZE(friend_cred); i++) {
         struct friend_cred *cred = &friend_cred[i];
 
-        if(cred->addr != BT_MESH_ADDR_UNASSIGNED &&
+        if (cred->addr != BT_MESH_ADDR_UNASSIGNED &&
                 cred->net_idx == net_idx) {
             memcpy(&cred->cred[0], &cred->cred[1],
                    sizeof(cred->cred[0]));
@@ -263,14 +263,14 @@ int friend_cred_update(struct bt_mesh_subnet *sub)
     for(i = 0; i < ARRAY_SIZE(friend_cred); i++) {
         struct friend_cred *cred = &friend_cred[i];
 
-        if(cred->addr == BT_MESH_ADDR_UNASSIGNED ||
+        if (cred->addr == BT_MESH_ADDR_UNASSIGNED ||
                 cred->net_idx != sub->net_idx) {
             continue;
         }
 
         err = friend_cred_set(cred, 1, sub->keys[1].net);
 
-        if(err) {
+        if (err) {
             return err;
         }
     }
@@ -286,7 +286,7 @@ struct friend_cred *friend_cred_create(struct bt_mesh_subnet *sub, u16_t addr,
     BT_DBG("net_idx 0x%04x addr 0x%04x", sub->net_idx, addr);
 
     for(cred = NULL, i = 0; i < ARRAY_SIZE(friend_cred); i++) {
-        if((friend_cred[i].addr == BT_MESH_ADDR_UNASSIGNED) ||
+        if ((friend_cred[i].addr == BT_MESH_ADDR_UNASSIGNED) ||
                 (friend_cred[i].addr == addr &&
                  friend_cred[i].net_idx == sub->net_idx)) {
             cred = &friend_cred[i];
@@ -294,7 +294,7 @@ struct friend_cred *friend_cred_create(struct bt_mesh_subnet *sub, u16_t addr,
         }
     }
 
-    if(!cred) {
+    if (!cred) {
         BT_WARN("No free friend credential slots");
         return NULL;
     }
@@ -305,15 +305,15 @@ struct friend_cred *friend_cred_create(struct bt_mesh_subnet *sub, u16_t addr,
     cred->frnd_counter = frnd_counter;
     err = friend_cred_set(cred, 0, sub->keys[0].net);
 
-    if(err) {
+    if (err) {
         friend_cred_clear(cred);
         return NULL;
     }
 
-    if(sub->kr_flag) {
+    if (sub->kr_flag) {
         err = friend_cred_set(cred, 1, sub->keys[1].net);
 
-        if(err) {
+        if (err) {
             friend_cred_clear(cred);
             return NULL;
         }
@@ -338,7 +338,7 @@ int friend_cred_del(u16_t net_idx, u16_t addr)
     for(i = 0; i < ARRAY_SIZE(friend_cred); i++) {
         struct friend_cred *cred = &friend_cred[i];
 
-        if(cred->addr == addr && cred->net_idx == net_idx) {
+        if (cred->addr == addr && cred->net_idx == net_idx) {
             friend_cred_clear(cred);
             return 0;
         }
@@ -356,23 +356,23 @@ int friend_cred_get(struct bt_mesh_subnet *sub, u16_t addr, u8_t *nid,
     for(i = 0; i < ARRAY_SIZE(friend_cred); i++) {
         struct friend_cred *cred = &friend_cred[i];
 
-        if(cred->net_idx != sub->net_idx) {
+        if (cred->net_idx != sub->net_idx) {
             continue;
         }
 
-        if(addr != BT_MESH_ADDR_UNASSIGNED && cred->addr != addr) {
+        if (addr != BT_MESH_ADDR_UNASSIGNED && cred->addr != addr) {
             continue;
         }
 
-        if(nid) {
+        if (nid) {
             *nid = cred->cred[sub->kr_flag].nid;
         }
 
-        if(enc) {
+        if (enc) {
             *enc = cred->cred[sub->kr_flag].enc;
         }
 
-        if(priv) {
+        if (priv) {
             *priv = cred->cred[sub->kr_flag].privacy;
         }
 
@@ -386,11 +386,11 @@ u8_t bt_mesh_net_flags(struct bt_mesh_subnet *sub)
 {
     u8_t flags = 0x00;
 
-    if(sub && sub->kr_flag) {
+    if (sub && sub->kr_flag) {
         flags |= BT_MESH_NET_FLAG_KR;
     }
 
-    if(atomic_test_bit(bt_mesh.flags, BT_MESH_IVU_IN_PROGRESS)) {
+    if (atomic_test_bit(bt_mesh.flags, BT_MESH_IVU_IN_PROGRESS)) {
         flags |= BT_MESH_NET_FLAG_IVU;
     }
 
@@ -402,7 +402,7 @@ int bt_mesh_net_beacon_update(struct bt_mesh_subnet *sub)
     u8_t flags = bt_mesh_net_flags(sub);
     struct bt_mesh_subnet_keys *keys;
 
-    if(sub->kr_flag) {
+    if (sub->kr_flag) {
         BT_DBG("NetIndex %u Using new key", sub->net_idx);
         keys = &sub->keys[1];
     } else {
@@ -428,10 +428,10 @@ int bt_mesh_net_create(u16_t idx, u8_t flags, const u8_t key[16],
     sub = &bt_mesh.sub[0];
     sub->kr_flag = BT_MESH_KEY_REFRESH(flags);
 
-    if(sub->kr_flag) {
+    if (sub->kr_flag) {
         err = bt_mesh_net_keys_create(&sub->keys[1], key);
 
-        if(err) {
+        if (err) {
             return -EIO;
         }
 
@@ -439,14 +439,14 @@ int bt_mesh_net_create(u16_t idx, u8_t flags, const u8_t key[16],
     } else {
         err = bt_mesh_net_keys_create(&sub->keys[0], key);
 
-        if(err) {
+        if (err) {
             return -EIO;
         }
     }
 
     sub->net_idx = idx;
 
-    if((MYNEWT_VAL(BLE_MESH_GATT_PROXY))) {
+    if ((MYNEWT_VAL(BLE_MESH_GATT_PROXY))) {
         sub->node_id = BT_MESH_NODE_IDENTITY_STOPPED;
     } else {
         sub->node_id = BT_MESH_NODE_IDENTITY_NOT_SUPPORTED;
@@ -474,7 +474,7 @@ void bt_mesh_net_revoke_keys(struct bt_mesh_subnet *sub)
     for(i = 0; i < ARRAY_SIZE(bt_mesh.app_keys); i++) {
         struct bt_mesh_app_key *key = &bt_mesh.app_keys[i];
 
-        if(key->net_idx != sub->net_idx || !key->updated) {
+        if (key->net_idx != sub->net_idx || !key->updated) {
             continue;
         }
 
@@ -485,15 +485,15 @@ void bt_mesh_net_revoke_keys(struct bt_mesh_subnet *sub)
 
 bool bt_mesh_kr_update(struct bt_mesh_subnet *sub, u8_t new_kr, bool new_key)
 {
-    if(new_kr != sub->kr_flag && sub->kr_phase == BT_MESH_KR_NORMAL) {
+    if (new_kr != sub->kr_flag && sub->kr_phase == BT_MESH_KR_NORMAL) {
         BT_WARN("KR change in normal operation. Are we blacklisted?");
         return false;
     }
 
     sub->kr_flag = new_kr;
 
-    if(sub->kr_flag) {
-        if(sub->kr_phase == BT_MESH_KR_PHASE_1) {
+    if (sub->kr_flag) {
+        if (sub->kr_phase == BT_MESH_KR_PHASE_1) {
             BT_DBG("Phase 1 -> Phase 2");
             sub->kr_phase = BT_MESH_KR_PHASE_2;
             return true;
@@ -501,7 +501,7 @@ bool bt_mesh_kr_update(struct bt_mesh_subnet *sub, u8_t new_kr, bool new_key)
     } else {
         switch(sub->kr_phase) {
             case BT_MESH_KR_PHASE_1:
-                if(!new_key) {
+                if (!new_key) {
                     /* Ignore */
                     break;
                 }
@@ -517,7 +517,7 @@ bool bt_mesh_kr_update(struct bt_mesh_subnet *sub, u8_t new_kr, bool new_key)
                 BT_DBG("KR Phase 0x%02x -> Normal", sub->kr_phase);
                 bt_mesh_net_revoke_keys(sub);
 
-                if((MYNEWT_VAL(BLE_MESH_LOW_POWER)) ||
+                if ((MYNEWT_VAL(BLE_MESH_LOW_POWER)) ||
                         (MYNEWT_VAL(BLE_MESH_FRIEND))) {
                     friend_cred_refresh(sub->net_idx);
                 }
@@ -540,8 +540,8 @@ void bt_mesh_rpl_reset(void)
     for(i = 0; i < ARRAY_SIZE(bt_mesh.rpl); i++) {
         struct bt_mesh_rpl *rpl = &bt_mesh.rpl[i];
 
-        if(rpl->src) {
-            if(rpl->old_iv) {
+        if (rpl->src) {
+            if (rpl->old_iv) {
                 memset(rpl, 0, sizeof(*rpl));
             } else {
                 rpl->old_iv = true;
@@ -560,12 +560,12 @@ void bt_mesh_iv_update_test(bool enable)
 
 bool bt_mesh_iv_update(void)
 {
-    if(!bt_mesh_is_provisioned()) {
+    if (!bt_mesh_is_provisioned()) {
         BT_ERR("Not yet provisioned");
         return false;
     }
 
-    if(atomic_test_bit(bt_mesh.flags, BT_MESH_IVU_IN_PROGRESS)) {
+    if (atomic_test_bit(bt_mesh.flags, BT_MESH_IVU_IN_PROGRESS)) {
         bt_mesh_net_iv_update(bt_mesh.iv_index, false);
     } else {
         bt_mesh_net_iv_update(bt_mesh.iv_index + 1, true);
@@ -579,11 +579,11 @@ bool bt_mesh_iv_update(void)
 /* Used for sending immediate beacons to Friend queues and GATT clients */
 void bt_mesh_net_sec_update(struct bt_mesh_subnet *sub)
 {
-    if(IS_ENABLED(CONFIG_BT_MESH_FRIEND)) {
+    if (IS_ENABLED(CONFIG_BT_MESH_FRIEND)) {
         bt_mesh_friend_sec_update(sub ? sub->net_idx : BT_MESH_KEY_ANY);
     }
 
-    if(IS_ENABLED(CONFIG_BT_MESH_GATT_PROXY) &&
+    if (IS_ENABLED(CONFIG_BT_MESH_GATT_PROXY) &&
             bt_mesh_gatt_proxy_get() == BT_MESH_GATT_PROXY_ENABLED) {
         bt_mesh_proxy_beacon_send(sub);
     }
@@ -593,28 +593,28 @@ bool bt_mesh_net_iv_update(u32_t iv_index, bool iv_update)
 {
     int i;
 
-    if(atomic_test_bit(bt_mesh.flags, BT_MESH_IVU_IN_PROGRESS)) {
+    if (atomic_test_bit(bt_mesh.flags, BT_MESH_IVU_IN_PROGRESS)) {
         /* We're currently in IV Update mode */
-        if(iv_index != bt_mesh.iv_index) {
+        if (iv_index != bt_mesh.iv_index) {
             BT_WARN("IV Index mismatch: 0x%08x != 0x%08x",
                     (unsigned) iv_index,
                     (unsigned) bt_mesh.iv_index);
             return false;
         }
 
-        if(iv_update) {
+        if (iv_update) {
             /* Nothing to do */
             BT_DBG("Already in IV Update in Progress state");
             return false;
         }
     } else {
         /* We're currently in Normal mode */
-        if(iv_index == bt_mesh.iv_index) {
+        if (iv_index == bt_mesh.iv_index) {
             BT_DBG("Same IV Index in normal mode");
             return false;
         }
 
-        if(iv_index < bt_mesh.iv_index ||
+        if (iv_index < bt_mesh.iv_index ||
                 iv_index > bt_mesh.iv_index + 42) {
             BT_ERR("IV Index out of sync: 0x%08x != 0x%08x",
                    (unsigned) iv_index,
@@ -622,7 +622,7 @@ bool bt_mesh_net_iv_update(u32_t iv_index, bool iv_update)
             return false;
         }
 
-        if(iv_index > bt_mesh.iv_index + 1) {
+        if (iv_index > bt_mesh.iv_index + 1) {
             BT_WARN("Performing IV Index Recovery");
             memset(bt_mesh.rpl, 0, sizeof(bt_mesh.rpl));
             bt_mesh.iv_index = iv_index;
@@ -630,28 +630,28 @@ bool bt_mesh_net_iv_update(u32_t iv_index, bool iv_update)
             goto do_update;
         }
 
-        if(iv_index == bt_mesh.iv_index + 1 && !iv_update) {
+        if (iv_index == bt_mesh.iv_index + 1 && !iv_update) {
             BT_WARN("Ignoring new index in normal mode");
             return false;
         }
 
-        if(!iv_update) {
+        if (!iv_update) {
             /* Nothing to do */
             BT_DBG("Already in Normal state");
             return false;
         }
     }
 
-    if(!(IS_ENABLED(CONFIG_BT_MESH_IV_UPDATE_TEST) &&
+    if (!(IS_ENABLED(CONFIG_BT_MESH_IV_UPDATE_TEST) &&
             atomic_test_bit(bt_mesh.flags, BT_MESH_IVU_TEST))) {
-        if(bt_mesh.ivu_duration < BT_MESH_IVU_MIN_HOURS) {
+        if (bt_mesh.ivu_duration < BT_MESH_IVU_MIN_HOURS) {
             BT_WARN("IV Update before minimum duration");
             return false;
         }
     }
 
     /* Defer change to Normal Operation if there are pending acks */
-    if(!iv_update && bt_mesh_tx_in_progress()) {
+    if (!iv_update && bt_mesh_tx_in_progress()) {
         BT_WARN("IV Update deferred because of pending transfer");
         atomic_set_bit(bt_mesh.flags, BT_MESH_IVU_PENDING);
         return false;
@@ -661,7 +661,7 @@ do_update:
     atomic_set_bit_to(bt_mesh.flags, BT_MESH_IVU_IN_PROGRESS, iv_update);
     bt_mesh.ivu_duration = 0U;
 
-    if(iv_update) {
+    if (iv_update) {
         bt_mesh.iv_index = iv_index;
         BT_DBG("IV Update state entered. New index 0x%08x",
                (unsigned) bt_mesh.iv_index);
@@ -674,12 +674,12 @@ do_update:
     k_delayed_work_submit(&bt_mesh.ivu_timer, BT_MESH_IVU_TIMEOUT);
 
     for(i = 0; i < ARRAY_SIZE(bt_mesh.sub); i++) {
-        if(bt_mesh.sub[i].net_idx != BT_MESH_KEY_UNUSED) {
+        if (bt_mesh.sub[i].net_idx != BT_MESH_KEY_UNUSED) {
             bt_mesh_net_beacon_update(&bt_mesh.sub[i]);
         }
     }
 
-    if(IS_ENABLED(CONFIG_BT_SETTINGS)) {
+    if (IS_ENABLED(CONFIG_BT_SETTINGS)) {
         bt_mesh_store_iv(false);
     }
 
@@ -690,11 +690,11 @@ u32_t bt_mesh_next_seq(void)
 {
     u32_t seq = bt_mesh.seq++;
 
-    if(IS_ENABLED(CONFIG_BT_SETTINGS)) {
+    if (IS_ENABLED(CONFIG_BT_SETTINGS)) {
         bt_mesh_store_seq();
     }
 
-    if(!atomic_test_bit(bt_mesh.flags, BT_MESH_IVU_IN_PROGRESS) &&
+    if (!atomic_test_bit(bt_mesh.flags, BT_MESH_IVU_IN_PROGRESS) &&
             bt_mesh.seq > IV_UPDATE_SEQ_LIMIT &&
             bt_mesh_subnet_get(BT_MESH_KEY_PRIMARY)) {
         bt_mesh_beacon_ivu_initiator(true);
@@ -719,14 +719,14 @@ int bt_mesh_net_resend(struct bt_mesh_subnet *sub, struct os_mbuf *buf,
     priv = sub->keys[new_key].privacy;
     err = bt_mesh_net_obfuscate(buf->om_data, BT_MESH_NET_IVI_TX, priv);
 
-    if(err) {
+    if (err) {
         BT_ERR("deobfuscate failed (err %d)", err);
         return err;
     }
 
     err = bt_mesh_net_decrypt(enc, buf, BT_MESH_NET_IVI_TX, false);
 
-    if(err) {
+    if (err) {
         BT_ERR("decrypt failed (err %d)", err);
         return err;
     }
@@ -739,19 +739,19 @@ int bt_mesh_net_resend(struct bt_mesh_subnet *sub, struct os_mbuf *buf,
     dst = DST(buf->om_data);
     err = bt_mesh_net_encrypt(enc, buf, BT_MESH_NET_IVI_TX, false);
 
-    if(err) {
+    if (err) {
         BT_ERR("encrypt failed (err %d)", err);
         return err;
     }
 
     err = bt_mesh_net_obfuscate(buf->om_data, BT_MESH_NET_IVI_TX, priv);
 
-    if(err) {
+    if (err) {
         BT_ERR("obfuscate failed (err %d)", err);
         return err;
     }
 
-    if(IS_ENABLED(CONFIG_BT_MESH_GATT_PROXY) &&
+    if (IS_ENABLED(CONFIG_BT_MESH_GATT_PROXY) &&
             bt_mesh_proxy_relay(buf, dst)) {
         send_cb_finalize(cb, cb_data);
     } else {
@@ -782,10 +782,10 @@ int bt_mesh_net_encode(struct bt_mesh_net_tx *tx, struct os_mbuf *buf,
     u8_t *seq;
     int err;
 
-    if(ctl && net_buf_simple_tailroom(buf) < 8) {
+    if (ctl && net_buf_simple_tailroom(buf) < 8) {
         BT_ERR("Insufficient MIC space for CTL PDU");
         return -EINVAL;
-    } else if(net_buf_simple_tailroom(buf) < 4) {
+    } else if (net_buf_simple_tailroom(buf) < 4) {
         BT_ERR("Insufficient MIC space for PDU");
         return -EINVAL;
     }
@@ -800,14 +800,14 @@ int bt_mesh_net_encode(struct bt_mesh_net_tx *tx, struct os_mbuf *buf,
     seq[1] = seq_val >> 8;
     seq[2] = seq_val;
 
-    if(ctl) {
+    if (ctl) {
         net_buf_simple_push_u8(buf, tx->ctx->send_ttl | 0x80);
     } else {
         net_buf_simple_push_u8(buf, tx->ctx->send_ttl);
     }
 
-    if(IS_ENABLED(CONFIG_BT_MESH_LOW_POWER) && tx->friend_cred) {
-        if(friend_cred_get(tx->sub, BT_MESH_ADDR_UNASSIGNED,
+    if (IS_ENABLED(CONFIG_BT_MESH_LOW_POWER) && tx->friend_cred) {
+        if (friend_cred_get(tx->sub, BT_MESH_ADDR_UNASSIGNED,
                            &nid, &enc, &priv)) {
             BT_WARN("Falling back to master credentials");
             tx->friend_cred = 0;
@@ -825,7 +825,7 @@ int bt_mesh_net_encode(struct bt_mesh_net_tx *tx, struct os_mbuf *buf,
     net_buf_simple_push_u8(buf, (nid | (BT_MESH_NET_IVI_TX & 1) << 7));
     err = bt_mesh_net_encrypt(enc, buf, BT_MESH_NET_IVI_TX, proxy);
 
-    if(err) {
+    if (err) {
         return err;
     }
 
@@ -842,13 +842,13 @@ int bt_mesh_net_send(struct bt_mesh_net_tx *tx, struct os_mbuf *buf,
     BT_DBG("Payload len %u: %s", buf->om_len, bt_hex(buf->om_data, buf->om_len));
     BT_DBG("Seq 0x%06x", bt_mesh.seq);
 
-    if(tx->ctx->send_ttl == BT_MESH_TTL_DEFAULT) {
+    if (tx->ctx->send_ttl == BT_MESH_TTL_DEFAULT) {
         tx->ctx->send_ttl = bt_mesh_default_ttl_get();
     }
 
     err = bt_mesh_net_encode(tx, buf, false);
 
-    if(err) {
+    if (err) {
         goto done;
     }
 
@@ -859,9 +859,9 @@ int bt_mesh_net_send(struct bt_mesh_net_tx *tx, struct os_mbuf *buf,
      * "The output filter of the interface connected to advertising or
      * GATT bearers shall drop all messages with TTL value set to 1."
      */
-    if(MYNEWT_VAL(BLE_MESH_GATT_PROXY) &&
+    if (MYNEWT_VAL(BLE_MESH_GATT_PROXY) &&
             tx->ctx->send_ttl != 1) {
-        if(bt_mesh_proxy_relay(buf, tx->ctx->addr) &&
+        if (bt_mesh_proxy_relay(buf, tx->ctx->addr) &&
                 BT_MESH_ADDR_IS_UNICAST(tx->ctx->addr)) {
             /* Notify completion if this only went
              * through the Mesh Proxy.
@@ -873,20 +873,20 @@ int bt_mesh_net_send(struct bt_mesh_net_tx *tx, struct os_mbuf *buf,
     }
 
     /* Deliver to local network interface if necessary */
-    if(bt_mesh_fixed_group_match(tx->ctx->addr) ||
+    if (bt_mesh_fixed_group_match(tx->ctx->addr) ||
             bt_mesh_elem_find(tx->ctx->addr)) {
-        if(cb && cb->start) {
+        if (cb && cb->start) {
             cb->start(0, 0, cb_data);
         }
 
         net_buf_slist_put(&bt_mesh.local_queue, net_buf_ref(buf));
 
-        if(cb && cb->end) {
+        if (cb && cb->end) {
             cb->end(0, cb_data);
         }
 
         k_work_submit(&bt_mesh.local_work);
-    } else if(tx->ctx->send_ttl != 1) {
+    } else if (tx->ctx->send_ttl != 1) {
         /* Deliver to to the advertising network interface. Mesh spec
          * 3.4.5.2: "The output filter of the interface connected to
          * advertising or GATT bearers shall drop all messages with
@@ -906,14 +906,14 @@ static bool auth_match(struct bt_mesh_subnet_keys *keys,
 {
     u8_t net_auth[8];
 
-    if(memcmp(net_id, keys->net_id, 8)) {
+    if (memcmp(net_id, keys->net_id, 8)) {
         return false;
     }
 
     bt_mesh_beacon_auth(keys->beacon, flags, keys->net_id, iv_index,
                         net_auth);
 
-    if(memcmp(auth, net_auth, 8)) {
+    if (memcmp(auth, net_auth, 8)) {
         BT_WARN("Authentication Value %s != %s",
                 bt_hex(auth, 8), bt_hex(net_auth, 8));
         return false;
@@ -931,20 +931,20 @@ struct bt_mesh_subnet *bt_mesh_subnet_find(const u8_t net_id[8], u8_t flags,
     for(i = 0; i < ARRAY_SIZE(bt_mesh.sub); i++) {
         struct bt_mesh_subnet *sub = &bt_mesh.sub[i];
 
-        if(sub->net_idx == BT_MESH_KEY_UNUSED) {
+        if (sub->net_idx == BT_MESH_KEY_UNUSED) {
             continue;
         }
 
-        if(auth_match(&sub->keys[0], net_id, flags, iv_index, auth)) {
+        if (auth_match(&sub->keys[0], net_id, flags, iv_index, auth)) {
             *new_key = false;
             return sub;
         }
 
-        if(sub->kr_phase == BT_MESH_KR_NORMAL) {
+        if (sub->kr_phase == BT_MESH_KR_NORMAL) {
             continue;
         }
 
-        if(auth_match(&sub->keys[1], net_id, flags, iv_index, auth)) {
+        if (auth_match(&sub->keys[1], net_id, flags, iv_index, auth)) {
             *new_key = true;
             return sub;
         }
@@ -965,25 +965,25 @@ static int net_decrypt(struct bt_mesh_subnet *sub, const u8_t *enc,
     net_buf_simple_init(buf, 0);
     memcpy(net_buf_simple_add(buf, data_len), data, data_len);
 
-    if(bt_mesh_net_obfuscate(buf->om_data, BT_MESH_NET_IVI_RX(rx), priv)) {
+    if (bt_mesh_net_obfuscate(buf->om_data, BT_MESH_NET_IVI_RX(rx), priv)) {
         return -ENOENT;
     }
 
-    if(rx->net_if == BT_MESH_NET_IF_ADV && msg_cache_match(rx, buf)) {
+    if (rx->net_if == BT_MESH_NET_IF_ADV && msg_cache_match(rx, buf)) {
         BT_WARN("Duplicate found in Network Message Cache");
         return -EALREADY;
     }
 
     rx->ctx.addr = SRC(buf->om_data);
 
-    if(!BT_MESH_ADDR_IS_UNICAST(rx->ctx.addr)) {
+    if (!BT_MESH_ADDR_IS_UNICAST(rx->ctx.addr)) {
         BT_WARN("Ignoring non-unicast src addr 0x%04x", rx->ctx.addr);
         return -EINVAL;
     }
 
     BT_DBG("src 0x%04x", rx->ctx.addr);
 
-    if((MYNEWT_VAL(BLE_MESH_PROXY)) &&
+    if ((MYNEWT_VAL(BLE_MESH_PROXY)) &&
             rx->net_if == BT_MESH_NET_IF_PROXY_CFG) {
         return bt_mesh_net_decrypt(enc, buf, BT_MESH_NET_IVI_RX(rx),
                                    true);
@@ -1002,21 +1002,21 @@ static int friend_decrypt(struct bt_mesh_subnet *sub, const u8_t *data,
     for(i = 0; i < ARRAY_SIZE(friend_cred); i++) {
         struct friend_cred *cred = &friend_cred[i];
 
-        if(cred->net_idx != sub->net_idx) {
+        if (cred->net_idx != sub->net_idx) {
             continue;
         }
 
-        if(NID(data) == cred->cred[0].nid &&
+        if (NID(data) == cred->cred[0].nid &&
                 !net_decrypt(sub, cred->cred[0].enc, cred->cred[0].privacy,
                              data, data_len, rx, buf)) {
             return 0;
         }
 
-        if(sub->kr_phase == BT_MESH_KR_NORMAL) {
+        if (sub->kr_phase == BT_MESH_KR_NORMAL) {
             continue;
         }
 
-        if(NID(data) == cred->cred[1].nid &&
+        if (NID(data) == cred->cred[1].nid &&
                 !net_decrypt(sub, cred->cred[1].enc, cred->cred[1].privacy,
                              data, data_len, rx, buf)) {
             rx->new_key = 1;
@@ -1038,11 +1038,11 @@ static bool net_find_and_decrypt(const u8_t *data, size_t data_len,
     for(i = 0; i < ARRAY_SIZE(bt_mesh.sub); i++) {
         sub = &bt_mesh.sub[i];
 
-        if(sub->net_idx == BT_MESH_KEY_UNUSED) {
+        if (sub->net_idx == BT_MESH_KEY_UNUSED) {
             continue;
         }
 
-        if((IS_ENABLED(CONFIG_BT_MESH_LOW_POWER) ||
+        if ((IS_ENABLED(CONFIG_BT_MESH_LOW_POWER) ||
                 IS_ENABLED(CONFIG_BT_MESH_FRIEND)) &&
                 !friend_decrypt(sub, data, data_len, rx, buf)) {
             rx->friend_cred = 1U;
@@ -1051,7 +1051,7 @@ static bool net_find_and_decrypt(const u8_t *data, size_t data_len,
             return true;
         }
 
-        if(NID(data) == sub->keys[0].nid &&
+        if (NID(data) == sub->keys[0].nid &&
                 !net_decrypt(sub, sub->keys[0].enc, sub->keys[0].privacy,
                              data, data_len, rx, buf)) {
             rx->ctx.net_idx = sub->net_idx;
@@ -1059,11 +1059,11 @@ static bool net_find_and_decrypt(const u8_t *data, size_t data_len,
             return true;
         }
 
-        if(sub->kr_phase == BT_MESH_KR_NORMAL) {
+        if (sub->kr_phase == BT_MESH_KR_NORMAL) {
             continue;
         }
 
-        if(NID(data) == sub->keys[1].nid &&
+        if (NID(data) == sub->keys[1].nid &&
                 !net_decrypt(sub, sub->keys[1].enc, sub->keys[1].privacy,
                              data, data_len, rx, buf)) {
             rx->new_key = 1;
@@ -1105,23 +1105,23 @@ static void bt_mesh_net_relay(struct os_mbuf *sbuf,
     struct os_mbuf *buf;
     u8_t nid, transmit;
 
-    if(rx->net_if == BT_MESH_NET_IF_LOCAL) {
+    if (rx->net_if == BT_MESH_NET_IF_LOCAL) {
         /* Locally originated PDUs with TTL=1 will only be delivered
          * to local elements as per Mesh Profile 1.0 section 3.4.5.2:
          * "The output filter of the interface connected to
          * advertising or GATT bearers shall drop all messages with
          * TTL value set to 1."
          */
-        if(rx->ctx.recv_ttl == 1) {
+        if (rx->ctx.recv_ttl == 1) {
             return;
         }
     } else {
-        if(rx->ctx.recv_ttl <= 1) {
+        if (rx->ctx.recv_ttl <= 1) {
             return;
         }
     }
 
-    if(rx->net_if == BT_MESH_NET_IF_ADV &&
+    if (rx->net_if == BT_MESH_NET_IF_ADV &&
             bt_mesh_relay_get() != BT_MESH_RELAY_ENABLED &&
             bt_mesh_gatt_proxy_get() != BT_MESH_GATT_PROXY_ENABLED) {
         return;
@@ -1134,7 +1134,7 @@ static void bt_mesh_net_relay(struct os_mbuf *sbuf,
      * Anything else (like GATT to adv, or locally originated packets)
      * use the Network Transmit state.
      */
-    if(rx->net_if == BT_MESH_NET_IF_ADV) {
+    if (rx->net_if == BT_MESH_NET_IF_ADV) {
         transmit = bt_mesh_relay_retransmit_get();
     } else {
         transmit = bt_mesh_net_transmit_get();
@@ -1142,13 +1142,13 @@ static void bt_mesh_net_relay(struct os_mbuf *sbuf,
 
     buf = bt_mesh_adv_create(BT_MESH_ADV_DATA, transmit, K_NO_WAIT);
 
-    if(!buf) {
+    if (!buf) {
         BT_ERR("Out of relay buffers");
         return;
     }
 
     /* Only decrement TTL for non-locally originated packets */
-    if(rx->net_if != BT_MESH_NET_IF_LOCAL) {
+    if (rx->net_if != BT_MESH_NET_IF_LOCAL) {
         /* Leave CTL bit intact */
         sbuf->om_data[1] &= 0x80;
         sbuf->om_data[1] |= rx->ctx.recv_ttl - 1;
@@ -1161,7 +1161,7 @@ static void bt_mesh_net_relay(struct os_mbuf *sbuf,
     BT_DBG("Relaying packet. TTL is now %u", TTL(buf->om_data));
 
     /* Update NID if RX or RX was with friend credentials */
-    if(rx->friend_cred) {
+    if (rx->friend_cred) {
         buf->om_data[0] &= 0x80; /* Clear everything except IVI */
         buf->om_data[0] |= nid;
     }
@@ -1170,12 +1170,12 @@ static void bt_mesh_net_relay(struct os_mbuf *sbuf,
      * the normal TX IVI (which may be different) since the transport
      * layer nonce includes the IVI.
      */
-    if(bt_mesh_net_encrypt(enc, buf, BT_MESH_NET_IVI_RX(rx), false)) {
+    if (bt_mesh_net_encrypt(enc, buf, BT_MESH_NET_IVI_RX(rx), false)) {
         BT_ERR("Re-encrypting failed");
         goto done;
     }
 
-    if(bt_mesh_net_obfuscate(buf->om_data, BT_MESH_NET_IVI_RX(rx), priv)) {
+    if (bt_mesh_net_obfuscate(buf->om_data, BT_MESH_NET_IVI_RX(rx), priv)) {
         BT_ERR("Re-obfuscating failed");
         goto done;
     }
@@ -1186,16 +1186,16 @@ static void bt_mesh_net_relay(struct os_mbuf *sbuf,
     /* Sending to the GATT bearer should only happen if GATT Proxy
      * is enabled or the message originates from the local node.
      */
-    if(IS_ENABLED(CONFIG_BT_MESH_GATT_PROXY) &&
+    if (IS_ENABLED(CONFIG_BT_MESH_GATT_PROXY) &&
             (bt_mesh_gatt_proxy_get() == BT_MESH_GATT_PROXY_ENABLED ||
              rx->net_if == BT_MESH_NET_IF_LOCAL)) {
-        if(bt_mesh_proxy_relay(buf, rx->ctx.recv_dst) &&
+        if (bt_mesh_proxy_relay(buf, rx->ctx.recv_dst) &&
                 BT_MESH_ADDR_IS_UNICAST(rx->ctx.recv_dst)) {
             goto done;
         }
     }
 
-    if(relay_to_adv(rx->net_if)) {
+    if (relay_to_adv(rx->net_if)) {
         bt_mesh_adv_send(buf, NULL, NULL);
     }
 
@@ -1217,13 +1217,13 @@ void bt_mesh_net_header_parse(struct os_mbuf *buf,
 int bt_mesh_net_decode(struct os_mbuf *data, enum bt_mesh_net_if net_if,
                        struct bt_mesh_net_rx *rx, struct os_mbuf *buf)
 {
-    if(data->om_len < BT_MESH_NET_MIN_PDU_LEN) {
+    if (data->om_len < BT_MESH_NET_MIN_PDU_LEN) {
         BT_WARN("Dropping too short mesh packet (len %u)", data->om_len);
         BT_WARN("%s", bt_hex(data->om_data, data->om_len));
         return -EINVAL;
     }
 
-    if(net_if == BT_MESH_NET_IF_ADV && check_dup(data)) {
+    if (net_if == BT_MESH_NET_IF_ADV && check_dup(data)) {
         BT_DBG("duplicate packet; dropping %u bytes: %s", data->om_len,
                bt_hex(data->om_data, data->om_len));
         return -EINVAL;
@@ -1232,7 +1232,7 @@ int bt_mesh_net_decode(struct os_mbuf *data, enum bt_mesh_net_if net_if,
     BT_DBG("%u bytes: %s", data->om_len, bt_hex(data->om_data, data->om_len));
     rx->net_if = net_if;
 
-    if(!net_find_and_decrypt(data->om_data, data->om_len, rx, buf)) {
+    if (!net_find_and_decrypt(data->om_data, data->om_len, rx, buf)) {
         BT_DBG("Unable to find matching net for packet");
         return -ENOENT;
     }
@@ -1242,7 +1242,7 @@ int bt_mesh_net_decode(struct os_mbuf *data, enum bt_mesh_net_if net_if,
     rx->ctx.recv_ttl = TTL(buf->om_data);
 
     /* Default to responding with TTL 0 for non-routed messages */
-    if(rx->ctx.recv_ttl == 0) {
+    if (rx->ctx.recv_ttl == 0) {
         rx->ctx.send_ttl = 0;
     } else {
         rx->ctx.send_ttl = BT_MESH_TTL_DEFAULT;
@@ -1254,18 +1254,18 @@ int bt_mesh_net_decode(struct os_mbuf *data, enum bt_mesh_net_if net_if,
     BT_DBG("Decryption successful. Payload len %u: %s", buf->om_len,
            bt_hex(buf->om_data, buf->om_len));
 
-    if(net_if != BT_MESH_NET_IF_PROXY_CFG &&
+    if (net_if != BT_MESH_NET_IF_PROXY_CFG &&
             rx->ctx.recv_dst == BT_MESH_ADDR_UNASSIGNED) {
         BT_ERR("Destination address is unassigned; dropping packet");
         return -EBADMSG;
     }
 
-    if(BT_MESH_ADDR_IS_RFU(rx->ctx.recv_dst)) {
+    if (BT_MESH_ADDR_IS_RFU(rx->ctx.recv_dst)) {
         BT_ERR("Destination address is RFU; dropping packet");
         return -EBADMSG;
     }
 
-    if(net_if != BT_MESH_NET_IF_LOCAL && bt_mesh_elem_find(rx->ctx.addr)) {
+    if (net_if != BT_MESH_NET_IF_LOCAL && bt_mesh_elem_find(rx->ctx.addr)) {
         BT_DBG("Dropping locally originated packet");
         return -EBADMSG;
     }
@@ -1284,12 +1284,12 @@ void bt_mesh_net_recv(struct os_mbuf *data, s8_t rssi,
     struct net_buf_simple_state state;
     BT_DBG("rssi %d net_if %u", rssi, net_if);
 
-    if(!bt_mesh_is_provisioned()) {
+    if (!bt_mesh_is_provisioned()) {
         BT_ERR("Not provisioned; dropping packet");
         goto done;
     }
 
-    if(bt_mesh_net_decode(data, net_if, &rx, buf)) {
+    if (bt_mesh_net_decode(data, net_if, &rx, buf)) {
         goto done;
     }
 
@@ -1298,11 +1298,11 @@ void bt_mesh_net_recv(struct os_mbuf *data, s8_t rssi,
     rx.local_match = (bt_mesh_fixed_group_match(rx.ctx.recv_dst) ||
                       bt_mesh_elem_find(rx.ctx.recv_dst));
 
-    if((MYNEWT_VAL(BLE_MESH_GATT_PROXY)) &&
+    if ((MYNEWT_VAL(BLE_MESH_GATT_PROXY)) &&
             net_if == BT_MESH_NET_IF_PROXY) {
         bt_mesh_proxy_addr_add(data, rx.ctx.addr);
 
-        if(bt_mesh_gatt_proxy_get() == BT_MESH_GATT_PROXY_DISABLED &&
+        if (bt_mesh_gatt_proxy_get() == BT_MESH_GATT_PROXY_DISABLED &&
                 !rx.local_match) {
             BT_INFO("Proxy is disabled; ignoring message");
             goto done;
@@ -1316,7 +1316,7 @@ void bt_mesh_net_recv(struct os_mbuf *data, s8_t rssi,
      * credentials. Remove it from the message cache so that we accept
      * it again in the future.
      */
-    if(bt_mesh_trans_recv(buf, &rx) == -EAGAIN) {
+    if (bt_mesh_trans_recv(buf, &rx) == -EAGAIN) {
         BT_WARN("Removing rejected message from Network Message Cache");
         msg_cache[rx.msg_cache_idx] = 0ULL;
         /* Rewind the next index now that we're not using this entry */
@@ -1326,7 +1326,7 @@ void bt_mesh_net_recv(struct os_mbuf *data, s8_t rssi,
     /* Relay if this was a group/virtual address, or if the destination
      * was neither a local element nor an LPN we're Friends for.
      */
-    if(!BT_MESH_ADDR_IS_UNICAST(rx.ctx.recv_dst) ||
+    if (!BT_MESH_ADDR_IS_UNICAST(rx.ctx.recv_dst) ||
             (!rx.local_match && !rx.friend_match)) {
         net_buf_simple_restore(buf, &state);
         bt_mesh_net_relay(buf, &rx);
@@ -1344,8 +1344,8 @@ static void ivu_refresh(struct ble_npl_event *work)
            "IVU in Progress" : "IVU Normal mode",
            bt_mesh.ivu_duration, bt_mesh.ivu_duration == 1 ? "" : "s");
 
-    if(bt_mesh.ivu_duration < BT_MESH_IVU_MIN_HOURS) {
-        if(IS_ENABLED(CONFIG_BT_SETTINGS)) {
+    if (bt_mesh.ivu_duration < BT_MESH_IVU_MIN_HOURS) {
+        if (IS_ENABLED(CONFIG_BT_SETTINGS)) {
             bt_mesh_store_iv(true);
         }
 
@@ -1353,39 +1353,39 @@ static void ivu_refresh(struct ble_npl_event *work)
         return;
     }
 
-    if(atomic_test_bit(bt_mesh.flags, BT_MESH_IVU_IN_PROGRESS)) {
+    if (atomic_test_bit(bt_mesh.flags, BT_MESH_IVU_IN_PROGRESS)) {
         bt_mesh_beacon_ivu_initiator(true);
         bt_mesh_net_iv_update(bt_mesh.iv_index, false);
-    } else if(IS_ENABLED(CONFIG_BT_SETTINGS)) {
+    } else if (IS_ENABLED(CONFIG_BT_SETTINGS)) {
         bt_mesh_store_iv(true);
     }
 }
 
 void bt_mesh_net_start(void)
 {
-    if(bt_mesh_beacon_get() == BT_MESH_BEACON_ENABLED) {
+    if (bt_mesh_beacon_get() == BT_MESH_BEACON_ENABLED) {
         bt_mesh_beacon_enable();
     } else {
         bt_mesh_beacon_disable();
     }
 
-    if(IS_ENABLED(CONFIG_BT_MESH_GATT_PROXY) &&
+    if (IS_ENABLED(CONFIG_BT_MESH_GATT_PROXY) &&
             bt_mesh_gatt_proxy_get() != BT_MESH_GATT_PROXY_NOT_SUPPORTED) {
         bt_mesh_proxy_gatt_enable();
         bt_mesh_adv_update();
     }
 
-    if(IS_ENABLED(CONFIG_BT_MESH_LOW_POWER)) {
+    if (IS_ENABLED(CONFIG_BT_MESH_LOW_POWER)) {
         bt_mesh_lpn_init();
     } else {
         bt_mesh_scan_enable();
     }
 
-    if(IS_ENABLED(CONFIG_BT_MESH_FRIEND)) {
+    if (IS_ENABLED(CONFIG_BT_MESH_FRIEND)) {
         bt_mesh_friend_init();
     }
 
-    if(IS_ENABLED(CONFIG_BT_MESH_PROV)) {
+    if (IS_ENABLED(CONFIG_BT_MESH_PROV)) {
         u16_t net_idx = bt_mesh.sub[0].net_idx;
         u16_t addr = bt_mesh_primary_addr();
         bt_mesh_prov_complete(net_idx, addr);

@@ -72,14 +72,14 @@ static void bits2int(uECC_word_t *native, const uint8_t *bits,
     uECC_word_t carry;
     uECC_word_t *ptr;
 
-    if(bits_size > num_n_bytes) {
+    if (bits_size > num_n_bytes) {
         bits_size = num_n_bytes;
     }
 
     uECC_vli_clear(native, num_n_words);
     uECC_vli_bytesToNative(native, bits, bits_size);
 
-    if(bits_size * 8 <= (unsigned)curve->num_n_bits) {
+    if (bits_size * 8 <= (unsigned)curve->num_n_bits) {
         return;
     }
 
@@ -94,7 +94,7 @@ static void bits2int(uECC_word_t *native, const uint8_t *bits,
     }
 
     /* Reduce mod curve_n */
-    if(uECC_vli_cmp_unsafe(curve->n, native, num_n_words) != 1) {
+    if (uECC_vli_cmp_unsafe(curve->n, native, num_n_words) != 1) {
         uECC_vli_sub(native, native, curve->n, num_n_words);
     }
 }
@@ -113,7 +113,7 @@ int uECC_sign_with_k(const uint8_t *private_key, const uint8_t *message_hash,
     bitcount_t num_n_bits = curve->num_n_bits;
 
     /* Make sure 0 < k < curve_n */
-    if(uECC_vli_isZero(k, num_words) ||
+    if (uECC_vli_isZero(k, num_words) ||
             uECC_vli_cmp(curve->n, k, num_n_words) != 1) {
         return 0;
     }
@@ -121,16 +121,16 @@ int uECC_sign_with_k(const uint8_t *private_key, const uint8_t *message_hash,
     carry = regularize_k(k, tmp, s, curve);
     EccPoint_mult(p, curve->G, k2[!carry], 0, num_n_bits + 1, curve);
 
-    if(uECC_vli_isZero(p, num_words)) {
+    if (uECC_vli_isZero(p, num_words)) {
         return 0;
     }
 
     /* If an RNG function was specified, get a random number
     to prevent side channel analysis of k. */
-    if(!g_rng_function) {
+    if (!g_rng_function) {
         uECC_vli_clear(tmp, num_n_words);
         tmp[0] = 1;
-    } else if(!uECC_generate_random_int(tmp, curve->n, num_n_words)) {
+    } else if (!uECC_generate_random_int(tmp, curve->n, num_n_words)) {
         return 0;
     }
 
@@ -149,7 +149,7 @@ int uECC_sign_with_k(const uint8_t *private_key, const uint8_t *message_hash,
     uECC_vli_modAdd(s, tmp, s, curve->n, num_n_words); /* s = e + r*d */
     uECC_vli_modMult(s, s, k, curve->n, num_n_words);  /* s = (e + r*d) / k */
 
-    if(uECC_vli_numBits(s, num_n_words) > (bitcount_t)curve->num_bytes * 8) {
+    if (uECC_vli_numBits(s, num_n_words) > (bitcount_t)curve->num_bytes * 8) {
         return 0;
     }
 
@@ -168,7 +168,7 @@ int uECC_sign(const uint8_t *private_key, const uint8_t *message_hash,
         /* Generating _random uniformly at random: */
         uECC_RNG_Function rng_function = uECC_get_rng();
 
-        if(!rng_function ||
+        if (!rng_function ||
                 !rng_function((uint8_t *)_random, 2 * NUM_ECC_WORDS * uECC_WORD_SIZE)) {
             return 0;
         }
@@ -176,7 +176,7 @@ int uECC_sign(const uint8_t *private_key, const uint8_t *message_hash,
         // computing k as modular reduction of _random (see FIPS 186.4 B.5.1):
         uECC_vli_mmod(k, _random, curve->n, BITS_TO_WORDS(curve->num_n_bits));
 
-        if(uECC_sign_with_k(private_key, message_hash, hash_size, k, signature,
+        if (uECC_sign_with_k(private_key, message_hash, hash_size, k, signature,
                             curve)) {
             return 1;
         }
@@ -220,12 +220,12 @@ int uECC_verify(const uint8_t *public_key, const uint8_t *message_hash,
     uECC_vli_bytesToNative(s, signature + curve->num_bytes, curve->num_bytes);
 
     /* r, s must not be 0. */
-    if(uECC_vli_isZero(r, num_words) || uECC_vli_isZero(s, num_words)) {
+    if (uECC_vli_isZero(r, num_words) || uECC_vli_isZero(s, num_words)) {
         return 0;
     }
 
     /* r, s must be < n. */
-    if(uECC_vli_cmp_unsafe(curve->n, r, num_n_words) != 1 ||
+    if (uECC_vli_cmp_unsafe(curve->n, r, num_n_words) != 1 ||
             uECC_vli_cmp_unsafe(curve->n, s, num_n_words) != 1) {
         return 0;
     }
@@ -265,7 +265,7 @@ int uECC_verify(const uint8_t *public_key, const uint8_t *message_hash,
         index = (!!uECC_vli_testBit(u1, i)) | ((!!uECC_vli_testBit(u2, i)) << 1);
         point = points[index];
 
-        if(point) {
+        if (point) {
             uECC_vli_set(tx, point, num_words);
             uECC_vli_set(ty, point + num_words, num_words);
             apply_z(tx, ty, z, curve);
@@ -279,7 +279,7 @@ int uECC_verify(const uint8_t *public_key, const uint8_t *message_hash,
     apply_z(rx, ry, z, curve);
 
     /* v = x1 (mod n) */
-    if(uECC_vli_cmp_unsafe(curve->n, rx, num_n_words) != 1) {
+    if (uECC_vli_cmp_unsafe(curve->n, rx, num_n_words) != 1) {
         uECC_vli_sub(rx, rx, curve->n, num_n_words);
     }
 

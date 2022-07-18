@@ -94,7 +94,6 @@ tls_bt_status_t tls_bt_spp_enable(void);
 
 tls_bt_status_t tls_bt_spp_disable(void);
 
-
 /**
  * @brief          Discovery the spp service by the given peer device.
  *
@@ -162,5 +161,4 @@ tls_bt_status_t tls_bt_spp_start_server(wm_spp_sec_t sec_mask,
 tls_bt_status_t tls_bt_spp_write(uint32_t handle, uint8_t *p_data, int length);
 
 #endif
-
 

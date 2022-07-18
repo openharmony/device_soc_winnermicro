@@ -64,16 +64,16 @@ ble_sm_lgcy_io_action(struct ble_sm_proc *proc, uint8_t *action)
     pair_req = (struct ble_sm_pair_cmd *) &proc->pair_req[1];
     pair_rsp = (struct ble_sm_pair_cmd *) &proc->pair_rsp[1];
 
-    if(pair_req->oob_data_flag == BLE_SM_PAIR_OOB_YES &&
+    if (pair_req->oob_data_flag == BLE_SM_PAIR_OOB_YES &&
             pair_rsp->oob_data_flag == BLE_SM_PAIR_OOB_YES) {
         *action = BLE_SM_IOACT_OOB;
-    } else if(!(pair_req->authreq & BLE_SM_PAIR_AUTHREQ_MITM) &&
+    } else if (!(pair_req->authreq & BLE_SM_PAIR_AUTHREQ_MITM) &&
               !(pair_rsp->authreq & BLE_SM_PAIR_AUTHREQ_MITM)) {
         *action = BLE_SM_IOACT_NONE;
-    } else if(pair_req->io_cap >= BLE_SM_IO_CAP_RESERVED ||
+    } else if (pair_req->io_cap >= BLE_SM_IO_CAP_RESERVED ||
               pair_rsp->io_cap >= BLE_SM_IO_CAP_RESERVED) {
         *action = BLE_SM_IOACT_NONE;
-    } else if(proc->flags & BLE_SM_PROC_F_INITIATOR) {
+    } else if (proc->flags & BLE_SM_PROC_F_INITIATOR) {
         *action = ble_sm_lgcy_init_ioa[pair_rsp->io_cap][pair_req->io_cap];
     } else {
         *action = ble_sm_lgcy_resp_ioa[pair_rsp->io_cap][pair_req->io_cap];
@@ -115,7 +115,7 @@ ble_sm_lgcy_confirm_exec(struct ble_sm_proc *proc, struct ble_sm_result *res)
     int rc;
     cmd = ble_sm_cmd_get(BLE_SM_OP_PAIR_CONFIRM, sizeof(*cmd), &txom);
 
-    if(cmd == NULL) {
+    if (cmd == NULL) {
         rc = BLE_HS_ENOMEM;
         goto err;
     }
@@ -124,24 +124,24 @@ ble_sm_lgcy_confirm_exec(struct ble_sm_proc *proc, struct ble_sm_result *res)
     rc = ble_sm_alg_c1(proc->tk, ble_sm_our_pair_rand(proc), proc->pair_req,
                        proc->pair_rsp, iat, rat, ia, ra, cmd->value);
 
-    if(rc != 0) {
+    if (rc != 0) {
         goto err;
     }
 
     rc = ble_sm_tx(proc->conn_handle, txom);
 
-    if(rc != 0) {
+    if (rc != 0) {
         goto err;
     }
 
-    if(!(proc->flags & BLE_SM_PROC_F_INITIATOR)) {
+    if (!(proc->flags & BLE_SM_PROC_F_INITIATOR)) {
         proc->state = BLE_SM_PROC_STATE_RANDOM;
     }
 
     return;
 err:
 
-    if(txom) {
+    if (txom) {
         os_mbuf_free_chain(txom);
     }
 
@@ -157,7 +157,7 @@ ble_sm_gen_stk(struct ble_sm_proc *proc)
     int rc;
     rc = ble_sm_alg_s1(proc->tk, proc->rands, proc->randm, key);
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
@@ -175,7 +175,7 @@ ble_sm_lgcy_random_exec(struct ble_sm_proc *proc, struct ble_sm_result *res)
     int rc;
     cmd = ble_sm_cmd_get(BLE_SM_OP_PAIR_RANDOM, sizeof(*cmd), &txom);
 
-    if(cmd == NULL) {
+    if (cmd == NULL) {
         res->app_status = BLE_HS_ENOMEM;
         res->enc_cb = 1;
         res->sm_err = BLE_SM_ERR_UNSPECIFIED;
@@ -185,14 +185,14 @@ ble_sm_lgcy_random_exec(struct ble_sm_proc *proc, struct ble_sm_result *res)
     memcpy(cmd->value, ble_sm_our_pair_rand(proc), 16);
     rc = ble_sm_tx(proc->conn_handle, txom);
 
-    if(rc != 0) {
+    if (rc != 0) {
         res->app_status = rc;
         res->enc_cb = 1;
         res->sm_err = BLE_SM_ERR_UNSPECIFIED;
         return;
     }
 
-    if(!(proc->flags & BLE_SM_PROC_F_INITIATOR)) {
+    if (!(proc->flags & BLE_SM_PROC_F_INITIATOR)) {
         proc->state = BLE_SM_PROC_STATE_LTK_START;
     }
 }
@@ -210,14 +210,14 @@ ble_sm_lgcy_random_rx(struct ble_sm_proc *proc, struct ble_sm_result *res)
     rc = ble_sm_alg_c1(proc->tk, ble_sm_peer_pair_rand(proc), proc->pair_req,
                        proc->pair_rsp, iat, rat, ia, ra, confirm_val);
 
-    if(rc != 0) {
+    if (rc != 0) {
         res->app_status = rc;
         res->sm_err = BLE_SM_ERR_UNSPECIFIED;
         res->enc_cb = 1;
         return;
     }
 
-    if(memcmp(proc->confirm_peer, confirm_val, 16) != 0) {
+    if (memcmp(proc->confirm_peer, confirm_val, 16) != 0) {
         /* Random number mismatch. */
         res->app_status = BLE_HS_SM_US_ERR(BLE_SM_ERR_CONFIRM_MISMATCH);
         res->sm_err = BLE_SM_ERR_CONFIRM_MISMATCH;
@@ -228,14 +228,14 @@ ble_sm_lgcy_random_rx(struct ble_sm_proc *proc, struct ble_sm_result *res)
     /* Generate the key. */
     rc = ble_sm_gen_stk(proc);
 
-    if(rc != 0) {
+    if (rc != 0) {
         res->app_status = rc;
         res->sm_err = BLE_SM_ERR_UNSPECIFIED;
         res->enc_cb = 1;
         return;
     }
 
-    if(proc->flags & BLE_SM_PROC_F_INITIATOR) {
+    if (proc->flags & BLE_SM_PROC_F_INITIATOR) {
         /* Send the start-encrypt HCI command to the controller.   For
          * short-term key generation, we always set ediv and rand to 0.
          * (Vol. 3, part H, 2.4.4.1).

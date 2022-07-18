@@ -35,13 +35,12 @@
 static struct tls_inside_fls *inside_fls = NULL;
 
 /**System parameter, default for 2M flash*/
-unsigned int  TLS_FLASH_PARAM_DEFAULT        =		  (0x81FB000UL);
-unsigned int  TLS_FLASH_PARAM1_ADDR          =		  (0x81FC000UL);
-unsigned int  TLS_FLASH_PARAM2_ADDR          =		  (0x81FD000UL);
-unsigned int  TLS_FLASH_PARAM_RESTORE_ADDR   =	      (0x81FE000UL);
-unsigned int  TLS_FLASH_OTA_FLAG_ADDR        =	      (0x81FF000UL);
-unsigned int  TLS_FLASH_END_ADDR             =		  (0x81FFFFFUL);
-
+unsigned int  TLS_FLASH_PARAM_DEFAULT        =          (0x81FB000UL);
+unsigned int  TLS_FLASH_PARAM1_ADDR          =          (0x81FC000UL);
+unsigned int  TLS_FLASH_PARAM2_ADDR          =          (0x81FD000UL);
+unsigned int  TLS_FLASH_PARAM_RESTORE_ADDR   =          (0x81FE000UL);
+unsigned int  TLS_FLASH_OTA_FLAG_ADDR        =          (0x81FF000UL);
+unsigned int  TLS_FLASH_END_ADDR             =          (0x81FFFFFUL);
 
 static vu32 read_first_value(void)
 {
@@ -110,16 +109,14 @@ static void writeBpBit_for_2wreg(char cmp, char bp4, char bp3, char bp2, char bp
     M32(HR_FLASH_CMD_ADDR) = 0xA001;
     M32(HR_FLASH_CMD_START) = CMD_START_Msk;
 
-
     M32(HR_FLASH_CMD_ADDR) = 0x6;
     M32(HR_FLASH_CMD_START) = CMD_START_Msk;
 
     status      = ((status>>8) & 0xBF) | (cmp << 6);
     M32(RSA_BASE_ADDRESS)   = status;
     M32(HR_FLASH_CMD_ADDR)  = 0xA031;
-    M32(HR_FLASH_CMD_START) = CMD_START_Msk;	
+    M32(HR_FLASH_CMD_START) = CMD_START_Msk;    
 }
-
 
 static void writeESMTBpBit(char cmp, char bp4, char bp3, char bp2, char bp1, char bp0)
 {
@@ -143,7 +140,6 @@ static void writeESMTBpBit(char cmp, char bp4, char bp3, char bp2, char bp1, cha
     M32(HR_FLASH_CMD_ADDR) = 0x0A001;
     M32(HR_FLASH_CMD_START) = CMD_START_Msk;
 
-
     M32(HR_FLASH_CMD_ADDR) = 0x0C085;
     M32(HR_FLASH_CMD_START) = CMD_START_Msk;
     status  =  read_first_value() & 0xFF;
@@ -152,7 +148,7 @@ static void writeESMTBpBit(char cmp, char bp4, char bp3, char bp2, char bp1, cha
     M32(HR_FLASH_CMD_ADDR) = 0x6;
     M32(HR_FLASH_CMD_START) = CMD_START_Msk;
 
-    status		= (status & 0xBF) | (cmp << 6);
+    status        = (status & 0xBF) | (cmp << 6);
     M32(RSA_BASE_ADDRESS)  = status;
     M32(HR_FLASH_CMD_ADDR) = 0x0A0C1;
     M32(HR_FLASH_CMD_START) = CMD_START_Msk;
@@ -163,16 +159,16 @@ static int flashunlock(void)
     switch(readRID())
     {
     case SPIFLASH_MID_GD:
-	case SPIFLASH_MID_TSINGTENG:
+    case SPIFLASH_MID_TSINGTENG:
         writeBpBit_for_1wreg(0, 0, 0, 0, 0, 0);
         break;
     case SPIFLASH_MID_PUYA:
-	case SPIFLASH_MID_XTX:
-	case SPIFLASH_MID_BOYA:
-	case SPIFLASH_MID_FUDANMICRO:
-	case SPIFLASH_MID_XMC:
-		writeBpBit_for_2wreg(0, 0, 0, 0, 0, 0);
-		break;
+    case SPIFLASH_MID_XTX:
+    case SPIFLASH_MID_BOYA:
+    case SPIFLASH_MID_FUDANMICRO:
+    case SPIFLASH_MID_XMC:
+        writeBpBit_for_2wreg(0, 0, 0, 0, 0, 0);
+        break;
     case SPIFLASH_MID_ESMT:
         writeESMTBpBit(0, 0, 0, 0, 0, 0);
         break;
@@ -187,15 +183,15 @@ static int flashlock(void)
     switch(readRID())
     {
     case SPIFLASH_MID_GD:
-	case SPIFLASH_MID_TSINGTENG:		
+    case SPIFLASH_MID_TSINGTENG:        
         writeBpBit_for_1wreg(0, 1, 1, 0, 1, 0);
-		break;
+        break;
     case SPIFLASH_MID_PUYA:
-	case SPIFLASH_MID_XTX:
-	case SPIFLASH_MID_BOYA:
-	case SPIFLASH_MID_FUDANMICRO:
-	case SPIFLASH_MID_XMC:
-		writeBpBit_for_2wreg(0, 1, 1, 0, 1, 0);
+    case SPIFLASH_MID_XTX:
+    case SPIFLASH_MID_BOYA:
+    case SPIFLASH_MID_FUDANMICRO:
+    case SPIFLASH_MID_XMC:
+        writeBpBit_for_2wreg(0, 1, 1, 0, 1, 0);
         break;
     case SPIFLASH_MID_ESMT:
         writeESMTBpBit(0, 1, 1, 0, 1, 0);
@@ -245,7 +241,7 @@ static void writeLbBit_for_2wreg(unsigned int val)
     M32(HR_FLASH_CMD_ADDR) = 0x6;
     M32(HR_FLASH_CMD_START) = CMD_START_Msk;
 
-	status |= (val);
+    status |= (val);
     status      = (status>>8);
     M32(RSA_BASE_ADDRESS)   = status;
     M32(HR_FLASH_CMD_ADDR)  = 0xA031;
@@ -256,7 +252,6 @@ static int programSR(unsigned int  cmd, unsigned long addr, unsigned char *buf, 
 {
     unsigned long base_addr = 0;
     unsigned int size = 0;
-
 
     if (sz > INSIDE_FLS_PAGE_SIZE)
     {
@@ -281,7 +276,6 @@ static int programSR(unsigned int  cmd, unsigned long addr, unsigned char *buf, 
     return 0;
 }
 
-
 static int programPage (unsigned long adr, unsigned long sz, unsigned char *buf)
 {
     programSR(0x80009002, adr, buf, sz);
@@ -303,16 +297,15 @@ static int eraseSector (unsigned long adr)
 {
     eraseSR(0x80000820, adr);
 
-    return (0);                                  				// Finished without Errors
+    return (0);                                                  // Finished without Errors
 }
 
 /*only for w800 c400 flash*/
 static int erasePage (unsigned long addr)
 {
-	eraseSR(0x80000881, addr);
-    return (0);                                  				// Finished without Errors
+    eraseSR(0x80000881, addr);
+    return (0);                                                  // Finished without Errors
 }
-
 
 static unsigned int getFlashDensity(void)
 {
@@ -322,7 +315,7 @@ static unsigned int getFlashDensity(void)
     M32(HR_FLASH_CMD_START) = CMD_START_Msk;
 
     density = ((read_first_value() & 0xFFFFFF) >> 16) & 0xFF;
-    //	printf("density %x\n", density);
+    //    printf("density %x\n", density);
     if (density && (density <= 28)) 
     {
         return (1 << density);
@@ -337,14 +330,14 @@ int __readByCMD(unsigned char cmd, unsigned long addr, unsigned char *buf, unsig
     int word = sz / 4;
     int byte = sz % 4;
     unsigned long addr_read;
-	if (!(M32(HR_FLASH_CR)&0x1))/*non-QIO mode, only single line command can be used*/
-	{
-		if (cmd > 0x0B)
-		{
-			cmd = 0x0B;
-		}
-	}
-	
+    if (!(M32(HR_FLASH_CR)&0x1))/*non-QIO mode, only single line command can be used*/
+    {
+        if (cmd > 0x0B)
+        {
+            cmd = 0x0B;
+        }
+    }
+    
     switch (cmd)
     {
     case 0x03:
@@ -353,7 +346,7 @@ int __readByCMD(unsigned char cmd, unsigned long addr, unsigned char *buf, unsig
         M32(HR_FLASH_CMD_START) = CMD_START_Msk;
         break;
     case 0x0B:
-        if((M32(HR_FLASH_CR) & 0x2) == 0x2)
+        if ((M32(HR_FLASH_CR) & 0x2) == 0x2)
         {
             M32(HR_FLASH_CMD_ADDR) = 0xB400C00B | (((sz - 1) & 0x3FF) << 16);
         }
@@ -376,13 +369,12 @@ int __readByCMD(unsigned char cmd, unsigned long addr, unsigned char *buf, unsig
         M32(HR_FLASH_CMD_START) = CMD_START_Msk;
         break;
 
-
     default:
         return -1;
     }
 
-    //	printf("delay delay delay delay\n");
-    //	dumpUint32("readByCMD RSA_BASE_ADDRESS", RSA_BASE_ADDRESS, sz/4);
+    //    printf("delay delay delay delay\n");
+    //    dumpUint32("readByCMD RSA_BASE_ADDRESS", RSA_BASE_ADDRESS, sz/4);
     addr_read = RSA_BASE_ADDRESS;
     for(i = 0; i < word; i ++)
     {
@@ -391,10 +383,10 @@ int __readByCMD(unsigned char cmd, unsigned long addr, unsigned char *buf, unsig
         addr_read += 4;
     }
 
-    if(byte > 0)
+    if (byte > 0)
     {
         M32(buf) = M32(addr_read);
-        buf += 3;							//point last byte
+        buf += 3;                            // point last byte
         byte = 4 - byte;
         while(byte)
         {
@@ -414,8 +406,8 @@ int __readByCMD(unsigned char cmd, unsigned long addr, unsigned char *buf, unsig
  * @param[in]      buf                 is user for data buffer of flash read
  * @param[in]      len                 is byte length for read.
  *
- * @retval         TLS_FLS_STATUS_OK	    if read sucsess
- * @retval         TLS_FLS_STATUS_EPERM	    if inside fls does not initialized.
+ * @retval         TLS_FLS_STATUS_OK        if read sucsess
+ * @retval         TLS_FLS_STATUS_EPERM        if inside fls does not initialized.
  *
  * @note           None
  */
@@ -426,13 +418,11 @@ int readByCMD(unsigned char cmd, unsigned long addr, unsigned char *buf, unsigne
         return TLS_FLS_STATUS_EPERM;
     }
 
-	tls_os_sem_acquire(inside_fls->fls_lock, 0);
-	__readByCMD(cmd, addr, buf, sz);
-	tls_os_sem_release(inside_fls->fls_lock);
+    tls_os_sem_acquire(inside_fls->fls_lock, 0);
+    __readByCMD(cmd, addr, buf, sz);
+    tls_os_sem_release(inside_fls->fls_lock);
     return TLS_FLS_STATUS_OK;
 }
-
-
 
 int flashRead(unsigned long addr, unsigned char *buf, unsigned long sz)
 {
@@ -443,77 +433,77 @@ int flashRead(unsigned long addr, unsigned char *buf, unsigned long sz)
     unsigned int sz_remain = 0;
     int i = 0;
     int page_offset = addr & (INSIDE_FLS_PAGE_SIZE - 1);
-	
+    
 
-	if ((page_offset == 0) 
-		&& (((unsigned int)buf&0x3) == 0) 
-		&& ((sz&0x3) == 0))/*Use 4-bytes aligned and buf must be 4 times, sz must be 4 times*/
-	{
-		flash_addr = addr;
+    if ((page_offset == 0) 
+        && (((unsigned int)buf&0x3) == 0) 
+        && ((sz&0x3) == 0))/*Use 4-bytes aligned and buf must be 4 times, sz must be 4 times*/
+    {
+        flash_addr = addr;
         unsigned int max_size = 0;
-		if (sz >= 512)
-		{
-			max_size = INSIDE_FLS_MAX_RD_SIZE;
-		}
-		else
-		{
-			max_size = INSIDE_FLS_PAGE_SIZE;
-		}
+        if (sz >= 512)
+        {
+            max_size = INSIDE_FLS_MAX_RD_SIZE;
+        }
+        else
+        {
+            max_size = INSIDE_FLS_PAGE_SIZE;
+        }
 
-		sz_pagenum = sz / max_size;
-		sz_remain = sz % max_size;
-		for (i = 0; i < sz_pagenum; i++)
-		{
-			__readByCMD(0xEB, flash_addr, (unsigned char *)buf, max_size);
-			buf 		+= max_size;
-			flash_addr	+= max_size;
-		}
-		
-		if (sz_remain)
-		{
-			__readByCMD(0xEB, flash_addr, (unsigned char *)buf, sz_remain);
-		}
+        sz_pagenum = sz / max_size;
+        sz_remain = sz % max_size;
+        for (i = 0; i < sz_pagenum; i++)
+        {
+            __readByCMD(0xEB, flash_addr, (unsigned char *)buf, max_size);
+            buf         += max_size;
+            flash_addr    += max_size;
+        }
+        
+        if (sz_remain)
+        {
+            __readByCMD(0xEB, flash_addr, (unsigned char *)buf, sz_remain);
+        }
 
-	}
-	else
-	{
-	    char *cache = tls_mem_alloc(INSIDE_FLS_PAGE_SIZE);
-	    if (cache == NULL)
-	    {
-	        TLS_DBGPRT_ERR("allocate sector cache memory fail!\n");
-	        return TLS_FLS_STATUS_ENOMEM;
-	    }
-	    flash_addr = addr & ~(INSIDE_FLS_PAGE_SIZE - 1);
-	    __readByCMD(0xEB, flash_addr, (unsigned char *)cache, INSIDE_FLS_PAGE_SIZE);
-	    if (sz > INSIDE_FLS_PAGE_SIZE - page_offset)
-	    {
-	        MEMCPY(buf, cache + page_offset, INSIDE_FLS_PAGE_SIZE - page_offset);
-	        buf += INSIDE_FLS_PAGE_SIZE - page_offset;
-	        flash_addr 	+= INSIDE_FLS_PAGE_SIZE;
+    }
+    else
+    {
+        char *cache = tls_mem_alloc(INSIDE_FLS_PAGE_SIZE);
+        if (cache == NULL)
+        {
+            TLS_DBGPRT_ERR("allocate sector cache memory fail!\n");
+            return TLS_FLS_STATUS_ENOMEM;
+        }
+        flash_addr = addr & ~(INSIDE_FLS_PAGE_SIZE - 1);
+        __readByCMD(0xEB, flash_addr, (unsigned char *)cache, INSIDE_FLS_PAGE_SIZE);
+        if (sz > INSIDE_FLS_PAGE_SIZE - page_offset)
+        {
+            MEMCPY(buf, cache + page_offset, INSIDE_FLS_PAGE_SIZE - page_offset);
+            buf += INSIDE_FLS_PAGE_SIZE - page_offset;
+            flash_addr     += INSIDE_FLS_PAGE_SIZE;
 
-	        sz_pagenum = (sz - (INSIDE_FLS_PAGE_SIZE - page_offset)) / INSIDE_FLS_PAGE_SIZE;
-	        sz_remain = (sz - (INSIDE_FLS_PAGE_SIZE - page_offset)) % INSIDE_FLS_PAGE_SIZE;
-	        for (i = 0; i < sz_pagenum; i++)
-	        {
+            sz_pagenum = (sz - (INSIDE_FLS_PAGE_SIZE - page_offset)) / INSIDE_FLS_PAGE_SIZE;
+            sz_remain = (sz - (INSIDE_FLS_PAGE_SIZE - page_offset)) % INSIDE_FLS_PAGE_SIZE;
+            for (i = 0; i < sz_pagenum; i++)
+            {
 
-	            __readByCMD(0xEB, flash_addr, (unsigned char *)cache, INSIDE_FLS_PAGE_SIZE);
-	            MEMCPY(buf, cache, INSIDE_FLS_PAGE_SIZE);
-	            buf 		+= INSIDE_FLS_PAGE_SIZE;
-	            flash_addr 	+= INSIDE_FLS_PAGE_SIZE;
-	        }
+                __readByCMD(0xEB, flash_addr, (unsigned char *)cache, INSIDE_FLS_PAGE_SIZE);
+                MEMCPY(buf, cache, INSIDE_FLS_PAGE_SIZE);
+                buf         += INSIDE_FLS_PAGE_SIZE;
+                flash_addr     += INSIDE_FLS_PAGE_SIZE;
+            }
 
-	        if (sz_remain)
-	        {
-	            __readByCMD(0xEB, flash_addr, (unsigned char *)cache, sz_remain + (4- sz_remain%4));
-	            MEMCPY(buf, cache, sz_remain);
-	        }
-	    }
-	    else
-	    {
-	        MEMCPY(buf, cache + page_offset, sz);
-	    }
-	    tls_mem_free(cache);
-	}
+            if (sz_remain)
+            {
+                __readByCMD(0xEB, flash_addr, (unsigned char *)cache, sz_remain + (4- sz_remain%4));
+                MEMCPY(buf, cache, sz_remain);
+            }
+        }
+        else
+        {
+            MEMCPY(buf, cache + page_offset, sz);
+        }
+        tls_mem_free(cache);
+    }
 
     return 0;
 }
@@ -521,7 +511,7 @@ int flashRead(unsigned long addr, unsigned char *buf, unsigned long sz)
 /**
  * @brief           This function is used to unlock flash protect area [0x0~0x2000].
  *
- * @param	   None
+ * @param       None
  *
  * @return         0-success,non-zero-failure
  *
@@ -529,7 +519,7 @@ int flashRead(unsigned long addr, unsigned char *buf, unsigned long sz)
  */
 int tls_flash_unlock(void)
 {
-	int ret = 0;
+    int ret = 0;
     if (inside_fls == NULL)
     {
         return TLS_FLS_STATUS_EPERM;
@@ -538,13 +528,13 @@ int tls_flash_unlock(void)
     ret = flashunlock();
     tls_os_sem_release(inside_fls->fls_lock);
 
-	return ret;
+    return ret;
 }
 
 /**
  * @brief           This function is used to lock flash protect area [0x0~0x2000].
  *
- * @param	   None
+ * @param       None
  *
  * @return        0-success,non-zero-failure
  *
@@ -552,7 +542,7 @@ int tls_flash_unlock(void)
  */
 int tls_flash_lock(void)
 {
-	int ret = 0;
+    int ret = 0;
     if (inside_fls == NULL)
     {
         return TLS_FLS_STATUS_EPERM;
@@ -561,15 +551,14 @@ int tls_flash_lock(void)
     ret = flashlock();
     tls_os_sem_release(inside_fls->fls_lock);
 
-	return ret;
+    return ret;
 
 }
-
 
 /**
  * @brief           This function is used to semaphore protect.
  *
- * @param	   None
+ * @param       None
  *
  * @return         None
  *
@@ -584,11 +573,10 @@ void tls_fls_sem_lock(void)
     tls_os_sem_acquire(inside_fls->fls_lock, 0);
 }
 
-
 /**
  * @brief           This function is used to semaphore protect cancel.
  *
- * @param	   None
+ * @param       None
  *
  * @return         None
  *
@@ -608,99 +596,99 @@ void tls_fls_sem_unlock(void)
  *
  * @param[out]      uuid                 Specified the address to save the uuid, the length must be greater than or equals to 18 bytes.
  *
- * @retval         TLS_FLS_STATUS_OK	    if read sucsess
- * @retval         TLS_FLS_STATUS_EIO	    if read fail
+ * @retval         TLS_FLS_STATUS_OK        if read sucsess
+ * @retval         TLS_FLS_STATUS_EIO        if read fail
  *
  * @note           The uuid's length must be greater than or equals to 18 bytes.
  */
 int tls_fls_read_unique_id(unsigned  char *uuid)
 {
-	unsigned int value = 0;
-	unsigned int addr_read = 0;
-	int i = 0;
-	int len;
-	unsigned char FLASH_BUF[20];
-	unsigned char *addr = &FLASH_BUF[0];
-	int dumy_bytes = 0;
-	int uni_bytes = 0;
-	unsigned char rid;
-	int word;
-	int byte;
+    unsigned int value = 0;
+    unsigned int addr_read = 0;
+    int i = 0;
+    int len;
+    unsigned char FLASH_BUF[20];
+    unsigned char *addr = &FLASH_BUF[0];
+    int dumy_bytes = 0;
+    int uni_bytes = 0;
+    unsigned char rid;
+    int word;
+    int byte;
     if (inside_fls == NULL)
     {
-    	return TLS_FLS_STATUS_EPERM;
+        return TLS_FLS_STATUS_EPERM;
     }
 
-	tls_os_sem_acquire(inside_fls->fls_lock, 0);
-	memset(uuid, 0xFF, 18);
-	rid = readRID();
-	switch(rid)
-	{
-		case SPIFLASH_MID_GD:
-		case SPIFLASH_MID_PUYA:
-		case SPIFLASH_MID_TSINGTENG:
-			dumy_bytes = 4;
-			uni_bytes = 16;
-			break;
-		case SPIFLASH_MID_WINBOND:
-		case SPIFLASH_MID_FUDANMICRO:
-		case SPIFLASH_MID_BOYA:
-		case SPIFLASH_MID_XMC:
-			dumy_bytes = 4;
-			uni_bytes = 8;
-			break;
-		case SPIFLASH_MID_ESMT:
-		case SPIFLASH_MID_XTX:
-		default:
-			tls_os_sem_release(inside_fls->fls_lock);
-			return -1;
-	}
-	uuid[0] = rid;
-	uuid[1] = (unsigned char)(uni_bytes & 0xFF);
-	len = dumy_bytes + uni_bytes;
-	word = len/4;
-	byte = len%4;
-	
-	value = 0xC04B|((len-1) << 16);
-	M32(HR_FLASH_CMD_ADDR) = value;
-	M32(HR_FLASH_CMD_START) = CMD_START_Msk;		
+    tls_os_sem_acquire(inside_fls->fls_lock, 0);
+    memset(uuid, 0xFF, 18);
+    rid = readRID();
+    switch(rid)
+    {
+        case SPIFLASH_MID_GD:
+        case SPIFLASH_MID_PUYA:
+        case SPIFLASH_MID_TSINGTENG:
+            dumy_bytes = 4;
+            uni_bytes = 16;
+            break;
+        case SPIFLASH_MID_WINBOND:
+        case SPIFLASH_MID_FUDANMICRO:
+        case SPIFLASH_MID_BOYA:
+        case SPIFLASH_MID_XMC:
+            dumy_bytes = 4;
+            uni_bytes = 8;
+            break;
+        case SPIFLASH_MID_ESMT:
+        case SPIFLASH_MID_XTX:
+        default:
+            tls_os_sem_release(inside_fls->fls_lock);
+            return -1;
+    }
+    uuid[0] = rid;
+    uuid[1] = (unsigned char)(uni_bytes & 0xFF);
+    len = dumy_bytes + uni_bytes;
+    word = len/4;
+    byte = len%4;
+    
+    value = 0xC04B|((len-1) << 16);
+    M32(HR_FLASH_CMD_ADDR) = value;
+    M32(HR_FLASH_CMD_START) = CMD_START_Msk;        
 
-	addr_read = RSA_BASE_ADDRESS;
-	for(i = 0;i < word; i ++)
-	{
-		M32(addr) = M32(addr_read);	
-		addr += 4;
-		addr_read += 4;
-	}
+    addr_read = RSA_BASE_ADDRESS;
+    for(i = 0;i < word; i ++)
+    {
+        M32(addr) = M32(addr_read);    
+        addr += 4;
+        addr_read += 4;
+    }
 
-	if(byte > 0)
-	{
-		M32(addr) = M32(addr_read);	
-		addr += 3;							//point last byte
-		while(byte)
-		{
-			*addr = 0;
-			addr --;
-			byte --;
-		}
-	}
-	addr = &FLASH_BUF[0];
-	memcpy(&uuid[2], addr + dumy_bytes, uni_bytes);
-	tls_os_sem_release(inside_fls->fls_lock);
+    if (byte > 0)
+    {
+        M32(addr) = M32(addr_read);    
+        addr += 3;                            // point last byte
+        while(byte)
+        {
+            *addr = 0;
+            addr --;
+            byte --;
+        }
+    }
+    addr = &FLASH_BUF[0];
+    memcpy(&uuid[2], addr + dumy_bytes, uni_bytes);
+    tls_os_sem_release(inside_fls->fls_lock);
 
-	return 0;
+    return 0;
 }
 
 int tls_fls_otp_read(u32 addr, u8 *buf, u32 len)
 {
     int err;
-	
-	int word = len/4;
-	int byte = len%4;
-	unsigned long addr_read = 0xBC00C048;
-	volatile unsigned long value;
-	unsigned long addr_offset = 0;
-	unsigned long sz_need = len;
+    
+    int word = len/4;
+    int byte = len%4;
+    unsigned long addr_read = 0xBC00C048;
+    volatile unsigned long value;
+    unsigned long addr_offset = 0;
+    unsigned long sz_need = len;
 
     if (inside_fls == NULL)
     {
@@ -709,51 +697,51 @@ int tls_fls_otp_read(u32 addr, u8 *buf, u32 len)
     }
     tls_os_sem_acquire(inside_fls->fls_lock, 0);
 
-	if(buf)
-	{
-		addr_offset = addr % 16;
-		sz_need = (addr_offset + len + 16) / 16 * 16;
-		addr = addr / 16 * 16;
-	}
-	M32(HR_FLASH_CMD_ADDR) = addr_read|(((sz_need-1)&0x3FF)<<16);
-	M32(HR_FLASH_ADDR) = (addr&0x1FFFFFF);
-	M32(HR_FLASH_CMD_START) = tls_reg_read32(HR_FLASH_CMD_START) | CMD_START_Msk;
+    if (buf)
+    {
+        addr_offset = addr % 16;
+        sz_need = (addr_offset + len + 16) / 16 * 16;
+        addr = addr / 16 * 16;
+    }
+    M32(HR_FLASH_CMD_ADDR) = addr_read|(((sz_need-1)&0x3FF)<<16);
+    M32(HR_FLASH_ADDR) = (addr&0x1FFFFFF);
+    M32(HR_FLASH_CMD_START) = tls_reg_read32(HR_FLASH_CMD_START) | CMD_START_Msk;
 
-	if(buf)
-	{
-		addr_read = RSA_BASE_ADDRESS + (addr_offset / 4 * 4);
-		int i = (4 - addr_offset % 4) % 4;
-		if(i > len)
-		{
-			byte = len;
-		}
-		else
-		{
-			byte = i;
-		}
-		if(byte)
-		{
-			value = M32(addr_read);
-			memcpy(buf, ((char *)&value) + 4 - i, byte);
-			addr_read += 4;
-			buf += byte;
-		}
-		word = (len - byte) / 4;
-		for(i = 0;i < word; i ++)
-		{
-			value = M32(addr_read);
-			memcpy(buf, (char*)&value, 4);
-			buf += 4;
-			addr_read += 4;
-		}
-		byte = (len - byte) % 4;
-		if(byte > 0)
-		{
-			value = M32(addr_read);
-			memcpy(buf, (char *)&value, byte);
-		}
-	}
-	
+    if (buf)
+    {
+        addr_read = RSA_BASE_ADDRESS + (addr_offset / 4 * 4);
+        int i = (4 - addr_offset % 4) % 4;
+        if (i > len)
+        {
+            byte = len;
+        }
+        else
+        {
+            byte = i;
+        }
+        if (byte)
+        {
+            value = M32(addr_read);
+            memcpy(buf, ((char *)&value) + 4 - i, byte);
+            addr_read += 4;
+            buf += byte;
+        }
+        word = (len - byte) / 4;
+        for(i = 0;i < word; i ++)
+        {
+            value = M32(addr_read);
+            memcpy(buf, (char*)&value, 4);
+            buf += 4;
+            addr_read += 4;
+        }
+        byte = (len - byte) % 4;
+        if (byte > 0)
+        {
+            value = M32(addr_read);
+            memcpy(buf, (char *)&value, byte);
+        }
+    }
+    
     err = TLS_FLS_STATUS_OK;
     tls_os_sem_release(inside_fls->fls_lock);
     return err;
@@ -761,81 +749,81 @@ int tls_fls_otp_read(u32 addr, u8 *buf, u32 len)
 
 int tls_fls_otp_write(u32 addr, u8 *buf, u32 len)
 {
-	int ret = 0;
-	unsigned int erasecmd = 0x80000844;
-	unsigned int writecmd = 0x80009042; 
-	uint32_t eraseAddr = 0;
-	uint16_t eraseSize = 0;
-	uint16_t pageSize = 0;
-	unsigned char flashid = 0;
-	int l = 0;
-	unsigned char *backbuf = NULL;
-	unsigned long size = 0;
-	unsigned long p = 0;
-	unsigned char *q = NULL;
+    int ret = 0;
+    unsigned int erasecmd = 0x80000844;
+    unsigned int writecmd = 0x80009042; 
+    uint32_t eraseAddr = 0;
+    uint16_t eraseSize = 0;
+    uint16_t pageSize = 0;
+    unsigned char flashid = 0;
+    int l = 0;
+    unsigned char *backbuf = NULL;
+    unsigned long size = 0;
+    unsigned long p = 0;
+    unsigned char *q = NULL;
 
-	if (!buf)
-	{
-		return TLS_FLS_STATUS_EINVAL;
-	}
+    if (!buf)
+    {
+        return TLS_FLS_STATUS_EINVAL;
+    }
     if (inside_fls == NULL)
     {
         TLS_DBGPRT_ERR("flash driver module not beed installed!\n");
         return TLS_FLS_STATUS_EPERM;
     }
-	eraseSize = inside_fls->OTPWRParam.eraseSize;
-	pageSize = inside_fls->OTPWRParam.pageSize;
-	if (eraseSize == 0 || pageSize == 0)
-	{
-		TLS_DBGPRT_ERR("flash type is not supported!\n");
-		return TLS_FLS_STATUS_ENOSUPPORT;
-	}
-	eraseAddr = addr & ~(eraseSize - 1);
-	if(addr < eraseAddr || len > eraseSize - (addr - eraseAddr))
-	{
-		return TLS_FLS_STATUS_EINVAL;
-	}
-	TLS_DBGPRT_INFO("addr 0x%x, eraseAddr 0x%x, eraseSize 0x%x, pageSize 0x%x\n", addr, eraseAddr, eraseSize, pageSize);
-	backbuf = tls_mem_alloc(eraseSize);
-	if (!backbuf)
-	{
-		ret = TLS_FLS_STATUS_ENOMEM;
-		goto out;
-	}
-	p = eraseAddr;
-	q = backbuf;
-	size = eraseSize;
-	while(size > 0)
-	{
-		l = size > pageSize ? pageSize : size;
-		if(tls_fls_otp_read(p, q, l) != TLS_FLS_STATUS_OK)
-		{
-			ret = TLS_FLS_STATUS_EPERM;
-			goto out;
-		}
-		q += l;
-		p += l;
-		size -= l;
-	}
-	tls_os_sem_acquire(inside_fls->fls_lock, 0);
-	eraseSR(erasecmd, eraseAddr);
-	memcpy(backbuf + (addr - eraseAddr), buf, len);
-	p = eraseAddr;
-	q = backbuf;
-	size = eraseSize;
-	while(size > 0)
-	{
-		l = size > pageSize ? pageSize : size;
-		programSR(writecmd, p, q, l);
-		q += l;
-		p += l;
-		size -= l;
-	}
-	tls_os_sem_release(inside_fls->fls_lock);
+    eraseSize = inside_fls->OTPWRParam.eraseSize;
+    pageSize = inside_fls->OTPWRParam.pageSize;
+    if (eraseSize == 0 || pageSize == 0)
+    {
+        TLS_DBGPRT_ERR("flash type is not supported!\n");
+        return TLS_FLS_STATUS_ENOSUPPORT;
+    }
+    eraseAddr = addr & ~(eraseSize - 1);
+    if (addr < eraseAddr || len > eraseSize - (addr - eraseAddr))
+    {
+        return TLS_FLS_STATUS_EINVAL;
+    }
+    TLS_DBGPRT_INFO("addr 0x%x, eraseAddr 0x%x, eraseSize 0x%x, pageSize 0x%x\n", addr, eraseAddr, eraseSize, pageSize);
+    backbuf = tls_mem_alloc(eraseSize);
+    if (!backbuf)
+    {
+        ret = TLS_FLS_STATUS_ENOMEM;
+        goto out;
+    }
+    p = eraseAddr;
+    q = backbuf;
+    size = eraseSize;
+    while(size > 0)
+    {
+        l = size > pageSize ? pageSize : size;
+        if (tls_fls_otp_read(p, q, l) != TLS_FLS_STATUS_OK)
+        {
+            ret = TLS_FLS_STATUS_EPERM;
+            goto out;
+        }
+        q += l;
+        p += l;
+        size -= l;
+    }
+    tls_os_sem_acquire(inside_fls->fls_lock, 0);
+    eraseSR(erasecmd, eraseAddr);
+    memcpy(backbuf + (addr - eraseAddr), buf, len);
+    p = eraseAddr;
+    q = backbuf;
+    size = eraseSize;
+    while(size > 0)
+    {
+        l = size > pageSize ? pageSize : size;
+        programSR(writecmd, p, q, l);
+        q += l;
+        p += l;
+        size -= l;
+    }
+    tls_os_sem_release(inside_fls->fls_lock);
 out:
-	if(backbuf)
-		tls_mem_free(backbuf);
-	return ret;
+    if (backbuf)
+        tls_mem_free(backbuf);
+    return ret;
 }
 
 int tls_fls_otp_lock(void)
@@ -846,29 +834,29 @@ int tls_fls_otp_lock(void)
         return TLS_FLS_STATUS_EPERM;
     }
     tls_os_sem_acquire(inside_fls->fls_lock, 0);
-	switch(inside_fls->flashid)
-	{
-	case SPIFLASH_MID_GD:
-	case SPIFLASH_MID_TSINGTENG:
-		writeLbBit_for_1wreg((1<<10));
-		break;
-	case SPIFLASH_MID_FUDANMICRO:
-		writeLbBit_for_2wreg((1<<10));
-		break;
-	case SPIFLASH_MID_BOYA:
-	case SPIFLASH_MID_XMC:
-	case SPIFLASH_MID_WINBOND:
+    switch(inside_fls->flashid)
+    {
+    case SPIFLASH_MID_GD:
+    case SPIFLASH_MID_TSINGTENG:
+        writeLbBit_for_1wreg((1<<10));
+        break;
+    case SPIFLASH_MID_FUDANMICRO:
+        writeLbBit_for_2wreg((1<<10));
+        break;
+    case SPIFLASH_MID_BOYA:
+    case SPIFLASH_MID_XMC:
+    case SPIFLASH_MID_WINBOND:
     case SPIFLASH_MID_PUYA:
-		writeLbBit_for_2wreg((7<<11));
-		break;
-	case SPIFLASH_MID_XTX:
+        writeLbBit_for_2wreg((7<<11));
+        break;
+    case SPIFLASH_MID_XTX:
     case SPIFLASH_MID_ESMT:
     default:
         TLS_DBGPRT_ERR("flash is not supported!\n");
         return TLS_FLS_STATUS_ENOSUPPORT;
-	}
-    tls_os_sem_release(inside_fls->fls_lock);	
-	return 0;
+    }
+    tls_os_sem_release(inside_fls->fls_lock);    
+    return 0;
 }
 
 /**
@@ -878,8 +866,8 @@ int tls_fls_otp_lock(void)
  * @param[in]      buf                   is user for data buffer of flash read
  * @param[in]      len                   is byte length for read.
  *
- * @retval         TLS_FLS_STATUS_OK	    if read sucsess
- * @retval         TLS_FLS_STATUS_EIO	    if read fail
+ * @retval         TLS_FLS_STATUS_OK        if read sucsess
+ * @retval         TLS_FLS_STATUS_EIO        if read fail
  *
  * @note           None
  */
@@ -914,10 +902,10 @@ int tls_fls_read(u32 addr, u8 *buf, u32 len)
  * @param[in]      buf       is the data buffer want to write to flash
  * @param[in]      len       is the byte length want to write
  *
- * @retval         TLS_FLS_STATUS_OK	           if write flash success
- * @retval         TLS_FLS_STATUS_EPERM	    if flash struct point is null
- * @retval         TLS_FLS_STATUS_ENODRV	    if flash driver is not installed
- * @retval         TLS_FLS_STATUS_EINVAL	    if argument is invalid
+ * @retval         TLS_FLS_STATUS_OK               if write flash success
+ * @retval         TLS_FLS_STATUS_EPERM        if flash struct point is null
+ * @retval         TLS_FLS_STATUS_ENODRV        if flash driver is not installed
+ * @retval         TLS_FLS_STATUS_EINVAL        if argument is invalid
  * @retval         TLS_FLS_STATUS_EIO           if io error
  *
  * @note           None
@@ -952,16 +940,16 @@ int tls_fls_write(u32 addr, u8 *buf, u32 len)
         return TLS_FLS_STATUS_ENOMEM;
     }
 
-    offaddr = addr & (INSIDE_FLS_BASE_ADDR - 1);			//Offset of 0X08000000
-    secpos = offaddr / INSIDE_FLS_SECTOR_SIZE;				//Section addr
-    secoff = (offaddr % INSIDE_FLS_SECTOR_SIZE);			//Offset in section
+    offaddr = addr & (INSIDE_FLS_BASE_ADDR - 1);            // Offset of 0X08000000
+    secpos = offaddr / INSIDE_FLS_SECTOR_SIZE;                // Section addr
+    secoff = (offaddr % INSIDE_FLS_SECTOR_SIZE);            // Offset in section
     secremain = INSIDE_FLS_SECTOR_SIZE - secoff;    // 扇区剩余空间大小
-    if(len <= secremain)
+    if (len <= secremain)
     {
-        secremain = len;								//Not bigger with remain size in section
+        secremain = len;                                // Not bigger with remain size in section
     }
 
-	flashRead(secpos * INSIDE_FLS_SECTOR_SIZE, cache, INSIDE_FLS_SECTOR_SIZE);
+    flashRead(secpos * INSIDE_FLS_SECTOR_SIZE, cache, INSIDE_FLS_SECTOR_SIZE);
     while (1)
     {
         eraseSector(secpos * INSIDE_FLS_SECTOR_SIZE);
@@ -971,9 +959,9 @@ int tls_fls_write(u32 addr, u8 *buf, u32 len)
         }
         for (i = 0; i < (INSIDE_FLS_SECTOR_SIZE / INSIDE_FLS_PAGE_SIZE); i++)
         {
-            programPage(secpos * INSIDE_FLS_SECTOR_SIZE + i * INSIDE_FLS_PAGE_SIZE, INSIDE_FLS_PAGE_SIZE, &cache[i * INSIDE_FLS_PAGE_SIZE]);	//Write
+            programPage(secpos * INSIDE_FLS_SECTOR_SIZE + i * INSIDE_FLS_PAGE_SIZE, INSIDE_FLS_PAGE_SIZE, &cache[i * INSIDE_FLS_PAGE_SIZE]);    // Write
         }
-        if(len == secremain)
+        if (len == secremain)
         {
             break;              // 写入结束了
         }
@@ -983,14 +971,14 @@ int tls_fls_write(u32 addr, u8 *buf, u32 len)
             secoff = 0;         // 偏移位置为0
             buf += secremain;   // 指针偏移
             len -= secremain;
-            if(len > (INSIDE_FLS_SECTOR_SIZE))
+            if (len > (INSIDE_FLS_SECTOR_SIZE))
             {
                 secremain = INSIDE_FLS_SECTOR_SIZE; // 下一个扇区还是写不完
             }
             else
             {
-                secremain = len;					//Next section will finish
-				flashRead(secpos * INSIDE_FLS_SECTOR_SIZE, cache, INSIDE_FLS_SECTOR_SIZE);
+                secremain = len;                    // Next section will finish
+                flashRead(secpos * INSIDE_FLS_SECTOR_SIZE, cache, INSIDE_FLS_SECTOR_SIZE);
             }
         }
     }
@@ -1007,10 +995,10 @@ int tls_fls_write(u32 addr, u8 *buf, u32 len)
  * @param[in]      buf      Pointer to a byte array that is to be written
  * @param[in]      len      Specifies the length of the data to be written
  *
- * @retval         TLS_FLS_STATUS_OK	        if write flash success
- * @retval         TLS_FLS_STATUS_EPERM	        if flash struct point is null
- * @retval         TLS_FLS_STATUS_ENODRV	    if flash driver is not installed
- * @retval         TLS_FLS_STATUS_EINVAL	    if argument is invalid
+ * @retval         TLS_FLS_STATUS_OK            if write flash success
+ * @retval         TLS_FLS_STATUS_EPERM            if flash struct point is null
+ * @retval         TLS_FLS_STATUS_ENODRV        if flash driver is not installed
+ * @retval         TLS_FLS_STATUS_EINVAL        if argument is invalid
  *
  * @note           Erase action should be excuted by API tls_fls_erase in user layer.
  */
@@ -1044,16 +1032,16 @@ int tls_fls_write_without_erase(u32 addr, u8 *buf, u32 len)
         return TLS_FLS_STATUS_ENOMEM;
     }
 
-    offaddr = addr & (INSIDE_FLS_BASE_ADDR - 1);	//Offset of 0X08000000
-    pagepos = offaddr / INSIDE_FLS_PAGE_SIZE;		//Page addr
-    pageoff = (offaddr % INSIDE_FLS_PAGE_SIZE);		//Offset in page
+    offaddr = addr & (INSIDE_FLS_BASE_ADDR - 1);    // Offset of 0X08000000
+    pagepos = offaddr / INSIDE_FLS_PAGE_SIZE;        // Page addr
+    pageoff = (offaddr % INSIDE_FLS_PAGE_SIZE);        // Offset in page
     pageremain = INSIDE_FLS_PAGE_SIZE - pageoff;    // size remained in one page
-    if(len <= pageremain)
+    if (len <= pageremain)
     {
-        pageremain = len;							//Not bigger with remain size in one page
+        pageremain = len;                            // Not bigger with remain size in one page
     }
 
-	flashRead(pagepos * INSIDE_FLS_PAGE_SIZE, cache, INSIDE_FLS_PAGE_SIZE);
+    flashRead(pagepos * INSIDE_FLS_PAGE_SIZE, cache, INSIDE_FLS_PAGE_SIZE);
     while (1)
     {
         for (i = 0; i < pageremain; i++)
@@ -1061,8 +1049,8 @@ int tls_fls_write_without_erase(u32 addr, u8 *buf, u32 len)
             cache[i + pageoff] = buf[i];
         }
 
-        programPage(pagepos * INSIDE_FLS_PAGE_SIZE, INSIDE_FLS_PAGE_SIZE, &cache[0]); //Write
-        if(len == pageremain)// page program over
+        programPage(pagepos * INSIDE_FLS_PAGE_SIZE, INSIDE_FLS_PAGE_SIZE, &cache[0]); // Write
+        if (len == pageremain)// page program over
         {
             break;              
         }
@@ -1072,14 +1060,14 @@ int tls_fls_write_without_erase(u32 addr, u8 *buf, u32 len)
             pageoff = 0;         // page offset set to zero
             buf += pageremain;   // buffer modified 
             len -= pageremain;   // len decrease
-            if(len > (INSIDE_FLS_PAGE_SIZE))
+            if (len > (INSIDE_FLS_PAGE_SIZE))
             {
                 pageremain = INSIDE_FLS_PAGE_SIZE; // size next to write
             }
             else
             {
-                pageremain = len;					//last data to write
-               	flashRead(pagepos * INSIDE_FLS_PAGE_SIZE, cache, INSIDE_FLS_PAGE_SIZE);
+                pageremain = len;                    // last data to write
+                   flashRead(pagepos * INSIDE_FLS_PAGE_SIZE, cache, INSIDE_FLS_PAGE_SIZE);
             }
         }
     }
@@ -1089,16 +1077,15 @@ int tls_fls_write_without_erase(u32 addr, u8 *buf, u32 len)
     return TLS_FLS_STATUS_OK;
 }
 
-
 /**
- * @brief          	This function is used to erase the appoint sector
+ * @brief              This function is used to erase the appoint sector
  *
- * @param[in]      	sector 	sector num of the flash, 4K byte a sector
+ * @param[in]          sector     sector num of the flash, 4K byte a sector
  *
- * @retval         	TLS_FLS_STATUS_OK	    	if read sucsess
- * @retval         	other	    				if read fail
+ * @retval             TLS_FLS_STATUS_OK            if read sucsess
+ * @retval             other                        if read fail
  *
- * @note           	None
+ * @note               None
  */
 int tls_fls_erase(u32 sector)
 {
@@ -1126,20 +1113,18 @@ int tls_fls_erase(u32 sector)
     return TLS_FLS_STATUS_OK;
 }
 
-
 static u8 *gsflscache = NULL;
-//static u32 gsSecOffset = 0;
+// static u32 gsSecOffset = 0;
 static u32 gsSector = 0;
 
-
 /**
- * @brief          	This function is used to flush the appoint sector
+ * @brief              This function is used to flush the appoint sector
  *
- * @param      	None
+ * @param          None
  *
- * @return         	None
+ * @return             None
  *
- * @note           	None
+ * @note               None
  */
 static void tls_fls_flush_sector(void)
 {
@@ -1156,19 +1141,18 @@ static void tls_fls_flush_sector(void)
                         &gsflscache[i * INSIDE_FLS_PAGE_SIZE]);
         }
     }
-    //gsSecOffset = 0;
+    // gsSecOffset = 0;
 }
 
-
 /**
- * @brief          	This function is used to fast write flash initialize
+ * @brief              This function is used to fast write flash initialize
  *
- * @param      	None
+ * @param          None
  *
- * @retval         	TLS_FLS_STATUS_OK	    	sucsess
- * @retval         	other	    				fail
+ * @retval             TLS_FLS_STATUS_OK            sucsess
+ * @retval             other                        fail
  *
- * @note           	None
+ * @note               None
  */
 int tls_fls_fast_write_init(void)
 {
@@ -1193,13 +1177,13 @@ int tls_fls_fast_write_init(void)
 }
 
 /**
- * @brief          	This function is used to destroy fast write flash
+ * @brief              This function is used to destroy fast write flash
  *
- * @param      	None
+ * @param          None
  *
- * @return         	None
+ * @return             None
  *
- * @note           	None
+ * @note               None
  */
 void tls_fls_fast_write_destroy(void)
 {
@@ -1213,7 +1197,7 @@ void tls_fls_fast_write_destroy(void)
         else
         {
             tls_os_sem_acquire(inside_fls->fls_lock, 0);
-        	tls_fls_flush_sector();
+            tls_fls_flush_sector();
             tls_os_sem_release(inside_fls->fls_lock);
         }
 
@@ -1223,16 +1207,16 @@ void tls_fls_fast_write_destroy(void)
 }
 
 /**
- * @brief          	This function is used to fast write data to the flash.
+ * @brief              This function is used to fast write data to the flash.
  *
- * @param[in]      	addr     	is byte offset addr for write to the flash
- * @param[in]      	buf       	is the data buffer want to write to flash
- * @param[in]      	length  	is the byte length want to write
+ * @param[in]          addr         is byte offset addr for write to the flash
+ * @param[in]          buf           is the data buffer want to write to flash
+ * @param[in]          length      is the byte length want to write
  *
- * @retval         	TLS_FLS_STATUS_OK	success
- * @retval        	other				fail
+ * @retval             TLS_FLS_STATUS_OK    success
+ * @retval            other                fail
  *
- * @note           	None
+ * @note               None
  */
 int tls_fls_fast_write(u32 addr, u8 *buf, u32 length)
 {
@@ -1244,7 +1228,7 @@ int tls_fls_fast_write(u32 addr, u8 *buf, u32 length)
         TLS_DBGPRT_ERR("flash driver module not beed installed!\n");
         return TLS_FLS_STATUS_EPERM;
     }
-    if(((addr & (INSIDE_FLS_BASE_ADDR - 1)) >=  inside_fls->density) || (length == 0) || (buf == NULL))
+    if (((addr & (INSIDE_FLS_BASE_ADDR - 1)) >=  inside_fls->density) || (length == 0) || (buf == NULL))
     {
         return TLS_FLS_STATUS_EINVAL;
     }
@@ -1283,16 +1267,15 @@ int tls_fls_fast_write(u32 addr, u8 *buf, u32 length)
     return TLS_FLS_STATUS_OK;
 }
 
-
 /**
- * @brief          	This function is used to erase flash all chip
+ * @brief              This function is used to erase flash all chip
  *
- * @param      	None
+ * @param          None
  *
- * @retval         	TLS_FLS_STATUS_OK	    	sucsess
- * @retval         	other	    				fail
+ * @retval             TLS_FLS_STATUS_OK            sucsess
+ * @retval             other                        fail
  *
- * @note           	None
+ * @note               None
  */
 int tls_fls_chip_erase(void)
 {
@@ -1315,7 +1298,6 @@ int tls_fls_chip_erase(void)
         return TLS_FLS_STATUS_ENOMEM;
     }
 
-
     for( i = 0; i < ( inside_fls->density - (INSIDE_FLS_SECBOOT_ADDR & 0xFFFFF)) / INSIDE_FLS_SECTOR_SIZE; i ++)
     {
         flashRead(INSIDE_FLS_SECBOOT_ADDR + i * INSIDE_FLS_SECTOR_SIZE, cache, INSIDE_FLS_SECTOR_SIZE);
@@ -1336,22 +1318,20 @@ int tls_fls_chip_erase(void)
     return TLS_FLS_STATUS_OK;
 }
 
-
 /**
- * @brief          	This function is used to get flash param
+ * @brief              This function is used to get flash param
  *
- * @param[in]      	type		the type of the param need to get
- * @param[out]     	param	point to addr of out param
+ * @param[in]          type        the type of the param need to get
+ * @param[out]         param    point to addr of out param
  *
- * @retval         	TLS_FLS_STATUS_OK	    	sucsess
- * @retval         	other	    				fail
+ * @retval             TLS_FLS_STATUS_OK            sucsess
+ * @retval             other                        fail
  *
- * @note           	None
+ * @note               None
  */
 int tls_fls_get_param(u8 type, void *param)
 {
     int err;
-
 
     if (inside_fls == NULL)
     {
@@ -1397,14 +1377,14 @@ int tls_fls_get_param(u8 type, void *param)
 }
 
 /**
- * @brief          	This function is used to initialize the flash module
+ * @brief              This function is used to initialize the flash module
  *
- * @param      	None
+ * @param          None
  *
- * @retval         	TLS_FLS_STATUS_OK	    	sucsess
- * @retval         	other	    				fail
+ * @retval             TLS_FLS_STATUS_OK            sucsess
+ * @retval             other                        fail
  *
- * @note           	None
+ * @note               None
  */
 int tls_fls_init(void)
 {
@@ -1432,41 +1412,41 @@ int tls_fls_init(void)
         TLS_DBGPRT_ERR("create semaphore @fls_lock fail!\n");
         return TLS_FLS_STATUS_ENOMEM;
     }
-	fls->flashid = readRID();
-	//printf("flashid %x\n", fls->flashid);
-	fls->density = getFlashDensity();
-	fls->OTPWRParam.pageSize = 256;
-	switch(fls->flashid)
-	{
-	case SPIFLASH_MID_GD:
-		fls->OTPWRParam.eraseSize = 1024;
-		break;
-	case SPIFLASH_MID_FUDANMICRO:
-		fls->OTPWRParam.eraseSize = 1024;
-		if(fls->density <= (1 << 20))//8Mbit
-		{
-			fls->OTPWRParam.eraseSize = 256;
-		}
-		break;
-	case SPIFLASH_MID_TSINGTENG:
-	case SPIFLASH_MID_BOYA:
-	case SPIFLASH_MID_XMC:
-	case SPIFLASH_MID_WINBOND:
-		fls->OTPWRParam.eraseSize = 256;
-		break;
+    fls->flashid = readRID();
+    // printf("flashid %x\n", fls->flashid);
+    fls->density = getFlashDensity();
+    fls->OTPWRParam.pageSize = 256;
+    switch(fls->flashid)
+    {
+    case SPIFLASH_MID_GD:
+        fls->OTPWRParam.eraseSize = 1024;
+        break;
+    case SPIFLASH_MID_FUDANMICRO:
+        fls->OTPWRParam.eraseSize = 1024;
+        if (fls->density <= (1 << 20))// 8Mbit
+        {
+            fls->OTPWRParam.eraseSize = 256;
+        }
+        break;
+    case SPIFLASH_MID_TSINGTENG:
+    case SPIFLASH_MID_BOYA:
+    case SPIFLASH_MID_XMC:
+    case SPIFLASH_MID_WINBOND:
+        fls->OTPWRParam.eraseSize = 256;
+        break;
     case SPIFLASH_MID_PUYA:
-		fls->OTPWRParam.eraseSize = 512;
-		break;
-	case SPIFLASH_MID_XTX:
+        fls->OTPWRParam.eraseSize = 512;
+        break;
+    case SPIFLASH_MID_XTX:
     case SPIFLASH_MID_ESMT:
-		fls->OTPWRParam.eraseSize = 0;//not support
-		break;
+        fls->OTPWRParam.eraseSize = 0;// not support
+        break;
     default:
-		tls_mem_free(fls);
+        tls_mem_free(fls);
         TLS_DBGPRT_ERR("flash is not supported!\n");
         return TLS_FLS_STATUS_ENOSUPPORT;
-	}
-	
+    }
+    
     inside_fls = fls;
 
     return TLS_FLS_STATUS_OK;
@@ -1479,13 +1459,13 @@ int tls_fls_exit(void)
 }
 
 /**
- * @brief          	This function is used to initialize system parameter postion by flash density
+ * @brief              This function is used to initialize system parameter postion by flash density
  *
- * @param      	None
+ * @param          None
  *
- * @retval         	None
+ * @retval             None
  *
- * @note           	must be called before function tls_param_init
+ * @note               must be called before function tls_param_init
  */
 void tls_fls_sys_param_postion_init(void)
 {
@@ -1496,10 +1476,10 @@ void tls_fls_sys_param_postion_init(void)
     {
         TLS_FLASH_END_ADDR            = (FLASH_BASE_ADDR|density) - 1;
         TLS_FLASH_OTA_FLAG_ADDR       = (FLASH_BASE_ADDR|density) - 0x1000;
-        TLS_FLASH_PARAM_RESTORE_ADDR  =	(FLASH_BASE_ADDR|density) - 0x2000;
-        TLS_FLASH_PARAM2_ADDR 		  =	(FLASH_BASE_ADDR|density) - 0x3000;
-        TLS_FLASH_PARAM1_ADDR 		  =	(FLASH_BASE_ADDR|density) - 0x4000;
-        TLS_FLASH_PARAM_DEFAULT	      =	(FLASH_BASE_ADDR|density) - 0x5000;
+        TLS_FLASH_PARAM_RESTORE_ADDR  =    (FLASH_BASE_ADDR|density) - 0x2000;
+        TLS_FLASH_PARAM2_ADDR           =    (FLASH_BASE_ADDR|density) - 0x3000;
+        TLS_FLASH_PARAM1_ADDR           =    (FLASH_BASE_ADDR|density) - 0x4000;
+        TLS_FLASH_PARAM_DEFAULT          =    (FLASH_BASE_ADDR|density) - 0x5000;
     }
     else
     {

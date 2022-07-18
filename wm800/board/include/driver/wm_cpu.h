@@ -31,11 +31,11 @@
 #define W800_PLL_CLK_MHZ  		(480)
 
 enum CPU_CLK{
-	CPU_CLK_240M = 2,
-	CPU_CLK_160M = 3,
-	CPU_CLK_80M  = 6,
-	CPU_CLK_40M  = 12,
-	CPU_CLK_2M  = 240,		
+    CPU_CLK_240M = 2,
+    CPU_CLK_160M = 3,
+    CPU_CLK_80M  = 6,
+    CPU_CLK_40M  = 12,
+    CPU_CLK_2M  = 240,
 };
 
 typedef union {
@@ -52,11 +52,10 @@ typedef union {
 
 #define UNIT_MHZ		(1000000)
 
-
 typedef struct{
-	u32 apbclk;
-	u32 cpuclk;
-	u32 wlanclk;
+    u32 apbclk;
+    u32 cpuclk;
+    u32 wlanclk;
 }tls_sys_clk;
 
 /**
@@ -79,7 +78,6 @@ typedef struct{
  * @{
  */
 
-
 /**
  * @brief          This function is used to set cpu clock
  *
@@ -92,7 +90,6 @@ typedef struct{
  * @note           None
  */
 void tls_sys_clk_set(u32 clk);
-
 
 /**
  * @brief          	This function is used to get cpu clock

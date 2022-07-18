@@ -40,13 +40,13 @@ int tc_ccm_config(TCCcmMode_t c, TCAesKeySched_t sched, uint8_t *nonce,
                   unsigned int nlen, unsigned int mlen)
 {
     /* input sanity check: */
-    if(c == (TCCcmMode_t) 0 ||
+    if (c == (TCCcmMode_t) 0 ||
             sched == (TCAesKeySched_t) 0 ||
             nonce == (uint8_t *) 0) {
         return TC_CRYPTO_FAIL;
-    } else if(nlen != 13) {
+    } else if (nlen != 13) {
         return TC_CRYPTO_FAIL; /* The allowed nonce size is: 13. See documentation.*/
-    } else if((mlen < 4) || (mlen > 16) || (mlen & 1)) {
+    } else if ((mlen < 4) || (mlen > 16) || (mlen & 1)) {
         return TC_CRYPTO_FAIL; /* The allowed mac sizes are: 4, 6, 8, 10, 12, 14, 16.*/
     }
 
@@ -64,7 +64,7 @@ static void ccm_cbc_mac(uint8_t *T, const uint8_t *data, unsigned int dlen,
 {
     unsigned int i;
 
-    if(flag > 0) {
+    if (flag > 0) {
         T[0] ^= (uint8_t)(dlen >> 8);
         T[1] ^= (uint8_t)(dlen);
         dlen += 2;
@@ -76,7 +76,7 @@ static void ccm_cbc_mac(uint8_t *T, const uint8_t *data, unsigned int dlen,
     while(i < dlen) {
         T[i++ % (Nb * Nk)] ^= *data++;
 
-        if(((i % (Nb * Nk)) == 0) || dlen == i) {
+        if (((i % (Nb * Nk)) == 0) || dlen == i) {
             (void) tc_aes_encrypt(T, T, sched);
         }
     }
@@ -98,7 +98,7 @@ static int ccm_ctr_mode(uint8_t *out, unsigned int outlen, const uint8_t *in,
     unsigned int i;
 
     /* input sanity check: */
-    if(out == (uint8_t *) 0 ||
+    if (out == (uint8_t *) 0 ||
             in == (uint8_t *) 0 ||
             ctr == (uint8_t *) 0 ||
             sched == (TCAesKeySched_t) 0 ||
@@ -114,12 +114,12 @@ static int ccm_ctr_mode(uint8_t *out, unsigned int outlen, const uint8_t *in,
     block_num = (uint16_t)((nonce[14] << 8) | (nonce[15]));
 
     for(i = 0; i < inlen; ++i) {
-        if((i % (TC_AES_BLOCK_SIZE)) == 0) {
+        if ((i % (TC_AES_BLOCK_SIZE)) == 0) {
             block_num++;
             nonce[14] = (uint8_t)(block_num >> 8);
             nonce[15] = (uint8_t)(block_num);
 
-            if(!tc_aes_encrypt(buffer, nonce, sched)) {
+            if (!tc_aes_encrypt(buffer, nonce, sched)) {
                 return TC_CRYPTO_FAIL;
             }
         }
@@ -140,7 +140,7 @@ int tc_ccm_generation_encryption(uint8_t *out, unsigned int olen,
                                  unsigned int plen, TCCcmMode_t c)
 {
     /* input sanity check: */
-    if((out == (uint8_t *) 0) ||
+    if ((out == (uint8_t *) 0) ||
             (c == (TCCcmMode_t) 0) ||
             ((plen > 0) && (payload == (uint8_t *) 0)) ||
             ((alen > 0) && (associated_data == (uint8_t *) 0)) ||
@@ -166,11 +166,11 @@ int tc_ccm_generation_encryption(uint8_t *out, unsigned int olen,
     /* computing the authentication tag using cbc-mac: */
     (void) tc_aes_encrypt(tag, b, c->sched);
 
-    if(alen > 0) {
+    if (alen > 0) {
         ccm_cbc_mac(tag, associated_data, alen, 1, c->sched);
     }
 
-    if(plen > 0) {
+    if (plen > 0) {
         ccm_cbc_mac(tag, payload, plen, 0, c->sched);
     }
 
@@ -198,7 +198,7 @@ int tc_ccm_decryption_verification(uint8_t *out, unsigned int olen,
                                    unsigned int plen, TCCcmMode_t c)
 {
     /* input sanity check: */
-    if((out == (uint8_t *) 0) ||
+    if ((out == (uint8_t *) 0) ||
             (c == (TCCcmMode_t) 0) ||
             ((plen > 0) && (payload == (uint8_t *) 0)) ||
             ((alen > 0) && (associated_data == (uint8_t *) 0)) ||
@@ -243,16 +243,16 @@ int tc_ccm_decryption_verification(uint8_t *out, unsigned int olen,
     /* computing the authentication tag using cbc-mac: */
     (void) tc_aes_encrypt(b, b, c->sched);
 
-    if(alen > 0) {
+    if (alen > 0) {
         ccm_cbc_mac(b, associated_data, alen, 1, c->sched);
     }
 
-    if(plen > 0) {
+    if (plen > 0) {
         ccm_cbc_mac(b, out, plen - c->mlen, 0, c->sched);
     }
 
     /* comparing the received tag and the computed one: */
-    if(_compare(b, tag, c->mlen) == 0) {
+    if (_compare(b, tag, c->mlen) == 0) {
         return TC_CRYPTO_SUCCESS;
     } else {
         /* erase the decrypted buffer in case of mac validation failure: */

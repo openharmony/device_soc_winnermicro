@@ -78,7 +78,6 @@ typedef struct {
     uint64_t reseedCount;
 } TCCtrPrng_t;
 
-
 /**
  *  @brief CTR-PRNG initialization procedure
  *  Initializes prng context with entropy and personalization string (if any)

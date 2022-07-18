@@ -33,8 +33,8 @@
 #define _TARGET_CONFIG_H
 
 #include <stdint.h>
-//#include "soc.h"
-//#include "los_compiler.h"
+// #include "soc.h"
+// #include "los_compiler.h"
 
 #ifdef __cplusplus
 #if __cplusplus
@@ -109,7 +109,7 @@ extern unsigned int __heap_end;
 /*=============================================================================
                                         Exception module configuration
 =============================================================================*/
-//#define LOSCFG_BACKTRACE_TYPE                               5
+// #define LOSCFG_BACKTRACE_TYPE                               5
 #define LOSCFG_KERNEL_PRINTF                                1
 
 #define LOSCFG_SUPPORT_LITTLEFS                             1

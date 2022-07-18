@@ -32,8 +32,7 @@
 
 #include "wm_type_def.h"
 
-#define ADC_DEST_BUFFER_SIZE			16383//ÒÔ×ÖÎªµ¥Î»	
-
+#define ADC_DEST_BUFFER_SIZE			16383// ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½
 
 /*ADC Result*/
 #define ADC_RESULT_MASK					(0x3FFFC)
@@ -56,10 +55,8 @@
 #define CLK_CHOP_SEL_PGA_MASK			(0x7<<4)
 #define CLK_CHOP_SEL_PGA_VAL(n)			((n)<<4)
 
-
 #define GAIN_CTRL_PGA_MASK				(0x3<<7)
 #define GAIN_CTRL_PGA_VAL(n)			((n)<<7)
-
 
 #define PGA_BYPASS_MASK					(0x1<<3)
 #define PGA_BYPASS_VAL(n)				((n)<<3)   /*1:bypass pga, 0:use pga*/
@@ -72,7 +69,6 @@
 #define PGA_EN_MASK						(0x1<<0)
 #define PGA_EN_VAL(n)					((n)<<0)   /*1: enable pga, 0: disable pga*/
 
-
 /*Temperature Control*/
 #define TEMP_GAIN_MASK					(0x3<<4)
 #define TEMP_GAIN_VAL(n)				((n)<<4)
@@ -81,7 +77,6 @@
 
 #define TEMP_EN_MASK					(0x1<<0)
 #define TEMP_EN_VAL(n)					((n)<<0)  /*1: enable temperature, 0: disable temperature*/
-
 
 /*ADC CTRL*/
 #define ANALOG_SWITCH_TIME_MASK			(0x3FF<<20)
@@ -95,7 +90,6 @@
 #define CMP_IRQ_EN_MASK                 (0x1<<5)
 #define CMP_IRQ_EN_VAL(n)				((n)<<5)  /*1: enable cmp irq, 0: disable cmp irq*/
 
-
 #define CMP_EN_MASK                 	(0x1<<4)
 #define CMP_EN_VAL(n)					((n)<<4) /*1: enable cmp function, 0: disable cmp function*/
 
@@ -105,7 +99,6 @@
 #define ADC_DMA_EN_MASK                 (0x1<<0)
 #define ADC_DMA_EN_VAL(n)				((n)<<0)   /*1:enable adc dma, 0: disable*/
 
-
 /*ADC IRQ Status*/
 #define CMP_INT_MASK					(0x1<<1)
 
@@ -114,28 +107,25 @@
 /*CMP Value*/
 #define CONFIG_ADC_INPUT_CMP_VAL(n)		((n)&0x3FFFF)
 
-
 /*ADC Channel*/
 #define CONFIG_ADC_CHL_OFFSET			(0x0E)
 #define CONFIG_ADC_CHL_VOLT				(0x0D)
 #define CONFIG_ADC_CHL_TEMP				(0x0C)
 
-
-
 #define ADC_INT_TYPE_ADC				0
 #define ADC_INT_TYPE_DMA				1
 #define ADC_INT_TYPE_ADC_COMP 			2
 
-#define ADC_REFERENCE_EXTERNAL  		0       //Íâ²¿²Î¿¼
-#define ADC_REFERENCE_INTERNAL  		1       //ÄÚ²¿²Î¿¼
+#define ADC_REFERENCE_EXTERNAL  		0       // ï¿½â²¿ï¿½Î¿ï¿½
+#define ADC_REFERENCE_INTERNAL  		1       // ï¿½Ú²ï¿½ï¿½Î¿ï¿½
 
 typedef struct adc_st{
-	u8 dmachannel;
-	void (*adc_cb)(int *buf, u16 len);
-	void (*adc_bigger_cb)(int *buf, u16 len);
-	void (*adc_dma_cb)(int *buf,u16 len);
-	u16 valuelen;		/*dma ²ÉÑùÊý¾Ý³¤¶È*/
-	u16 offset;
+    u8 dmachannel;
+    void (*adc_cb)(int *buf, u16 len);
+    void (*adc_bigger_cb)(int *buf, u16 len);
+    void (*adc_dma_cb)(int *buf,u16 len);
+    u16 valuelen;		/*dma ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý³ï¿½ï¿½ï¿½*/
+    u16 offset;
 }ST_ADC;
 
 /**

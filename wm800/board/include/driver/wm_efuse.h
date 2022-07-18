@@ -30,16 +30,16 @@
 #define TLS_EFUSE_STATUS_EIO      (2)
 
 enum {
-	CMD_WIFI_MAC = 0x01,
-	CMD_BT_MAC,		
-	CMD_TX_DC,
-	CMD_RX_DC,
-	CMD_TX_IQ_GAIN,
-	CMD_RX_IQ_GAIN,
-	CMD_TX_IQ_PHASE,
-	CMD_RX_IQ_PHASE,
-	CMD_TX_GAIN,
-	CMD_ALL,
+    CMD_WIFI_MAC = 0x01,
+    CMD_BT_MAC,
+    CMD_TX_DC,
+    CMD_RX_DC,
+    CMD_TX_IQ_GAIN,
+    CMD_RX_IQ_GAIN,
+    CMD_TX_IQ_PHASE,
+    CMD_RX_IQ_PHASE,
+    CMD_TX_GAIN,
+    CMD_ALL,
 };
 
 #define FREQERR_ADDR  (FT_MAGICNUM_ADDR + sizeof(FT_PARAM_ST))
@@ -47,7 +47,7 @@ enum {
 #define CAL_FLAG_ADDR  (FT_MAGICNUM_ADDR + sizeof(FT_PARAM_ST)+4)
 #define CAL_FLAG_LEN    (4)
 
-//#define TX_GAIN_NEW_ADDR (VCG_ADDR+VCG_LEN)
+// #define TX_GAIN_NEW_ADDR (VCG_ADDR+VCG_LEN)
 #define TX_GAIN_LEN   (28*3)
 
 /**
@@ -80,7 +80,6 @@ enum {
 */
 int tls_ft_param_init(void);
 
-
 /**
 * @brief 	This function is used to write ft_param.
 *
@@ -104,7 +103,6 @@ int tls_ft_param_set(unsigned int opnum, void *data, unsigned int len);
 * @retval		TLS_EFUSE_STATUS_EIO			get failed
 */
 int tls_ft_param_get(unsigned int opnum, void *data, unsigned int rdlen);
-
 
 /**
 * @brief 	This function is used to get mac addr
@@ -144,7 +142,6 @@ int tls_get_bt_mac_addr(u8 *mac);
 * @retval		TLS_EFUSE_STATUS_EIO			set failed
 */
 int tls_set_bt_mac_addr(u8 *mac);
-
 
 /**
 * @brief 	This function is used to get tx gain

@@ -104,7 +104,6 @@ tls_bt_status_t tls_ble_set_adv_param(tls_ble_dm_adv_param_t *param);
  */
 tls_bt_status_t tls_ble_set_adv_ext_param(tls_ble_dm_adv_ext_param_t *param);
 
-
 /**
  * @brief          start/stop ble scan
  *
@@ -195,7 +194,6 @@ tls_bt_status_t tls_ble_conn_parameter_update(const tls_bt_addr_t *bd_addr,
  * @note           None
  */
 tls_bt_status_t tls_dm_read_remote_rssi(const tls_bt_addr_t *bd_addr);
-
 
 /**
  * @brief          config the io capabilities of local device

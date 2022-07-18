@@ -49,7 +49,6 @@ int tls_touchsensor_init_config(u32 sensorno, u8 scan_period, u8 window, u32 ena
  */
 int tls_touchsensor_deinit(u32 sensorno);
 
-
 /**
  * @brief          This function is used to set threshold per touch sensor.
  *
@@ -61,7 +60,6 @@ int tls_touchsensor_deinit(u32 sensorno);
  * @note           None
  */
 int tls_touchsensor_threshold_config(u32 sensorno, u8 threshold);
-
 
 /**
  * @brief          This function is used to get touch sensor's count number.
@@ -117,6 +115,4 @@ void tls_touchsensor_irq_register(void (*callback)(u32 status));
  * @note           None
  */
 int tls_touchsensor_irq_status_get(u32 sensorno);
-
-
 

@@ -15,7 +15,6 @@ run_img_header=80d0000
 run_img_pos=80d0400
 upd_img_pos=8010000
 
-
 echo $ProjName
 if [ $prikey_sel -gt 0 ]
  then

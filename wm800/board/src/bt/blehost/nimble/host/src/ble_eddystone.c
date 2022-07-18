@@ -72,19 +72,19 @@ ble_eddystone_set_adv_data_gen(struct ble_hs_adv_fields *adv_fields,
 {
     int rc;
 
-    if(adv_fields->num_uuids16 > BLE_EDDYSTONE_MAX_UUIDS16) {
+    if (adv_fields->num_uuids16 > BLE_EDDYSTONE_MAX_UUIDS16) {
         return BLE_HS_EINVAL;
     }
 
-    if(svc_data_len > BLE_EDDYSTONE_MAX_SVC_DATA_LEN) {
+    if (svc_data_len > BLE_EDDYSTONE_MAX_SVC_DATA_LEN) {
         return BLE_HS_EINVAL;
     }
 
-    if(adv_fields->num_uuids16 > 0 && !adv_fields->uuids16_is_complete) {
+    if (adv_fields->num_uuids16 > 0 && !adv_fields->uuids16_is_complete) {
         return BLE_HS_EINVAL;
     }
 
-    if(adv_fields->svc_data_uuid16_len != 0) {
+    if (adv_fields->svc_data_uuid16_len != 0) {
         return BLE_HS_EINVAL;
     }
 
@@ -100,7 +100,7 @@ ble_eddystone_set_adv_data_gen(struct ble_hs_adv_fields *adv_fields,
                                       BLE_EDDYSTONE_SVC_DATA_BASE_SZ;
     rc = ble_gap_adv_set_fields(adv_fields);
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
@@ -117,7 +117,7 @@ ble_eddystone_set_adv_data_uid(struct ble_hs_adv_fields *adv_fields,
     svc_data = ble_eddystone_set_svc_data_base(BLE_EDDYSTONE_FRAME_TYPE_UID);
 
     /* Measured Power ranging data (Calibrated tx power at 0 meters). */
-    if(measured_power < -100 || measured_power > 20) {
+    if (measured_power < -100 || measured_power > 20) {
         return BLE_HS_EINVAL;
     }
 
@@ -129,7 +129,7 @@ ble_eddystone_set_adv_data_uid(struct ble_hs_adv_fields *adv_fields,
     svc_data[18] = 0x00;
     rc = ble_eddystone_set_adv_data_gen(adv_fields, 19);
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
@@ -147,18 +147,18 @@ ble_eddystone_set_adv_data_url(struct ble_hs_adv_fields *adv_fields,
     int rc;
     url_len = url_body_len;
 
-    if(url_suffix != BLE_EDDYSTONE_URL_SUFFIX_NONE) {
+    if (url_suffix != BLE_EDDYSTONE_URL_SUFFIX_NONE) {
         url_len++;
     }
 
-    if(url_len > BLE_EDDYSTONE_URL_MAX_LEN) {
+    if (url_len > BLE_EDDYSTONE_URL_MAX_LEN) {
         return BLE_HS_EINVAL;
     }
 
     svc_data = ble_eddystone_set_svc_data_base(BLE_EDDYSTONE_FRAME_TYPE_URL);
 
     /* Measured Power ranging data (Calibrated tx power at 0 meters). */
-    if(measured_power < -100 || measured_power > 20) {
+    if (measured_power < -100 || measured_power > 20) {
         return BLE_HS_EINVAL;
     }
 
@@ -166,13 +166,13 @@ ble_eddystone_set_adv_data_url(struct ble_hs_adv_fields *adv_fields,
     svc_data[1] = url_scheme;
     memcpy(svc_data + 2, url_body, url_body_len);
 
-    if(url_suffix != BLE_EDDYSTONE_URL_SUFFIX_NONE) {
+    if (url_suffix != BLE_EDDYSTONE_URL_SUFFIX_NONE) {
         svc_data[2 + url_body_len] = url_suffix;
     }
 
     rc = ble_eddystone_set_adv_data_gen(adv_fields, url_len + 2);
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 

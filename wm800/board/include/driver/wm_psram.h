@@ -20,8 +20,8 @@
 #define PSRAM_SIZE_BYTE           0x00800000
 
 typedef enum{
-	PSRAM_SPI = 0,
-	PSRAM_QPI,
+    PSRAM_SPI = 0,
+    PSRAM_QPI,
 } psram_mode_t;
 /**
  * @defgroup Driver_APIs Driver APIs
@@ -74,8 +74,4 @@ int memcpy_dma(unsigned char *dst, unsigned char *src, int num);
  * @}
  */
 #endif
-
-
-
-
 

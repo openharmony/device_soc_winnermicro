@@ -57,7 +57,6 @@ static os_membuf_t ble_hci_vuart_evt_hi_buf[
  ];
 #endif
 
-
 static struct os_mempool ble_hci_vuart_evt_lo_pool;
 
 #if MYNEWT_VAL(SYS_MEM_DYNAMIC)
@@ -122,10 +121,7 @@ static struct ble_npl_eventq hci_evt_rx_tx_queue;
 
 #endif
 
-
-
 #define HCI_DBG FALSE
-
 
 #ifndef HCI_DBG
 #define HCI_DBG TRUE
@@ -134,42 +130,41 @@ static struct ble_npl_eventq hci_evt_rx_tx_queue;
 #if (HCI_DBG == TRUE)
 #define HCIDBG(fmt, ...)  \
     do{\
-        if(1) \
+        if (1) \
             printf("%s(L%d): " fmt, __FUNCTION__, __LINE__,  ## __VA_ARGS__); \
     }while(0)
 #else
 #define HCIDBG(param, ...)
 #endif
 
-
 #if (HCI_DBG == TRUE)
 static void  hci_dbg_hexstring(const char *msg, const uint8_t *ptr, int a_length)
 {
 #define DBG_TRACE_WARNING_MAX_SIZE_W  252
-    //123
+    // 123
 #define DBG_TRACE_WARNING_MAX_SIZE    256
-    //128
+    // 128
     char sbuffer[DBG_TRACE_WARNING_MAX_SIZE];
     uint8_t offset = 0;
     int i = 0;
     int length = 0;
 
-    if(msg) {
+    if (msg) {
         printf("[%d]%s", tls_os_get_time(), msg);
     }
 
-    if(a_length <= 0 || ptr == NULL) {
+    if (a_length <= 0 || ptr == NULL) {
         return;
     }
 
-    //length = MIN(40, a_length);
+    // length = MIN(40, a_length);
     length = a_length;
 
     do {
         for(; i < length; i++) {
             offset += sprintf(sbuffer + offset, "%02X ", (uint8_t)ptr[i]);
 
-            if(offset > DBG_TRACE_WARNING_MAX_SIZE_W) {
+            if (offset > DBG_TRACE_WARNING_MAX_SIZE_W) {
                 break;
             }
         }
@@ -178,7 +173,7 @@ static void  hci_dbg_hexstring(const char *msg, const uint8_t *ptr, int a_length
         sbuffer[offset] = '\n';
         sbuffer[offset + 1] = 0;
 
-        if(offset > DBG_TRACE_WARNING_MAX_SIZE_W) {
+        if (offset > DBG_TRACE_WARNING_MAX_SIZE_W) {
             sbuffer[offset - 2] = '.';
             sbuffer[offset - 3] = '.';
         }
@@ -188,7 +183,6 @@ static void  hci_dbg_hexstring(const char *msg, const uint8_t *ptr, int a_length
     } while(i < length);
 }
 #endif
-
 
 void ble_hci_trans_cfg_hs(ble_hci_trans_rx_cmd_fn *cmd_cb,
                           void *cmd_arg,
@@ -211,7 +205,7 @@ int ble_hci_trans_hs_cmd_tx(uint8_t *cmd)
         tls_os_time_delay(1000 / /*configTICK_RATE_HZ*/HZ);
     }
 
-    //hci_dbg_hexstring(">>>[CMD]", cmd, len);
+    // hci_dbg_hexstring(">>>[CMD]", cmd, len);
     tls_bt_vuart_host_send_packet(cmd, len);
     ble_hci_trans_buf_free(cmd);
     return 0;
@@ -221,7 +215,7 @@ int ble_hci_trans_ll_evt_tx(uint8_t *hci_ev)
 {
     int rc = -1;
 
-    if(ble_hci_rx_cmd_hs_cb) {
+    if (ble_hci_rx_cmd_hs_cb) {
         rc = ble_hci_rx_cmd_hs_cb(hci_ev, ble_hci_rx_cmd_hs_arg);
     }
 
@@ -234,7 +228,7 @@ int ble_hci_trans_hs_acl_tx(struct os_mbuf *om)
     uint8_t data[MYNEWT_VAL(BLE_ACL_BUF_SIZE) + 1];
 
     /* If this packet is zero length, just free it */
-    if(OS_MBUF_PKTLEN(om) == 0) {
+    if (OS_MBUF_PKTLEN(om) == 0) {
         os_mbuf_free_chain(om);
         return 0;
     }
@@ -249,11 +243,10 @@ int ble_hci_trans_hs_acl_tx(struct os_mbuf *om)
     os_mbuf_copydata(om, 0, OS_MBUF_PKTLEN(om), &data[1]);
     len += OS_MBUF_PKTLEN(om);
     tls_bt_vuart_host_send_packet(data, len);
-    //hci_dbg_hexstring(">>>[ACL]", data, len);
+    // hci_dbg_hexstring(">>>[ACL]", data, len);
     os_mbuf_free_chain(om);
     return 0;
 }
-
 
 uint8_t *ble_hci_trans_buf_alloc(int type)
 {
@@ -267,7 +260,7 @@ uint8_t *ble_hci_trans_buf_alloc(int type)
         case BLE_HCI_TRANS_BUF_EVT_HI:
             buf = os_memblock_get(&ble_hci_vuart_evt_hi_pool);
 
-            if(buf == NULL) {
+            if (buf == NULL) {
                 /* If no high-priority event buffers remain, try to grab a
                  * low-priority one.
                  */
@@ -300,10 +293,10 @@ void ble_hci_trans_buf_free(uint8_t *buf)
      * Thus, we check to see which pool the buffer came from so we can free
      * it to the appropriate pool
      */
-    if(os_memblock_from(&ble_hci_vuart_evt_hi_pool, buf)) {
+    if (os_memblock_from(&ble_hci_vuart_evt_hi_pool, buf)) {
         rc = os_memblock_put(&ble_hci_vuart_evt_hi_pool, buf);
         assert(rc == 0);
-    } else if(os_memblock_from(&ble_hci_vuart_evt_lo_pool, buf)) {
+    } else if (os_memblock_from(&ble_hci_vuart_evt_lo_pool, buf)) {
         rc = os_memblock_put(&ble_hci_vuart_evt_lo_pool, buf);
         assert(rc == 0);
     } else {
@@ -356,19 +349,19 @@ static void ble_hci_rx_acl(uint8_t *data, uint16_t len)
     struct os_mbuf *m;
     int sr;
 
-    if(len < BLE_HCI_DATA_HDR_SZ || len > MYNEWT_VAL(BLE_ACL_BUF_SIZE)) {
+    if (len < BLE_HCI_DATA_HDR_SZ || len > MYNEWT_VAL(BLE_ACL_BUF_SIZE)) {
         assert(0);
         return;
     }
 
     m = ble_hci_trans_acl_buf_alloc();
 
-    if(!m) {
+    if (!m) {
         assert(0);
         return;
     }
 
-    if(os_mbuf_append(m, data, len)) {
+    if (os_mbuf_append(m, data, len)) {
         assert(0);
         os_mbuf_free_chain(m);
         return;
@@ -376,7 +369,7 @@ static void ble_hci_rx_acl(uint8_t *data, uint16_t len)
 
     OS_ENTER_CRITICAL(sr);
 
-    if(ble_hci_rx_acl_hs_cb) {
+    if (ble_hci_rx_acl_hs_cb) {
         ble_hci_rx_acl_hs_cb(m, NULL);
     }
 
@@ -390,23 +383,23 @@ void notify_host_send_available(int cnt)
 
 static int ble_hci_trans_hs_rx(uint8_t *data, uint16_t len)
 {
-    if(data[0] == BLE_HCI_UART_H4_EVT) {
+    if (data[0] == BLE_HCI_UART_H4_EVT) {
         uint8_t *evbuf;
         int totlen;
         int rc;
         totlen = BLE_HCI_EVENT_HDR_LEN + data[2];
         assert(totlen <= UINT8_MAX + BLE_HCI_EVENT_HDR_LEN);
 
-        if(data[1] == BLE_HCI_EVCODE_HW_ERROR) {
+        if (data[1] == BLE_HCI_EVCODE_HW_ERROR) {
             assert(0);
         }
 
         /* Allocate LE Advertising Report Event from lo pool only */
-        if((data[1] == BLE_HCI_EVCODE_LE_META) && (data[3] == BLE_HCI_LE_SUBEV_ADV_RPT)) {
+        if ((data[1] == BLE_HCI_EVCODE_LE_META) && (data[3] == BLE_HCI_LE_SUBEV_ADV_RPT)) {
             evbuf = ble_hci_trans_buf_alloc(BLE_HCI_TRANS_BUF_EVT_LO);
 
             /* Skip advertising report if we're out of memory */
-            if(!evbuf) {
+            if (!evbuf) {
                 return 0;
             }
         } else {
@@ -417,7 +410,7 @@ static int ble_hci_trans_hs_rx(uint8_t *data, uint16_t len)
         memcpy(evbuf, &data[1], totlen);
         rc = ble_hci_trans_ll_evt_tx(evbuf);
         assert(rc == 0);
-    } else if(data[0] == BLE_HCI_UART_H4_ACL) {
+    } else if (data[0] == BLE_HCI_UART_H4_ACL) {
         ble_hci_rx_acl(data + 1, len - 1);
     }
 
@@ -433,7 +426,7 @@ static void ble_hs_event_hci_rx_func(void *arg)
     ble_npl_mutex_pend(&hci_resp_queue_mutex, 0);
     item = TAILQ_FIRST(&hci_resp_queue);
 
-    if(item) {
+    if (item) {
         TAILQ_REMOVE(&hci_resp_queue, item, entries);
         item_next = TAILQ_FIRST(&hci_resp_queue);
         hci_resp_queue_counter--;
@@ -441,7 +434,7 @@ static void ble_hs_event_hci_rx_func(void *arg)
 
     ble_npl_mutex_release(&hci_resp_queue_mutex);
 
-    if(item) {
+    if (item) {
         ble_hci_trans_hs_rx(item->payload, item->size);
 #if (HCI_DBG == TRUE)
         hci_dbg_hexstring("***", item->payload, item->size);
@@ -452,7 +445,7 @@ static void ble_hs_event_hci_rx_func(void *arg)
 
     /*More hci response available, notify the host statck for reading again*/
 
-    if(item_next) {
+    if (item_next) {
         ble_npl_eventq_put(&hci_evt_rx_tx_queue, &ble_hs_ev_hci_rx);
     }
 }
@@ -470,23 +463,23 @@ static void notify_host_recv(uint8_t *data, uint16_t len)
 {
 #if HCI_VUART_RX_QUEUE
 
-    if(data == NULL || len == 0) { return; }
+    if (data == NULL || len == 0) { return; }
 
 #if (HCI_DBG == TRUE)
     hci_dbg_hexstring("<<<", data, len);
-    //HCIDBG("%s, pending_counter=%d\r\n", __func__, hci_resp_queue_counter);
+    // HCIDBG("%s, pending_counter=%d\r\n", __func__, hci_resp_queue_counter);
 #endif
 
-    if(data[0] == HCI_EVENT_PKT && data[1] == BT_HCI_EVT_LE_META_EVENT
+    if (data[0] == HCI_EVENT_PKT && data[1] == BT_HCI_EVT_LE_META_EVENT
             && data[3] == BT_HCI_EVT_LE_ADVERTISING_REPORT) {
-        if(hci_resp_queue_counter > HCI_RESP_QUEUE_HALF_FULL) {
+        if (hci_resp_queue_counter > HCI_RESP_QUEUE_HALF_FULL) {
             HCIDBG("Too much hci_adv_report_evt, discard it");
             ble_npl_eventq_put(&hci_evt_rx_tx_queue, &ble_hs_ev_hci_rx);
             return;
         }
     }
 
-    if(hci_resp_queue_counter > HCI_RESP_QUEUE_FULL) {
+    if (hci_resp_queue_counter > HCI_RESP_QUEUE_FULL) {
         HCIDBG("Too much(%d) hci_response_evt, discard it", hci_resp_queue_counter);
         ble_npl_eventq_put(&hci_evt_rx_tx_queue, &ble_hs_ev_hci_rx);
         return;
@@ -494,14 +487,14 @@ static void notify_host_recv(uint8_t *data, uint16_t len)
 
     struct QUEUE_ITEM *item = tls_mem_alloc(sizeof(struct QUEUE_ITEM));
 
-    if(item == NULL) {
+    if (item == NULL) {
         MODLOG_DFLT(INFO, "Alloc queue item failed, no memory available");
         return;
     }
 
     item->payload = tls_mem_alloc(len);
 
-    if(item->payload == NULL) {
+    if (item->payload == NULL) {
         MODLOG_DFLT(INFO,  "Alloc queue item payload failed, no memory available");
         tls_mem_free(item);
         return;
@@ -515,17 +508,16 @@ static void notify_host_recv(uint8_t *data, uint16_t len)
     ble_npl_mutex_release(&hci_resp_queue_mutex);
     ble_npl_eventq_put(&hci_evt_rx_tx_queue, &ble_hs_ev_hci_rx);
 #else
-    //hci_dbg_hexstring("<<<", data, len);
+    // hci_dbg_hexstring("<<<", data, len);
     ble_hci_trans_hs_rx(data, len);
 #endif
     return;
 }
 
 static tls_bt_host_if_t vuart_hci_cb = {
-	.notify_controller_avaiable_hci_buffer = notify_host_send_available,
-	.notify_host_recv_h4 = notify_host_recv,
+    .notify_controller_avaiable_hci_buffer = notify_host_send_available,
+    .notify_host_recv_h4 = notify_host_recv,
 };
-
 
 static int wm_ble_controller_init(uint8_t uart_idx)
 {
@@ -534,13 +526,13 @@ static int wm_ble_controller_init(uint8_t uart_idx)
     hci_if.uart_index = uart_idx;
     status = tls_bt_ctrl_enable(&hci_if, 0);
 
-    if((status != TLS_BT_STATUS_SUCCESS) && (status != TLS_BT_STATUS_DONE)) {
+    if ((status != TLS_BT_STATUS_SUCCESS) && (status != TLS_BT_STATUS_DONE)) {
         return TLS_BT_STATUS_CTRL_ENABLE_FAILED;
     }
 
     status = tls_bt_ctrl_if_register(&vuart_hci_cb);
 
-    if(status != TLS_BT_STATUS_SUCCESS) {
+    if (status != TLS_BT_STATUS_SUCCESS) {
         return TLS_BT_STATUS_CTRL_ENABLE_FAILED;
     }
 
@@ -569,9 +561,9 @@ static void nimble_vhci_task(void)
         ev = ble_npl_eventq_get(&hci_evt_rx_tx_queue, BLE_NPL_TIME_FOREVER);
         ble_npl_event_run(ev);
         arg = (int)ble_npl_event_get_arg(ev);
-        //if (arg == HCI_EXIT_EV_ARG) {
-        //    ;//break;
-        //}
+        // if (arg == HCI_EXIT_EV_ARG) {
+        //    ;// break;
+        // }
     }
 }
 #endif
@@ -663,8 +655,8 @@ ble_hci_vuart_init(uint8_t uart_idx)
                          ble_hci_vuart_evt_lo_buf,
                          "ble_hci_vuart_evt_lo_pool");
     SYSINIT_PANIC_ASSERT(rc == 0);
-	
-	return rc;
+    
+    return rc;
 }
 
 int ble_hci_vuart_deinit()
@@ -680,22 +672,22 @@ int ble_hci_vuart_deinit()
 #endif
 #if MYNEWT_VAL(SYS_MEM_DYNAMIC)
 
-    if(ble_hci_vuart_acl_buf) {
+    if (ble_hci_vuart_acl_buf) {
         tls_mem_free(ble_hci_vuart_acl_buf);
         ble_hci_vuart_acl_buf = NULL;
     }
 
-    if(ble_hci_vuart_cmd_buf) {
+    if (ble_hci_vuart_cmd_buf) {
         tls_mem_free(ble_hci_vuart_cmd_buf);
         ble_hci_vuart_cmd_buf = NULL;
     }
 
-    if(ble_hci_vuart_evt_hi_buf) {
+    if (ble_hci_vuart_evt_hi_buf) {
         tls_mem_free(ble_hci_vuart_evt_hi_buf);
         ble_hci_vuart_evt_hi_buf = NULL;
     }
 
-    if(ble_hci_vuart_evt_lo_buf) {
+    if (ble_hci_vuart_evt_lo_buf) {
         tls_mem_free(ble_hci_vuart_evt_lo_buf);
         ble_hci_vuart_evt_lo_buf = NULL;
     }

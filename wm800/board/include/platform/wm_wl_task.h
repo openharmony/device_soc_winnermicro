@@ -28,7 +28,7 @@
 #include "wm_type_def.h"
 #include "wm_wl_mbox.h"
 #include "wm_wl_timers.h"
-//#include "ithread.h"
+// #include "ithread.h"
 
 #define TLS_TASK_START_PRIO                 0
 #define TASK_WL_PRIO                        9
@@ -44,8 +44,7 @@
 #define AP_SOCKET_S_TASK_PRIO               (TASK_WL_PRIO_MAX + 10)
 #define TLS_UPNP_TASK_PRIO                  (TASK_WL_PRIO_MAX + 11)
 #define TLS_ONESHOT_TASK_PRIO          		(TASK_WL_PRIO_MAX + 15)
-#define TLS_ONESHOT_SPEC_TASK_PRIO			(TASK_WL_PRIO_MAX + 16)
-
+#define TLS_ONESHOT_SPEC_TASK_PRIO	        (TASK_WL_PRIO_MAX + 16)
 
 #define TLS_MBOX_ALL_COUNT                  8
 #define TLS_MBOX_ID_WL_TASK                 0
@@ -119,11 +118,11 @@ struct task_msg {
 
 /** task parameters */
 struct task_parameter{
-	u8 task_id;             /**< task ID */
-	const char * name;      /**< task name */
-	u8 *stk_start;          /**< start address of task stack */
-	u32 stk_size;           /**< size of task stack */
-	u8 mbox_size;           /**< size of mailbox */
+    u8 task_id;             /**< task ID */
+    const char * name;      /**< task name */
+    u8 *stk_start;          /**< start address of task stack */
+    u32 stk_size;           /**< size of task stack */
+    u8 mbox_size;           /**< size of mailbox */
     u8 mbox_id;             /**< mailbox ID */
     u8 timeo_id;            /**< timer ID */
 };

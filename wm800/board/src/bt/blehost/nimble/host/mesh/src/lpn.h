@@ -32,7 +32,7 @@ static inline bool bt_mesh_lpn_match(u16_t addr)
 {
 #if (MYNEWT_VAL(BLE_MESH_LOW_POWER))
 
-    if(bt_mesh_lpn_established()) {
+    if (bt_mesh_lpn_established()) {
         return (addr == bt_mesh.lpn.frnd);
     }
 

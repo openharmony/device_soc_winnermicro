@@ -91,7 +91,7 @@ static inline int bt_mesh_prov_nonce(const u8_t dhkey[32],
     int err;
     err = bt_mesh_k1(dhkey, 32, prov_salt, "prsn", tmp);
 
-    if(!err) {
+    if (!err) {
         memcpy(nonce, tmp + 3, 13);
     }
 
