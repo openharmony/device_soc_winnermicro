@@ -32,8 +32,8 @@ typedef enum {
     TLS_PERIPHERAL_TYPE_I2C   = (1 << 0), /**< peripheral type : I2C */
     TLS_PERIPHERAL_TYPE_UART0 = (1 << 1), /**< peripheral type : UART0 */
     TLS_PERIPHERAL_TYPE_UART1 = (1 << 2), /**< peripheral type : UART1 */
-	TLS_PERIPHERAL_TYPE_UART2 = (1 << 3), /**< peripheral type : UART2 */
-	TLS_PERIPHERAL_TYPE_UART3 = (1 << 4), /**< peripheral type : UART3 */
+    TLS_PERIPHERAL_TYPE_UART2 = (1 << 3), /**< peripheral type : UART2 */
+    TLS_PERIPHERAL_TYPE_UART3 = (1 << 4), /**< peripheral type : UART3 */
     TLS_PERIPHERAL_TYPE_UART4 = (1 << 5), /**< peripheral type : UART4 */
 
     TLS_PERIPHERAL_TYPE_UART5 = (1 << 6), /**< peripheral type : UART4 */
@@ -79,7 +79,6 @@ typedef void (*tls_pmu_irq_callback)(void *arg);
  * @{
  */
 
-
 /**
  * @brief          	This function is used to register pmu timer1 interrupt
  *
@@ -95,7 +94,6 @@ typedef void (*tls_pmu_irq_callback)(void *arg);
  * recommendation to send messages to other tasks to operate it.
  */
 void tls_pmu_timer1_isr_register(tls_pmu_irq_callback callback, void *arg);
-
 
 /**
  * @brief          	This function is used to register pmu timer0 interrupt
@@ -113,7 +111,6 @@ void tls_pmu_timer1_isr_register(tls_pmu_irq_callback callback, void *arg);
  */
 void tls_pmu_timer0_isr_register(tls_pmu_irq_callback callback, void *arg);
 
-
 /**
  * @brief          	This function is used to register pmu gpio interrupt
  *
@@ -129,7 +126,6 @@ void tls_pmu_timer0_isr_register(tls_pmu_irq_callback callback, void *arg);
  * recommendation to send messages to other tasks to operate it.
  */
 void tls_pmu_gpio_isr_register(tls_pmu_irq_callback callback, void *arg);
-
 
 /**
  * @brief          	This function is used to register pmu sdio interrupt
@@ -147,7 +143,6 @@ void tls_pmu_gpio_isr_register(tls_pmu_irq_callback callback, void *arg);
  */
 void tls_pmu_sdio_isr_register(tls_pmu_irq_callback callback, void *arg);
 
-
 /**
  * @brief          	This function is used to select pmu clk
  *
@@ -161,7 +156,6 @@ void tls_pmu_sdio_isr_register(tls_pmu_irq_callback callback, void *arg);
  */
 void tls_pmu_clk_select(u8 bypass);
 
-
 /**
  * @brief          	This function is used to start pmu timer0
  *
@@ -172,7 +166,6 @@ void tls_pmu_clk_select(u8 bypass);
  * @note           	None
  */
 void tls_pmu_timer0_start(u16 second);
-
 
 /**
  * @brief          	This function is used to stop pmu timer0
@@ -185,8 +178,6 @@ void tls_pmu_timer0_start(u16 second);
  */
 void tls_pmu_timer0_stop(void);
 
-
-
 /**
  * @brief          	This function is used to start pmu timer1
  *
@@ -197,7 +188,6 @@ void tls_pmu_timer0_stop(void);
  * @note           	None
  */
 void tls_pmu_timer1_start(u16 msec);
-
 
 /**
  * @brief          	This function is used to stop pmu timer1
@@ -210,8 +200,6 @@ void tls_pmu_timer1_start(u16 msec);
  */
 void tls_pmu_timer1_stop(void);
 
-
-
 /**
  * @brief          	This function is used to start pmu goto standby 
  *
@@ -222,7 +210,6 @@ void tls_pmu_timer1_stop(void);
  * @note           	None
  */
 void tls_pmu_standby_start(void);
-
 
 /**
  * @brief          	This function is used to start pmu goto sleep 
@@ -265,5 +252,4 @@ void tls_open_peripheral_clock(tls_peripheral_type_s devices);
  */
 
 #endif
-
 

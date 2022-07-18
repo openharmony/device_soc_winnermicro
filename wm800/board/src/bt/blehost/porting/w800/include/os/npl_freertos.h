@@ -38,7 +38,6 @@ void npl_freertos_eventq_remove(struct ble_npl_eventq *evq,
 ble_npl_error_t npl_freertos_mutex_init(struct ble_npl_mutex *mu);
 ble_npl_error_t npl_freertos_mutex_deinit(struct ble_npl_mutex *mu);
 
-
 ble_npl_error_t npl_freertos_mutex_pend(struct ble_npl_mutex *mu,
                                         ble_npl_time_t timeout);
 

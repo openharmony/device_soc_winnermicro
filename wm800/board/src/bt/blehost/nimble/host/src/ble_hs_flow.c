@@ -58,7 +58,7 @@ ble_hs_flow_tx_num_comp_pkts(void)
     for(conn = ble_hs_conn_first();
             conn != NULL;
             conn = SLIST_NEXT(conn, bhc_next)) {
-        if(conn->bhc_completed_pkts > 0) {
+        if (conn->bhc_completed_pkts > 0) {
             /* Only specify one connection per command. */
             /* TODO could combine this in single HCI command */
             cmd->handles = 1;
@@ -75,7 +75,7 @@ ble_hs_flow_tx_num_comp_pkts(void)
                                             BLE_HCI_OCF_CB_HOST_NUM_COMP_PKTS),
                                  buf, sizeof(buf));
 
-            if(rc != 0) {
+            if (rc != 0) {
                 return rc;
             }
         }
@@ -90,10 +90,10 @@ ble_hs_flow_event_cb(struct ble_npl_event *ev)
     int rc;
     ble_hs_lock();
 
-    if(ble_hs_flow_num_completed_pkts > 0) {
+    if (ble_hs_flow_num_completed_pkts > 0) {
         rc = ble_hs_flow_tx_num_comp_pkts();
 
-        if(rc != 0) {
+        if (rc != 0) {
             ble_hs_sched_reset(rc);
         }
 
@@ -112,7 +112,7 @@ ble_hs_flow_inc_completed_pkts(struct ble_hs_conn *conn)
     conn->bhc_completed_pkts++;
     ble_hs_flow_num_completed_pkts++;
 
-    if(ble_hs_flow_num_completed_pkts > MYNEWT_VAL(BLE_ACL_BUF_COUNT)) {
+    if (ble_hs_flow_num_completed_pkts > MYNEWT_VAL(BLE_ACL_BUF_COUNT)) {
         ble_hs_sched_reset(BLE_HS_ECONTROLLER);
         return;
     }
@@ -122,10 +122,10 @@ ble_hs_flow_inc_completed_pkts(struct ble_hs_conn *conn)
      */
     num_free = MYNEWT_VAL(BLE_ACL_BUF_COUNT) - ble_hs_flow_num_completed_pkts;
 
-    if(num_free <= MYNEWT_VAL(BLE_HS_FLOW_CTRL_THRESH)) {
+    if (num_free <= MYNEWT_VAL(BLE_HS_FLOW_CTRL_THRESH)) {
         ble_npl_eventq_put(ble_hs_evq_get(), &ble_hs_flow_ev);
         ble_npl_callout_stop(&ble_hs_flow_timer);
-    } else if(ble_hs_flow_num_completed_pkts == 1) {
+    } else if (ble_hs_flow_num_completed_pkts == 1) {
         rc = ble_npl_callout_reset(&ble_hs_flow_timer, BLE_HS_FLOW_ITVL_TICKS);
         BLE_HS_DBG_ASSERT_EVAL(rc == 0);
     }
@@ -149,7 +149,7 @@ ble_hs_flow_acl_free(struct os_mempool_ext *mpe, void *data, void *arg)
     /* Free the mbuf back to its pool. */
     rc = os_memblock_put_from_cb(&mpe->mpe_mp, data);
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
@@ -159,7 +159,7 @@ ble_hs_flow_acl_free(struct os_mempool_ext *mpe, void *data, void *arg)
     ble_hs_lock_nested();
     conn = ble_hs_conn_find(conn_handle);
 
-    if(conn != NULL) {
+    if (conn != NULL) {
         ble_hs_flow_inc_completed_pkts(conn);
     }
 
@@ -225,7 +225,7 @@ ble_hs_flow_startup(void)
                                       BLE_HCI_OCF_CB_SET_CTLR_TO_HOST_FC),
                            &enable_cmd, sizeof(enable_cmd), NULL, 0);
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
@@ -233,7 +233,7 @@ ble_hs_flow_startup(void)
                                       BLE_HCI_OCF_CB_HOST_BUF_SIZE),
                            &buf_size_cmd, sizeof(buf_size_cmd), NULL, 0);
 
-    if(rc != 0) {
+    if (rc != 0) {
         enable_cmd.enable = BLE_HCI_CTLR_TO_HOST_FC_OFF;
         ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_CTLR_BASEBAND,
                                      BLE_HCI_OCF_CB_SET_CTLR_TO_HOST_FC),

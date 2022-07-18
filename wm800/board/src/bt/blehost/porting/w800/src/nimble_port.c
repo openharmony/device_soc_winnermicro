@@ -32,7 +32,6 @@ static struct ble_npl_event ble_hs_ev_stop;
 
 #define NIMBLE_PORT_DEINIT_EV_ARG (-1)
 
-
 void
 nimble_port_init(void)
 {
@@ -70,7 +69,6 @@ nimble_port_deinit(void)
 #endif
 }
 
-
 void
 nimble_port_run(void)
 {
@@ -79,8 +77,8 @@ nimble_port_run(void)
         ble_npl_event_run(ev);
         int arg = (int)ble_npl_event_get_arg(ev);
 
-        if(arg == NIMBLE_PORT_DEINIT_EV_ARG) {
-            ;//break;
+        if (arg == NIMBLE_PORT_DEINIT_EV_ARG) {
+            ;// break;
         }
     }
 }
@@ -109,7 +107,7 @@ nimble_port_stop(void)
     rc = ble_hs_stop(&stop_listener, ble_hs_stop_cb,
                      NULL);
 
-    if(rc != 0) {
+    if (rc != 0) {
         ble_npl_sem_deinit(&ble_hs_stop_sem);
         return rc;
     }
@@ -124,14 +122,12 @@ nimble_port_stop(void)
     ble_npl_sem_deinit(&ble_hs_stop_sem);
 
     /*Adding shutdown cb function, inform application free resources*/
-    if(ble_hs_cfg.shutdown_cb != NULL) {
+    if (ble_hs_cfg.shutdown_cb != NULL) {
         ble_hs_cfg.shutdown_cb(0);
     }
 
     return rc;
 }
-
-
 
 struct ble_npl_eventq *
 nimble_port_get_dflt_eventq(void)

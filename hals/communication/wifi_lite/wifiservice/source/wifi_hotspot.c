@@ -122,7 +122,6 @@ WifiErrorCode EnableHotspot()
     //     return ERROR_WIFI_UNKNOWN;
     // }
 
-
     // TODO(xu): add API to set AP's ipinfo
     struct tls_ip_info_t ipinfo = {0};
     ipinfo.ip_addr[0] = 192;

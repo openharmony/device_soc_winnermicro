@@ -37,33 +37,29 @@ typedef volatile unsigned long vu32;
 #define M16(adr)	(*((vu16*) (adr)))
 #define M32(adr)	(*((vu32*) (adr)))
 
-
 #define INSIDE_FLS_SECTOR_SIZE	0x1000
 #define INSIDE_FLS_PAGE_SIZE	256
-
 
 #define INSIDE_FLS_BASE_ADDR		0x8000000UL
 #define INSIDE_FLS_SECBOOT_ADDR 	(INSIDE_FLS_BASE_ADDR  + 0x02000)
 
-
-
 enum TYPE_FLASH_ID{
-	SPIFLASH_MID_GD = 0xC8,
-	SPIFLASH_MID_ESMT = 0x1C,
-	SPIFLASH_MID_PUYA = 0x85,	
-	SPIFLASH_MID_WINBOND = 0xEF,	
-	SPIFLASH_MID_FUDANMICRO = 0xA1,
-	SPIFLASH_MID_BOYA       = 0x68,
-	SPIFLASH_MID_XMC		= 0x20,
-	SPIFLASH_MID_XTX        = 0x0B,
-	SPIFLASH_MID_TSINGTENG    = 0xEB, /*UNIGROUP TSINGTENG*/	
+    SPIFLASH_MID_GD = 0xC8,
+    SPIFLASH_MID_ESMT = 0x1C,
+    SPIFLASH_MID_PUYA = 0x85,
+    SPIFLASH_MID_WINBOND = 0xEF,
+    SPIFLASH_MID_FUDANMICRO = 0xA1,
+    SPIFLASH_MID_BOYA       = 0x68,
+    SPIFLASH_MID_XMC        = 0x20,
+    SPIFLASH_MID_XTX        = 0x0B,
+    SPIFLASH_MID_TSINGTENG    = 0xEB, /* UNIGROUP TSINGTENG */
 };
 
 typedef union {
     struct {
         uint32_t _reserved0: 1;               /*!< bit:  0  Reserved */
         uint32_t code_decrypt: 1;             /*!< bit:  1      read code from AHB decrypt flag */
-        uint32_t dbus_decrypt: 1;             /*!< bit:  2  	read data from Flash register controller decrypt flag */
+        uint32_t dbus_decrypt: 1;             /*!< bit:  2      read data from Flash register controller decrypt flag */
         uint32_t data_decrypt: 1;             /*!< bit:  3      read data from AHB decrypt flag */
         uint32_t prikey_sel: 3;               /*!< bit:  4.. 6   private key selection: 0 : first one; 1 : second one; */
         uint32_t decrypt_start: 1;            /*!< bit:  7   write 1 to start RSA decryption operation */
@@ -71,7 +67,6 @@ typedef union {
     } b;                                   /*!< Structure    Access by bit */
     uint32_t w;                            /*!< Type         Access by whole register */
 } FLASH_ENCRYPT_CTRL_Type;
-
 
 /**
  * @typedef struct    Flash Registers
@@ -107,7 +102,6 @@ typedef struct
 #define FLASH_PGERR     0x00000002
 #define FLASH_EOP       0x00000004
 
-
 #define TLS_FLS_STATUS_OK      (0)
 #define TLS_FLS_STATUS_EINVAL      (1)
 #define TLS_FLS_STATUS_EBUSY      (2)
@@ -134,10 +128,9 @@ typedef struct
 #define CMD_START_Pos                         8U                                          /*!< CMD start position */
 #define CMD_START_Msk                         (1UL << CMD_START_Pos)                         /*!< CMD start Mask */
 
-
 typedef struct {
-	uint16_t eraseSize;
-	uint16_t pageSize;
+    uint16_t eraseSize;
+    uint16_t pageSize;
 } FLASH_OTP_WR_PARAM_ST;
 
 /**
@@ -146,9 +139,9 @@ typedef struct {
 struct tls_inside_fls
 {
     tls_os_sem_t *fls_lock;
-	unsigned char flashid;
-	unsigned int density;
-	FLASH_OTP_WR_PARAM_ST OTPWRParam;
+    unsigned char flashid;
+    unsigned int density;
+    FLASH_OTP_WR_PARAM_ST OTPWRParam;
 };
 
 /**
@@ -171,7 +164,6 @@ struct tls_inside_fls
  * @{
  */
 
-
 /**
  * @brief          This function is used to unlock flash protect area [0x0~0x2000].
  *
@@ -193,7 +185,6 @@ int tls_flash_unlock(void);
  * @note           None
  */
 int tls_flash_lock(void);
-
 
 /**
  * @brief          This function is used to get the flash semaphore.
@@ -256,7 +247,6 @@ int tls_fls_init(void);
  */
 int tls_fls_read(u32 addr, u8 * buf, u32 len);
 
-
 /**
  * @brief          This function is used to write data into the flash.
  *
@@ -289,7 +279,6 @@ int tls_fls_write(u32 addr, u8 * buf, u32 len);
  * @note           Erase action should be excuted by API tls_fls_erase in user layer.
  */
 int tls_fls_write_without_erase(u32 addr, u8 *buf, u32 len);
-
 
 /**
  * @brief          	This function is used to erase the appointed sector

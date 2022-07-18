@@ -38,12 +38,12 @@ void UserMain(void)
 #endif
 
 #if defined(LOSCFG_KERNEL_TEST_FULL) || defined(LOSCFG_KERNEL_TEST)
-	LosAppInit(); 
+    LosAppInit(); 
 #else
     if (DeviceManagerStart()) {
         printf("[%s] No drivers need load by hdf manager!",__func__);
     }
-#endif	
-	
+#endif
+
 }
 

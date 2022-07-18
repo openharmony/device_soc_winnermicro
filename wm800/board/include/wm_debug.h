@@ -56,21 +56,21 @@
 #define __TLS_DBGPRT_WARNING(fmt, ...)    printf(fmt, ##__VA_ARGS__)
 #define __TLS_DBGPRT_ERR(fmt, ...)        printf(fmt, ##__VA_ARGS__)
 #else
-#define __TLS_DBGPRT_INFO(fmt, ...)				     \
-do {									                     \
-       u32 time = tls_os_get_time();	                 \
+#define __TLS_DBGPRT_INFO(fmt, ...)                     \
+do {                                                         \
+       u32 time = tls_os_get_time();                     \
        printf("[WM_I] <%d.%02d> %s : "fmt, (time/100), (time%100), __func__ , ##__VA_ARGS__); \
 } while (0)
 
-#define __TLS_DBGPRT_WARNING(fmt, ...)				     \
-do {									                     \
-       u32 time = tls_os_get_time();	                 \
+#define __TLS_DBGPRT_WARNING(fmt, ...)                     \
+do {                                                         \
+       u32 time = tls_os_get_time();                     \
        printf("[WM_W] <%d.%02d> %s : "fmt, (time/100), (time%100), __func__ , ##__VA_ARGS__); \
 } while (0)
 
-#define __TLS_DBGPRT_ERR(fmt, ...)				     \
-do {									                     \
-       u32 time = tls_os_get_time();	                 \
+#define __TLS_DBGPRT_ERR(fmt, ...)                     \
+do {                                                         \
+       u32 time = tls_os_get_time();                     \
        printf("[WM_E] <%d.%02d> %s : "fmt, (time/100), (time%100), __func__ , ##__VA_ARGS__); \
 } while (0)
 #endif

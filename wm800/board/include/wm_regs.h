@@ -82,7 +82,6 @@ typedef enum IRQn
 #define     __O     volatile             /*!< Defines 'write only' permissions                */
 #define     __IO    volatile             /*!< Defines 'read / write' permissions              */
 
-
 typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
 typedef volatile unsigned int TLS_REG;    /* Hardware register definition */
 
@@ -93,7 +92,6 @@ typedef volatile unsigned int TLS_REG;    /* Hardware register definition */
 #define APB_CLK      (40000000) /* 40MHz */
 
 #define DEVICE_BASE_ADDR    0x40000000
-
 
 /***************************************************************
  * SDIO Reg
@@ -158,7 +156,6 @@ typedef volatile unsigned int TLS_REG;    /* Hardware register definition */
 #define SDIO_WP_INT_SRC_CMD_UP           (1UL<<2)
 #define SDIO_WP_INT_SRC_DATA_DOWN        (1UL<<1)
 #define SDIO_WP_INT_SRC_DATA_UP          (1UL<<0)
-
 
 /***************************************************************
  * DMA Reg
@@ -251,7 +248,6 @@ typedef volatile unsigned int TLS_REG;    /* Hardware register definition */
 #define PMU_TIMER1_NTERRUPT_SRC         (1UL << 1)
 #define PMU_GPIO_NTERRUPT_SRC           (1UL << 2)
 
-
 /***************************************************************
  * system clock and bus clock Reg
  ***************************************************************/
@@ -267,7 +263,7 @@ typedef volatile unsigned int TLS_REG;    /* Hardware register definition */
 #define HR_CLK_RST_STA            (HR_CLK_BASE_ADDR + 0x1C)
 
 /***************************************************************
- * ÄÚ´æÄ£¿é¼Ä´æÆ÷¶¨Òå
+ * ï¿½Ú´ï¿½Ä£ï¿½ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
  ***************************************************************/
 #define HR_MEM_BASE_ADDR            (DEVICE_BASE_ADDR + 0xF00)
 #define HR_MEM_TXBUF_BASE_ADDR      (HR_MEM_BASE_ADDR + 0x00)
@@ -299,7 +295,6 @@ typedef volatile unsigned int TLS_REG;    /* Hardware register definition */
 #define HR_I2C_TXR               (HR_I2C_BASE_ADDR + 0x14)
 #define HR_I2C_CR               (HR_I2C_BASE_ADDR + 0x18)
 
-
 #define I2C_CTRL_INT_DISABLE    (0x1UL<<6)
 #define I2C_CTRL_ENABLE            (0x1UL<<7)
 
@@ -315,7 +310,6 @@ typedef volatile unsigned int TLS_REG;    /* Hardware register definition */
 #define I2C_SR_TIP                (0x1UL<<1)
 #define I2C_SR_IF                (0x1UL)
 
-
 /***************************************************************
  * SD ADC Reg
  ***************************************************************/
@@ -327,7 +321,6 @@ typedef volatile unsigned int TLS_REG;    /* Hardware register definition */
 #define HR_SD_ADC_CTRL               ((HR_SD_ADC_BASE_ADDR+0x010))
 #define HR_SD_ADC_INT_STATUS          ((HR_SD_ADC_BASE_ADDR+0x014))
 #define HR_SD_ADC_CMP_VALUE           ((HR_SD_ADC_BASE_ADDR+0x018))
-
 
 /***************************************************************
  *Low Speed SPI Reg
@@ -346,7 +339,6 @@ typedef volatile unsigned int TLS_REG;    /* Hardware register definition */
 #define HR_SPI_SLV_XMIT_LEN_REG               (HR_SPI_BASE_ADDR + 0x028)
 #define HR_SPI_RXDATA_REG                   (HR_SPI_BASE_ADDR + 0x030)
 
-
 #define SPIM_STARTADDRESS                   (HR_APB_BASE_ADDR + 0x400)
 #define SPIM_CHCFG_REG                       (*(volatile unsigned int*)(SPIM_STARTADDRESS+0x000))
 #define SPIM_SPICFG_REG                   (*(volatile unsigned int*)(SPIM_STARTADDRESS+0x004))
@@ -360,7 +352,6 @@ typedef volatile unsigned int TLS_REG;    /* Hardware register definition */
 #define SPIM_TRANSLEN_REG                   (*(volatile unsigned int*)(SPIM_STARTADDRESS+0x024))
 #define SPIM_RXDATA_REG                   (*(volatile unsigned int*)(SPIM_STARTADDRESS+0x030))
 
-
 /*RSA Reg*/
 #define RSA_BASE_ADDRESS       0x40000000
 #define  RSAXBUF               (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x0 )))
@@ -369,11 +360,7 @@ typedef volatile unsigned int TLS_REG;    /* Hardware register definition */
 #define  RSADBUF               (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x300 )))
 #define  RSACON                (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x400 )))
 #define  RSAMC                 (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x404 )))
-#define  RSAN                  (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x408 )))
-
-
-
-/* Bits Definitions of "CH_CFG" */
+#define  RSAN                  (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x408 )))/* Bits Definitions of "CH_CFG" */
 #define SPI_RX_INVALID_BITS(n)      ((n) << 23)
 #define SPI_CLEAR_FIFOS      (1U << 22)
 #define SPI_CONTINUE_MODE      (1U << 21)
@@ -659,7 +646,6 @@ typedef volatile unsigned int TLS_REG;    /* Hardware register definition */
 #define HR_GPIOB_MIS                 (HR_GPIOB_BASE_ADDR + 0x34)
 #define HR_GPIOB_IC                     (HR_GPIOB_BASE_ADDR + 0x38)
 
-
 #define IO_PA_BASE_ADDR            (HR_APB_BASE_ADDR + 0x1200)
 #define IO_PA_DATA                (*(volatile unsigned int*)(IO_PA_BASE_ADDR + 0x0))
 #define IO_PA_EN                (*(volatile unsigned int*)(IO_PA_BASE_ADDR + 0x4))
@@ -774,7 +760,6 @@ typedef volatile unsigned int TLS_REG;    /* Hardware register definition */
  ***************************************************************/
 #define HR_CLK_I2S_GATE_Pos                        (10)
 
-
 #define HR_I2S_REG_BASE                     (HR_APB_BASE_ADDR+0x2000)
 #define HR_I2S_CTRL                       (HR_I2S_REG_BASE+0x000)
 #define HR_I2S_INT_MASK              (HR_I2S_REG_BASE+0x004)
@@ -813,7 +798,6 @@ typedef volatile unsigned int TLS_REG;    /* Hardware register definition */
 #define HR_PWM_CH4_REG2                 (HR_PWM_REG_BASE+0x0030)
 #define HR_PWM_CAP2DAT                  (HR_PWM_REG_BASE+0x0034)
 #define HR_PWM_CAP2CTL                  (HR_PWM_REG_BASE+0x0038)
-
 
 /******************************************************************************/
 /*                                                                            */
@@ -879,7 +863,6 @@ typedef volatile unsigned int TLS_REG;    /* Hardware register definition */
 #define HR_TC_INT_EN                     (HR_TC_REG_BASE+0x0044) /*bit 31:16*/
 #define HR_TC_INT_STATUS                 (HR_TC_REG_BASE+0x0044) /*bit 15:0*/ 
 
-
 /**
  * @defgroup System_APIs System APIs
  * @brief System APIs
@@ -915,7 +898,6 @@ static __inline void tls_reg_write32(unsigned int reg, unsigned int val)
     *(TLS_REG *)reg = val;
 }
 
-
 /**
  * @brief          This function is used to read value from register or memory
  *
@@ -930,7 +912,6 @@ static __inline unsigned int tls_reg_read32(unsigned int reg)
     unsigned int val = *(TLS_REG *)reg;
     return val;
 }
-
 
 /**
  * @brief          This function is used to write specified bit through
@@ -972,7 +953,6 @@ static __inline unsigned int tls_bitband_read(volatile unsigned int addr, unsign
 
     return *((volatile unsigned int *)temp);
 }
-
 
 /**
  * @}

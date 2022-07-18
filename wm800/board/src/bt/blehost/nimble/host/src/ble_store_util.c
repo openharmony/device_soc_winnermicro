@@ -40,12 +40,12 @@ ble_store_util_iter_unique_peer(int obj_type,
 
     /* Do nothing if this peer is a duplicate. */
     for(i = 0; i < set->num_peers; i++) {
-        if(ble_addr_cmp(set->peer_id_addrs + i, &val->sec.peer_addr) == 0) {
+        if (ble_addr_cmp(set->peer_id_addrs + i, &val->sec.peer_addr) == 0) {
             return 0;
         }
     }
 
-    if(set->num_peers >= set->max_peers) {
+    if (set->num_peers >= set->max_peers) {
         /* Overflow; abort the iterate procedure. */
         set->status = BLE_HS_ENOMEM;
         return 1;
@@ -85,11 +85,11 @@ ble_store_util_bonded_peers(ble_addr_t *out_peer_id_addrs, int *out_num_peers,
                            ble_store_util_iter_unique_peer,
                            &set);
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
-    if(set.status != 0) {
+    if (set.status != 0) {
         return set.status;
     }
 
@@ -115,13 +115,13 @@ ble_store_util_delete_peer(const ble_addr_t *peer_id_addr)
     key.sec.peer_addr = *peer_id_addr;
     rc = ble_store_util_delete_all(BLE_STORE_OBJ_TYPE_OUR_SEC, &key);
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
     rc = ble_store_util_delete_all(BLE_STORE_OBJ_TYPE_PEER_SEC, &key);
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
@@ -129,12 +129,12 @@ ble_store_util_delete_peer(const ble_addr_t *peer_id_addr)
     key.cccd.peer_addr = *peer_id_addr;
     rc = ble_store_util_delete_all(BLE_STORE_OBJ_TYPE_CCCD, &key);
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
     rc = ble_store_flush();
-    if(!rc)
+    if (!rc)
     {
         return rc;
     }
@@ -160,7 +160,7 @@ ble_store_util_delete_all(int type, const union ble_store_key *key)
         rc = ble_store_delete(type, key);
     } while(rc == 0);
 
-    if(rc != BLE_HS_ENOENT) {
+    if (rc != BLE_HS_ENOENT) {
         return rc;
     }
 
@@ -187,7 +187,7 @@ ble_store_util_count(int type, int *out_count)
                            ble_store_util_iter_count,
                            out_count);
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
@@ -202,18 +202,17 @@ int ble_store_util_get_peer_by_index(int index, ble_addr_t *peer_id_addr)
                          peer_id_addrs, &num_peers,
                          sizeof peer_id_addrs / sizeof peer_id_addrs[0]);
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
-    if(index > num_peers) {
+    if (index > num_peers) {
         return -1;
     }
 
     memcpy(peer_id_addr, &peer_id_addrs[index], sizeof(ble_addr_t));
     return rc;
 }
-
 
 int
 ble_store_util_delete_oldest_peer(ble_addr_t *peer_id_addr)
@@ -225,20 +224,20 @@ ble_store_util_delete_oldest_peer(ble_addr_t *peer_id_addr)
                          peer_id_addrs, &num_peers,
                          sizeof peer_id_addrs / sizeof peer_id_addrs[0]);
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
-    if(num_peers == 0) {
+    if (num_peers == 0) {
         return 0;
     }
 
     rc = ble_store_util_delete_peer(&peer_id_addrs[0]);
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
-    if(peer_id_addr)
+    if (peer_id_addr)
     {
     memcpy(peer_id_addr, &peer_id_addrs[0], sizeof(ble_addr_t));
     }

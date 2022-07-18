@@ -78,7 +78,6 @@ extern const float32_t twiddleCoef_rfft_2048[2048];
 extern const float32_t twiddleCoef_rfft_4096[4096];
 extern const float32_t twiddleCoef_rfft_8192[8192];
 
-
 extern const q15_t realCoefAQ15_8192[8192];
 extern const q31_t realCoefAQ31_8192[8192];
 
@@ -101,10 +100,8 @@ extern const q31_t realCoefAQ31_1024[1024];
 extern const q31_t realCoefAQ31_2048[2048];
 extern const q31_t realCoefAQ31_4096[4096];
 
-
 extern const float32_t realCoefA[8192];
 extern const float32_t realCoefB[8192];
-
 
 /*Tables for DCT4*/
 extern const q15_t ALIGN4 WeightsQ15_128[128+2];
@@ -117,7 +114,6 @@ extern const q15_t ALIGN4 cos_factorsQ15_512[512];
 extern const q15_t ALIGN4 cos_factorsQ15_2048[2048];
 extern const q15_t ALIGN4 cos_factorsQ15_8192[8192];
 
-
 extern const q31_t WeightsQ31_128[128+2];
 extern const q31_t WeightsQ31_512[512+2];
 extern const q31_t WeightsQ31_2048[2048+2];
@@ -127,7 +123,6 @@ extern const q31_t cos_factorsQ31_128[128];
 extern const q31_t cos_factorsQ31_512[512];
 extern const q31_t cos_factorsQ31_2048[2048];
 extern const q31_t cos_factorsQ31_8192[8192];
-
 
 extern const float32_t Weights_128[128+2];
 extern const float32_t Weights_512[512+2];
@@ -204,7 +199,7 @@ extern  const mynumber Lv[362][2];
 
 /*constant for Fast math*/
   const static mynumber
-  nZERO	  = {{0, 0x80000000}},	        /* -0.0          */
+  nZERO   = {{0, 0x80000000}},        /* -0.0          */
   INF     = {{0x00000000, 0x7ff00000}}, /* INF           */
   nINF    = {{0x00000000, 0xfff00000}}, /* -INF          */
   sqrt_2  = {{0x667f3bcc, 0x3ff6a09e}}, /* sqrt(2)       */
@@ -214,7 +209,7 @@ extern  const mynumber Lv[362][2];
   bigv    = {{0xfff8016a, 0x4207ffff}}, /* 1.5*2**33-1+362*2**-19 */
   t52     = {{0x00000000, 0x43300000}}, /* 2**52         */
   two52e  = {{0x000003ff, 0x43300000}}, /* 2**52'        */
-  //nan     = {{0x00000000, 0x7ff80000}}, /* NAN           */
+  // nan     = {{0x00000000, 0x7ff80000}}, /* NAN           */
   t256    = {{0, 0x4ff00000}},          /* 2^256         */
   ln_two1 = {{0xFEFA3800, 0x3FE62E42}}, /* 0.69314718055989033 */
   ln_two2 = {{0x93C76730, 0x3D2EF357}}, /* 5.4979230187083712e-14*/
@@ -339,9 +334,9 @@ static const float64_t
 
 /*coeffient for log10 function*/
 static const float64_t
-  ivln10    = 4.34294481903251816668e-01,	/* 0x3FDBCB7B, 0x1526E50E */
-  log10_2hi = 3.01029995663611771306e-01,	/* 0x3FD34413, 0x509F6000 */
-  log10_2lo = 3.69423907715893078616e-13;	/* 0x3D59FEF3, 0x11F12B36 */
+  ivln10    = 4.34294481903251816668e-01, /* 0x3FDBCB7B, 0x1526E50E */
+  log10_2hi = 3.01029995663611771306e-01, /* 0x3FD34413, 0x509F6000 */
+  log10_2lo = 3.69423907715893078616e-13; /* 0x3D59FEF3, 0x11F12B36 */
 
 /*constant for log10 function*/
 static const float64_t

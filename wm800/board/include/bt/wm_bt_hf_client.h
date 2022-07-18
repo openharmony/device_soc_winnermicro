@@ -23,7 +23,6 @@
  * Copyright (c) 2020 Winner Microelectronics Co., Ltd.
  */
 
-
 #ifndef __WM_BT_HF_CLIENT_H__
 #define __WM_BT_HF_CLIENT_H__
 
@@ -48,16 +47,14 @@
  * @{
  */
 
-
-
 /**
- * @brief		   initializes the hf client interface
+ * @brief         initializes the hf client interface
  *
- * @param[in]	  callback		pointer on callback function
+ * @param[in]     callback    pointer on callback function
  *
- * @retval		   @ref tls_bt_status_t
+ * @retval         @ref tls_bt_status_t
  *
- * @note		   None
+ * @note           None
  */
 tls_bt_status_t tls_bt_hf_client_init(tls_bthf_client_callback_t callback);
 
@@ -82,7 +79,6 @@ tls_bt_status_t tls_bt_hf_client_deinit(void);
  * @note           None
  */
 tls_bt_status_t tls_bt_hf_client_connect(tls_bt_addr_t *bd_addr);
-
 
 /**
  * @brief          disconnect from audio gateway
@@ -143,7 +139,7 @@ tls_bt_status_t tls_bt_hf_client_stop_voice_recognition(void);
 /**
  * @brief           volume control
  *
- * @param[in]    type Mic or speaker
+ * @param[in]    type Mic or speaker
 
  * @param[in]    volume index value
  * 

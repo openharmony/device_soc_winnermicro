@@ -43,7 +43,7 @@ int tc_ctr_mode(uint8_t *out, unsigned int outlen, const uint8_t *in,
     unsigned int i;
 
     /* input sanity check: */
-    if(out == (uint8_t *) 0 ||
+    if (out == (uint8_t *) 0 ||
             in == (uint8_t *) 0 ||
             ctr == (uint8_t *) 0 ||
             sched == (TCAesKeySched_t) 0 ||
@@ -60,9 +60,9 @@ int tc_ctr_mode(uint8_t *out, unsigned int outlen, const uint8_t *in,
                 (nonce[14] << 8) | (nonce[15]);
 
     for(i = 0; i < inlen; ++i) {
-        if((i % (TC_AES_BLOCK_SIZE)) == 0) {
+        if ((i % (TC_AES_BLOCK_SIZE)) == 0) {
             /* encrypt data using the current nonce */
-            if(tc_aes_encrypt(buffer, nonce, sched)) {
+            if (tc_aes_encrypt(buffer, nonce, sched)) {
                 block_num++;
                 nonce[12] = (uint8_t)(block_num >> 24);
                 nonce[13] = (uint8_t)(block_num >> 16);

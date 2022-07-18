@@ -385,7 +385,7 @@ static inline void atomic_set_bit_to(atomic_t *target, int bit, bool val)
 {
     atomic_val_t mask = ATOMIC_MASK(bit);
 
-    if(val) {
+    if (val) {
         (void)atomic_or(ATOMIC_ELEM(target, bit), mask);
     } else {
         (void)atomic_and(ATOMIC_ELEM(target, bit), ~mask);

@@ -80,7 +80,6 @@
    extern csky_rfft_instance_q15 csky_rfft_sR_q15_len4096;
    extern csky_rfft_instance_q15 csky_rfft_sR_q15_len8192;
 
-
    extern csky_rfft_instance_q15 csky_inv_rfft_sR_q15_len32;
    extern csky_rfft_instance_q15 csky_inv_rfft_sR_q15_len64;
    extern csky_rfft_instance_q15 csky_inv_rfft_sR_q15_len128;
@@ -90,7 +89,6 @@
    extern csky_rfft_instance_q15 csky_inv_rfft_sR_q15_len2048;
    extern csky_rfft_instance_q15 csky_inv_rfft_sR_q15_len4096;
    extern csky_rfft_instance_q15 csky_inv_rfft_sR_q15_len8192;
-
 
    extern csky_rfft_instance_q31 csky_rfft_sR_q31_len32;
    extern csky_rfft_instance_q31 csky_rfft_sR_q31_len64;
@@ -111,7 +109,6 @@
    extern csky_rfft_instance_q31 csky_inv_rfft_sR_q31_len2048;
    extern csky_rfft_instance_q31 csky_inv_rfft_sR_q31_len4096;
    extern csky_rfft_instance_q31 csky_inv_rfft_sR_q31_len8192;
-
 
    extern csky_rfft_fast_instance_f32 csky_rfft_sR_f32_len32;
    extern csky_rfft_fast_instance_f32 csky_rfft_sR_f32_len64;

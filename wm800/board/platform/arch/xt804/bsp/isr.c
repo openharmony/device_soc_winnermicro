@@ -46,7 +46,6 @@ extern void PMU_TIMER1_IRQHandler(void);
 extern void PMU_GPIO_WAKE_IRQHandler(void);
 extern void PMU_RTC_IRQHandler(void);
 
-
 #define readl(addr) \
     ({ unsigned int __v = (*(volatile unsigned int *) (addr)); __v; })
 
@@ -60,33 +59,33 @@ extern void PMU_RTC_IRQHandler(void);
 
 int csi_kernel_intrpt_enter(void)
 {
-	return 0;
+    return 0;
 }
 int csi_kernel_intrpt_exit(void)
 {
-	return 0;
+    return 0;
 }
 void HalPreInterruptHandler(uint32_t arg)
 {
-	if( arg == 57)
-	{
-		readl(0xE000E010);// clear tick irq
-	}
+    if ( arg == 57)
+    {
+        readl(0xE000E010);// clear tick irq
+    }
 }
 
-//static int tick_test = 0;
+// static int tick_test = 0;
 ATTRIBUTE_ISR void CORET_IRQ_Handler(void)
 {
 #ifndef CONFIG_KERNEL_FREERTOS
     CSI_INTRPT_ENTER();
 #endif
 
-    readl(0xE000E010);//clear tick irq
+    readl(0xE000E010);// clear tick irq
 
 #if defined(CONFIG_KERNEL_RHINO)
     systick_handler();
 #elif defined(CONFIG_KERNEL_LITEOS)
-	OsTickHandler();
+    OsTickHandler();
 #elif defined(CONFIG_KERNEL_FREERTOS)
     xPortSysTickHandler();
 #elif defined(CONFIG_KERNEL_UCOS)
@@ -121,14 +120,12 @@ ATTRIBUTE_ISR void RSA_IRQ_Handler(void)
     CSI_INTRPT_EXIT();
 }
 
-
 ATTRIBUTE_ISR void TIM0_5_IRQ_Handler(void)
 {
     CSI_INTRPT_ENTER();
     TIMER0_5_IRQHandler();
     CSI_INTRPT_EXIT();
 }
-
 
 ATTRIBUTE_ISR void SPI_HS_IRQ_Handler(void)
 {
@@ -164,20 +161,20 @@ ATTRIBUTE_ISR void PMU_IRQ_Handler(void)
 #ifndef WM_WIFI_SIMULATION_PROJECT
     if (tls_reg_read32(HR_PMU_INTERRUPT_SRC) & BIT(0))
     {
-    	PMU_TIMER0_IRQHandler();
+        PMU_TIMER0_IRQHandler();
     }
     if (tls_reg_read32(HR_PMU_INTERRUPT_SRC) & BIT(1)) /* timer1 interrupt */
     {
-    	PMU_TIMER1_IRQHandler();
+        PMU_TIMER1_IRQHandler();
     }
     if (tls_reg_read32(HR_PMU_INTERRUPT_SRC) & BIT(2)) /* gpio wake interrupt */
     {
-    	PMU_GPIO_WAKE_IRQHandler();
+        PMU_GPIO_WAKE_IRQHandler();
     }
 
     if (tls_reg_read32(HR_PMU_INTERRUPT_SRC) & BIT(4)) /* rtc interrupt */
     {
-    	PMU_RTC_IRQHandler();
+        PMU_RTC_IRQHandler();
     }
 #endif
 #endif

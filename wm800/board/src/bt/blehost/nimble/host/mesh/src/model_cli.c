@@ -37,7 +37,7 @@ static void gen_onoff_status(struct bt_mesh_model *model,
            ctx->net_idx, ctx->app_idx, ctx->addr, buf->om_len,
            bt_hex(buf->om_data, buf->om_len));
 
-    if(cli->op_pending != OP_GEN_ONOFF_STATUS) {
+    if (cli->op_pending != OP_GEN_ONOFF_STATUS) {
         BT_WARN("Unexpected Generic OnOff Status message");
         return;
     }
@@ -45,7 +45,7 @@ static void gen_onoff_status(struct bt_mesh_model *model,
     param = cli->op_param;
     state = net_buf_simple_pull_u8(buf);
 
-    if(param->state) {
+    if (param->state) {
         *param->state = state;
     }
 
@@ -64,7 +64,7 @@ static void gen_level_status(struct bt_mesh_model *model,
            ctx->net_idx, ctx->app_idx, ctx->addr, buf->om_len,
            bt_hex(buf->om_data, buf->om_len));
 
-    if(cli->op_pending != OP_GEN_LEVEL_STATUS) {
+    if (cli->op_pending != OP_GEN_LEVEL_STATUS) {
         BT_WARN("Unexpected Generic LEVEL Status message");
         return;
     }
@@ -72,7 +72,7 @@ static void gen_level_status(struct bt_mesh_model *model,
     param = cli->op_param;
     level = net_buf_simple_pull_le16(buf);
 
-    if(param->level) {
+    if (param->level) {
         *param->level = level;
     }
 
@@ -89,7 +89,7 @@ static int onoff_cli_init(struct bt_mesh_model *model)
 {
     BT_DBG("");
 
-    if(!model->user_data) {
+    if (!model->user_data) {
         BT_ERR("No Generic OnOff Client context provided");
         return -EINVAL;
     }
@@ -113,7 +113,7 @@ static int level_cli_init(struct bt_mesh_model *model)
 {
     BT_DBG("");
 
-    if(!model->user_data) {
+    if (!model->user_data) {
         BT_ERR("No Generic Level Client context provided");
         return -EINVAL;
     }
@@ -157,7 +157,7 @@ int bt_mesh_gen_onoff_get(u16_t net_idx, u16_t addr, u16_t app_idx,
     bt_mesh_model_msg_init(msg, OP_GEN_ONOFF_GET);
     err = bt_mesh_model_send(gen_onoff_cli->model, &ctx, msg, NULL, NULL);
 
-    if(err) {
+    if (err) {
         BT_ERR("model_send() failed (err %d)", err);
         goto done;
     }
@@ -183,7 +183,7 @@ int bt_mesh_gen_onoff_set(u16_t net_idx, u16_t addr, u16_t app_idx,
     };
     int err;
 
-    if(state) {
+    if (state) {
         bt_mesh_model_msg_init(msg, OP_GEN_ONOFF_SET);
     } else {
         bt_mesh_model_msg_init(msg, OP_GEN_ONOFF_SET_UNACK);
@@ -193,19 +193,19 @@ int bt_mesh_gen_onoff_set(u16_t net_idx, u16_t addr, u16_t app_idx,
     net_buf_simple_add_u8(msg, transaction_id);
     err = bt_mesh_model_send(gen_onoff_cli->model, &ctx, msg, NULL, NULL);
 
-    if(err) {
+    if (err) {
         BT_ERR("model_send() failed (err %d)", err);
         goto done;
     }
 
-    if(!state) {
+    if (!state) {
         goto done;
     }
 
     err = cli_wait(gen_onoff_cli, &param, OP_GEN_ONOFF_STATUS);
 done:
 
-    if(err == 0) {
+    if (err == 0) {
         transaction_id++;
     }
 
@@ -230,7 +230,7 @@ int bt_mesh_gen_level_get(u16_t net_idx, u16_t addr, u16_t app_idx,
     bt_mesh_model_msg_init(msg, OP_GEN_LEVEL_GET);
     err = bt_mesh_model_send(gen_level_cli->model, &ctx, msg, NULL, NULL);
 
-    if(err) {
+    if (err) {
         BT_ERR("model_send() failed (err %d)", err);
         goto done;
     }
@@ -256,7 +256,7 @@ int bt_mesh_gen_level_set(u16_t net_idx, u16_t addr, u16_t app_idx,
     };
     int err;
 
-    if(state) {
+    if (state) {
         bt_mesh_model_msg_init(msg, OP_GEN_LEVEL_SET);
     } else {
         bt_mesh_model_msg_init(msg, OP_GEN_LEVEL_SET_UNACK);
@@ -266,19 +266,19 @@ int bt_mesh_gen_level_set(u16_t net_idx, u16_t addr, u16_t app_idx,
     net_buf_simple_add_u8(msg, transaction_id);
     err = bt_mesh_model_send(gen_level_cli->model, &ctx, msg, NULL, NULL);
 
-    if(err) {
+    if (err) {
         BT_ERR("model_send() failed (err %d)", err);
         goto done;
     }
 
-    if(!state) {
+    if (!state) {
         goto done;
     }
 
     err = cli_wait(gen_level_cli, &param, OP_GEN_LEVEL_STATUS);
 done:
 
-    if(err == 0) {
+    if (err == 0) {
         transaction_id++;
     }
 

@@ -45,7 +45,6 @@
  * @{
  */
 
-
 /**
  * @brief  config the pins used for highspeed spi
  * @param  numsel: config highspeed spi pins multiplex relation,valid para 0,1
@@ -288,7 +287,6 @@ void wm_uart3_rts_config(enum tls_io_name io_name);
  */
  void wm_uart3_cts_config(enum tls_io_name io_name);
 
-
 /**
  * @brief  config the pins used for uart4 tx
  * @param  io_name: config uart1 tx pins name
@@ -370,8 +368,6 @@ void wm_uart5_rts_config(enum tls_io_name io_name);
  * @return None
  */
  void wm_uart5_cts_config(enum tls_io_name io_name);
-
-
 
 /**
  * @brief  config the pins used for i2s ck

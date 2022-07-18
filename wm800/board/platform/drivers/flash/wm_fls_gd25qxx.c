@@ -57,7 +57,6 @@ static struct tls_fls_drv exspi_fls = {
 
 static struct tls_fls_drv *exspifls_drv = NULL;
 
-
 static unsigned int swap32(unsigned int v)
 {
     return ((v & 0xff) << 24) | ((v & 0xff00) << 8) |
@@ -255,8 +254,7 @@ static int tls_spifls_drv_chip_erase(void)
 
 static int tls_spifls_drv_probe(u32 id)
 {
-//	int i = 0;
-
+//   int i = 0;
 
     if (!id)
     {
@@ -266,9 +264,9 @@ static int tls_spifls_drv_probe(u32 id)
     exspi_fls.id = id;
     if ((id>>16)&0xFF)
     {
-    	exspi_fls.total_size = 1 << (id>>16);
+        exspi_fls.total_size = 1 << (id>>16);
     }else{
-    	exspi_fls.total_size = FLASH_TOTAL_SIZE;  /*1MByte*/
+        exspi_fls.total_size = FLASH_TOTAL_SIZE;  /*1MByte*/
     }
     
     exspi_fls.page_size = PAGE_SIZE;
@@ -285,18 +283,17 @@ static void tls_spifls_drv_remove(void)
     exspifls_drv = NULL;
 }
 
-
 /**
  * @brief          This function is used to install gd25qxx driver.
  *
  * @param[in]      None
  *
- * @retval         TLS_FLS_STATUS_OK	         if write flash success
+ * @retval         TLS_FLS_STATUS_OK             if write flash success
  * @retval         TLS_FLS_STATUS_EPERM     if flash struct point is null
- * @retval         TLS_FLS_STATUS_ENODRV	  if flash driver is not installed
- * @retval         TLS_FLS_STATUS_EINVAL	  if argument is invalid
- * @retval         TLS_FLS_STATUS_EIO	         if io error
- * @retval         TLS_FLS_STATUS_EEXIST	  if driver is already existed
+ * @retval         TLS_FLS_STATUS_ENODRV      if flash driver is not installed
+ * @retval         TLS_FLS_STATUS_EINVAL      if argument is invalid
+ * @retval         TLS_FLS_STATUS_EIO             if io error
+ * @retval         TLS_FLS_STATUS_EEXIST      if driver is already existed
  *
  * @note           None
  */
@@ -306,11 +303,10 @@ int tls_spifls_drv_install(void)
     extern int tls_spifls_probe(void);
     extern int tls_spifls_drv_register(struct tls_fls_drv *fls_drv);
 
-
     err = tls_spifls_drv_register((struct tls_fls_drv *) &exspi_fls);
     if (err == TLS_FLS_STATUS_EEXIST)
-    {		
-    	return err;
+    {        
+        return err;
     }
     TLS_DBGPRT_INFO("register the spi flash driver - %d.\n", err);
 

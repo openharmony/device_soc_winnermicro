@@ -84,7 +84,6 @@ void tls_irq_init(void);
  */
 void tls_irq_register_handler(u8 vec_no, intr_handler_func handler, void *data);
 
-
 /**
  * @brief          This function is used to enable interrupt.
  *
@@ -107,7 +106,6 @@ void tls_irq_enable(u8 vec_no);
  */
 void tls_irq_disable(u8 vec_no);
 
-
 /**
  * @brief          This function is used to get the isr count.
  *
@@ -120,7 +118,6 @@ void tls_irq_disable(u8 vec_no);
 u8 tls_get_isr_count(void);
 
 void tls_irq_priority(u8 vec_no, u32 prio);
-
 
 /**
  * @}

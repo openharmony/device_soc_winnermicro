@@ -30,7 +30,6 @@ device/soc/
 4. 安装hb
 5. 安装csky-abiv2-elf-gcc
 
-
 ##### 获取源码
 
 ```shell
@@ -142,7 +141,7 @@ sudo apt-get install build-essential gcc g++ make zlib* libffi-dev e2fsprogs pkg
 
 1. 打开Linux编译服务器终端。
 2. 下载[csky-abiv2-elf-gcc 编译工具下载](https://occ.t-head.cn/community/download?id=3885366095506644992)
-	选择下载 csky-elfabiv2-tools-x86_64-minilibc-20210423.tar。
+    选择下载 csky-elfabiv2-tools-x86_64-minilibc-20210423.tar。
 3. 解压 csky-elfabiv2-tools-x86_64-minilibc-20210423.tar 安装包至\~/toolchain/路径下。
 
    ```shell

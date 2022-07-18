@@ -31,7 +31,7 @@ extern "C" {
 
 /* Generic command header */
 struct ble_hci_cmd {
-    uint8_t  hci_type; //preserved for vhci transfering;
+    uint8_t  hci_type; // preserved for vhci transfering;
     uint16_t opcode;
     uint8_t  length;
     uint8_t  data[0];
@@ -99,7 +99,6 @@ struct ble_hci_cb_read_tx_pwr_rp {
     uint16_t conn_handle;
     int8_t   tx_level;
 } __attribute__((packed));
-
 
 #define BLE_HCI_OCF_CB_SET_CTLR_TO_HOST_FC  (0x0031)
 struct ble_hci_cb_ctlr_to_host_fc_cp {
@@ -972,7 +971,6 @@ struct ble_hci_le_set_host_feat_cp {
 #define BLE_HCI_CONN_PEER_ADDR_PUB_ID       (2)
 #define BLE_HCI_CONN_PEER_ADDR_RAND_ID      (3)
 #define BLE_HCI_CONN_PEER_ADDR_MAX          (3)
-
 
 /* --- LE set data length (OCF 0x0022) */
 #define BLE_HCI_SET_DATALEN_TX_OCTETS_MIN   (0x001b)

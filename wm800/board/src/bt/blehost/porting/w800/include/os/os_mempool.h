@@ -24,7 +24,6 @@
  *   @{
  */
 
-
 #ifndef _OS_MEMPOOL_H_
 #define _OS_MEMPOOL_H_
 
@@ -254,13 +253,11 @@ os_error_t os_memblock_put(struct os_mempool *mp, void *block_addr);
 
 void os_mempool_reset();
 
-
 #ifdef __cplusplus
 }
 #endif
 
 #endif  /* _OS_MEMPOOL_H_ */
-
 
 /**
  *   @} OSMempool

@@ -145,7 +145,7 @@ ble_svc_dis_access(uint16_t conn_handle, uint16_t attr_handle,
             info = ble_svc_dis_data.model_number;
 #ifdef MYNEWT_VAL_BLE_SVC_DIS_MODEL_NUMBER_NAME_DEFAULT
 
-            if(info == NULL) {
+            if (info == NULL) {
                 info = MYNEWT_VAL(BLE_SVC_DIS_MODEL_NUMBER_DEFAULT);
             }
 
@@ -158,7 +158,7 @@ ble_svc_dis_access(uint16_t conn_handle, uint16_t attr_handle,
             info = ble_svc_dis_data.serial_number;
 #ifdef MYNEWT_VAL_BLE_SVC_DIS_SERIAL_NUMBER_DEFAULT
 
-            if(info == NULL) {
+            if (info == NULL) {
                 info = MYNEWT_VAL(BLE_SVC_DIS_SERIAL_NUMBER_DEFAULT);
             }
 
@@ -171,7 +171,7 @@ ble_svc_dis_access(uint16_t conn_handle, uint16_t attr_handle,
             info = ble_svc_dis_data.firmware_revision;
 #ifdef MYNEWT_VAL_BLE_SVC_DIS_FIRMWARE_REVISION_DEFAULT
 
-            if(info == NULL) {
+            if (info == NULL) {
                 info = MYNEWT_VAL(BLE_SVC_DIS_FIRMWARE_REVISION_DEFAULT);
             }
 
@@ -184,7 +184,7 @@ ble_svc_dis_access(uint16_t conn_handle, uint16_t attr_handle,
             info = ble_svc_dis_data.hardware_revision;
 #ifdef MYNEWT_VAL_BLE_SVC_DIS_HARDWARE_REVISION_DEFAULT
 
-            if(info == NULL) {
+            if (info == NULL) {
                 info = MYNEWT_VAL(BLE_SVC_DIS_HARDWARE_REVISION_DEFAULT);
             }
 
@@ -197,7 +197,7 @@ ble_svc_dis_access(uint16_t conn_handle, uint16_t attr_handle,
             info = ble_svc_dis_data.software_revision;
 #ifdef MYNEWT_VAL_BLE_SVC_DIS_SOFTWARE_REVISION_DEFAULT
 
-            if(info == NULL) {
+            if (info == NULL) {
                 info = MYNEWT_VAL(BLE_SVC_DIS_SOFTWARE_REVISION_DEFAULT);
             }
 
@@ -210,7 +210,7 @@ ble_svc_dis_access(uint16_t conn_handle, uint16_t attr_handle,
             info = ble_svc_dis_data.manufacturer_name;
 #ifdef MYNEWT_VAL_BLE_SVC_DIS_MANUFACTURER_NAME_DEFAULT
 
-            if(info == NULL) {
+            if (info == NULL) {
                 info = MYNEWT_VAL(BLE_SVC_DIS_MANUFACTURER_NAME_DEFAULT);
             }
 
@@ -223,7 +223,7 @@ ble_svc_dis_access(uint16_t conn_handle, uint16_t attr_handle,
             info = ble_svc_dis_data.system_id;
 #ifdef MYNEWT_VAL_BLE_SVC_DIS_SYSTEM_ID_DEFAULT
 
-            if(info == NULL) {
+            if (info == NULL) {
                 info = MYNEWT_VAL(BLE_SVC_DIS_SYSTEM_ID_DEFAULT);
             }
 
@@ -236,7 +236,7 @@ ble_svc_dis_access(uint16_t conn_handle, uint16_t attr_handle,
             return BLE_ATT_ERR_UNLIKELY;
     }
 
-    if(info != NULL) {
+    if (info != NULL) {
         int rc = os_mbuf_append(ctxt->om, info, strlen(info));
         return rc == 0 ? 0 : BLE_ATT_ERR_INSUFFICIENT_RES;
     }

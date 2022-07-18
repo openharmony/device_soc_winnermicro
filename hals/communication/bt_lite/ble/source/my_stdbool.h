@@ -24,7 +24,6 @@ extern "C" {
 #define bool    unsigned char
 #endif
 
-
 #ifdef __cplusplus
 }
 #endif
