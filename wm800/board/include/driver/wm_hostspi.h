@@ -93,8 +93,7 @@
  *  filling rx_buf. If the receive buffer is null, the data shifted in
  *  will be discarded.
  */
-struct tls_spi_transfer
-{
+struct tls_spi_transfer {
     struct dl_list transfer_list;    /**< transfers are sequenced through
                                           tls_spi_message.transfers. */
 
@@ -112,8 +111,7 @@ struct tls_spi_transfer
  *  is "atomic" in the sense that no other spi_message may use that SPI bus
  *  until that sequence completes.
   */
-struct tls_spi_message
-{
+struct tls_spi_message {
     struct dl_list queue;       /**< transaction messages are sequenced through
                                      tls_spi_port.wait_queue. */
 
@@ -133,8 +131,7 @@ struct tls_spi_message
  *  to access to the SPI device. For each such message it queues, it calls the message's
  *  completion function when the transaction completes.
  */
-struct tls_spi_port
-{
+struct tls_spi_port {
     u32 speed_hz;               /**< clock rate to be used. */
     u8 cs_active;               /**< chipselect mode, maybe active low or active
                                    high. */

@@ -47,8 +47,7 @@ typedef struct {
     uint32_t I2S_MclkFreq;
 } I2S_InitDef;
 
-typedef struct _wm_dma_desc
-{
+typedef struct _wm_dma_desc {
     unsigned int valid;
     unsigned int dma_ctrl;
     unsigned int src_addr;
@@ -56,11 +55,10 @@ typedef struct _wm_dma_desc
     struct _wm_dma_desc * next;
 }wm_dma_desc;
 
-typedef struct _dma_handler_type
-{
+typedef struct _dma_handler_type {
     uint8_t channel;
-    void    (* XferCpltCallback)( struct _dma_handler_type * hdma);         /*!< DMA transfer complete callback         */
-    void    (* XferHalfCpltCallback)( struct _dma_handler_type * hdma);     /*!< DMA Half transfer complete callback    */
+    void    (* XferCpltCallback)( struct _dma_handler_type * hdma);     /* !< DMA transfer complete callback */
+    void    (* XferHalfCpltCallback)( struct _dma_handler_type * hdma); /* !< DMA Half transfer complete callback    */
 }wm_dma_handler_type;
 
 #define I2S			            ((I2S_T *)HR_I2S_REG_BASE)
@@ -79,7 +77,7 @@ typedef struct _dma_handler_type
 #define I2S_DataFormat_8		(8)
 #define I2S_DataFormat_16		(16)
 #define I2S_DataFormat_24		(24)
-#define I2S_DataFormat_32		(32)	
+#define I2S_DataFormat_32		(32)
 
 #define I2S_CTRL_CHSEL_MASK		(1UL<<23)
 #define I2S_CTRL_CHSEL_LEFT		(1UL<<23)
@@ -304,7 +302,7 @@ int wm_i2s_receive_dma(wm_dma_handler_type *hdma, uint16_t *data, uint16_t len);
  * @}
  */
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
 }
 #endif
 

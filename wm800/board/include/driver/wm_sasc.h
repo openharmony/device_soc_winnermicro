@@ -76,7 +76,7 @@ typedef enum {
 
 typedef struct {
     sasc_car_e car;               /* security and user or super */
-    sasc_ap_e ap;                /* super user and normal user access.*/
+    sasc_ap_e ap;                /* super user and normal user access. */
     sasc_cd_e cd;                /* instruction fetched excution */
 } sasc_region_attr_t;
 

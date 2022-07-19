@@ -113,7 +113,7 @@ int tls_wifi_init(void)
     }
     tls_wifi_status_change_cb_register(wifi_status_changed);
     wifi_inited_ok = 1;
-    return 0;    
+    return 0;
 }
 
 /**

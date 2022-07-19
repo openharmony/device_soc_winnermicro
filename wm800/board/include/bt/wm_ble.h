@@ -77,7 +77,7 @@ tls_bt_status_t tls_ble_adv(uint8_t adv_state);
  * @retval         @ref tls_bt_status_t
  *
  * @note           if pure_data equals to true, the filed of manufacturer equals to all fileds of advetisement data.
- *                     otherwise, the filed manufacturer will be advertised in 0xFF filed. 
+ *                     otherwise, the filed manufacturer will be advertised in 0xFF filed.
  *
  */
 tls_bt_status_t tls_ble_set_adv_data(tls_ble_dm_adv_data_t *data);
@@ -100,7 +100,8 @@ tls_bt_status_t tls_ble_set_adv_param(tls_ble_dm_adv_param_t *param);
  *
  * @retval         @ref tls_bt_status_t
  *
- * @note           if you know how to config all the parameters, you can use this function; otherwise, tls_ble_set_adv_param will be recommanded strongly;
+ * @note           if you know how to config all the parameters, you can use this function;
+ *                 otherwise, tls_ble_set_adv_param will be recommanded strongly;
  */
 tls_bt_status_t tls_ble_set_adv_ext_param(tls_ble_dm_adv_ext_param_t *param);
 
@@ -178,10 +179,10 @@ tls_bt_status_t tls_dm_set_privacy(uint8_t enable);
  *
  * @note           None
  */
-tls_bt_status_t tls_ble_conn_parameter_update(const tls_bt_addr_t *bd_addr, 
+tls_bt_status_t tls_ble_conn_parameter_update(const tls_bt_addr_t *bd_addr,
                                              int min_interval,
-                                             int max_interval, 
-                                             int latency, 
+                                             int max_interval,
+                                             int latency,
                                              int timeout);
 
 /**
@@ -198,7 +199,7 @@ tls_bt_status_t tls_dm_read_remote_rssi(const tls_bt_addr_t *bd_addr);
 /**
  * @brief          config the io capabilities of local device
  *
- * @param[in]      io_cap        
+ * @param[in]      io_cap
  *
  * @return         @ref tls_bt_status_t
  *
@@ -210,7 +211,7 @@ tls_bt_status_t tls_ble_set_sec_io_cap(uint8_t io_cap);
 /**
  * @brief          config the auth requirement of local device
  *
- * @param[in]      auth_req        
+ * @param[in]      auth_req
  *
  * @return         @ref tls_bt_status_t
  *
@@ -227,7 +228,7 @@ tls_bt_status_t tls_ble_set_sec_auth_req(uint8_t auth_req);
 
  * @param[in]sec_act       - This is the security action to indicate
  *                                 what knid of BLE security level is required for
- *                                 the BLE link if the BLE is supported      
+ *                                 the BLE link if the BLE is supported
  * @param[in]bd_addr       - Address of the peer device
  * @ref tls_bt_status_t
  *

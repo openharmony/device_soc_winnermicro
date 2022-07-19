@@ -43,7 +43,7 @@ typedef volatile unsigned long vu32;
 #define INSIDE_FLS_BASE_ADDR		0x8000000UL
 #define INSIDE_FLS_SECBOOT_ADDR 	(INSIDE_FLS_BASE_ADDR  + 0x02000)
 
-enum TYPE_FLASH_ID{
+enum TYPE_FLASH_ID {
     SPIFLASH_MID_GD = 0xC8,
     SPIFLASH_MID_ESMT = 0x1C,
     SPIFLASH_MID_PUYA = 0x85,
@@ -57,13 +57,13 @@ enum TYPE_FLASH_ID{
 
 typedef union {
     struct {
-        uint32_t _reserved0: 1;               /*!< bit:  0  Reserved */
-        uint32_t code_decrypt: 1;             /*!< bit:  1      read code from AHB decrypt flag */
-        uint32_t dbus_decrypt: 1;             /*!< bit:  2      read data from Flash register controller decrypt flag */
-        uint32_t data_decrypt: 1;             /*!< bit:  3      read data from AHB decrypt flag */
-        uint32_t prikey_sel: 3;               /*!< bit:  4.. 6   private key selection: 0 : first one; 1 : second one; */
-        uint32_t decrypt_start: 1;            /*!< bit:  7   write 1 to start RSA decryption operation */
-        uint32_t _reserved2: 24;              /*!< bit:  8.. 31  Reserved */
+        uint32_t _reserved0 : 1;           /*!< bit:  0  Reserved */
+        uint32_t code_decrypt : 1;         /*!< bit:  1      read code from AHB decrypt flag */
+        uint32_t dbus_decrypt : 1;         /*!< bit:  2      read data from Flash register controller decrypt flag */
+        uint32_t data_decrypt : 1;         /*!< bit:  3      read data from AHB decrypt flag */
+        uint32_t prikey_sel : 3;           /*!< bit:  4.. 6   private key selection: 0 : first one; 1 : second one; */
+        uint32_t decrypt_start : 1;        /*!< bit:  7   write 1 to start RSA decryption operation */
+        uint32_t _reserved2 : 24;          /*!< bit:  8.. 31  Reserved */
     } b;                                   /*!< Structure    Access by bit */
     uint32_t w;                            /*!< Type         Access by whole register */
 } FLASH_ENCRYPT_CTRL_Type;
@@ -71,8 +71,7 @@ typedef union {
 /**
  * @typedef struct    Flash Registers
  */
-typedef struct
-{
+typedef struct {
     vu32 ACR;                   /**< offset 0x000 */
     vu32 KEYR;                 /**< offset 0x004 */
     vu32 SR;                     /**< offset 0x008 */
@@ -136,8 +135,7 @@ typedef struct {
 /**
  * @struct tls_inside_fls
  */
-struct tls_inside_fls
-{
+struct tls_inside_fls {
     tls_os_sem_t *fls_lock;
     unsigned char flashid;
     unsigned int density;
@@ -167,7 +165,7 @@ struct tls_inside_fls
 /**
  * @brief          This function is used to unlock flash protect area [0x0~0x2000].
  *
- * @param	       None	 
+ * @param	       None
  *
  * @return         0-success,non-zero-failure
  *
@@ -178,7 +176,7 @@ int tls_flash_unlock(void);
 /**
  * @brief          This function is used to lock flash protect area [0x0~0x2000].
  *
- * @param	       None	 
+ * @param	       None
  *
  * @return         0-success,non-zero-failure
  *
@@ -189,7 +187,7 @@ int tls_flash_lock(void);
 /**
  * @brief          This function is used to get the flash semaphore.
  *
- * @param	       None	 
+ * @param	       None
  *
  * @return         None
  *
@@ -200,7 +198,7 @@ void tls_fls_sem_lock(void);
 /**
  * @brief          This function is used to release the flash semaphore.
  *
- * @param	       None	 
+ * @param	       None
  *
  * @return         None
  *
@@ -211,7 +209,7 @@ void tls_fls_sem_unlock(void);
 /**
  * @brief          This function is used to read the unique id of the internal flash.
  *
- * @param[out]      uuid                 Specified the address to save the uuid, the length must be greater than or equals to 18 bytes.
+ * @param[out]    uuid Specified the address to save the uuid, the length must be greater than or equals to 18 bytes.
  *
  * @retval         TLS_FLS_STATUS_OK	    if read sucsess
  * @retval         TLS_FLS_STATUS_EIO	    if read fail
@@ -283,7 +281,7 @@ int tls_fls_write_without_erase(u32 addr, u8 *buf, u32 len);
 /**
  * @brief          	This function is used to erase the appointed sector
  *
- * @param[in]      	sector 	sector num of the flash, 4K bytes every sector	
+ * @param[in]      	sector 	sector num of the flash, 4K bytes every sector
  *
  * @retval         	TLS_FLS_STATUS_OK	    	if read sucsess
  * @retval         	other	    				if read fail
@@ -337,7 +335,7 @@ int tls_fls_otp_write(u32 addr, u8 *buf, u32 len);
 /**
  * @brief          This function is used to lock the security registers.
  *
- * @param	       None	 
+ * @param	       None
  *
  * @return         None
  *
