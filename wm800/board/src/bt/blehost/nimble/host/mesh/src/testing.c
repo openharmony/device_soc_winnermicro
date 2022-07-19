@@ -6,7 +6,7 @@
 
 #include <stddef.h>
 
-//#include "console/console.h"
+// #include "console/console.h"
 #include "mesh/testing.h"
 #include "mesh/slist.h"
 #include "mesh/glue.h"
@@ -36,7 +36,7 @@ void bt_test_mesh_net_recv(u8_t ttl, u8_t ctl, u16_t src, u16_t dst,
 {
     struct bt_test_cb *cb;
     SYS_SLIST_FOR_EACH_CONTAINER(&cb_slist, cb, node) {
-        if(cb->mesh_net_recv) {
+        if (cb->mesh_net_recv) {
             cb->mesh_net_recv(ttl, ctl, src, dst, payload,
                               payload_len);
         }
@@ -48,7 +48,7 @@ void bt_test_mesh_model_bound(u16_t addr, struct bt_mesh_model *model,
 {
     struct bt_test_cb *cb;
     SYS_SLIST_FOR_EACH_CONTAINER(&cb_slist, cb, node) {
-        if(cb->mesh_model_bound) {
+        if (cb->mesh_model_bound) {
             cb->mesh_model_bound(addr, model, key_idx);
         }
     }
@@ -59,7 +59,7 @@ void bt_test_mesh_model_unbound(u16_t addr, struct bt_mesh_model *model,
 {
     struct bt_test_cb *cb;
     SYS_SLIST_FOR_EACH_CONTAINER(&cb_slist, cb, node) {
-        if(cb->mesh_model_unbound) {
+        if (cb->mesh_model_unbound) {
             cb->mesh_model_unbound(addr, model, key_idx);
         }
     }
@@ -69,7 +69,7 @@ void bt_test_mesh_prov_invalid_bearer(u8_t opcode)
 {
     struct bt_test_cb *cb;
     SYS_SLIST_FOR_EACH_CONTAINER(&cb_slist, cb, node) {
-        if(cb->mesh_prov_invalid_bearer) {
+        if (cb->mesh_prov_invalid_bearer) {
             cb->mesh_prov_invalid_bearer(opcode);
         }
     }
@@ -79,7 +79,7 @@ void bt_test_mesh_trans_incomp_timer_exp(void)
 {
     struct bt_test_cb *cb;
     SYS_SLIST_FOR_EACH_CONTAINER(&cb_slist, cb, node) {
-        if(cb->mesh_trans_incomp_timer_exp) {
+        if (cb->mesh_trans_incomp_timer_exp) {
             cb->mesh_trans_incomp_timer_exp();
         }
     }
@@ -115,7 +115,7 @@ void bt_test_print_credentials(void)
     printf("Dev key: %s\n", bt_hex(bt_mesh.dev_key, 16));
 
     for(i = 0; i < MYNEWT_VAL(BLE_MESH_SUBNET_COUNT); ++i) {
-        if(bt_mesh.app_keys[i].net_idx == BT_MESH_KEY_UNUSED) {
+        if (bt_mesh.app_keys[i].net_idx == BT_MESH_KEY_UNUSED) {
             continue;
         }
 
@@ -128,7 +128,7 @@ void bt_test_print_credentials(void)
     }
 
     for(i = 0; i < MYNEWT_VAL(BLE_MESH_APP_KEY_COUNT); ++i) {
-        if(bt_mesh.app_keys[i].net_idx == BT_MESH_KEY_UNUSED) {
+        if (bt_mesh.app_keys[i].net_idx == BT_MESH_KEY_UNUSED) {
             continue;
         }
 
@@ -144,11 +144,11 @@ void bt_test_print_credentials(void)
     }
 
     for(i = 0; i < MYNEWT_VAL(BLE_MESH_SUBNET_COUNT); ++i) {
-        if(bt_mesh.sub[i].net_idx == BT_MESH_KEY_UNUSED) {
+        if (bt_mesh.sub[i].net_idx == BT_MESH_KEY_UNUSED) {
             continue;
         }
 
-        if(friend_cred_get(&bt_mesh.sub[i], BT_MESH_ADDR_UNASSIGNED,
+        if (friend_cred_get(&bt_mesh.sub[i], BT_MESH_ADDR_UNASSIGNED,
                            &nid, &enc, &priv)) {
             return;
         }
@@ -178,7 +178,7 @@ int bt_test_bind_app_key_to_model(struct bt_mesh_model *model, u16_t key_idx, u1
     struct bt_mesh_model *found_model;
     found_model = bt_mesh_model_find(bt_mesh_model_elem(model), id);
 
-    if(!found_model) {
+    if (!found_model) {
         return STATUS_INVALID_MODEL;
     }
 

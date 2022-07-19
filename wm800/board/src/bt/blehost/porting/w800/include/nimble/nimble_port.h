@@ -34,7 +34,6 @@ void nimble_port_deinit(void);
 
 int nimble_port_stop(void);
 
-
 struct ble_npl_eventq *nimble_port_get_dflt_eventq(void);
 
 extern void os_msys_deinit();

@@ -43,11 +43,11 @@ static struct bt_mesh_subnet *cache_check(u8_t data[21])
     for(i = 0; i < ARRAY_SIZE(bt_mesh.sub); i++) {
         struct bt_mesh_subnet *sub = &bt_mesh.sub[i];
 
-        if(sub->net_idx == BT_MESH_KEY_UNUSED) {
+        if (sub->net_idx == BT_MESH_KEY_UNUSED) {
             continue;
         }
 
-        if(!memcmp(sub->beacon_cache, data, 21)) {
+        if (!memcmp(sub->beacon_cache, data, 21)) {
             return sub;
         }
     }
@@ -74,7 +74,7 @@ void bt_mesh_beacon_create(struct bt_mesh_subnet *sub,
     struct bt_mesh_subnet_keys *keys;
     net_buf_simple_add_u8(buf, BEACON_TYPE_SECURE);
 
-    if(sub->kr_flag) {
+    if (sub->kr_flag) {
         keys = &sub->keys[1];
     } else {
         keys = &sub->keys[0];
@@ -110,13 +110,13 @@ static int secure_beacon_send(void)
         struct os_mbuf *buf;
         u32_t time_diff;
 
-        if(sub->net_idx == BT_MESH_KEY_UNUSED) {
+        if (sub->net_idx == BT_MESH_KEY_UNUSED) {
             continue;
         }
 
         time_diff = now - sub->beacon_sent;
 
-        if(time_diff < K_SECONDS(600) &&
+        if (time_diff < K_SECONDS(600) &&
                 time_diff < BEACON_THRESHOLD(sub)) {
             continue;
         }
@@ -124,7 +124,7 @@ static int secure_beacon_send(void)
         buf = bt_mesh_adv_create(BT_MESH_ADV_BEACON, PROV_XMIT,
                                  K_NO_WAIT);
 
-        if(!buf) {
+        if (!buf) {
             BT_ERR("Unable to allocate beacon buffer");
             return -ENOBUFS;
         }
@@ -146,7 +146,7 @@ static int unprovisioned_beacon_send(void)
     BT_DBG("unprovisioned_beacon_send");
     buf = bt_mesh_adv_create(BT_MESH_ADV_BEACON, UNPROV_XMIT, K_NO_WAIT);
 
-    if(!buf) {
+    if (!buf) {
         BT_ERR("Unable to allocate beacon buffer");
         return -ENOBUFS;
     }
@@ -155,7 +155,7 @@ static int unprovisioned_beacon_send(void)
     net_buf_add_u8(buf, BEACON_TYPE_UNPROVISIONED);
     net_buf_add_mem(buf, prov->uuid, 16);
 
-    if(prov->uri && bt_mesh_s1(prov->uri, uri_hash) == 0) {
+    if (prov->uri && bt_mesh_s1(prov->uri, uri_hash) == 0) {
         oob_info = prov->oob_info | BT_MESH_PROV_OOB_URI;
     } else {
         oob_info = prov->oob_info;
@@ -166,19 +166,19 @@ static int unprovisioned_beacon_send(void)
     bt_mesh_adv_send(buf, NULL, NULL);
     net_buf_unref(buf);
 
-    if(prov->uri) {
+    if (prov->uri) {
         size_t len;
         buf = bt_mesh_adv_create(BT_MESH_ADV_URI, UNPROV_XMIT,
                                  K_NO_WAIT);
 
-        if(!buf) {
+        if (!buf) {
             BT_ERR("Unable to allocate URI buffer");
             return -ENOBUFS;
         }
 
         len = strlen(prov->uri);
 
-        if(net_buf_tailroom(buf) < len) {
+        if (net_buf_tailroom(buf) < len) {
             BT_WARN("Too long URI to fit advertising data");
         } else {
             net_buf_add_mem(buf, prov->uri, len);
@@ -200,7 +200,7 @@ static void unprovisioned_beacon_recv(struct os_mbuf *buf)
     u32_t uri_hash_val;
     u32_t *uri_hash = NULL;
 
-    if(buf->om_len != 18 && buf->om_len != 22) {
+    if (buf->om_len != 18 && buf->om_len != 22) {
         BT_ERR("Invalid unprovisioned beacon length (%u)", buf->om_len);
         return;
     }
@@ -208,7 +208,7 @@ static void unprovisioned_beacon_recv(struct os_mbuf *buf)
     uuid = net_buf_simple_pull_mem(buf, 16);
     oob_info = net_buf_simple_pull_be16(buf);
 
-    if(buf->om_len == 4) {
+    if (buf->om_len == 4) {
         uri_hash_val = net_buf_simple_pull_be32(buf);
         uri_hash = &uri_hash_val;
     }
@@ -216,7 +216,7 @@ static void unprovisioned_beacon_recv(struct os_mbuf *buf)
     BT_DBG("uuid %s", bt_hex(uuid, 16));
     prov = bt_mesh_prov_get();
 
-    if(prov->unprovisioned_beacon) {
+    if (prov->unprovisioned_beacon) {
         prov->unprovisioned_beacon(uuid,
                                    (bt_mesh_prov_oob_info_t)oob_info,
                                    uri_hash);
@@ -235,14 +235,14 @@ static void update_beacon_observation(void)
      */
     first_half = !first_half;
 
-    if(first_half) {
+    if (first_half) {
         return;
     }
 
     for(i = 0; i < ARRAY_SIZE(bt_mesh.sub); i++) {
         struct bt_mesh_subnet *sub = &bt_mesh.sub[i];
 
-        if(sub->net_idx == BT_MESH_KEY_UNUSED) {
+        if (sub->net_idx == BT_MESH_KEY_UNUSED) {
             continue;
         }
 
@@ -254,24 +254,24 @@ static void update_beacon_observation(void)
 static void beacon_send(struct ble_npl_event *work)
 {
     /* Don't send anything if we have an active provisioning link */
-    if((MYNEWT_VAL(BLE_MESH_PROV)) && bt_prov_active()) {
+    if ((MYNEWT_VAL(BLE_MESH_PROV)) && bt_prov_active()) {
         k_delayed_work_submit(&beacon_timer, UNPROVISIONED_INTERVAL);
         return;
     }
 
     BT_DBG("");
 
-    if(bt_mesh_is_provisioned()) {
+    if (bt_mesh_is_provisioned()) {
         update_beacon_observation();
         secure_beacon_send();
 
         /* Only resubmit if beaconing is still enabled */
-        if(bt_mesh_beacon_get() == BT_MESH_BEACON_ENABLED ||
+        if (bt_mesh_beacon_get() == BT_MESH_BEACON_ENABLED ||
                 atomic_test_bit(bt_mesh.flags, BT_MESH_IVU_INITIATOR)) {
             k_delayed_work_submit(&beacon_timer,
                                   PROVISIONED_INTERVAL);
         }
-    } else if(IS_ENABLED(CONFIG_BT_MESH_PB_ADV)) {
+    } else if (IS_ENABLED(CONFIG_BT_MESH_PB_ADV)) {
         unprovisioned_beacon_send();
         k_delayed_work_submit(&beacon_timer, UNPROVISIONED_INTERVAL);
     }
@@ -285,14 +285,14 @@ static void secure_beacon_recv(struct os_mbuf *buf)
     bool new_key, kr_change, iv_change;
     u8_t flags;
 
-    if(buf->om_len < 21) {
+    if (buf->om_len < 21) {
         BT_ERR("Too short secure beacon (len %u)", buf->om_len);
         return;
     }
 
     sub = cache_check(buf->om_data);
 
-    if(sub) {
+    if (sub) {
         /* We've seen this beacon before - just update the stats */
         goto update_stats;
     }
@@ -307,12 +307,12 @@ static void secure_beacon_recv(struct os_mbuf *buf)
            flags, bt_hex(net_id, 8), (unsigned) iv_index);
     sub = bt_mesh_subnet_find(net_id, flags, iv_index, auth, &new_key);
 
-    if(!sub) {
+    if (!sub) {
         BT_DBG("No subnet that matched beacon");
         return;
     }
 
-    if(sub->kr_phase == BT_MESH_KR_PHASE_2 && !new_key) {
+    if (sub->kr_phase == BT_MESH_KR_PHASE_2 && !new_key) {
         BT_WARN("Ignoring Phase 2 KR Update secured using old key");
         return;
     }
@@ -320,7 +320,7 @@ static void secure_beacon_recv(struct os_mbuf *buf)
     cache_add(data, sub);
 
     /* If we have NetKey0 accept initiation only from it */
-    if(bt_mesh_subnet_get(BT_MESH_KEY_PRIMARY) &&
+    if (bt_mesh_subnet_get(BT_MESH_KEY_PRIMARY) &&
             sub->net_idx != BT_MESH_KEY_PRIMARY) {
         BT_WARN("Ignoring secure beacon on non-primary subnet");
         goto update_stats;
@@ -329,7 +329,7 @@ static void secure_beacon_recv(struct os_mbuf *buf)
     BT_DBG("net_idx 0x%04x iv_index 0x%08x, current iv_index 0x%08x",
            sub->net_idx, (unsigned) iv_index, (unsigned) bt_mesh.iv_index);
 
-    if(atomic_test_bit(bt_mesh.flags, BT_MESH_IVU_INITIATOR) &&
+    if (atomic_test_bit(bt_mesh.flags, BT_MESH_IVU_INITIATOR) &&
             (atomic_test_bit(bt_mesh.flags, BT_MESH_IVU_IN_PROGRESS) ==
              BT_MESH_IV_UPDATE(flags))) {
         bt_mesh_beacon_ivu_initiator(false);
@@ -338,21 +338,21 @@ static void secure_beacon_recv(struct os_mbuf *buf)
     iv_change = bt_mesh_net_iv_update(iv_index, BT_MESH_IV_UPDATE(flags));
     kr_change = bt_mesh_kr_update(sub, BT_MESH_KEY_REFRESH(flags), new_key);
 
-    if(kr_change) {
+    if (kr_change) {
         bt_mesh_net_beacon_update(sub);
     }
 
-    if(iv_change) {
+    if (iv_change) {
         /* Update all subnets */
         bt_mesh_net_sec_update(NULL);
-    } else if(kr_change) {
+    } else if (kr_change) {
         /* Key Refresh without IV Update only impacts one subnet */
         bt_mesh_net_sec_update(sub);
     }
 
 update_stats:
 
-    if(bt_mesh_beacon_get() == BT_MESH_BEACON_ENABLED &&
+    if (bt_mesh_beacon_get() == BT_MESH_BEACON_ENABLED &&
             sub->beacons_cur < 0xff) {
         sub->beacons_cur++;
     }
@@ -363,7 +363,7 @@ void bt_mesh_beacon_recv(struct os_mbuf *buf)
     u8_t type;
     BT_DBG("%u bytes: %s", buf->om_len, bt_hex(buf->om_data, buf->om_len));
 
-    if(buf->om_len < 1) {
+    if (buf->om_len < 1) {
         BT_ERR("Too short beacon");
         return;
     }
@@ -394,9 +394,9 @@ void bt_mesh_beacon_ivu_initiator(bool enable)
 {
     atomic_set_bit_to(bt_mesh.flags, BT_MESH_IVU_INITIATOR, enable);
 
-    if(enable) {
+    if (enable) {
         k_work_submit(&beacon_timer.work);
-    } else if(bt_mesh_beacon_get() == BT_MESH_BEACON_DISABLED) {
+    } else if (bt_mesh_beacon_get() == BT_MESH_BEACON_DISABLED) {
         k_delayed_work_cancel(&beacon_timer);
     }
 }
@@ -405,7 +405,7 @@ void bt_mesh_beacon_enable(void)
 {
     int i;
 
-    if(!bt_mesh_is_provisioned()) {
+    if (!bt_mesh_is_provisioned()) {
         k_work_submit(&beacon_timer.work);
         return;
     }
@@ -413,7 +413,7 @@ void bt_mesh_beacon_enable(void)
     for(i = 0; i < ARRAY_SIZE(bt_mesh.sub); i++) {
         struct bt_mesh_subnet *sub = &bt_mesh.sub[i];
 
-        if(sub->net_idx == BT_MESH_KEY_UNUSED) {
+        if (sub->net_idx == BT_MESH_KEY_UNUSED) {
             continue;
         }
 
@@ -427,7 +427,7 @@ void bt_mesh_beacon_enable(void)
 
 void bt_mesh_beacon_disable(void)
 {
-    if(!atomic_test_bit(bt_mesh.flags, BT_MESH_IVU_INITIATOR)) {
+    if (!atomic_test_bit(bt_mesh.flags, BT_MESH_IVU_INITIATOR)) {
         k_delayed_work_cancel(&beacon_timer);
     }
 }

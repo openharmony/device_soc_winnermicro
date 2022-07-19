@@ -76,7 +76,7 @@ int uECC_make_key_with_d(uint8_t *public_key, uint8_t *private_key,
     memcpy(_private, d, NUM_ECC_BYTES);
 
     /* Computing public-key from private: */
-    if(EccPoint_compute_public_key(_public, _private, curve)) {
+    if (EccPoint_compute_public_key(_public, _private, curve)) {
         /* Converting buffers to correct bit order: */
         uECC_vli_nativeToBytes(private_key,
                                BITS_TO_BYTES(curve->num_n_bits),
@@ -106,7 +106,7 @@ int uECC_make_key(uint8_t *public_key, uint8_t *private_key, uECC_Curve curve)
         /* Generating _private uniformly at random: */
         uECC_RNG_Function rng_function = uECC_get_rng();
 
-        if(!rng_function ||
+        if (!rng_function ||
                 !rng_function((uint8_t *)_random, 2 * NUM_ECC_WORDS * uECC_WORD_SIZE)) {
             return 0;
         }
@@ -115,7 +115,7 @@ int uECC_make_key(uint8_t *public_key, uint8_t *private_key, uECC_Curve curve)
         uECC_vli_mmod(_private, _random, curve->n, BITS_TO_WORDS(curve->num_n_bits));
 
         /* Computing public-key from private: */
-        if(EccPoint_compute_public_key(_public, _private, curve)) {
+        if (EccPoint_compute_public_key(_public, _private, curve)) {
             /* Converting buffers to correct bit order: */
             uECC_vli_nativeToBytes(private_key,
                                    BITS_TO_BYTES(curve->num_n_bits),
@@ -163,8 +163,8 @@ int uECC_shared_secret(const uint8_t *public_key, const uint8_t *private_key,
 
     /* If an RNG function was specified, try to get a random initial Z value to
      * improve protection against side-channel attacks. */
-    if(g_rng_function) {
-        if(!uECC_generate_random_int(p2[carry], curve->p, num_words)) {
+    if (g_rng_function) {
+        if (!uECC_generate_random_int(p2[carry], curve->p, num_words)) {
             r = 0;
             goto clear_and_out;
         }

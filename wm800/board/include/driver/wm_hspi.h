@@ -32,8 +32,6 @@
 
 #define HSPI_TX_MEM_MALLOC			0		/** tx mem dynamic malloc*/
 
-
-
 #define HSPI_INTERFACE_SPI			2		/** spi interface*/
 #define HSPI_INTERFACE_SDIO			3		/** sdio interface*/
 
@@ -65,22 +63,20 @@
 #endif
 /** HSPI tx desc zone */
 #define HSPI_TX_DESC_BASE_ADDR      ((u32)(HSPI_TXBUF_BASE_ADDR + HSPI_TXBUF_TOTAL_SIZE))
-#define HSPI_TX_DESC_TOTAL_SIZE     (HSPI_TX_DESC_SIZE * HSPI_TX_DESC_NUM)	//28*3=84
+#define HSPI_TX_DESC_TOTAL_SIZE     (HSPI_TX_DESC_SIZE * HSPI_TX_DESC_NUM)	// 28*3=84
 /** HSPI rxbuf zone */
 #define HSPI_RXBUF_BASE_ADDR        ((u32)(HSPI_TX_DESC_BASE_ADDR + HSPI_TX_DESC_TOTAL_SIZE))
-#define HSPI_RXBUF_TOTAL_SIZE       (HSPI_RXBUF_NUM * HSPI_RXBUF_SIZE)	//4500
+#define HSPI_RXBUF_TOTAL_SIZE       (HSPI_RXBUF_NUM * HSPI_RXBUF_SIZE)	// 4500
 /** HSPI rx desc zone */
 #define HSPI_RX_DESC_BASE_ADDR      ((u32)(HSPI_RXBUF_BASE_ADDR + HSPI_RXBUF_TOTAL_SIZE))
-#define HSPI_RX_DESC_TOTAL_SIZE     (HSPI_RX_DESC_SIZE * HSPI_RX_DESC_NUM)	//36
+#define HSPI_RX_DESC_TOTAL_SIZE     (HSPI_RX_DESC_SIZE * HSPI_RX_DESC_NUM)	// 36
 
 #define SDIO_CIS_SIZE (0x80)
 #define SDIO_CMD_RXBUF_SIZE          256
 
-
-#define SDIO_CIS0_ADDR              (HSPI_RX_DESC_BASE_ADDR + HSPI_RX_DESC_TOTAL_SIZE)	//128
-#define SDIO_CIS1_ADDR              (SDIO_CIS0_ADDR + SDIO_CIS_SIZE)						//128
+#define SDIO_CIS0_ADDR              (HSPI_RX_DESC_BASE_ADDR + HSPI_RX_DESC_TOTAL_SIZE)	// 128
+#define SDIO_CIS1_ADDR              (SDIO_CIS0_ADDR + SDIO_CIS_SIZE)						// 128
 #define SDIO_CMD_RXBUF_ADDR          (SDIO_CIS1_ADDR + SDIO_CIS_SIZE)
-
 
 #define CIS_FUN0_ADDR				((u32)SDIO_CIS0_ADDR)
 #define CIS_FUN1_ADDR				((u32)SDIO_CIS1_ADDR)
@@ -104,14 +100,11 @@
 #define FN1_TPL_FUNCE_AVGPWR		(CIS_FUN1_ADDR + 0x28)
 #define FN1_TPL_END					(CIS_FUN1_ADDR + 0x30)
 
-
-
 /** SDIO interrupt bit definition */
 #define SDIO_WP_INT_SRC_CMD_DOWN         (1UL<<3)
 #define SDIO_WP_INT_SRC_CMD_UP           (1UL<<2)
 #define SDIO_WP_INT_SRC_DATA_DOWN        (1UL<<1)
 #define SDIO_WP_INT_SRC_DATA_UP          (1UL<<0)
-
 
 /** Definition of send data  descriptor structure */
 struct tls_hspi_tx_desc {
@@ -131,7 +124,6 @@ struct tls_hspi_rx_desc {
     u32 next_desc_addr;
 };
 
-
 /** struct tls_slave_hspi */
 struct tls_slave_hspi {
     u8 ifusermode;
@@ -147,7 +139,7 @@ struct tls_slave_hspi {
     struct tls_hspi_rx_desc   *curr_rx_desc;    /**< Downlink data management */
 
 #if HSPI_TX_MEM_MALLOC
-	u8 txdoneflag;		                        /**< tx done falg*/
+    u8 txdoneflag;                        /**< tx done falg*/
 #endif
 };
 
@@ -196,7 +188,6 @@ int tls_slave_spi_init(void);
  */
 void tls_set_hspi_user_mode(u8 ifenable);
 
-
 /**
  * @brief          This function is used to set high speed interface type.
  *
@@ -208,7 +199,6 @@ void tls_set_hspi_user_mode(u8 ifenable);
  */
 void tls_set_high_speed_interface_type(int type);
 
-
 /**
  * @brief          This function is used to register hspi rx command interrupt.
  *
@@ -219,7 +209,6 @@ void tls_set_high_speed_interface_type(int type);
  * @note           None
  */
 void tls_hspi_rx_cmd_callback_register(s16 (*rx_cmd_callback)(char *buf));
-
 
 /**
  * @brief          This function is used to register hspi rx data interrupt.
@@ -242,7 +231,6 @@ void tls_hspi_rx_data_callback_register(s16 (*rx_data_callback)(char *buf));
  * @note           None
  */
 void tls_hspi_tx_data_callback_register(s16 (*tx_data_callback)(char *buf));
-
 
 /**
  * @brief          This function is used to transfer data.

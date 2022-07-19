@@ -78,7 +78,7 @@ net_buf_ref(struct os_mbuf *om)
     struct bt_mesh_adv *adv;
 
     /* For bufs with header we count refs*/
-    if(OS_MBUF_USRHDR_LEN(om) == 0) {
+    if (OS_MBUF_USRHDR_LEN(om) == 0) {
         return om;
     }
 
@@ -93,13 +93,13 @@ net_buf_unref(struct os_mbuf *om)
     struct bt_mesh_adv *adv;
 
     /* For bufs with header we count refs*/
-    if(OS_MBUF_USRHDR_LEN(om) == 0) {
+    if (OS_MBUF_USRHDR_LEN(om) == 0) {
         goto free;
     }
 
     adv = BT_MESH_ADV(om);
 
-    if(--adv->ref_cnt > 0) {
+    if (--adv->ref_cnt > 0) {
         return;
     }
 
@@ -112,11 +112,11 @@ bt_encrypt_be(const uint8_t *key, const uint8_t *plaintext, uint8_t *enc_data)
 {
     struct tc_aes_key_sched_struct s;
 
-    if(tc_aes128_set_encrypt_key(&s, key) == TC_CRYPTO_FAIL) {
+    if (tc_aes128_set_encrypt_key(&s, key) == TC_CRYPTO_FAIL) {
         return BLE_HS_EUNKNOWN;
     }
 
-    if(tc_aes_encrypt(enc_data, plaintext, &s) == TC_CRYPTO_FAIL) {
+    if (tc_aes_encrypt(enc_data, plaintext, &s) == TC_CRYPTO_FAIL) {
         return BLE_HS_EUNKNOWN;
     }
 
@@ -231,7 +231,7 @@ net_buf_simple_push_le16(struct os_mbuf *om, uint16_t val)
     put_le16(om->om_data, val);
     om->om_len += 2;
 
-    if(om->om_pkthdr_len) {
+    if (om->om_pkthdr_len) {
         OS_MBUF_PKTHDR(om)->omp_len += 2;
     }
 
@@ -247,7 +247,7 @@ net_buf_simple_push_be16(struct os_mbuf *om, uint16_t val)
     put_be16(om->om_data, val);
     om->om_len += 2;
 
-    if(om->om_pkthdr_len) {
+    if (om->om_pkthdr_len) {
         OS_MBUF_PKTHDR(om)->omp_len += 2;
     }
 
@@ -263,7 +263,7 @@ net_buf_simple_push_u8(struct os_mbuf *om, uint8_t val)
     om->om_data[0] = val;
     om->om_len += 1;
 
-    if(om->om_pkthdr_len) {
+    if (om->om_pkthdr_len) {
         OS_MBUF_PKTHDR(om)->omp_len += 1;
     }
 
@@ -278,7 +278,7 @@ net_buf_add_zeros(struct os_mbuf *om, uint8_t len)
     memset(z, 0, len);
     rc = os_mbuf_append(om, z, len);
 
-    if(rc) {
+    if (rc) {
         assert(0);
     }
 
@@ -319,7 +319,7 @@ void *net_buf_get(struct ble_npl_eventq *fifo, s32_t t)
 {
     struct ble_npl_event *ev = ble_npl_eventq_get(fifo, 0);
 
-    if(ev) {
+    if (ev) {
         return ble_npl_event_get_arg(ev);
     }
 
@@ -375,7 +375,7 @@ k_delayed_work_submit(struct k_delayed_work *w, uint32_t ms)
 {
     uint32_t ticks;
 
-    if(ble_npl_time_ms_to_ticks(ms, &ticks) != 0) {
+    if (ble_npl_time_ms_to_ticks(ms, &ticks) != 0) {
         assert(0);
     }
 
@@ -438,7 +438,7 @@ bt_dh_key_gen(const u8_t remote_pk[64], bt_dh_key_cb_t cb)
 {
     uint8_t dh[32];
 
-    if(ble_sm_alg_gen_dhkey((uint8_t *)&remote_pk[0], (uint8_t *)&remote_pk[32],
+    if (ble_sm_alg_gen_dhkey((uint8_t *)&remote_pk[0], (uint8_t *)&remote_pk[32],
                             priv, dh)) {
         return -1;
     }
@@ -453,7 +453,7 @@ bt_rand(void *buf, size_t len)
     int rc;
     rc = ble_hs_hci_util_rand(buf, len);
 
-    if(rc != 0) {
+    if (rc != 0) {
         return -1;
     }
 
@@ -463,7 +463,7 @@ bt_rand(void *buf, size_t len)
 int
 bt_pub_key_gen(struct bt_pub_key_cb *new_cb)
 {
-    if(ble_sm_alg_gen_key_pair(pub, priv)) {
+    if (ble_sm_alg_gen_key_pair(pub, priv)) {
         assert(0);
         return -1;
     }
@@ -476,7 +476,7 @@ bt_pub_key_gen(struct bt_pub_key_cb *new_cb)
 uint8_t *
 bt_pub_key_get(void)
 {
-    if(!has_pub) {
+    if (!has_pub) {
         return NULL;
     }
 
@@ -507,7 +507,7 @@ ble_adv_copy_to_ext_param(struct ble_gap_ext_adv_params *ext_param,
     memset(ext_param, 0, sizeof(*ext_param));
     ext_param->legacy_pdu = 1;
 
-    if(param->conn_mode != BLE_GAP_CONN_MODE_NON) {
+    if (param->conn_mode != BLE_GAP_CONN_MODE_NON) {
         ext_param->connectable = 1;
         ext_param->scannable = 1;
     }
@@ -526,7 +526,7 @@ ble_adv_conf_adv_instance(const struct ble_gap_adv_params *param, int *instance)
     struct ble_gap_adv_params *cur_conf;
     int err = 0;
 
-    if(param->conn_mode == BLE_GAP_CONN_MODE_NON) {
+    if (param->conn_mode == BLE_GAP_CONN_MODE_NON) {
         *instance = BT_MESH_ADV_INST;
         cur_conf = &ble_adv_cur_conf[BT_MESH_ADV_IDX];
     } else {
@@ -541,11 +541,11 @@ ble_adv_conf_adv_instance(const struct ble_gap_adv_params *param, int *instance)
     /* Checking interval max as it has to be in place if instance was configured
      * before.
      */
-    if(cur_conf->itvl_max == 0) {
+    if (cur_conf->itvl_max == 0) {
         goto configure;
     }
 
-    if(memcmp(param, cur_conf, sizeof(*cur_conf)) == 0) {
+    if (memcmp(param, cur_conf, sizeof(*cur_conf)) == 0) {
         /* Same parameters - skip reconfiguring */
         goto done;
     }
@@ -553,7 +553,7 @@ ble_adv_conf_adv_instance(const struct ble_gap_adv_params *param, int *instance)
     ble_gap_ext_adv_stop(*instance);
     err = ble_gap_ext_adv_remove(*instance);
 
-    if(err) {
+    if (err) {
         assert(0);
         goto done;
     }
@@ -563,7 +563,7 @@ configure:
     err  = ble_gap_ext_adv_configure(*instance, &ext_params, 0,
                                      ble_adv_gap_mesh_cb, NULL);
 
-    if(!err) {
+    if (!err) {
         memcpy(cur_conf, param, sizeof(*cur_conf));
     }
 
@@ -583,63 +583,63 @@ bt_le_adv_start(const struct ble_gap_adv_params *param,
     uint8_t buf_len = 0;
     err = ble_adv_conf_adv_instance(param, &instance);
 
-    if(err) {
+    if (err) {
         return err;
     }
 
-    if(ad_len > 0) {
+    if (ad_len > 0) {
         err = set_ad(ad, ad_len, buf, &buf_len);
 
-        if(err) {
+        if (err) {
             return err;
         }
 
         /* For now let's use msys pool. We are not putting more then legacy */
         data = os_msys_get_pkthdr(BLE_HS_ADV_MAX_SZ, 0);
 
-        if(!data) {
+        if (!data) {
             return OS_ENOMEM;
         }
 
         err = os_mbuf_append(data, buf, buf_len);
 
-        if(err) {
+        if (err) {
             goto error;
         }
 
         err = ble_gap_ext_adv_set_data(instance, data);
 
-        if(err) {
+        if (err) {
             return err;
         }
 
         data = NULL;
     }
 
-    if(sd_len > 0) {
+    if (sd_len > 0) {
         buf_len = 0;
         err = set_ad(sd, sd_len, buf, &buf_len);
 
-        if(err) {
+        if (err) {
             return err;
         }
 
         /* For now let's use msys pool. We are not putting more then legace*/
         data = os_msys_get_pkthdr(BLE_HS_ADV_MAX_SZ, 0);
 
-        if(!data) {
+        if (!data) {
             return OS_ENOMEM;
         }
 
         err = os_mbuf_append(data, buf, buf_len);
 
-        if(err) {
+        if (err) {
             goto error;
         }
 
         err = ble_gap_ext_adv_rsp_set_data(instance, data);
 
-        if(err) {
+        if (err) {
             goto error;
         }
     }
@@ -649,7 +649,7 @@ bt_le_adv_start(const struct ble_gap_adv_params *param,
     return err;
 error:
 
-    if(data) {
+    if (data) {
         os_mbuf_free_chain(data);
     }
 
@@ -661,7 +661,7 @@ int bt_le_adv_stop(bool proxy)
 #if MYNEWT_VAL(BLE_MESH_PROXY)
     int rc;
 
-    if(proxy) {
+    if (proxy) {
         rc = ble_gap_ext_adv_stop(BT_MESH_ADV_GATT_INST);
     } else {
         rc = ble_gap_ext_adv_stop(BT_MESH_ADV_INST);
@@ -685,28 +685,28 @@ bt_le_adv_start(const struct ble_gap_adv_params *param,
     int err;
     err = set_ad(ad, ad_len, buf, &buf_len);
 
-    if(err) {
+    if (err) {
         return err;
     }
 
     err = ble_gap_adv_set_data(buf, buf_len);
 
-    if(err != 0) {
+    if (err != 0) {
         return err;
     }
 
-    if(sd) {
+    if (sd) {
         buf_len = 0;
         err = set_ad(sd, sd_len, buf, &buf_len);
 
-        if(err) {
+        if (err) {
             BT_ERR("Advertising failed: err %d", err);
             return err;
         }
 
         err = ble_gap_adv_rsp_set_data(buf, buf_len);
 
-        if(err != 0) {
+        if (err != 0) {
             BT_ERR("Advertising failed: err %d", err);
             return err;
         }
@@ -715,7 +715,7 @@ bt_le_adv_start(const struct ble_gap_adv_params *param,
     err = ble_gap_adv_start(g_mesh_addr_type, NULL, BLE_HS_FOREVER, param,
                             NULL, NULL);
 
-    if(err) {
+    if (err) {
         BT_ERR("Advertising failed: err %d", err);
         return err;
     }
@@ -758,7 +758,7 @@ struct os_mbuf *net_buf_slist_peek_head(struct net_buf_slist_t *list)
     /* Get mbuf pointer from packet header pointer */
     pkthdr = STAILQ_FIRST(list);
 
-    if(!pkthdr) {
+    if (!pkthdr) {
         return NULL;
     }
 
@@ -772,7 +772,7 @@ struct os_mbuf *net_buf_slist_peek_next(struct os_mbuf *buf)
     pkthdr = OS_MBUF_PKTHDR(buf);
     pkthdr = STAILQ_NEXT(pkthdr, omp_next);
 
-    if(!pkthdr) {
+    if (!pkthdr) {
         return NULL;
     }
 
@@ -785,7 +785,7 @@ struct os_mbuf *net_buf_slist_get(struct net_buf_slist_t *list)
     struct os_mbuf *m;
     m = net_buf_slist_peek_head(list);
 
-    if(!m) {
+    if (!m) {
         return NULL;
     }
 
@@ -809,7 +809,7 @@ void net_buf_slist_remove(struct net_buf_slist_t *list, struct os_mbuf *prev,
     struct os_mbuf_pkthdr *pkthdr, *cur_pkthdr;
     cur_pkthdr = OS_MBUF_PKTHDR(cur);
     STAILQ_FOREACH(pkthdr, list, omp_next) {
-        if(cur_pkthdr == pkthdr) {
+        if (cur_pkthdr == pkthdr) {
             STAILQ_REMOVE(list, cur_pkthdr, os_mbuf_pkthdr, omp_next);
             break;
         }
@@ -819,7 +819,7 @@ void net_buf_slist_remove(struct net_buf_slist_t *list, struct os_mbuf *prev,
 void net_buf_slist_merge_slist(struct net_buf_slist_t *list,
                                struct net_buf_slist_t *list_to_append)
 {
-    if(!STAILQ_EMPTY(list_to_append)) {
+    if (!STAILQ_EMPTY(list_to_append)) {
         *(list)->stqh_last = list_to_append->stqh_first;
         (list)->stqh_last = list_to_append->stqh_last;
         STAILQ_INIT(list_to_append);
@@ -837,7 +837,7 @@ int settings_bytes_from_str(char *val_str, void *vp, int *len)
 char *settings_str_from_bytes(const void *vp, int vp_len,
                               char *buf, int buf_len)
 {
-    if(BASE64_ENCODE_SIZE(vp_len) > buf_len) {
+    if (BASE64_ENCODE_SIZE(vp_len) > buf_len) {
         return NULL;
     }
 

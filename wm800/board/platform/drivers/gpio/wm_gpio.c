@@ -33,9 +33,7 @@ struct gpio_irq_context{
     void *arg;
 };
 
-
 static struct gpio_irq_context gpio_context[WM_IO_PB_31 - WM_IO_PA_00 + 1] = {{0,0}};
-
 
 ATTRIBUTE_ISR void GPIOA_IRQHandler(void)
 {
@@ -71,7 +69,6 @@ ATTRIBUTE_ISR void GPIOB_IRQHandler(void)
     csi_kernel_intrpt_enter();
     reg = tls_reg_read32(HR_GPIO_MIS + TLS_IO_AB_OFFSET);
 
-
     for (i = WM_IO_PB_00; i <= WM_IO_PB_31; i++)
     {
         if (reg & BIT(i - WM_IO_PB_00))
@@ -102,48 +99,47 @@ ATTRIBUTE_ISR void GPIOB_IRQHandler(void)
  */
 void tls_gpio_cfg(enum tls_io_name gpio_pin, enum tls_gpio_dir dir, enum tls_gpio_attr attr)
 {
-	u8	pin;
-	u16 offset;
+    u8    pin;
+    u16 offset;
 
-	if (gpio_pin >= WM_IO_PB_00)
-	{
-		pin    = gpio_pin - WM_IO_PB_00;
-		offset = TLS_IO_AB_OFFSET;
-	}
-	else
-	{
-		pin    = gpio_pin;
-		offset = 0;
-	}
+    if (gpio_pin >= WM_IO_PB_00)
+    {
+        pin    = gpio_pin - WM_IO_PB_00;
+        offset = TLS_IO_AB_OFFSET;
+    }
+    else
+    {
+        pin    = gpio_pin;
+        offset = 0;
+    }
 
-	/* enable gpio function */
-	tls_io_cfg_set(gpio_pin, WM_IO_OPT5_GPIO);
+    /* enable gpio function */
+    tls_io_cfg_set(gpio_pin, WM_IO_OPT5_GPIO);
 
-	/* gpio direction */
-	if (WM_GPIO_DIR_OUTPUT == dir)
-		tls_reg_write32(HR_GPIO_DIR + offset, tls_reg_read32(HR_GPIO_DIR + offset) | BIT(pin)); 	 /* 1 set output */
-	else if (WM_GPIO_DIR_INPUT == dir)
-		tls_reg_write32(HR_GPIO_DIR + offset, tls_reg_read32(HR_GPIO_DIR + offset) & (~BIT(pin)));	 /* 0 set input */
+    /* gpio direction */
+    if (WM_GPIO_DIR_OUTPUT == dir)
+        tls_reg_write32(HR_GPIO_DIR + offset, tls_reg_read32(HR_GPIO_DIR + offset) | BIT(pin));      /* 1 set output */
+    else if (WM_GPIO_DIR_INPUT == dir)
+        tls_reg_write32(HR_GPIO_DIR + offset, tls_reg_read32(HR_GPIO_DIR + offset) & (~BIT(pin)));     /* 0 set input */
 
-	/* gpio attribute */
-	if (WM_GPIO_ATTR_FLOATING == attr)
-	{
-		tls_reg_write32(HR_GPIO_PULLUP_EN + offset, tls_reg_read32(HR_GPIO_PULLUP_EN + offset) | BIT(pin)); 	   /* 1 disable pullup */
-		tls_reg_write32(HR_GPIO_PULLDOWN_EN + offset, tls_reg_read32(HR_GPIO_PULLDOWN_EN + offset)&(~BIT(pin)));	   /* 1 disable pulldown */ 
-		
-	}
-	if (WM_GPIO_ATTR_PULLHIGH == attr)
-	{
-		tls_reg_write32(HR_GPIO_PULLUP_EN + offset, tls_reg_read32(HR_GPIO_PULLUP_EN + offset) & (~BIT(pin)));		/* 0 enable pullup */
-		tls_reg_write32(HR_GPIO_PULLDOWN_EN + offset, tls_reg_read32(HR_GPIO_PULLDOWN_EN + offset) &(~BIT(pin)));	   /* 0 disable pulldown */
-	}
+    /* gpio attribute */
+    if (WM_GPIO_ATTR_FLOATING == attr)
+    {
+        tls_reg_write32(HR_GPIO_PULLUP_EN + offset, tls_reg_read32(HR_GPIO_PULLUP_EN + offset) | BIT(pin));        /* 1 disable pullup */
+        tls_reg_write32(HR_GPIO_PULLDOWN_EN + offset, tls_reg_read32(HR_GPIO_PULLDOWN_EN + offset)&(~BIT(pin)));       /* 1 disable pulldown */ 
+        
+    }
+    if (WM_GPIO_ATTR_PULLHIGH == attr)
+    {
+        tls_reg_write32(HR_GPIO_PULLUP_EN + offset, tls_reg_read32(HR_GPIO_PULLUP_EN + offset) & (~BIT(pin)));        /* 0 enable pullup */
+        tls_reg_write32(HR_GPIO_PULLDOWN_EN + offset, tls_reg_read32(HR_GPIO_PULLDOWN_EN + offset) &(~BIT(pin)));       /* 0 disable pulldown */
+    }
 
-	if (WM_GPIO_ATTR_PULLLOW == attr)
-	{
-		tls_reg_write32(HR_GPIO_PULLUP_EN + offset, tls_reg_read32(HR_GPIO_PULLUP_EN + offset) | BIT(pin)); 	/* 0 disable pullup */
-		tls_reg_write32(HR_GPIO_PULLDOWN_EN + offset, tls_reg_read32(HR_GPIO_PULLDOWN_EN + offset) | BIT(pin)); 	   /* 1 disable pulldown */
-	}
-
+    if (WM_GPIO_ATTR_PULLLOW == attr)
+    {
+        tls_reg_write32(HR_GPIO_PULLUP_EN + offset, tls_reg_read32(HR_GPIO_PULLUP_EN + offset) | BIT(pin));     /* 0 disable pullup */
+        tls_reg_write32(HR_GPIO_PULLDOWN_EN + offset, tls_reg_read32(HR_GPIO_PULLDOWN_EN + offset) | BIT(pin));        /* 1 disable pulldown */
+    }
 
 }
 
@@ -159,49 +155,8 @@ void tls_gpio_cfg(enum tls_io_name gpio_pin, enum tls_gpio_dir dir, enum tls_gpi
  */
 u8 tls_gpio_read(enum tls_io_name gpio_pin)
 {
-	u32 reg_en;
-	u32 reg;
-	u8  pin;
-    u16 offset;
-
-    if (gpio_pin >= WM_IO_PB_00)
-    {
-        pin    = gpio_pin - WM_IO_PB_00;
-        offset = TLS_IO_AB_OFFSET;
-    }
-    else
-    {
-        pin    = gpio_pin;
-        offset = 0;
-    }
-
-	reg_en = tls_reg_read32(HR_GPIO_DATA_EN + offset);
-	tls_reg_write32(HR_GPIO_DATA_EN + offset, reg_en | (1 << pin));
-	reg = tls_reg_read32(HR_GPIO_DATA + offset);
-	tls_reg_write32(HR_GPIO_DATA_EN + offset, reg_en);
-	if(reg & (0x1 << pin))
-		return 1;
-	else
-		return 0;
-}
-
-/**
- * @brief          This function is used to modify gpio status
- *
- * @param[in]      gpio_pin    gpio pin num
- * @param[in]      value       power level
- *                             0: low  power level
- * 					           1: high power level
- *
- * @return         None
- *
- * @note           None
- */
-void tls_gpio_write(enum tls_io_name gpio_pin, u8 value)
-{
-	u32 cpu_sr = 0;
-	u32 reg;
-	u32	reg_en;
+    u32 reg_en;
+    u32 reg;
     u8  pin;
     u16 offset;
 
@@ -216,21 +171,62 @@ void tls_gpio_write(enum tls_io_name gpio_pin, u8 value)
         offset = 0;
     }
 
-	
-	cpu_sr = tls_os_set_critical();
-	
-	reg_en = tls_reg_read32(HR_GPIO_DATA_EN + offset);
-	tls_reg_write32(HR_GPIO_DATA_EN + offset, reg_en | (1 << pin));
+    reg_en = tls_reg_read32(HR_GPIO_DATA_EN + offset);
+    tls_reg_write32(HR_GPIO_DATA_EN + offset, reg_en | (1 << pin));
+    reg = tls_reg_read32(HR_GPIO_DATA + offset);
+    tls_reg_write32(HR_GPIO_DATA_EN + offset, reg_en);
+    if (reg & (0x1 << pin))
+        return 1;
+    else
+        return 0;
+}
 
-	reg = tls_reg_read32(HR_GPIO_DATA + offset);
-	if(value)
-		tls_reg_write32(HR_GPIO_DATA + offset, reg |  (1 << pin));	/* write high */
-	else
-		tls_reg_write32(HR_GPIO_DATA + offset, reg & (~(1 << pin)));/* write low */
+/**
+ * @brief          This function is used to modify gpio status
+ *
+ * @param[in]      gpio_pin    gpio pin num
+ * @param[in]      value       power level
+ *                             0: low  power level
+ *                                1: high power level
+ *
+ * @return         None
+ *
+ * @note           None
+ */
+void tls_gpio_write(enum tls_io_name gpio_pin, u8 value)
+{
+    u32 cpu_sr = 0;
+    u32 reg;
+    u32    reg_en;
+    u8  pin;
+    u16 offset;
+
+    if (gpio_pin >= WM_IO_PB_00)
+    {
+        pin    = gpio_pin - WM_IO_PB_00;
+        offset = TLS_IO_AB_OFFSET;
+    }
+    else
+    {
+        pin    = gpio_pin;
+        offset = 0;
+    }
+
+    
+    cpu_sr = tls_os_set_critical();
+    
+    reg_en = tls_reg_read32(HR_GPIO_DATA_EN + offset);
+    tls_reg_write32(HR_GPIO_DATA_EN + offset, reg_en | (1 << pin));
+
+    reg = tls_reg_read32(HR_GPIO_DATA + offset);
+    if (value)
+        tls_reg_write32(HR_GPIO_DATA + offset, reg |  (1 << pin));    /* write high */
+    else
+        tls_reg_write32(HR_GPIO_DATA + offset, reg & (~(1 << pin)));/* write low */
 
     tls_reg_write32(HR_GPIO_DATA_EN + offset, reg_en);
 
-	tls_os_release_critical(cpu_sr);
+    tls_os_release_critical(cpu_sr);
 }
 
 /**
@@ -245,8 +241,8 @@ void tls_gpio_write(enum tls_io_name gpio_pin, u8 value)
  */
 void tls_gpio_irq_enable(enum tls_io_name gpio_pin, enum tls_gpio_irq_trig mode)
 {
-	u32 reg;
-	u8  pin;
+    u32 reg;
+    u8  pin;
     u16 offset;
     u8  vec_no;
 
@@ -263,64 +259,64 @@ void tls_gpio_irq_enable(enum tls_io_name gpio_pin, enum tls_gpio_irq_trig mode)
         vec_no = GPIOA_IRQn;
     }
 
-//	TLS_DBGPRT_INFO("\r\ntls_gpio_int_enable gpio pin =%d,mode==%d\r\n",gpio_pin,mode);
+//   TLS_DBGPRT_INFO("\r\ntls_gpio_int_enable gpio pin =%d,mode==%d\r\n",gpio_pin,mode);
 
-	switch(mode)
-	{
-		case WM_GPIO_IRQ_TRIG_RISING_EDGE:
-			reg = tls_reg_read32(HR_GPIO_IS + offset);
-			reg &= (~(0x1 << pin));
-		//	TLS_DBGPRT_INFO("\r\nrising edge is ret=%x\r\n",reg);
-			tls_reg_write32(HR_GPIO_IS + offset, reg);		/* 0 edge trigger */
-			reg = tls_reg_read32(HR_GPIO_IBE + offset);
-			reg &= (~(0x1 << pin));
-		//	TLS_DBGPRT_INFO("\r\nrising edge ibe ret=%x\r\n",reg);
-			tls_reg_write32(HR_GPIO_IBE + offset, reg);	/* 0 edge trigger */
-			reg = tls_reg_read32(HR_GPIO_IEV + offset);
-			reg |= (0x1 << pin);
-		//	TLS_DBGPRT_INFO("\r\nrising edge iev ret=%x\r\n",reg);
-			tls_reg_write32(HR_GPIO_IEV + offset, reg);	/* 1 rising edge trigger */
-			break;
-		case WM_GPIO_IRQ_TRIG_FALLING_EDGE:
-			reg = tls_reg_read32(HR_GPIO_IS + offset);
-			reg &= (~(0x1 << pin));
-		//	TLS_DBGPRT_INFO("\falling edge is ret=%x\n",reg);
-			tls_reg_write32(HR_GPIO_IS + offset, reg);		/* 0 edge trigger */
-			reg = tls_reg_read32(HR_GPIO_IBE + offset);
-			reg &= (~(0x1 << pin));
-		//	TLS_DBGPRT_INFO("\falling edge ibe ret=%x\n",reg);
-			tls_reg_write32(HR_GPIO_IBE + offset, reg);	/* 0 edge trigger */
-			reg = tls_reg_read32(HR_GPIO_IEV + offset);
-			reg &= (~(0x1 << pin));
-		//	TLS_DBGPRT_INFO("\falling edge iev ret=%x\n",reg);
-			tls_reg_write32(HR_GPIO_IEV + offset, reg);	/* 0 falling edge trigger */
-			break;
-		case WM_GPIO_IRQ_TRIG_DOUBLE_EDGE:
-			reg = tls_reg_read32(HR_GPIO_IS + offset);
-			tls_reg_write32(HR_GPIO_IS + offset, reg & (~(0x1 << pin)));	/* 0 edge trigger */
-			reg = tls_reg_read32(HR_GPIO_IBE + offset);
-			tls_reg_write32(HR_GPIO_IBE + offset, reg | (0x1 << pin));       /* 1 double edge trigger */
-			break;
-		case WM_GPIO_IRQ_TRIG_HIGH_LEVEL:
-			reg = tls_reg_read32(HR_GPIO_IS + offset);
-			tls_reg_write32(HR_GPIO_IS + offset, reg | (0x1 << pin));		/* 1 level trigger */
-			reg = tls_reg_read32(HR_GPIO_IEV + offset);
-			tls_reg_write32(HR_GPIO_IEV + offset, reg | (0x1 << pin));		/* 1 high level trigger */
-			break;
-		case WM_GPIO_IRQ_TRIG_LOW_LEVEL:
-			reg = tls_reg_read32(HR_GPIO_IS + offset);
-			tls_reg_write32(HR_GPIO_IS + offset, reg | (0x1 << pin));		/* 1 level trigger */
-			reg = tls_reg_read32(HR_GPIO_IEV + offset);
-			tls_reg_write32(HR_GPIO_IEV + offset, reg & (~(0x1 << pin)));	/* 0 low level trigger */
-			break;
-	}
+    switch(mode)
+    {
+        case WM_GPIO_IRQ_TRIG_RISING_EDGE:
+            reg = tls_reg_read32(HR_GPIO_IS + offset);
+            reg &= (~(0x1 << pin));
+        //   TLS_DBGPRT_INFO("\r\nrising edge is ret=%x\r\n",reg);
+            tls_reg_write32(HR_GPIO_IS + offset, reg);        /* 0 edge trigger */
+            reg = tls_reg_read32(HR_GPIO_IBE + offset);
+            reg &= (~(0x1 << pin));
+        //   TLS_DBGPRT_INFO("\r\nrising edge ibe ret=%x\r\n",reg);
+            tls_reg_write32(HR_GPIO_IBE + offset, reg);    /* 0 edge trigger */
+            reg = tls_reg_read32(HR_GPIO_IEV + offset);
+            reg |= (0x1 << pin);
+        //   TLS_DBGPRT_INFO("\r\nrising edge iev ret=%x\r\n",reg);
+            tls_reg_write32(HR_GPIO_IEV + offset, reg);    /* 1 rising edge trigger */
+            break;
+        case WM_GPIO_IRQ_TRIG_FALLING_EDGE:
+            reg = tls_reg_read32(HR_GPIO_IS + offset);
+            reg &= (~(0x1 << pin));
+        //   TLS_DBGPRT_INFO("\falling edge is ret=%x\n",reg);
+            tls_reg_write32(HR_GPIO_IS + offset, reg);        /* 0 edge trigger */
+            reg = tls_reg_read32(HR_GPIO_IBE + offset);
+            reg &= (~(0x1 << pin));
+        //   TLS_DBGPRT_INFO("\falling edge ibe ret=%x\n",reg);
+            tls_reg_write32(HR_GPIO_IBE + offset, reg);    /* 0 edge trigger */
+            reg = tls_reg_read32(HR_GPIO_IEV + offset);
+            reg &= (~(0x1 << pin));
+        //   TLS_DBGPRT_INFO("\falling edge iev ret=%x\n",reg);
+            tls_reg_write32(HR_GPIO_IEV + offset, reg);    /* 0 falling edge trigger */
+            break;
+        case WM_GPIO_IRQ_TRIG_DOUBLE_EDGE:
+            reg = tls_reg_read32(HR_GPIO_IS + offset);
+            tls_reg_write32(HR_GPIO_IS + offset, reg & (~(0x1 << pin)));    /* 0 edge trigger */
+            reg = tls_reg_read32(HR_GPIO_IBE + offset);
+            tls_reg_write32(HR_GPIO_IBE + offset, reg | (0x1 << pin));       /* 1 double edge trigger */
+            break;
+        case WM_GPIO_IRQ_TRIG_HIGH_LEVEL:
+            reg = tls_reg_read32(HR_GPIO_IS + offset);
+            tls_reg_write32(HR_GPIO_IS + offset, reg | (0x1 << pin));        /* 1 level trigger */
+            reg = tls_reg_read32(HR_GPIO_IEV + offset);
+            tls_reg_write32(HR_GPIO_IEV + offset, reg | (0x1 << pin));        /* 1 high level trigger */
+            break;
+        case WM_GPIO_IRQ_TRIG_LOW_LEVEL:
+            reg = tls_reg_read32(HR_GPIO_IS + offset);
+            tls_reg_write32(HR_GPIO_IS + offset, reg | (0x1 << pin));        /* 1 level trigger */
+            reg = tls_reg_read32(HR_GPIO_IEV + offset);
+            tls_reg_write32(HR_GPIO_IEV + offset, reg & (~(0x1 << pin)));    /* 0 low level trigger */
+            break;
+    }
 
-	reg = tls_reg_read32(HR_GPIO_IE + offset);
-	reg |= (0x1 << pin);
-//	TLS_DBGPRT_INFO("\nie ret=%x\n",reg);
-	tls_reg_write32(HR_GPIO_IE + offset, reg);		/* enable interrupt */
+    reg = tls_reg_read32(HR_GPIO_IE + offset);
+    reg |= (0x1 << pin);
+//   TLS_DBGPRT_INFO("\nie ret=%x\n",reg);
+    tls_reg_write32(HR_GPIO_IE + offset, reg);        /* enable interrupt */
 
-	tls_irq_enable(vec_no);
+    tls_irq_enable(vec_no);
 }
 
 /**
@@ -334,33 +330,33 @@ void tls_gpio_irq_enable(enum tls_io_name gpio_pin, enum tls_gpio_irq_trig mode)
  */
 void tls_gpio_irq_disable(enum tls_io_name gpio_pin)
 {
-	u32 reg;
-	u8  pin;
+    u32 reg;
+    u8  pin;
     u16 offset;
 
     if (gpio_pin >= WM_IO_PB_00)
     {
         pin    = gpio_pin - WM_IO_PB_00;
         offset = TLS_IO_AB_OFFSET;
-		reg = tls_reg_read32(HR_GPIO_IE + offset);
-		tls_reg_write32(HR_GPIO_IE + offset, reg & (~(0x1 << pin)));	/* disable interrupt */
-		reg = reg&(~(0x1 << pin));
-		if (reg == 0)
-		{
-			tls_irq_disable(GPIOB_IRQn);
-		}
+        reg = tls_reg_read32(HR_GPIO_IE + offset);
+        tls_reg_write32(HR_GPIO_IE + offset, reg & (~(0x1 << pin)));    /* disable interrupt */
+        reg = reg&(~(0x1 << pin));
+        if (reg == 0)
+        {
+            tls_irq_disable(GPIOB_IRQn);
+        }
     }
     else
     {
         pin    = gpio_pin;
         offset = 0;
-		reg = tls_reg_read32(HR_GPIO_IE + offset);
-		tls_reg_write32(HR_GPIO_IE + offset, reg & (~(0x1 << pin)));	/* disable interrupt */	
-		reg = (reg&(~(0x1 << pin)))&0xFFFF;
-		if (reg == 0)
-		{
-			tls_irq_disable(GPIOA_IRQn);
-		}
+        reg = tls_reg_read32(HR_GPIO_IE + offset);
+        tls_reg_write32(HR_GPIO_IE + offset, reg & (~(0x1 << pin)));    /* disable interrupt */    
+        reg = (reg&(~(0x1 << pin)))&0xFFFF;
+        if (reg == 0)
+        {
+            tls_irq_disable(GPIOA_IRQn);
+        }
     }
 
 }
@@ -377,8 +373,8 @@ void tls_gpio_irq_disable(enum tls_io_name gpio_pin)
  */
 u8 tls_get_gpio_irq_status(enum tls_io_name gpio_pin)
 {
-	u32 reg;
-	u8  pin;
+    u32 reg;
+    u8  pin;
     u16 offset;
 
     if (gpio_pin >= WM_IO_PB_00)
@@ -392,11 +388,11 @@ u8 tls_get_gpio_irq_status(enum tls_io_name gpio_pin)
         offset = 0;
     }
 
-	reg = tls_reg_read32(HR_GPIO_RIS + offset);
-	if(reg & (0x1 << pin))
-		return	1;
-	else
-		return	0;
+    reg = tls_reg_read32(HR_GPIO_RIS + offset);
+    if (reg & (0x1 << pin))
+        return    1;
+    else
+        return    0;
 }
 
 /**
@@ -410,7 +406,7 @@ u8 tls_get_gpio_irq_status(enum tls_io_name gpio_pin)
  */
 void tls_clr_gpio_irq_status(enum tls_io_name gpio_pin)
 {
-	u8  pin;
+    u8  pin;
     u16 offset;
 
     if (gpio_pin >= WM_IO_PB_00)
@@ -424,7 +420,7 @@ void tls_clr_gpio_irq_status(enum tls_io_name gpio_pin)
         offset = 0;
     }
 
-	tls_reg_write32(HR_GPIO_IC + offset, (0x1 << pin));		/* 1 clear interrupt status */
+    tls_reg_write32(HR_GPIO_IC + offset, (0x1 << pin));        /* 1 clear interrupt status */
 }
 
 /**

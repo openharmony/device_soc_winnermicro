@@ -55,7 +55,7 @@ s32_t bt_mesh_model_pub_period_get(struct bt_mesh_model *mod)
 {
     int period;
 
-    if(!mod->pub) {
+    if (!mod->pub) {
         return 0;
     }
 
@@ -84,7 +84,7 @@ s32_t bt_mesh_model_pub_period_get(struct bt_mesh_model *mod)
             CODE_UNREACHABLE;
     }
 
-    if(mod->pub->fast_period) {
+    if (mod->pub->fast_period) {
         return period >> mod->pub->period_div;
     } else {
         return period;
@@ -97,14 +97,14 @@ static s32_t next_period(struct bt_mesh_model *mod)
     u32_t elapsed, period;
     period = bt_mesh_model_pub_period_get(mod);
 
-    if(!period) {
+    if (!period) {
         return 0;
     }
 
     elapsed = k_uptime_get_32() - pub->period_start;
     BT_DBG("Publishing took %ums", (unsigned) elapsed);
 
-    if(elapsed > period) {
+    if (elapsed > period) {
         BT_WARN("Publication sending took longer than the period");
         /* Return smallest positive number since 0 means disabled */
         return K_MSEC(1);
@@ -119,13 +119,13 @@ static void publish_sent(int err, void *user_data)
     s32_t delay;
     BT_DBG("err %d", err);
 
-    if(mod->pub->count) {
+    if (mod->pub->count) {
         delay = BT_MESH_PUB_TRANSMIT_INT(mod->pub->retransmit);
     } else {
         delay = next_period(mod);
     }
 
-    if(delay) {
+    if (delay) {
         BT_DBG("Publishing next time in %dms", (int) delay);
         k_delayed_work_submit(&mod->pub->timer, delay);
     }
@@ -136,13 +136,13 @@ static void publish_start(u16_t duration, int err, void *user_data)
     struct bt_mesh_model *mod = user_data;
     struct bt_mesh_model_pub *pub = mod->pub;
 
-    if(err) {
+    if (err) {
         BT_ERR("Failed to publish: err %d", err);
         return;
     }
 
     /* Initialize the timestamp for the beginning of a new period */
-    if(pub->count == BT_MESH_PUB_TRANSMIT_COUNT(pub->retransmit)) {
+    if (pub->count == BT_MESH_PUB_TRANSMIT_COUNT(pub->retransmit)) {
         pub->period_start = k_uptime_get_32();
     }
 }
@@ -170,7 +170,7 @@ static int publish_retransmit(struct bt_mesh_model *mod)
     int err;
     key = bt_mesh_app_key_find(pub->key);
 
-    if(!key) {
+    if (!key) {
         err = -EADDRNOTAVAIL;
         goto done;
     }
@@ -196,15 +196,15 @@ static void mod_publish(struct ble_npl_event *work)
     period_ms = bt_mesh_model_pub_period_get(pub->mod);
     BT_DBG("period %u ms", (unsigned) period_ms);
 
-    if(pub->count) {
+    if (pub->count) {
         err = publish_retransmit(pub->mod);
 
-        if(err) {
+        if (err) {
             BT_ERR("Failed to retransmit (err %d)", err);
             pub->count = 0;
 
             /* Continue with normal publication */
-            if(period_ms) {
+            if (period_ms) {
                 k_delayed_work_submit(&pub->timer, period_ms);
             }
         }
@@ -212,21 +212,21 @@ static void mod_publish(struct ble_npl_event *work)
         return;
     }
 
-    if(!period_ms) {
+    if (!period_ms) {
         return;
     }
 
     __ASSERT_NO_MSG(pub->update != NULL);
     err = pub->update(pub->mod);
 
-    if(err) {
+    if (err) {
         BT_ERR("Failed to update publication message");
         return;
     }
 
     err = bt_mesh_model_publish(pub->mod);
 
-    if(err) {
+    if (err) {
         BT_ERR("Publishing failed (err %d)", err);
     }
 }
@@ -240,22 +240,22 @@ struct bt_mesh_model *bt_mesh_model_get(bool vnd, u8_t elem_idx, u8_t mod_idx)
 {
     struct bt_mesh_elem *elem;
 
-    if(elem_idx >= dev_comp->elem_count) {
+    if (elem_idx >= dev_comp->elem_count) {
         BT_ERR("Invalid element index %u", elem_idx);
         return NULL;
     }
 
     elem = &dev_comp->elem[elem_idx];
 
-    if(vnd) {
-        if(mod_idx >= elem->vnd_model_count) {
+    if (vnd) {
+        if (mod_idx >= elem->vnd_model_count) {
             BT_ERR("Invalid vendor model index %u", mod_idx);
             return NULL;
         }
 
         return &elem->vnd_models[mod_idx];
     } else {
-        if(mod_idx >= elem->model_count) {
+        if (mod_idx >= elem->model_count) {
             BT_ERR("Invalid SIG model index %u", mod_idx);
             return NULL;
         }
@@ -269,7 +269,7 @@ static void mod_init(struct bt_mesh_model *mod, struct bt_mesh_elem *elem,
 {
     int i;
 
-    if(mod->pub) {
+    if (mod->pub) {
         mod->pub->mod = mod;
         k_delayed_work_init(&mod->pub->timer, mod_publish);
         k_delayed_work_add_arg(&mod->pub->timer, mod->pub);
@@ -281,13 +281,13 @@ static void mod_init(struct bt_mesh_model *mod, struct bt_mesh_elem *elem,
 
     mod->elem_idx = elem - dev_comp->elem;
 
-    if(vnd) {
+    if (vnd) {
         mod->mod_idx = mod - elem->vnd_models;
     } else {
         mod->mod_idx = mod - elem->models;
     }
 
-    if(mod->cb && mod->cb->init) {
+    if (mod->cb && mod->cb->init) {
         mod->cb->init(mod);
     }
 }
@@ -295,7 +295,7 @@ static void mod_init(struct bt_mesh_model *mod, struct bt_mesh_elem *elem,
 int bt_mesh_comp_register(const struct bt_mesh_comp *comp)
 {
     /* There must be at least one element */
-    if(!comp->elem_count) {
+    if (!comp->elem_count) {
         return -EINVAL;
     }
 
@@ -335,7 +335,7 @@ static u16_t *model_group_get(struct bt_mesh_model *mod, u16_t addr)
     int i;
 
     for(i = 0; i < ARRAY_SIZE(mod->groups); i++) {
-        if(mod->groups[i] == addr) {
+        if (mod->groups[i] == addr) {
             return &mod->groups[i];
         }
     }
@@ -354,13 +354,13 @@ static enum bt_mesh_walk find_group_mod_visitor(struct bt_mesh_model *mod,
 {
     struct find_group_visitor_ctx *ctx = user_data;
 
-    if(mod->elem_idx != ctx->mod->elem_idx) {
+    if (mod->elem_idx != ctx->mod->elem_idx) {
         return BT_MESH_WALK_CONTINUE;
     }
 
     ctx->entry = model_group_get(mod, ctx->addr);
 
-    if(ctx->entry) {
+    if (ctx->entry) {
         ctx->mod = mod;
         return BT_MESH_WALK_STOP;
     }
@@ -392,7 +392,7 @@ static struct bt_mesh_model *bt_mesh_elem_find_group(struct bt_mesh_elem *elem,
         model = &elem->models[i];
         match = model_group_get(model, group_addr);
 
-        if(match) {
+        if (match) {
             return model;
         }
     }
@@ -401,7 +401,7 @@ static struct bt_mesh_model *bt_mesh_elem_find_group(struct bt_mesh_elem *elem,
         model = &elem->vnd_models[i];
         match = model_group_get(model, group_addr);
 
-        if(match) {
+        if (match) {
             return model;
         }
     }
@@ -413,10 +413,10 @@ struct bt_mesh_elem *bt_mesh_elem_find(u16_t addr)
 {
     u16_t index;
 
-    if(BT_MESH_ADDR_IS_UNICAST(addr)) {
+    if (BT_MESH_ADDR_IS_UNICAST(addr)) {
         index = (addr - dev_comp->elem[0].addr);
 
-        if(index < dev_comp->elem_count) {
+        if (index < dev_comp->elem_count) {
             return &dev_comp->elem[index];
         } else {
             return NULL;
@@ -426,7 +426,7 @@ struct bt_mesh_elem *bt_mesh_elem_find(u16_t addr)
     for(index = 0; index < dev_comp->elem_count; index++) {
         struct bt_mesh_elem *elem = &dev_comp->elem[index];
 
-        if(bt_mesh_elem_find_group(elem, addr)) {
+        if (bt_mesh_elem_find_group(elem, addr)) {
             return elem;
         }
     }
@@ -444,7 +444,7 @@ static bool model_has_key(struct bt_mesh_model *mod, u16_t key)
     int i;
 
     for(i = 0; i < ARRAY_SIZE(mod->keys); i++) {
-        if(mod->keys[i] == key ||
+        if (mod->keys[i] == key ||
                 (mod->keys[i] == BT_MESH_KEY_DEV_ANY &&
                  BT_MESH_IS_DEV_KEY(key))) {
             return true;
@@ -456,9 +456,9 @@ static bool model_has_key(struct bt_mesh_model *mod, u16_t key)
 
 static bool model_has_dst(struct bt_mesh_model *mod, u16_t dst)
 {
-    if(BT_MESH_ADDR_IS_UNICAST(dst)) {
+    if (BT_MESH_ADDR_IS_UNICAST(dst)) {
         return (dev_comp->elem[mod->elem_idx].addr == dst);
-    } else if(BT_MESH_ADDR_IS_GROUP(dst) || BT_MESH_ADDR_IS_VIRTUAL(dst)) {
+    } else if (BT_MESH_ADDR_IS_GROUP(dst) || BT_MESH_ADDR_IS_VIRTUAL(dst)) {
         return (bt_mesh_model_find_group(&mod, dst) != NULL);
     }
 
@@ -476,7 +476,7 @@ static const struct bt_mesh_model_op *find_op(struct bt_mesh_model *models,
         *model = &models[i];
 
         for(op = (*model)->op; op->func; op++) {
-            if(op->opcode == opcode) {
+            if (op->opcode == opcode) {
                 return op;
             }
         }
@@ -491,7 +491,7 @@ static int get_opcode(struct os_mbuf *buf, u32_t *opcode)
     switch(buf->om_data[0] >> 6) {
         case 0x00:
         case 0x01:
-            if(buf->om_data[0] == 0x7f) {
+            if (buf->om_data[0] == 0x7f) {
                 BT_ERR("Ignoring RFU OpCode");
                 return -EINVAL;
             }
@@ -500,7 +500,7 @@ static int get_opcode(struct os_mbuf *buf, u32_t *opcode)
             return 0;
 
         case 0x02:
-            if(buf->om_len < 2) {
+            if (buf->om_len < 2) {
                 BT_ERR("Too short payload for 2-octet OpCode");
                 return -EINVAL;
             }
@@ -509,7 +509,7 @@ static int get_opcode(struct os_mbuf *buf, u32_t *opcode)
             return 0;
 
         case 0x03:
-            if(buf->om_len < 3) {
+            if (buf->om_len < 3) {
                 BT_ERR("Too short payload for 3-octet OpCode");
                 return -EINVAL;
             }
@@ -553,7 +553,7 @@ void bt_mesh_model_recv(struct bt_mesh_net_rx *rx, struct os_mbuf *buf)
            rx->ctx.addr, rx->ctx.recv_dst);
     BT_DBG("len %u: %s", buf->om_len, bt_hex(buf->om_data, buf->om_len));
 
-    if(get_opcode(buf, &opcode) < 0) {
+    if (get_opcode(buf, &opcode) < 0) {
         BT_WARN("Unable to decode OpCode");
         return;
     }
@@ -568,7 +568,7 @@ void bt_mesh_model_recv(struct bt_mesh_net_rx *rx, struct os_mbuf *buf)
          * vendor models cannot contain SIG (1- or 2-byte) OpCodes, so
          * we only need to do the lookup in one of the model lists.
          */
-        if(BT_MESH_MODEL_OP_LEN(opcode) < 3) {
+        if (BT_MESH_MODEL_OP_LEN(opcode) < 3) {
             models = elem->models;
             count = elem->model_count;
         } else {
@@ -578,20 +578,20 @@ void bt_mesh_model_recv(struct bt_mesh_net_rx *rx, struct os_mbuf *buf)
 
         const struct bt_mesh_model_op *op = find_op(models, count, opcode, &model);
 
-        if(!op) {
+        if (!op) {
             BT_DBG("No OpCode 0x%08x for elem %d", opcode, i);
             continue;
         }
 
-        if(!model_has_key(model, rx->ctx.app_idx)) {
+        if (!model_has_key(model, rx->ctx.app_idx)) {
             continue;
         }
 
-        if(!model_has_dst(model, rx->ctx.recv_dst)) {
+        if (!model_has_dst(model, rx->ctx.recv_dst)) {
             continue;
         }
 
-        if(buf->om_len < op->min_len) {
+        if (buf->om_len < op->min_len) {
             BT_ERR("Too short message for OpCode 0x%08x", opcode);
             continue;
         }
@@ -639,22 +639,22 @@ static int model_send(struct bt_mesh_model *model,
            tx->ctx->app_idx, tx->ctx->addr);
     BT_DBG("len %u: %s", msg->om_len, bt_hex(msg->om_data, msg->om_len));
 
-    if(!bt_mesh_is_provisioned()) {
+    if (!bt_mesh_is_provisioned()) {
         BT_ERR("Local node is not yet provisioned");
         return -EAGAIN;
     }
 
-    if(net_buf_simple_tailroom(msg) < 4) {
+    if (net_buf_simple_tailroom(msg) < 4) {
         BT_ERR("Not enough tailroom for TransMIC");
         return -EINVAL;
     }
 
-    if(msg->om_len > BT_MESH_TX_SDU_MAX - 4) {
+    if (msg->om_len > BT_MESH_TX_SDU_MAX - 4) {
         BT_ERR("Too big message");
         return -EMSGSIZE;
     }
 
-    if(!implicit_bind && !model_has_key(model, tx->ctx->app_idx)) {
+    if (!implicit_bind && !model_has_key(model, tx->ctx->app_idx)) {
         BT_ERR("Model not bound to AppKey 0x%04x", tx->ctx->app_idx);
         return -EINVAL;
     }
@@ -692,30 +692,30 @@ int bt_mesh_model_publish(struct bt_mesh_model *model)
     int err;
     BT_DBG("");
 
-    if(!pub) {
+    if (!pub) {
         err = -ENOTSUP;
         goto done;
     }
 
-    if(pub->addr == BT_MESH_ADDR_UNASSIGNED) {
+    if (pub->addr == BT_MESH_ADDR_UNASSIGNED) {
         err = -EADDRNOTAVAIL;
         goto done;
     }
 
     key = bt_mesh_app_key_find(pub->key);
 
-    if(!key) {
+    if (!key) {
         err = -EADDRNOTAVAIL;
         goto done;
     }
 
-    if(pub->msg->om_len + 4 > BT_MESH_TX_SDU_MAX) {
+    if (pub->msg->om_len + 4 > BT_MESH_TX_SDU_MAX) {
         BT_ERR("Message does not fit maximum SDU size");
         err = -EMSGSIZE;
         goto done;
     }
 
-    if(pub->count) {
+    if (pub->count) {
         BT_WARN("Clearing publish retransmit timer");
         k_delayed_work_cancel(&pub->timer);
     }
@@ -733,7 +733,7 @@ int bt_mesh_model_publish(struct bt_mesh_model *model)
            BT_MESH_PUB_TRANSMIT_INT(pub->retransmit));
     err = model_send(model, &tx, true, sdu, &pub_sent_cb, model);
 
-    if(err) {
+    if (err) {
         /* Don't try retransmissions for this publish attempt */
         pub->count = 0;
         /* Make sure the publish timer gets reset */
@@ -751,7 +751,7 @@ struct bt_mesh_model *bt_mesh_model_find_vnd(const struct bt_mesh_elem *elem,
     u8_t i;
 
     for(i = 0; i < elem->vnd_model_count; i++) {
-        if(elem->vnd_models[i].vnd.company == company &&
+        if (elem->vnd_models[i].vnd.company == company &&
                 elem->vnd_models[i].vnd.id == id) {
             return &elem->vnd_models[i];
         }
@@ -766,7 +766,7 @@ struct bt_mesh_model *bt_mesh_model_find(const struct bt_mesh_elem *elem,
     u8_t i;
 
     for(i = 0; i < elem->model_count; i++) {
-        if(elem->models[i].id == id) {
+        if (elem->models[i].id == id) {
             return &elem->models[i];
         }
     }
@@ -801,16 +801,16 @@ void bt_mesh_model_tree_walk(struct bt_mesh_model *root,
     u32_t depth = 0;
 
     do {
-        if(cb(m, depth, user_data) == BT_MESH_WALK_STOP) {
+        if (cb(m, depth, user_data) == BT_MESH_WALK_STOP) {
             return;
         }
 
 #if MYNEWT_VAL(BLE_MESH_MODEL_EXTENSIONS)
 
-        if(m->extends) {
+        if (m->extends) {
             m = m->extends;
             depth++;
-        } else if(m->flags & BT_MESH_MOD_NEXT_IS_PARENT) {
+        } else if (m->flags & BT_MESH_MOD_NEXT_IS_PARENT) {
             m = m->next->next;
             depth--;
         } else {
@@ -833,11 +833,11 @@ int bt_mesh_model_extend(struct bt_mesh_model *mod,
      *
      * We add children (extend them) by inserting them as the first child.
      */
-    if(base_mod->next) {
+    if (base_mod->next) {
         return -EALREADY;
     }
 
-    if(mod->extends) {
+    if (mod->extends) {
         base_mod->next = mod->extends;
     } else {
         base_mod->next = mod;

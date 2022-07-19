@@ -30,11 +30,11 @@ ble_sm_cmd_get(uint8_t opcode, size_t len, struct os_mbuf **txom)
     struct ble_sm_hdr *hdr;
     *txom = ble_hs_mbuf_l2cap_pkt();
 
-    if(*txom == NULL) {
+    if (*txom == NULL) {
         return NULL;
     }
 
-    if(os_mbuf_extend(*txom, sizeof(*hdr) + len) == NULL) {
+    if (os_mbuf_extend(*txom, sizeof(*hdr) + len) == NULL) {
         os_mbuf_free_chain(*txom);
         return NULL;
     }

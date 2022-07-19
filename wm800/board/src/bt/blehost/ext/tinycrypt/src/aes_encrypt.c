@@ -75,9 +75,9 @@ int tc_aes128_set_encrypt_key(TCAesKeySched_t s, const uint8_t *k)
     };
     unsigned int i;
 
-    if(s == (TCAesKeySched_t) 0) {
+    if (s == (TCAesKeySched_t) 0) {
         return TC_CRYPTO_FAIL;
-    } else if(k == (const uint8_t *) 0) {
+    } else if (k == (const uint8_t *) 0) {
         return TC_CRYPTO_FAIL;
     }
 
@@ -89,7 +89,7 @@ int tc_aes128_set_encrypt_key(TCAesKeySched_t s, const uint8_t *k)
     for(; i < (Nb * (Nr + 1)); ++i) {
         unsigned int t = s->words[i - 1];
 
-        if((i % Nk) == 0) {
+        if ((i % Nk) == 0) {
             t = subword(rotword(t)) ^ rconst[i / Nk];
         }
 
@@ -179,11 +179,11 @@ int tc_aes_encrypt(uint8_t *out, const uint8_t *in, const TCAesKeySched_t s)
     uint8_t state[Nk * Nb];
     unsigned int i;
 
-    if(out == (uint8_t *) 0) {
+    if (out == (uint8_t *) 0) {
         return TC_CRYPTO_FAIL;
-    } else if(in == (const uint8_t *) 0) {
+    } else if (in == (const uint8_t *) 0) {
         return TC_CRYPTO_FAIL;
-    } else if(s == (TCAesKeySched_t) 0) {
+    } else if (s == (TCAesKeySched_t) 0) {
         return TC_CRYPTO_FAIL;
     }
 

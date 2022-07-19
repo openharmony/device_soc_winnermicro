@@ -42,13 +42,13 @@ ble_hs_hci_util_read_adv_tx_pwr(int8_t *out_tx_pwr)
                                       BLE_HCI_OCF_LE_RD_ADV_CHAN_TXPWR),
                            NULL, 0, &rsp, sizeof(rsp));
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
     *out_tx_pwr = rsp.power_level;
 
-    if(*out_tx_pwr < BLE_HCI_ADV_CHAN_TXPWR_MIN ||
+    if (*out_tx_pwr < BLE_HCI_ADV_CHAN_TXPWR_MIN ||
             *out_tx_pwr > BLE_HCI_ADV_CHAN_TXPWR_MAX) {
         BLE_HS_LOG(WARN, "advertiser txpwr out of range\n");
     }
@@ -68,7 +68,7 @@ ble_hs_hci_util_rand(void *dst, int len)
         int rc = ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_LE, BLE_HCI_OCF_LE_RAND),
                                NULL, 0, &rsp, sizeof(rsp));
 
-        if(rc != 0) {
+        if (rc != 0) {
             return rc;
         }
 
@@ -92,11 +92,11 @@ ble_hs_hci_util_read_rssi(uint16_t conn_handle, int8_t *out_rssi)
                                       BLE_HCI_OCF_RD_RSSI), &cmd, sizeof(cmd),
                            &rsp, sizeof(rsp));
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
-    if(le16toh(rsp.handle) != conn_handle) {
+    if (le16toh(rsp.handle) != conn_handle) {
         return BLE_HS_ECONTROLLER;
     }
 
@@ -122,12 +122,12 @@ ble_hs_hci_util_set_data_len(uint16_t conn_handle, uint16_t tx_octets,
     struct ble_hci_le_set_data_len_rp rsp;
     int rc;
 
-    if(tx_octets < BLE_HCI_SET_DATALEN_TX_OCTETS_MIN ||
+    if (tx_octets < BLE_HCI_SET_DATALEN_TX_OCTETS_MIN ||
             tx_octets > BLE_HCI_SET_DATALEN_TX_OCTETS_MAX) {
         return BLE_HS_EINVAL;
     }
 
-    if(tx_time < BLE_HCI_SET_DATALEN_TX_TIME_MIN ||
+    if (tx_time < BLE_HCI_SET_DATALEN_TX_TIME_MIN ||
             tx_time > BLE_HCI_SET_DATALEN_TX_TIME_MAX) {
         return BLE_HS_EINVAL;
     }
@@ -139,11 +139,11 @@ ble_hs_hci_util_set_data_len(uint16_t conn_handle, uint16_t tx_octets,
                                       BLE_HCI_OCF_LE_SET_DATA_LEN),
                            &cmd, sizeof(cmd), NULL, 0);
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
-    if(le16toh(rsp.conn_handle) != conn_handle) {
+    if (le16toh(rsp.conn_handle) != conn_handle) {
         return BLE_HS_ECONTROLLER;
     }
 
@@ -157,7 +157,7 @@ ble_hs_hci_util_data_hdr_strip(struct os_mbuf *om,
     int rc;
     rc = os_mbuf_copydata(om, 0, BLE_HCI_DATA_HDR_SZ, out_hdr);
 
-    if(rc != 0) {
+    if (rc != 0) {
         return BLE_HS_ECONTROLLER;
     }
 
@@ -179,11 +179,11 @@ ble_hs_hci_read_chan_map(uint16_t conn_handle, uint8_t *out_chan_map)
                                       BLE_HCI_OCF_LE_RD_CHAN_MAP),
                            &cmd, sizeof(cmd), &rsp, sizeof(rsp));
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
-    if(le16toh(rsp.conn_handle) != conn_handle) {
+    if (le16toh(rsp.conn_handle) != conn_handle) {
         return BLE_HS_ECONTROLLER;
     }
 

@@ -31,7 +31,7 @@ ble_att_cmd_prepare(uint8_t opcode, size_t len, struct os_mbuf *txom)
 {
     struct ble_att_hdr *hdr;
 
-    if(os_mbuf_extend(txom, sizeof(*hdr) + len) == NULL) {
+    if (os_mbuf_extend(txom, sizeof(*hdr) + len) == NULL) {
         os_mbuf_free_chain(txom);
         return NULL;
     }
@@ -46,7 +46,7 @@ ble_att_cmd_get(uint8_t opcode, size_t len, struct os_mbuf **txom)
 {
     *txom = ble_hs_mbuf_l2cap_pkt();
 
-    if(*txom == NULL) {
+    if (*txom == NULL) {
         return NULL;
     }
 
@@ -65,7 +65,7 @@ ble_att_tx(uint16_t conn_handle, struct os_mbuf *txom)
     ble_hs_misc_conn_chan_find_reqd(conn_handle, BLE_L2CAP_CID_ATT, &conn,
                                     &chan);
 
-    if(chan == NULL) {
+    if (chan == NULL) {
         os_mbuf_free_chain(txom);
         rc = BLE_HS_ENOTCONN;
     } else {

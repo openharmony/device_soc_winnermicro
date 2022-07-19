@@ -44,7 +44,6 @@ typedef double double_t;
 #define __DEFINED_double_t
 #endif
 
-
 #if defined(__NEED_max_align_t) && !defined(__DEFINED_max_align_t)
 typedef struct { long long __ll; long double __ld; } max_align_t;
 #define __DEFINED_max_align_t
@@ -98,7 +97,6 @@ typedef _Int64 time_t;
 typedef _Int64 suseconds_t;
 #define __DEFINED_suseconds_t
 #endif
-
 
 #if defined(__NEED_int8_t) && !defined(__DEFINED_int8_t)
 typedef signed char     int8_t;
@@ -155,7 +153,6 @@ typedef unsigned _Int64 uintmax_t;
 #define __DEFINED_uintmax_t
 #endif
 
-
 #if defined(__NEED_mode_t) && !defined(__DEFINED_mode_t)
 typedef unsigned mode_t;
 #define __DEFINED_mode_t
@@ -201,7 +198,6 @@ typedef unsigned _Int64 fsfilcnt_t;
 #define __DEFINED_fsfilcnt_t
 #endif
 
-
 #if defined(__NEED_wint_t) && !defined(__DEFINED_wint_t)
 typedef unsigned wint_t;
 #define __DEFINED_wint_t
@@ -211,7 +207,6 @@ typedef unsigned wint_t;
 typedef unsigned long wctype_t;
 #define __DEFINED_wctype_t
 #endif
-
 
 #if defined(__NEED_timer_t) && !defined(__DEFINED_timer_t)
 typedef void * timer_t;
@@ -237,7 +232,6 @@ struct timeval { time_t tv_sec; suseconds_t tv_usec; };
 struct timespec { time_t tv_sec; int :8*(sizeof(time_t)-sizeof(long))*(__BYTE_ORDER==4321); long tv_nsec; int :8*(sizeof(time_t)-sizeof(long))*(__BYTE_ORDER!=4321); };
 #define __DEFINED_struct_timespec
 #endif
-
 
 #if defined(__NEED_pid_t) && !defined(__DEFINED_pid_t)
 typedef int pid_t;
@@ -268,7 +262,6 @@ typedef int key_t;
 typedef unsigned useconds_t;
 #define __DEFINED_useconds_t
 #endif
-
 
 #ifdef __cplusplus
 #if defined(__NEED_pthread_t) && !defined(__DEFINED_pthread_t)
@@ -318,7 +311,6 @@ typedef struct { unsigned __attr[2]; } pthread_rwlockattr_t;
 #define __DEFINED_pthread_rwlockattr_t
 #endif
 
-
 #if defined(__NEED_struct__IO_FILE) && !defined(__DEFINED_struct__IO_FILE)
 struct _IO_FILE { char __x; };
 #define __DEFINED_struct__IO_FILE
@@ -328,7 +320,6 @@ struct _IO_FILE { char __x; };
 typedef struct _IO_FILE FILE;
 #define __DEFINED_FILE
 #endif
-
 
 #if defined(__NEED_va_list) && !defined(__DEFINED_va_list)
 typedef __builtin_va_list va_list;
@@ -340,30 +331,25 @@ typedef __builtin_va_list __isoc_va_list;
 #define __DEFINED___isoc_va_list
 #endif
 
-
 #if defined(__NEED_mbstate_t) && !defined(__DEFINED_mbstate_t)
 typedef struct __mbstate_t { unsigned __opaque1, __opaque2; } mbstate_t;
 #define __DEFINED_mbstate_t
 #endif
-
 
 #if defined(__NEED_locale_t) && !defined(__DEFINED_locale_t)
 typedef struct __locale_struct * locale_t;
 #define __DEFINED_locale_t
 #endif
 
-
 #if defined(__NEED_sigset_t) && !defined(__DEFINED_sigset_t)
 typedef struct __sigset_t { unsigned long __bits[128/sizeof(long)]; } sigset_t;
 #define __DEFINED_sigset_t
 #endif
 
-
 #if defined(__NEED_struct_iovec) && !defined(__DEFINED_struct_iovec)
 struct iovec { void *iov_base; size_t iov_len; };
 #define __DEFINED_struct_iovec
 #endif
-
 
 #if defined(__NEED_socklen_t) && !defined(__DEFINED_socklen_t)
 typedef unsigned socklen_t;
@@ -374,7 +360,6 @@ typedef unsigned socklen_t;
 typedef unsigned short sa_family_t;
 #define __DEFINED_sa_family_t
 #endif
-
 
 #if defined(__NEED_pthread_attr_t) && !defined(__DEFINED_pthread_attr_t)
 typedef struct { union { int __i[sizeof(long)==8?14:9]; volatile int __vi[sizeof(long)==8?14:9]; unsigned long __s[sizeof(long)==8?7:9]; } __u; } pthread_attr_t;
@@ -410,7 +395,6 @@ typedef struct { union { int __i[sizeof(long)==8?14:8]; volatile int __vi[sizeof
 typedef struct { union { int __i[sizeof(long)==8?8:5]; volatile int __vi[sizeof(long)==8?8:5]; void *__p[sizeof(long)==8?4:5]; } __u; } pthread_barrier_t;
 #define __DEFINED_pthread_barrier_t
 #endif
-
 
 #undef _Addr
 #undef _Int64

@@ -279,13 +279,12 @@ typedef struct {
     uint8_t val[6];
 } ble_addr_t;
 
-
 static inline int ble_addr_cmp(const ble_addr_t *a, const ble_addr_t *b)
 {
     int type_diff;
     type_diff = a->type - b->type;
 
-    if(type_diff != 0) {
+    if (type_diff != 0) {
         return type_diff;
     }
 

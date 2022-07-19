@@ -83,7 +83,7 @@ monitor_uart_tx_char(void *arg)
     uint8_t ch;
 
     /* No more data */
-    if(tx_ringbuf_head == tx_ringbuf_tail) {
+    if (tx_ringbuf_head == tx_ringbuf_tail) {
         return -1;
     }
 
@@ -104,7 +104,7 @@ monitor_uart_queue_char(uint8_t ch)
         uart_start_tx(uart);
         OS_EXIT_CRITICAL(sr);
 
-        if(os_started()) {
+        if (os_started()) {
             os_time_delay(1);
         }
 
@@ -160,7 +160,7 @@ update_drop_counters(struct ble_monitor_hdr *failed_hdr)
             break;
     }
 
-    if(*cnt < UINT8_MAX) {
+    if (*cnt < UINT8_MAX) {
         (*cnt)++;
         ble_npl_callout_reset(&rtt_drops.tmo, OS_TICKS_PER_SEC);
     }
@@ -189,21 +189,21 @@ monitor_write(const void *buf, size_t len)
     /* We will discard any packet which exceeds length of intermediate buffer */
     discard = rtt_pktbuf_pos + len > sizeof(rtt_pktbuf);
 
-    if(!discard) {
+    if (!discard) {
         memcpy(rtt_pktbuf + rtt_pktbuf_pos, buf, len);
     }
 
     rtt_pktbuf_pos += len;
 
-    if(rtt_pktbuf_pos < sizeof(hdr->data_len) + hdr->data_len) {
+    if (rtt_pktbuf_pos < sizeof(hdr->data_len) + hdr->data_len) {
         return;
     }
 
-    if(!discard) {
+    if (!discard) {
         ret = SEGGER_RTT_WriteNoLock(rtt_index, rtt_pktbuf, rtt_pktbuf_pos);
     }
 
-    if(ret > 0) {
+    if (ret > 0) {
         reset_drop_counters();
     } else {
         update_drop_counters(hdr);
@@ -226,7 +226,7 @@ monitor_write_header(uint16_t opcode, uint16_t len)
     hdr_len = sizeof(ts_hdr);
 #if MYNEWT_VAL(BLE_MONITOR_RTT) && MYNEWT_VAL(BLE_MONITOR_RTT_BUFFERED)
 
-    if(rtt_drops.dropped) {
+    if (rtt_drops.dropped) {
         hdr_len += sizeof(rtt_drops.drops_hdr);
     }
 
@@ -245,7 +245,7 @@ monitor_write_header(uint16_t opcode, uint16_t len)
     monitor_write(&hdr, sizeof(hdr));
 #if MYNEWT_VAL(BLE_MONITOR_RTT) && MYNEWT_VAL(BLE_MONITOR_RTT_BUFFERED)
 
-    if(rtt_drops.dropped) {
+    if (rtt_drops.dropped) {
         monitor_write(&rtt_drops.drops_hdr, sizeof(rtt_drops.drops_hdr));
     }
 
@@ -301,7 +301,7 @@ ble_monitor_init(void)
     uart = (struct uart_dev *)os_dev_open(MYNEWT_VAL(BLE_MONITOR_UART_DEV),
                                           OS_TIMEOUT_NEVER, &uc);
 
-    if(!uart) {
+    if (!uart) {
         return -1;
     }
 
@@ -324,7 +324,7 @@ ble_monitor_init(void)
                                          SEGGER_RTT_MODE_BLOCK_IF_FIFO_FULL);
 #endif
 
-    if(rtt_index < 0) {
+    if (rtt_index < 0) {
         return -1;
     }
 
@@ -434,10 +434,10 @@ ble_monitor_out(int c)
     static char buf[MYNEWT_VAL(BLE_MONITOR_CONSOLE_BUFFER_SIZE)];
     static size_t len;
 
-    if(c != '\n') {
+    if (c != '\n') {
         buf[len++] = c;
 
-        if(len < sizeof(buf) - 1) {
+        if (len < sizeof(buf) - 1) {
             return c;
         }
     }

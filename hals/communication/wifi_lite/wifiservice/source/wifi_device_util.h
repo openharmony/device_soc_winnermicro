@@ -34,7 +34,6 @@
 #include "wifi_device_config.h"
 #include "wifi_error_code.h"
 
-
 #include  "wm_wifi_api.h"
 
 /**

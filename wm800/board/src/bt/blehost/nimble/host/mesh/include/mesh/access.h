@@ -277,7 +277,6 @@ struct bt_mesh_model_op {
     .cb = _cb,                                                           \
 }
 
-
 /** @def BT_MESH_MODEL
  *
  * @brief Composition data SIG model entry.

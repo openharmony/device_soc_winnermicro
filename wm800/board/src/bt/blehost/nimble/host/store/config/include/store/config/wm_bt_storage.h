@@ -27,7 +27,6 @@
 #define BTIF_CFG_TYPE_BIN      (1 << 2)
 #define BTIF_CFG_TYPE_VOLATILE (1 << 15)
 
-
 typedef enum {
     NV_LOCAL = 0,
     NV_LOCAL_ADAPTER,
@@ -88,8 +87,6 @@ typedef enum {
 #define ADAPTER_BLE_DHK_VALID_BIT             (1<<11)
 #define ADAPTER_BLE_ER_VALID_BIT              (1<<12)
 
-
-
 /*BT device valid bit mask*/
 #define DEVICE_BD_ADDRESS_VALID_BIT             (1<<0)
 #define DEVICE_NAME_VALID_BIT                   (1<<1)
@@ -111,7 +108,6 @@ typedef enum {
 #define DEVICE_RMT_MANU_VALID_BIT                         (1<<17)
 #define DEVICE_RMT_LMP_VERSION_VALID_BIT                  (1<<18)
 #define DEVICE_RMT_LMP_SUB_VERSION_VALID_BIT              (1<<19)
-
 
 extern int btif_wm_config_get_remote_device(int index, void *ptr, int from_flash);
 
@@ -149,7 +145,6 @@ extern uint32_t btif_config_get_sec_cccd_item(int idx, void *addr, void *our_sec
 extern int btif_config_store_key_map(const uint8_t *map_info, int length, bool force_flush);
 extern int btif_config_load_key_map(uint8_t *map_info, int length);
 extern int btif_config_delete_all();
-
 
 #endif
 

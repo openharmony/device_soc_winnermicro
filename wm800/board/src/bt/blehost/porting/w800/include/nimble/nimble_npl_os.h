@@ -87,14 +87,14 @@ ble_npl_eventq_init(struct ble_npl_eventq *evq)
 {
     tls_os_queue_create(&evq->q, 32);
 
-    if(evq->q == NULL) {
+    if (evq->q == NULL) {
         assert(0);
     }
 }
 static inline void
 ble_npl_eventq_deinit(struct ble_npl_eventq *evq)
 {
-    if(evq && evq->q) {
+    if (evq && evq->q) {
         tls_os_queue_delete(evq->q);
     }
 }
@@ -218,7 +218,7 @@ ble_npl_callout_init(struct ble_npl_callout *co, struct ble_npl_eventq *evq,
 static inline void
 ble_npl_callout_deinit(struct ble_npl_callout *co)
 {
-    if(co && co->handle) {
+    if (co && co->handle) {
         tls_os_timer_delete(co->handle);
     }
 }

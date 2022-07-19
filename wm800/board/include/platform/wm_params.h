@@ -28,7 +28,7 @@
 #include "wm_type_def.h"
 
 /***************************************************************************************
-	ID								|			Data Type
+    ID								|			Data Type
 ***************************************************************************************
 TLS_PARAM_ID_SSID      				|		  	struct tls_param_ssid ssid
 TLS_PARAM_ID_ENCRY      		        	|		  	u8 encry
@@ -196,7 +196,6 @@ TLS_PARAM_ID_AUTO_RECONNECT         	|			u8 auto_reconnect
 #define TLS_PARAM_TX_RATEIDX_MCS15         (27)
 #define TLS_PARAM_TX_RATEIDX_MCS32         (28)
 
-
 /**   MACRO of SSID Broadcast   */
 #define TLS_PARAM_SSIDBRD_DISABLE      (0)
 #define TLS_PARAM_SSIDBRD_ENABLE      (1)
@@ -308,185 +307,185 @@ TLS_PARAM_ID_AUTO_RECONNECT         	|			u8 auto_reconnect
 
 /**   Structure of hardware parameter    */
 struct tls_param_hardware_version {
-	u8 mark;
-	u8 main;
-	u8 sub;
-	u8 material;
-	u8 year;
-	u8 week;
-	u8 res[2];
+    u8 mark;
+    u8 main;
+    u8 sub;
+    u8 material;
+    u8 year;
+    u8 week;
+    u8 res[2];
 };
 
 /**   Structure of specified BSSID parameter    */
 struct tls_param_bssid {
-	u8 bssid_enable;
-	u8 res;
-	u8 bssid[6];
+    u8 bssid_enable;
+    u8 res;
+    u8 bssid[6];
 };
 
 /**   Structure of SSID parameter    */
 struct tls_param_ssid {
-	u8 ssid[32];
-	u32 ssid_len;
+    u8 ssid[32];
+    u32 ssid_len;
 };
 
 /**   Structure of TEM parameter    */
 struct tls_param_tem_offset {
-	u8 offset_len;
-	s32 offset;
+    u8 offset_len;
+    s32 offset;
 };
 
 /**   Structure of KEY parameter    */
 struct tls_param_key {
-	u8 psk[64];
-	u8 key_length;
-	u8 key_index;
-	u8 key_format;
-	u8 res;
+    u8 psk[64];
+    u8 key_length;
+    u8 key_index;
+    u8 key_format;
+    u8 res;
 };
 
 /**   Structure of original KEY parameter    */
 struct tls_param_original_key {
-	u8 psk[64];
-	u32 key_length;
+    u8 psk[64];
+    u32 key_length;
 };
 
 /**   Structure of SHA1 KEY parameter    */
 struct tls_param_sha1{
-	u8 psk_set;
-	u8 psk[32];
+    u8 psk_set;
+    u8 psk[32];
 };
 
 /**   Structure of 802.11 bgn rate parameter    */
 struct tls_param_bgr {
-	u8 bg;
-	u8 max_rate;
-	u8 res[2];
+    u8 bg;
+    u8 max_rate;
+    u8 res[2];
 };
 
 /**   Structure of IP parameter    */
 struct tls_param_ip {
-	u8 dhcp_enable;
-	u8 res[3];
-	u8 ip[4];
-	u8 netmask[4];
-	u8 gateway[4];
-	u8 dns1[4];
-	u8 dns2[4];
+    u8 dhcp_enable;
+    u8 res[3];
+    u8 ip[4];
+    u8 netmask[4];
+    u8 gateway[4];
+    u8 dns1[4];
+    u8 dns2[4];
 };
 
 /**   Structure of uart parameter    */
 struct tls_param_uart {
-	u32 baudrate;
-	u8 stop_bits;
-	u8 parity;
-	u8 flow;
-	u8 charsize;
+    u32 baudrate;
+    u8 stop_bits;
+    u8 parity;
+    u8 flow;
+    u8 charsize;
 };
 
 /**   Structure of socket parameter    */
 struct tls_param_socket {
-	u8 protocol;
-	u8 client_or_server;
-	u16 port_num;
-	u8 host[32];
+    u8 protocol;
+    u8 client_or_server;
+    u16 port_num;
+    u8 host[32];
 };
 
 struct tls_param_wps {
-	u8 wps_enable;
-	u8 mode;
-	u8 flag;
-	u8 res;
-	u8 pin[8];
+    u8 wps_enable;
+    u8 mode;
+    u8 flag;
+    u8 res;
+    u8 pin[8];
 };
 
 /**   Structure of oray client */
 struct tls_param_oray_client {
-	u32 oray_client_enable;
-	u8 oray_client_user[32];
-	u8 oray_client_pass[32];
+    u32 oray_client_enable;
+    u8 oray_client_user[32];
+    u8 oray_client_pass[32];
 };
 
 /**   Structure of web server parameter    */
 struct tls_webs_cfg {
-	u8	AutoRun;
-	u8	Reserved;
-	u16 PortNum;
+    u8	AutoRun;
+    u8	Reserved;
+    u16 PortNum;
 };
 
 /**   Structure of user default parameter    */
 typedef struct tls_user_param{
 
-	u8 wireless_protocol;
-	u8 auto_mode;
-	u8 dhcp_enable;
-	u8 user_port_mode;
+    u8 wireless_protocol;
+    u8 auto_mode;
+    u8 dhcp_enable;
+    u8 user_port_mode;
 
-	u8 ip[4];
-	u8 netmask[4];
-	u8 gateway[4];
-	u8 dns[4];
+    u8 ip[4];
+    u8 netmask[4];
+    u8 gateway[4];
+    u8 dns[4];
 
-	u32 baudrate;
+    u32 baudrate;
 
-	u8 socket_protocol;
-	u8 socket_client_or_server;
-	u16 socket_port_num;
-	u8 socket_host[32];
-	u8 auto_powersave;
-	u8 PassWord[6];
+    u8 socket_protocol;
+    u8 socket_client_or_server;
+    u16 socket_port_num;
+    u8 socket_host[32];
+    u8 auto_powersave;
+    u8 PassWord[6];
 }ST_Wm_User_Param;
 typedef struct {
-	u32 valid_tag;  /*0xdeadbeaf means valid*/
-	u32 valid_bit;
-	u8 bd_addr[6]; 	 /*Local Address*/ 
-	uint8_t name_len;
-	u8 name[16];        /*Local Name*/
-	u32 class_of_device; /*Class of Device*/
-	u8 io_cap;
-	u8 discoverable;
-	u8 connectable;
-	u8 bt_auth_req;
-	u8 mode;			  /*Adv, Initiator, ......*/
-	u8 ble_auth_req;
-	u8 ir[16];
-	u8 irk[16];
-	u8 dhk[16];
-	u8 er[16];
+    u32 valid_tag;  /*0xdeadbeaf means valid*/
+    u32 valid_bit;
+    u8 bd_addr[6];      /*Local Address*/ 
+    uint8_t name_len;
+    u8 name[16];        /*Local Name*/
+    u32 class_of_device; /*Class of Device*/
+    u8 io_cap;
+    u8 discoverable;
+    u8 connectable;
+    u8 bt_auth_req;
+    u8 mode;			  /*Adv, Initiator, ......*/
+    u8 ble_auth_req;
+    u8 ir[16];
+    u8 irk[16];
+    u8 dhk[16];
+    u8 er[16];
 } bt_adapter_t;
 
 typedef struct {
-	u32 valid_tag;  /*0xdeadbeaf means valid*/
-	u8 in_use;
-	u32 valid_bit;
-	u8 bd_addr[6];
-	u8 name[16];
-	u8 name_len;
-	u32 class_of_device;
-	u32 available_service;
-	u8 link_key[16];
-	u8 key_type;
-	u8 io_cap;
-	u8 pin_length;
-	u8 device_type;
-	u8 reconnect_needed;
-	u8 ble_addr_type;
-	/* KEY_PENC */
-	u8 key_penc[28];
-	/* KEY_PID */
-	u8 key_pid[23];
-	/* KEY_PID */
-	u8 key_lid[23];
-	/* KEY_PCSRK */
-	u8 key_pcsrk[24];
-	/* KEY_LCSRK */
-	u8 key_lcsrk[24];
-	/* KEY_LENC */
-	u8 key_lenc[20];
-	u32 manufacturer;
-	u32 lmpver;
-	u32 lmpsubver;
-	
+    u32 valid_tag;  /*0xdeadbeaf means valid*/
+    u8 in_use;
+    u32 valid_bit;
+    u8 bd_addr[6];
+    u8 name[16];
+    u8 name_len;
+    u32 class_of_device;
+    u32 available_service;
+    u8 link_key[16];
+    u8 key_type;
+    u8 io_cap;
+    u8 pin_length;
+    u8 device_type;
+    u8 reconnect_needed;
+    u8 ble_addr_type;
+    /* KEY_PENC */
+    u8 key_penc[28];
+    /* KEY_PID */
+    u8 key_pid[23];
+    /* KEY_PID */
+    u8 key_lid[23];
+    /* KEY_PCSRK */
+    u8 key_pcsrk[24];
+    /* KEY_LCSRK */
+    u8 key_lcsrk[24];
+    /* KEY_LENC */
+    u8 key_lenc[20];
+    u32 manufacturer;
+    u32 lmpver;
+    u32 lmpsubver;
+    
 } bt_remote_device_t;
 
 /**
@@ -525,14 +524,14 @@ int tls_param_init(void);
 
 /**
  * @brief          This function is used to load the system's default
- 				   parameters
+                    parameters
  *
  * @param[in]      None
  *
  * @return         None
  *
  * @note           This function read user defined parameters first,
- 				   if wrong, all the parameters restore factory settings
+                    if wrong, all the parameters restore factory settings
  */
 void tls_param_load_factory_default(void);
 
@@ -540,10 +539,10 @@ void tls_param_load_factory_default(void);
  * @brief          This function is used to set one system parameter by its id
  *
  * @param[in]      id         param id,from TLS_PARAM_ID_SSID
- 						      to (TLS_PARAM_ID_MAX - 1)
+                               to (TLS_PARAM_ID_MAX - 1)
  * @param[in]      *argv      store parameters
  * @param[in]      to_flash   whether the parameter is written to flash,
- 							  1:write to flash,0:only write memory
+                               1:write to flash,0:only write memory
  *
  * @retval         TLS_PARAM_STATUS_OK       set success
  * @retval         TLS_PARAM_STATUS_EINVALID invalid param
@@ -556,10 +555,10 @@ int tls_param_set(int id, void *argv, bool to_flash);
  * @brief          This function is used to get one system parameter by its id.
  *
  * @param[in]      id            param id,from TLS_PARAM_ID_SSID
- 								 to (TLS_PARAM_ID_MAX - 1)
+                                  to (TLS_PARAM_ID_MAX - 1)
  * @param[in]      *argv         store parameters
  * @param[in]      from_flash    whether the parameter is readed from flash,
- 								 1 read from flash,0 read from memory
+                                  1 read from flash,0 read from memory
  *
  * @retval         TLS_PARAM_STATUS_OK       success
  * @retval         TLS_PARAM_STATUS_EINVALID invalid param
@@ -605,7 +604,7 @@ void tls_restore_param_from_backup(void);
  * @retval         TLS_PARAM_STATUS_EIO      read or write falsh error
  *
  * @note           This function read user defined parameters first,
- 				   if wrong, all the parameters restore factory settings
+                    if wrong, all the parameters restore factory settings
  */
 int tls_param_to_default(void);
 
@@ -672,7 +671,7 @@ int tls_param_get_program_param(u32 *pBase);
 
 /**
  * @brief          This function is used to set program base,image len,and
- 				   checksum
+                    checksum
  *
  * @param[in]      base        base address
  * @param[in]      totallen    total length of the image

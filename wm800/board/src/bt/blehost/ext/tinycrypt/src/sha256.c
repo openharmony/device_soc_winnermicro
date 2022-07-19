@@ -39,7 +39,7 @@ static void compress(unsigned int *iv, const uint8_t *data);
 int tc_sha256_init(TCSha256State_t s)
 {
     /* input sanity check: */
-    if(s == (TCSha256State_t) 0) {
+    if (s == (TCSha256State_t) 0) {
         return TC_CRYPTO_FAIL;
     }
 
@@ -64,17 +64,17 @@ int tc_sha256_init(TCSha256State_t s)
 int tc_sha256_update(TCSha256State_t s, const uint8_t *data, size_t datalen)
 {
     /* input sanity check: */
-    if(s == (TCSha256State_t) 0 ||
+    if (s == (TCSha256State_t) 0 ||
             data == (void *) 0) {
         return TC_CRYPTO_FAIL;
-    } else if(datalen == 0) {
+    } else if (datalen == 0) {
         return TC_CRYPTO_SUCCESS;
     }
 
     while(datalen-- > 0) {
         s->leftover[s->leftover_offset++] = *(data++);
 
-        if(s->leftover_offset >= TC_SHA256_BLOCK_SIZE) {
+        if (s->leftover_offset >= TC_SHA256_BLOCK_SIZE) {
             compress(s->iv, s->leftover);
             s->leftover_offset = 0;
             s->bits_hashed += (TC_SHA256_BLOCK_SIZE << 3);
@@ -89,7 +89,7 @@ int tc_sha256_final(uint8_t *digest, TCSha256State_t s)
     unsigned int i;
 
     /* input sanity check: */
-    if(digest == (uint8_t *) 0 ||
+    if (digest == (uint8_t *) 0 ||
             s == (TCSha256State_t) 0) {
         return TC_CRYPTO_FAIL;
     }
@@ -97,7 +97,7 @@ int tc_sha256_final(uint8_t *digest, TCSha256State_t s)
     s->bits_hashed += (s->leftover_offset << 3);
     s->leftover[s->leftover_offset++] = 0x80; /* always room for one byte */
 
-    if(s->leftover_offset > (sizeof(s->leftover) - 8)) {
+    if (s->leftover_offset > (sizeof(s->leftover) - 8)) {
         /* there is not room for all the padding in this block */
         _set(s->leftover + s->leftover_offset, 0x00,
              sizeof(s->leftover) - s->leftover_offset);
