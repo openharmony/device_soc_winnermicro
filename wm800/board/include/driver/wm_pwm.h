@@ -27,7 +27,6 @@
 
 #include "wm_type_def.h"
 
-
 /** pwm channel's maximum number */
 #define PWM_CHANNEL_MAX_NUM        5
 

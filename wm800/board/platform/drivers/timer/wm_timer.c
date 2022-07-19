@@ -69,7 +69,7 @@ static void timer_irq_callback(void *p)
 
     timer_id = (u8)(u32)p;
 
-    //timer_clear_irq(timer_id);
+    // timer_clear_irq(timer_id);
 
     if (NULL != timer_context[timer_id].callback)
         timer_context[timer_id].callback(timer_context[timer_id].arg);
@@ -79,39 +79,39 @@ static void timer_irq_callback(void *p)
 
 void TIMER0_5_IRQHandler(void)
 {
-	u32 timer_csr = tls_reg_read32(HR_TIMER0_5_CSR);
+    u32 timer_csr = tls_reg_read32(HR_TIMER0_5_CSR);
 
-	tls_reg_write32(HR_TIMER0_5_CSR, timer_csr);
+    tls_reg_write32(HR_TIMER0_5_CSR, timer_csr);
 
-	if(timer_csr & TLS_TIMER_INT_CLR(0))
-	{
-		timer_irq_callback((void *)TLS_TIMER_ID_0);
-	}
+    if (timer_csr & TLS_TIMER_INT_CLR(0))
+    {
+        timer_irq_callback((void *)TLS_TIMER_ID_0);
+    }
 
-	if(timer_csr & TLS_TIMER_INT_CLR(1))
-	{
-		timer_irq_callback((void *)TLS_TIMER_ID_1);
-	}
+    if (timer_csr & TLS_TIMER_INT_CLR(1))
+    {
+        timer_irq_callback((void *)TLS_TIMER_ID_1);
+    }
 
-	if(timer_csr & TLS_TIMER_INT_CLR(2))
-	{
-		timer_irq_callback((void *)TLS_TIMER_ID_2);
-	}
+    if (timer_csr & TLS_TIMER_INT_CLR(2))
+    {
+        timer_irq_callback((void *)TLS_TIMER_ID_2);
+    }
 
-	if(timer_csr & TLS_TIMER_INT_CLR(3))
-	{
-		timer_irq_callback((void *)TLS_TIMER_ID_3);
-	}
+    if (timer_csr & TLS_TIMER_INT_CLR(3))
+    {
+        timer_irq_callback((void *)TLS_TIMER_ID_3);
+    }
 
-	if(timer_csr & TLS_TIMER_INT_CLR(4))
-	{
-		timer_irq_callback((void *)TLS_TIMER_ID_4);
-	}
+    if (timer_csr & TLS_TIMER_INT_CLR(4))
+    {
+        timer_irq_callback((void *)TLS_TIMER_ID_4);
+    }
 
-	if(timer_csr & TLS_TIMER_INT_CLR(5))
-	{
-		timer_irq_callback((void *)TLS_TIMER_ID_5);
-	}
+    if (timer_csr & TLS_TIMER_INT_CLR(5))
+    {
+        timer_irq_callback((void *)TLS_TIMER_ID_5);
+    }
 }
 
 /**
@@ -119,8 +119,8 @@ void TIMER0_5_IRQHandler(void)
  *
  * @param[in]      cfg     timer configuration
  *
- * @retval         	WM_TIMER_ID_INVALID     failed
- * @retval         	other                   timer id[0~5]
+ * @retval             WM_TIMER_ID_INVALID     failed
+ * @retval             other                   timer id[0~5]
  *
  * @note
  * user not need clear interrupt flag.
@@ -141,7 +141,7 @@ u8 tls_timer_create(struct tls_timer_cfg *cfg)
 
     if (TLS_TIMER_ID_MAX == i)
     {
-    	return WM_TIMER_ID_INVALID;
+        return WM_TIMER_ID_INVALID;
     }
 
     if (wm_timer_bitmap == 0)
@@ -153,22 +153,22 @@ u8 tls_timer_create(struct tls_timer_cfg *cfg)
     timer_context[i].callback = cfg->callback;
     timer_context[i].arg = cfg->arg;
 
-	tls_sys_clk sysclk;	
+    tls_sys_clk sysclk;    
 
-	tls_sys_clk_get(&sysclk);
-	tls_reg_write32(HR_TIMER_CFG, sysclk.apbclk-1);		
-	
+    tls_sys_clk_get(&sysclk);
+    tls_reg_write32(HR_TIMER_CFG, sysclk.apbclk-1);        
+    
     timer_csr = tls_reg_read32(HR_TIMER0_5_CSR);
     if (!cfg->is_repeat)
-	    timer_csr |=  TLS_TIMER_ONE_TIME(i);
-	else
-	    timer_csr &= ~(TLS_TIMER_ONE_TIME(i));
-	if (TLS_TIMER_UNIT_MS == cfg->unit)
-	    timer_csr |=  TLS_TIMER_MS_UNIT(i);
-	else
-	    timer_csr &= ~(TLS_TIMER_MS_UNIT(i));
+        timer_csr |=  TLS_TIMER_ONE_TIME(i);
+    else
+        timer_csr &= ~(TLS_TIMER_ONE_TIME(i));
+    if (TLS_TIMER_UNIT_MS == cfg->unit)
+        timer_csr |=  TLS_TIMER_MS_UNIT(i);
+    else
+        timer_csr &= ~(TLS_TIMER_MS_UNIT(i));
     tls_reg_write32(HR_TIMER0_5_CSR, timer_csr | TLS_TIMER_INT_CLR(i));
-    if(cfg->timeout){
+    if (cfg->timeout){
         tls_reg_write32(HR_TIMER0_PRD + 0x04 * i, cfg->timeout);
     }
 
@@ -180,7 +180,7 @@ u8 tls_timer_create(struct tls_timer_cfg *cfg)
 /**
  * @brief          This function is used to start the timer
  *
- * @param[in]      	timer_id    timer id[0~5]
+ * @param[in]          timer_id    timer id[0~5]
  *
  * @return         None
  *
@@ -199,7 +199,7 @@ void tls_timer_start(u8 timer_id)
 /**
  * @brief          This function is used to stop the timer
  *
- * @param[in]      	timer_id    timer id[0~5]
+ * @param[in]          timer_id    timer id[0~5]
  *
  * @return         None
  *
@@ -212,18 +212,18 @@ void tls_timer_stop(u8 timer_id)
 
     tls_reg_write32(HR_TIMER0_5_CSR, tls_reg_read32(HR_TIMER0_5_CSR)|TLS_TIMER_INT_CLR(timer_id));
     tls_reg_write32(HR_TIMER0_5_CSR, tls_reg_read32(HR_TIMER0_5_CSR) &~ TLS_TIMER_EN(timer_id));
-	
+    
     return;
 }
 
 /**
  * @brief           This function is used to change a timer wait time
  *
- * @param[in]      	timer_id    timer id[0~5]
+ * @param[in]          timer_id    timer id[0~5]
  *
- * @param[in]      	newtime     new wait time
+ * @param[in]          newtime     new wait time
  *
- * @retval         	None
+ * @retval             None
  *
  * @note            If the timer does not start, this function will start the timer
  */
@@ -243,22 +243,22 @@ void tls_timer_change(u8 timer_id, u32 newtime)
 /**
  * @brief           This function is used to read a timer's current value
  *
- * @param[in]      	timer_id    timer id[0~5]
+ * @param[in]          timer_id    timer id[0~5]
  *
- * @retval         	timer's current value
+ * @retval             timer's current value
  *
  * @note            none
  */
 u32 tls_timer_read(u8 timer_id)
 {
-	u32 value;
-	
+    u32 value;
+    
     if (!(wm_timer_bitmap & BIT(timer_id)))
     {
         return 0;
     }
 
-	value = tls_reg_read32(HR_TIMER0_CNT + 0x04 * timer_id);
+    value = tls_reg_read32(HR_TIMER0_CNT + 0x04 * timer_id);
 
     return value;
 }
@@ -266,7 +266,7 @@ u32 tls_timer_read(u8 timer_id)
 /**
  * @brief          This function is used to delete the timer
  *
- * @param[in]      	timer_id    timer id[0~5]
+ * @param[in]          timer_id    timer id[0~5]
  *
  * @return         None
  *
@@ -284,10 +284,10 @@ void tls_timer_destroy(u8 timer_id)
 
     wm_timer_bitmap &= ~BIT(timer_id);
 
-	if (wm_timer_bitmap == 0)
-	{
-		tls_close_peripheral_clock(TLS_PERIPHERAL_TYPE_TIMER);
-	}
+    if (wm_timer_bitmap == 0)
+    {
+        tls_close_peripheral_clock(TLS_PERIPHERAL_TYPE_TIMER);
+    }
 
     return;
 }

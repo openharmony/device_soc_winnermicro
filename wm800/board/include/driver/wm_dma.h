@@ -45,7 +45,6 @@
 #define TLS_DMA_FLAGS_CHAIN_LINK_EN             (1   << 6)
 #define TLS_DMA_FLAGS_CHANNEL_VALID             (1   << 7)
 
-
 #define TLS_DMA_DESC_VALID                      (1U  << 31)
 #define TLS_DMA_DESC_CTRL_SRC_ADD_INC           (1   << 0)
 #define TLS_DMA_DESC_CTRL_DEST_ADD_INC          (1   << 2)
@@ -56,18 +55,17 @@
 #define TLS_DMA_DESC_CTRL_BURST_SIZE4           (1   << 6)
 #define TLS_DMA_DESC_CTRL_TOTAL_BYTES(n)        ((n) << 7)
 
-
 /* dma interrupt flags */
 #define TLS_DMA_IRQ_BURST_DONE                  (1 << 0)
 #define TLS_DMA_IRQ_TRANSFER_DONE               (1 << 1)
 #define TLS_DMA_IRQ_BOTH_DONE                   (TLS_DMA_IRQ_BURST_DONE | TLS_DMA_IRQ_TRANSFER_DONE)
 
 struct tls_dma_descriptor {
-	unsigned int valid;
-	unsigned int dma_ctrl;
-	unsigned int src_addr;
-	unsigned int dest_addr;
-	struct tls_dma_descriptor *next;    /**< next dms descriptor */
+    unsigned int valid;
+    unsigned int dma_ctrl;
+    unsigned int src_addr;
+    unsigned int dest_addr;
+    struct tls_dma_descriptor *next;    /**< next dms descriptor */
 };
 
 /**
@@ -90,7 +88,6 @@ struct tls_dma_descriptor {
  * @{
  */
 
-
 /**
  * @brief          	This function is used to clear dma interrupt flag.
  *
@@ -102,7 +99,6 @@ struct tls_dma_descriptor {
  * @note           	None
  */
 void tls_dma_irq_clr(unsigned char ch, unsigned char flags);
-
 
 /**
  * @brief          	This function is used to register dma interrupt callback function.
@@ -118,7 +114,6 @@ void tls_dma_irq_clr(unsigned char ch, unsigned char flags);
  */
 void tls_dma_irq_register(unsigned char ch, void (*callback)(void *p), void *arg, unsigned char flags);
 
-
 /**
  * @brief          This function is used to register dma interrupt
  *
@@ -129,7 +124,6 @@ void tls_dma_irq_register(unsigned char ch, void (*callback)(void *p), void *arg
  * @note           	None
  */
 int tls_dma_wait_complt(unsigned char ch);
-
 
 /**
  * @brief          This function is used to Start the DMA controller by Wrap
@@ -157,7 +151,6 @@ int tls_dma_wait_complt(unsigned char ch);
 unsigned char tls_dma_start_by_wrap(unsigned char ch, struct tls_dma_descriptor *dma_desc,
                                     unsigned char auto_reload, unsigned short src_zize,
                                     unsigned short dest_zize);
-
 
 /**
  * @brief          This function is used to Wait until DMA operation completes
@@ -196,7 +189,6 @@ unsigned char tls_dma_start(unsigned char ch, struct tls_dma_descriptor *dma_des
  */
 unsigned char tls_dma_stop(unsigned char ch);
 
-
  /**
  * @brief        This function is used to Request a free dma channel
  *				If ch is out of range [0,7] or valid but used, the function will select another free channel.
@@ -212,7 +204,6 @@ unsigned char tls_dma_stop(unsigned char ch);
  */
 unsigned char tls_dma_request(unsigned char ch, unsigned char flags);
 
-
 /**
  * @brief          This function is used to Free the DMA channel when not use
  *
@@ -223,7 +214,6 @@ unsigned char tls_dma_request(unsigned char ch, unsigned char flags);
  * @note           None
  */
 void tls_dma_free(unsigned char ch);
-
 
 /**
  * @brief          This function is used to Initialize DMA Control

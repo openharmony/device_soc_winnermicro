@@ -60,13 +60,13 @@ ble_hs_hci_cmd_send(uint16_t opcode, uint8_t len, const void *cmddata)
     cmd->opcode = htole16(opcode);
     cmd->length = len;
 
-    if(len != 0) {
+    if (len != 0) {
         memcpy(cmd->data, cmddata, len);
     }
 
     rc = ble_hs_hci_cmd_transport(cmd);
 
-    if(rc == 0) {
+    if (rc == 0) {
         STATS_INC(ble_hs_stats, hci_cmd);
     } else {
         BLE_HS_LOG(DEBUG, "ble_hs_hci_cmd_send failure; rc=%d\n", rc);
@@ -83,7 +83,7 @@ ble_hs_hci_cmd_send_buf(uint16_t opcode, const void *buf, uint8_t buf_len)
             return BLE_HS_ENOTSYNCED;
 
         case BLE_HS_SYNC_STATE_BRINGUP:
-            if(!ble_hs_is_parent_task()) {
+            if (!ble_hs_is_parent_task()) {
                 return BLE_HS_ENOTSYNCED;
             }
 

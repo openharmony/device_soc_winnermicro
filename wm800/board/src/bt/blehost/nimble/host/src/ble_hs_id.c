@@ -39,11 +39,11 @@ ble_hs_id_gen_rnd(int nrpa, ble_addr_t *out_addr)
     out_addr->type = BLE_ADDR_RANDOM;
     rc = ble_hs_hci_util_rand(out_addr->val, 6);
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
-    if(nrpa) {
+    if (nrpa) {
         out_addr->val[5] &= ~0xc0;
     } else {
         out_addr->val[5] |= 0xc0;
@@ -70,7 +70,7 @@ ble_hs_id_set_rnd(const uint8_t *rnd_addr)
     ones += __builtin_popcount(rnd_addr[4]);
     ones += __builtin_popcount(rnd_addr[5] & 0x3f);
 
-    if((addr_type_byte != 0x00 && addr_type_byte != 0xc0) ||
+    if ((addr_type_byte != 0x00 && addr_type_byte != 0xc0) ||
             (ones == 0 || ones == 46)) {
         rc = BLE_HS_EINVAL;
         goto done;
@@ -78,7 +78,7 @@ ble_hs_id_set_rnd(const uint8_t *rnd_addr)
 
     rc = ble_hs_hci_util_set_random_addr(rnd_addr);
 
-    if(rc != 0) {
+    if (rc != 0) {
         goto done;
     }
 
@@ -137,15 +137,15 @@ ble_hs_id_addr(uint8_t id_addr_type, const uint8_t **out_id_addr,
             return BLE_HS_EINVAL;
     }
 
-    if(memcmp(id_addr, ble_hs_misc_null_addr, 6) == 0) {
+    if (memcmp(id_addr, ble_hs_misc_null_addr, 6) == 0) {
         return BLE_HS_ENOADDR;
     }
 
-    if(out_id_addr != NULL) {
+    if (out_id_addr != NULL) {
         *out_id_addr = id_addr;
     }
 
-    if(out_is_nrpa != NULL) {
+    if (out_is_nrpa != NULL) {
         *out_is_nrpa = nrpa;
     }
 
@@ -161,7 +161,7 @@ ble_hs_id_copy_addr(uint8_t id_addr_type, uint8_t *out_id_addr,
     ble_hs_lock();
     rc = ble_hs_id_addr(id_addr_type, &addr, out_is_nrpa);
 
-    if(rc == 0 && out_id_addr != NULL) {
+    if (rc == 0 && out_id_addr != NULL) {
         memcpy(out_id_addr, addr, 6);
     }
 
@@ -181,7 +181,7 @@ ble_hs_id_addr_type_usable(uint8_t own_addr_type)
         case BLE_OWN_ADDR_RANDOM:
             rc = ble_hs_id_addr(own_addr_type, NULL, NULL);
 
-            if(rc != 0) {
+            if (rc != 0) {
                 return rc;
             }
 
@@ -192,11 +192,11 @@ ble_hs_id_addr_type_usable(uint8_t own_addr_type)
             id_addr_type = ble_hs_misc_own_addr_type_to_id(own_addr_type);
             rc = ble_hs_id_addr(id_addr_type, NULL, &nrpa);
 
-            if(rc != 0) {
+            if (rc != 0) {
                 return rc;
             }
 
-            if(nrpa) {
+            if (nrpa) {
                 return BLE_HS_ENOADDR;
             }
 
@@ -215,16 +215,16 @@ ble_hs_id_use_addr(uint8_t own_addr_type)
     int rc;
     rc = ble_hs_id_addr_type_usable(own_addr_type);
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
     /* If privacy is being used, make sure RPA rotation is in effect. */
-    if(own_addr_type == BLE_OWN_ADDR_RPA_PUBLIC_DEFAULT ||
+    if (own_addr_type == BLE_OWN_ADDR_RPA_PUBLIC_DEFAULT ||
             own_addr_type == BLE_OWN_ADDR_RPA_RANDOM_DEFAULT) {
         rc = ble_hs_pvcy_ensure_started();
 
-        if(rc != 0) {
+        if (rc != 0) {
             return rc;
         }
     }
@@ -250,7 +250,7 @@ ble_hs_id_infer_auto(int privacy, uint8_t *out_addr_type)
     int i;
     ble_hs_lock();
 
-    if(privacy) {
+    if (privacy) {
         addr_types = priv_addr_types;
         num_addr_types = sizeof priv_addr_types / sizeof priv_addr_types[0];
     } else {

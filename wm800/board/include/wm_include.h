@@ -40,10 +40,10 @@
  *     printf("\n user task\n");
  *
  * #if DEMO_CONSOLE
- *	   CreateDemoTask();
+ *       CreateDemoTask();
  * #endif
  *
- *     //user's task
+ *     // user's task
  * }
  * @endcode
  *
@@ -93,6 +93,5 @@
 #include "wm_efuse.h"
 #include "wm_mem.h"
 #include "wm_regs.h"
-
 
 #endif

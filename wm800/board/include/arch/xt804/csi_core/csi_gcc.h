@@ -239,7 +239,6 @@ __ALWAYS_STATIC_INLINE uint32_t __get_CCR(void)
     return (result);
 }
 
-
 /**
   \brief   Set CCR
   \details Assigns the given value to the CCR.
@@ -253,7 +252,6 @@ __ALWAYS_STATIC_INLINE void __set_CCR(uint32_t ccr)
     __ASM volatile("mtcr %0, cr<18, 0>\n" : : "r"(ccr));
 #endif
 }
-
 
 /**
   \brief   Get DCSR
@@ -271,7 +269,6 @@ __ALWAYS_STATIC_INLINE uint32_t __get_DCSR(void)
     return (result);
 }
 
-
 /**
   \brief   Set DCSR
   \details Writes the given value to the DCSR Register.
@@ -285,7 +282,6 @@ __ALWAYS_STATIC_INLINE void __set_DCSR(uint32_t dcsr)
     __ASM volatile("mtcr %0, cr<14, 0>" : : "r"(dcsr));
 #endif
 }
-
 
 /**
   \brief   Get CFR
@@ -304,7 +300,6 @@ __ALWAYS_STATIC_INLINE uint32_t __get_CFR(void)
     return (result);
 }
 
-
 /**
   \brief   Set CFR
   \details Writes the given value to the CFR Register.
@@ -318,7 +313,6 @@ __ALWAYS_STATIC_INLINE void __set_CFR(uint32_t cfr)
     __ASM volatile("mtcr %0, cr<17, 0>" : : "r"(cfr));
 #endif
 }
-
 
 /**
   \brief   Get CIR
@@ -336,7 +330,6 @@ __ALWAYS_STATIC_INLINE uint32_t __get_CIR(void)
     return (result);
 }
 
-
 /**
   \brief   Set CIR
   \details Writes the given value to the CIR Register.
@@ -350,7 +343,6 @@ __ALWAYS_STATIC_INLINE void __set_CIR(uint32_t cir)
     __ASM volatile("mtcr %0, cr<22, 0>" : : "r"(cir));
 #endif
 }
-
 
 /**
   \brief   Get CAPR
@@ -383,7 +375,6 @@ __ALWAYS_STATIC_INLINE void __set_CAPR(uint32_t capr)
 #endif
 }
 
-
 /**
   \brief   Set PACR
   \details Assigns the given value to the PACR.
@@ -398,7 +389,6 @@ __ALWAYS_STATIC_INLINE void __set_PACR(uint32_t pacr)
     __ASM volatile("mtcr %0, cr<20, 0>\n" : : "r"(pacr));
 #endif
 }
-
 
 /**
   \brief   Get PACR
@@ -551,7 +541,6 @@ __ALWAYS_STATIC_INLINE void __set_MIR(uint32_t mir)
 #endif
 }
 
-
 /**
   \brief   Get MEL0
   \details Returns the content of the MEL0 Register.
@@ -583,7 +572,6 @@ __ALWAYS_STATIC_INLINE void __set_MEL0(uint32_t mel0)
     __ASM volatile("mtcr %0, cr<2, 15>" : : "r"(mel0));
 #endif
 }
-
 
 /**
   \brief   Get MEL1
@@ -617,7 +605,6 @@ __ALWAYS_STATIC_INLINE void __set_MEL1(uint32_t mel1)
 #endif
 }
 
-
 /**
   \brief   Get MEH
   \details Returns the content of the MEH Register.
@@ -649,7 +636,6 @@ __ALWAYS_STATIC_INLINE void __set_MEH(uint32_t meh)
     __ASM volatile("mtcr %0, cr<4, 15>" : : "r"(meh));
 #endif
 }
-
 
 /**
   \brief   Get MPR
@@ -683,7 +669,6 @@ __ALWAYS_STATIC_INLINE void __set_MPR(uint32_t mpr)
 #endif
 }
 
-
 /**
   \brief   Get MCIR
   \details Returns the content of the MCIR Register.
@@ -715,7 +700,6 @@ __ALWAYS_STATIC_INLINE void __set_MCIR(uint32_t mcir)
     __ASM volatile("mtcr %0, cr<8, 15>" : : "r"(mcir));
 #endif
 }
-
 
 /**
   \brief   Get MPGD
@@ -749,7 +733,6 @@ __ALWAYS_STATIC_INLINE void __set_MPGD(uint32_t mpgd)
 #endif
 }
 
-
 /**
   \brief   Get MSA0
   \details Returns the content of the MSA0 Register.
@@ -781,7 +764,6 @@ __ALWAYS_STATIC_INLINE void __set_MSA0(uint32_t msa0)
     __ASM volatile("mtcr %0, cr<30, 15>" : : "r"(msa0));
 #endif
 }
-
 
 /**
   \brief   Get MSA1
@@ -816,7 +798,6 @@ __ALWAYS_STATIC_INLINE void __set_MSA1(uint32_t msa1)
 #endif
 }
 
-
 /**
   \brief   Enable interrupts and exceptions
   \details Enables interrupts and exceptions by setting the IE-bit and EE-bit in the PSR.
@@ -826,7 +807,6 @@ __ALWAYS_STATIC_INLINE void __enable_excp_irq(void)
 {
     __ASM volatile("psrset ee, ie");
 }
-
 
 /**
   \brief   Disable interrupts and exceptions
@@ -1011,7 +991,6 @@ __ALWAYS_STATIC_INLINE void __NOP(void)
     __ASM volatile("nop");
 }
 
-
 /**
   \brief   Wait For Interrupt
   \details Wait For Interrupt is a hint instruction that suspends execution until one of a number of events occurs.
@@ -1059,7 +1038,6 @@ __ALWAYS_STATIC_INLINE void __ISB(void)
     __ASM volatile("sync"::: "memory");
 }
 
-
 /**
   \brief   Data Synchronization Barrier
   \details Acts as a special kind of Data Memory Barrier.
@@ -1069,7 +1047,6 @@ __ALWAYS_STATIC_INLINE void __DSB(void)
 {
     __ASM volatile("sync"::: "memory");
 }
-
 
 /**
   \brief   Data Memory Barrier
@@ -1126,7 +1103,6 @@ __ALWAYS_STATIC_INLINE uint32_t __REV(uint32_t value)
     return __builtin_bswap32(value);
 }
 
-
 /**
   \brief   Reverse byte order (16 bit)
   \details Reverses the byte order in two unsigned short values.
@@ -1145,7 +1121,6 @@ __ALWAYS_STATIC_INLINE uint32_t __REV16(uint32_t value)
     return (result);
 }
 
-
 /**
   \brief   Reverse byte order in signed short value
   \details Reverses the byte order in a signed short value with sign extension to integer.
@@ -1156,7 +1131,6 @@ __ALWAYS_STATIC_INLINE int32_t __REVSH(int32_t value)
 {
     return (short)(((value & 0xFF00) >> 8) | ((value & 0x00FF) << 8));
 }
-
 
 /**
   \brief   Rotate Right in unsigned value (32 bit)
@@ -1169,7 +1143,6 @@ __ALWAYS_STATIC_INLINE uint32_t __ROR(uint32_t op1, uint32_t op2)
 {
     return (op1 >> op2) | (op1 << (32U - op2));
 }
-
 
 /**
   \brief   Breakpoint
@@ -1208,7 +1181,6 @@ __ALWAYS_STATIC_INLINE uint32_t __RBIT(uint32_t value)
 #endif
     return (result);
 }
-
 
 /**
   \brief   Count leading zeros
@@ -1338,11 +1310,10 @@ __ALWAYS_STATIC_INLINE uint32_t __RRX(uint32_t op1)
 __ALWAYS_STATIC_INLINE uint8_t __LDRBT(volatile uint8_t *addr)
 {
     uint32_t result;
-//#warning "__LDRBT"
+// #warning "__LDRBT"
     __ASM volatile("ldb %0, (%1, 0)" : "=r"(result) : "r"(addr));
     return ((uint8_t) result);    /* Add explicit type cast here */
 }
-
 
 /**
   \brief   LDRT Unprivileged (16 bit)
@@ -1354,11 +1325,10 @@ __ALWAYS_STATIC_INLINE uint16_t __LDRHT(volatile uint16_t *addr)
 {
     uint32_t result;
 
-//#warning "__LDRHT"
+// #warning "__LDRHT"
     __ASM volatile("ldh %0, (%1, 0)" : "=r"(result) : "r"(addr));
     return ((uint16_t) result);    /* Add explicit type cast here */
 }
-
 
 /**
   \brief   LDRT Unprivileged (32 bit)
@@ -1370,11 +1340,10 @@ __ALWAYS_STATIC_INLINE uint32_t __LDRT(volatile uint32_t *addr)
 {
     uint32_t result;
 
-//#warning "__LDRT"
+// #warning "__LDRT"
     __ASM volatile("ldw %0, (%1, 0)" : "=r"(result) : "r"(addr));
     return (result);
 }
-
 
 /**
   \brief   STRT Unprivileged (8 bit)
@@ -1384,10 +1353,9 @@ __ALWAYS_STATIC_INLINE uint32_t __LDRT(volatile uint32_t *addr)
  */
 __ALWAYS_STATIC_INLINE void __STRBT(uint8_t value, volatile uint8_t *addr)
 {
-//#warning "__STRBT"
+// #warning "__STRBT"
     __ASM volatile("stb %1, (%0, 0)" :: "r"(addr), "r"((uint32_t)value) : "memory");
 }
-
 
 /**
   \brief   STRT Unprivileged (16 bit)
@@ -1397,10 +1365,9 @@ __ALWAYS_STATIC_INLINE void __STRBT(uint8_t value, volatile uint8_t *addr)
  */
 __ALWAYS_STATIC_INLINE void __STRHT(uint16_t value, volatile uint16_t *addr)
 {
-//#warning "__STRHT"
+// #warning "__STRHT"
     __ASM volatile("sth %1, (%0, 0)" :: "r"(addr), "r"((uint32_t)value) : "memory");
 }
-
 
 /**
   \brief   STRT Unprivileged (32 bit)
@@ -1410,12 +1377,11 @@ __ALWAYS_STATIC_INLINE void __STRHT(uint16_t value, volatile uint16_t *addr)
  */
 __ALWAYS_STATIC_INLINE void __STRT(uint32_t value, volatile uint32_t *addr)
 {
-//#warning "__STRT"
+// #warning "__STRT"
     __ASM volatile("stw %1, (%0, 0)" :: "r"(addr), "r"(value) : "memory");
 }
 
 /*@}*/ /* end of group CSI_Core_InstructionInterface */
-
 
 /* ##########################  FPU functions  #################################### */
 /**
@@ -1435,7 +1401,7 @@ __ALWAYS_STATIC_INLINE void __STRT(uint32_t value, volatile uint32_t *addr)
  */
 __ALWAYS_STATIC_INLINE uint32_t __get_FPUType(void)
 {
-//FIXME:
+// FIXME:
     return 0;
 }
 
@@ -1906,7 +1872,6 @@ __ALWAYS_STATIC_INLINE uint32_t __UADD16(uint32_t x, uint32_t y)
 
     return ((s << 16) | (r));
 }
-
 
 /**
   \brief   Dual 16-bit signed addition with halved results.
@@ -2458,7 +2423,6 @@ __ALWAYS_STATIC_INLINE uint32_t __SSAX(uint32_t x, uint32_t y)
     return ((uint32_t)((s << 16) | (r)));
 }
 
-
 /**
   \brief   Dual 16-bit signed subtraction and addition with halved results.
   \details This function enables you to exchange the two halfwords of one operand, perform one signed
@@ -2545,7 +2509,6 @@ __ALWAYS_STATIC_INLINE uint32_t __SMUADX(uint32_t x, uint32_t y)
     return ((uint32_t)(((((int32_t)x << 16) >> 16) * (((int32_t)y) >> 16)) +
                        ((((int32_t)x) >> 16) * (((int32_t)y << 16) >> 16))));
 }
-
 
 /**
   \brief   Saturating add.

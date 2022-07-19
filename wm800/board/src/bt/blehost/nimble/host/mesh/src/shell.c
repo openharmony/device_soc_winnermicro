@@ -101,7 +101,7 @@ static void get_faults(u8_t *faults, u8_t faults_size, u8_t *dst, u8_t *count)
     u8_t i, limit = *count;
 
     for(i = 0, *count = 0; i < faults_size && *count < limit; i++) {
-        if(faults[i]) {
+        if (faults[i]) {
             *dst++ = faults[i];
             (*count)++;
         }
@@ -121,7 +121,7 @@ static int fault_get_cur(struct bt_mesh_model *model, u8_t *test_id,
 static int fault_get_reg(struct bt_mesh_model *model, u16_t cid,
                          u8_t *test_id, u8_t *faults, u8_t *fault_count)
 {
-    if(cid != CID_VENDOR) {
+    if (cid != CID_VENDOR) {
         printk("Faults requested for unknown Company ID 0x%04x\n", cid);
         return -EINVAL;
     }
@@ -134,7 +134,7 @@ static int fault_get_reg(struct bt_mesh_model *model, u16_t cid,
 
 static int fault_clear(struct bt_mesh_model *model, uint16_t cid)
 {
-    if(cid != CID_VENDOR) {
+    if (cid != CID_VENDOR) {
         return -EINVAL;
     }
 
@@ -145,11 +145,11 @@ static int fault_clear(struct bt_mesh_model *model, uint16_t cid)
 static int fault_test(struct bt_mesh_model *model, uint8_t test_id,
                       uint16_t cid)
 {
-    if(cid != CID_VENDOR) {
+    if (cid != CID_VENDOR) {
         return -EINVAL;
     }
 
-    if(test_id != 0x00) {
+    if (test_id != 0x00) {
         return -EINVAL;
     }
 
@@ -186,7 +186,7 @@ void show_faults(u8_t test_id, u16_t cid, u8_t *faults, size_t fault_count)
 {
     size_t i;
 
-    if(!fault_count) {
+    if (!fault_count) {
         printk("Health Test ID 0x%02x Company ID 0x%04x: no faults\n",
                test_id, cid);
         return;
@@ -292,11 +292,11 @@ static const struct bt_mesh_comp comp = {
 
 static u8_t hex2val(char c)
 {
-    if(c >= '0' && c <= '9') {
+    if (c >= '0' && c <= '9') {
         return c - '0';
-    } else if(c >= 'a' && c <= 'f') {
+    } else if (c >= 'a' && c <= 'f') {
         return c - 'a' + 10;
-    } else if(c >= 'A' && c <= 'F') {
+    } else if (c >= 'A' && c <= 'F') {
         return c - 'A' + 10;
     } else {
         return 0;
@@ -310,7 +310,7 @@ static size_t hex2bin(const char *hex, u8_t *bin, size_t bin_len)
     while(*hex && len < bin_len) {
         bin[len] = hex2val(*hex++) << 4;
 
-        if(!*hex) {
+        if (!*hex) {
             len++;
             break;
         }
@@ -367,16 +367,16 @@ static int cmd_input_num(int argc, char *argv[])
 {
     int err;
 
-    if(argc < 2) {
+    if (argc < 2) {
         return -EINVAL;
     }
 
-    if(input_act != BT_MESH_ENTER_NUMBER) {
+    if (input_act != BT_MESH_ENTER_NUMBER) {
         printk("A number hasn't been requested!\n");
         return 0;
     }
 
-    if(strlen(argv[1]) < input_size) {
+    if (strlen(argv[1]) < input_size) {
         printk("Too short input (%u digits required)\n",
                input_size);
         return 0;
@@ -384,7 +384,7 @@ static int cmd_input_num(int argc, char *argv[])
 
     err = bt_mesh_input_number(strtoul(argv[1], NULL, 10));
 
-    if(err) {
+    if (err) {
         printk("Numeric input failed (err %d)\n", err);
         return 0;
     }
@@ -401,16 +401,16 @@ static int cmd_input_str(int argc, char *argv[])
 {
     int err;
 
-    if(argc < 2) {
+    if (argc < 2) {
         return -EINVAL;
     }
 
-    if(input_act != BT_MESH_ENTER_STRING) {
+    if (input_act != BT_MESH_ENTER_STRING) {
         printk("A string hasn't been requested!\n");
         return 0;
     }
 
-    if(strlen(argv[1]) < input_size) {
+    if (strlen(argv[1]) < input_size) {
         printk("Too short input (%u characters required)\n",
                input_size);
         return 0;
@@ -418,7 +418,7 @@ static int cmd_input_str(int argc, char *argv[])
 
     err = bt_mesh_input_string(argv[1]);
 
-    if(err) {
+    if (err) {
         printk("String input failed (err %d)\n", err);
         return 0;
     }
@@ -504,20 +504,20 @@ static struct bt_mesh_prov prov = {
 
 static int cmd_static_oob(int argc, char *argv[])
 {
-    if(argc < 2) {
+    if (argc < 2) {
         prov.static_val = NULL;
         prov.static_val_len = 0;
     } else {
         prov.static_val_len = hex2bin(argv[1], static_val, 16);
 
-        if(prov.static_val_len) {
+        if (prov.static_val_len) {
             prov.static_val = static_val;
         } else {
             prov.static_val = NULL;
         }
     }
 
-    if(prov.static_val) {
+    if (prov.static_val) {
         printk("Static OOB value set (length %u)\n",
                prov.static_val_len);
     } else {
@@ -536,13 +536,13 @@ static int cmd_uuid(int argc, char *argv[])
     u8_t uuid[16];
     size_t len;
 
-    if(argc < 2) {
+    if (argc < 2) {
         return -EINVAL;
     }
 
     len = hex2bin(argv[1], uuid, sizeof(uuid));
 
-    if(len < 1) {
+    if (len < 1) {
         return -EINVAL;
     }
 
@@ -565,7 +565,7 @@ static int cmd_reset(int argc, char *argv[])
 
 static u8_t str2u8(const char *str)
 {
-    if(isdigit(str[0])) {
+    if (isdigit(str[0])) {
         return strtoul(str, NULL, 0);
     }
 
@@ -583,33 +583,33 @@ static int cmd_lpn(int argc, char *argv[])
     static bool enabled;
     int err;
 
-    if(argc < 2) {
+    if (argc < 2) {
         printk("%s\n", enabled ? "enabled" : "disabled");
         return 0;
     }
 
-    if(str2bool(argv[1])) {
-        if(enabled) {
+    if (str2bool(argv[1])) {
+        if (enabled) {
             printk("LPN already enabled\n");
             return 0;
         }
 
         err = bt_mesh_lpn_set(true);
 
-        if(err) {
+        if (err) {
             printk("Enabling LPN failed (err %d)\n", err);
         } else {
             enabled = true;
         }
     } else {
-        if(!enabled) {
+        if (!enabled) {
             printk("LPN already disabled\n");
             return 0;
         }
 
         err = bt_mesh_lpn_set(false);
 
-        if(err) {
+        if (err) {
             printk("Enabling LPN failed (err %d)\n", err);
         } else {
             enabled = false;
@@ -624,7 +624,7 @@ static int cmd_poll(int argc, char *argv[])
     int err;
     err = bt_mesh_lpn_poll();
 
-    if(err) {
+    if (err) {
         printk("Friend Poll failed (err %d)\n", err);
     }
 
@@ -633,7 +633,7 @@ static int cmd_poll(int argc, char *argv[])
 
 static void lpn_cb(u16_t friend_addr, bool established)
 {
-    if(established) {
+    if (established) {
         printk("Friendship (as LPN) established to Friend 0x%04x\n",
                friend_addr);
     } else {
@@ -664,7 +664,7 @@ int cmd_mesh_init(int argc, char *argv[])
     int err;
     ble_addr_t addr;
 
-    if(check_pub_addr_unassigned()) {
+    if (check_pub_addr_unassigned()) {
         /* Use NRPA */
         err = ble_hs_id_gen_rnd(1, &addr);
         assert(err == 0);
@@ -675,17 +675,17 @@ int cmd_mesh_init(int argc, char *argv[])
         err = bt_mesh_init(0, &prov, &comp);
     }
 
-    if(err) {
+    if (err) {
         printk("Mesh initialization failed (err %d)\n", err);
     }
 
     printk("Mesh initialized\n");
 
-    if(IS_ENABLED(CONFIG_SETTINGS)) {
+    if (IS_ENABLED(CONFIG_SETTINGS)) {
         settings_load();
     }
 
-    if(bt_mesh_is_provisioned()) {
+    if (bt_mesh_is_provisioned()) {
         printk("Mesh network restored from flash\n");
     } else {
         printk("Use \"pb-adv on\" or \"pb-gatt on\" to enable"
@@ -704,7 +704,7 @@ static int cmd_ident(int argc, char *argv[])
     int err;
     err = bt_mesh_proxy_identity_enable();
 
-    if(err) {
+    if (err) {
         printk("Failed advertise using Node Identity (err %d)\n", err);
     }
 
@@ -714,13 +714,13 @@ static int cmd_ident(int argc, char *argv[])
 
 static int cmd_dst(int argc, char *argv[])
 {
-    if(argc < 2) {
+    if (argc < 2) {
         printk("Destination address: 0x%04x%s\n", net.dst,
                net.dst == net.local ? " (local)" : "");
         return 0;
     }
 
-    if(!strcmp(argv[1], "local")) {
+    if (!strcmp(argv[1], "local")) {
         net.dst = net.local;
     } else {
         net.dst = strtoul(argv[1], NULL, 0);
@@ -737,7 +737,7 @@ struct shell_cmd_help cmd_dst_help = {
 
 static int cmd_netidx(int argc, char *argv[])
 {
-    if(argc < 2) {
+    if (argc < 2) {
         printk("NetIdx: 0x%04x\n", net.net_idx);
         return 0;
     }
@@ -753,7 +753,7 @@ struct shell_cmd_help cmd_netidx_help = {
 
 static int cmd_appidx(int argc, char *argv[])
 {
-    if(argc < 2) {
+    if (argc < 2) {
         printk("AppIdx: 0x%04x\n", net.app_idx);
         return 0;
     }
@@ -786,12 +786,12 @@ static int cmd_net_send(int argc, char *argv[])
     size_t len;
     int err = 0;
 
-    if(argc < 2) {
+    if (argc < 2) {
         err = -EINVAL;
         goto done;
     }
 
-    if(!tx.sub) {
+    if (!tx.sub) {
         printk("No matching subnet for NetKey Index 0x%04x\n",
                net.net_idx);
         goto done;
@@ -802,7 +802,7 @@ static int cmd_net_send(int argc, char *argv[])
     net_buf_simple_add(msg, len);
     err = bt_mesh_trans_send(&tx, msg, NULL, NULL);
 
-    if(err) {
+    if (err) {
         printk("Failed to send (err %d)\n", err);
     }
 
@@ -826,7 +826,7 @@ static int cmd_lpn_subscribe(int argc, char *argv[])
 {
     u16_t address;
 
-    if(argc < 2) {
+    if (argc < 2) {
         return -EINVAL;
     }
 
@@ -844,7 +844,7 @@ static int cmd_lpn_unsubscribe(int argc, char *argv[])
 {
     u16_t address;
 
-    if(argc < 2) {
+    if (argc < 2) {
         return -EINVAL;
     }
 
@@ -862,7 +862,7 @@ struct shell_cmd_help cmd_lpn_unsubscribe_help = {
 #if MYNEWT_VAL(BLE_MESH_IV_UPDATE_TEST)
 static int cmd_iv_update(int argc, char *argv[])
 {
-    if(bt_mesh_iv_update()) {
+    if (bt_mesh_iv_update()) {
         printk("Transitioned to IV Update In Progress state\n");
     } else {
         printk("Transitioned to IV Update Normal state\n");
@@ -876,13 +876,13 @@ static int cmd_iv_update_test(int argc, char *argv[])
 {
     bool enable;
 
-    if(argc < 2) {
+    if (argc < 2) {
         return -EINVAL;
     }
 
     enable = str2bool(argv[1]);
 
-    if(enable) {
+    if (enable) {
         printk("Enabling IV Update test mode\n");
     } else {
         printk("Disabling IV Update test mode\n");
@@ -903,10 +903,10 @@ int cmd_timeout(int argc, char *argv[])
 {
     s32_t timeout;
 
-    if(argc < 2) {
+    if (argc < 2) {
         timeout = bt_mesh_cfg_cli_timeout_get();
 
-        if(timeout == K_FOREVER) {
+        if (timeout == K_FOREVER) {
             printk("Message timeout: forever\n");
         } else {
             printk("Message timeout: %lu seconds\n",
@@ -918,7 +918,7 @@ int cmd_timeout(int argc, char *argv[])
 
     timeout = strtol(argv[1], NULL, 0);
 
-    if(timeout < 0 || timeout > (INT32_MAX / 1000)) {
+    if (timeout < 0 || timeout > (INT32_MAX / 1000)) {
         timeout = K_FOREVER;
     } else {
         timeout = timeout * 1000;
@@ -926,7 +926,7 @@ int cmd_timeout(int argc, char *argv[])
 
     bt_mesh_cfg_cli_timeout_set(timeout);
 
-    if(timeout == K_FOREVER) {
+    if (timeout == K_FOREVER) {
         printk("Message timeout: forever\n");
     } else {
         printk("Message timeout: %lu seconds\n",
@@ -940,14 +940,13 @@ struct shell_cmd_help cmd_timeout_help = {
     NULL, "[timeout in seconds]", NULL
 };
 
-
 static int cmd_get_comp(int argc, char *argv[])
 {
     struct os_mbuf *comp = NET_BUF_SIMPLE(32);
     u8_t status, page = 0x00;
     int err = 0;
 
-    if(argc > 1) {
+    if (argc > 1) {
         page = strtol(argv[1], NULL, 0);
     }
 
@@ -955,12 +954,12 @@ static int cmd_get_comp(int argc, char *argv[])
     err = bt_mesh_cfg_comp_data_get(net.net_idx, net.dst, page,
                                     &status, comp);
 
-    if(err) {
+    if (err) {
         printk("Getting composition failed (err %d)\n", err);
         goto done;
     }
 
-    if(status != 0x00) {
+    if (status != 0x00) {
         printk("Got non-success status 0x%02x\n", status);
         goto done;
     }
@@ -981,12 +980,12 @@ static int cmd_get_comp(int argc, char *argv[])
         vnd = net_buf_simple_pull_u8(comp);
         printk("\n\tElement @ 0x%04x:\n", loc);
 
-        if(comp->om_len < ((sig * 2) + (vnd * 4))) {
+        if (comp->om_len < ((sig * 2) + (vnd * 4))) {
             printk("\t\t...truncated data!\n");
             break;
         }
 
-        if(sig) {
+        if (sig) {
             printk("\t\tSIG Models:\n");
         } else {
             printk("\t\tNo SIG Models\n");
@@ -997,7 +996,7 @@ static int cmd_get_comp(int argc, char *argv[])
             printk("\t\t\t0x%04x\n", mod_id);
         }
 
-        if(vnd) {
+        if (vnd) {
             printk("\t\tVendor Models:\n");
         } else {
             printk("\t\tNo Vendor Models\n");
@@ -1024,7 +1023,7 @@ static int cmd_beacon(int argc, char *argv[])
     u8_t status;
     int err;
 
-    if(argc < 2) {
+    if (argc < 2) {
         err = bt_mesh_cfg_beacon_get(net.net_idx, net.dst, &status);
     } else {
         u8_t val = str2u8(argv[1]);
@@ -1032,7 +1031,7 @@ static int cmd_beacon(int argc, char *argv[])
                                      &status);
     }
 
-    if(err) {
+    if (err) {
         printk("Unable to send Beacon Get/Set message (err %d)\n", err);
         return 0;
     }
@@ -1050,14 +1049,14 @@ static int cmd_ttl(int argc, char *argv[])
     u8_t ttl;
     int err;
 
-    if(argc < 2) {
+    if (argc < 2) {
         err = bt_mesh_cfg_ttl_get(net.net_idx, net.dst, &ttl);
     } else {
         u8_t val = strtoul(argv[1], NULL, 0);
         err = bt_mesh_cfg_ttl_set(net.net_idx, net.dst, val, &ttl);
     }
 
-    if(err) {
+    if (err) {
         printk("Unable to send Default TTL Get/Set (err %d)\n", err);
         return 0;
     }
@@ -1075,14 +1074,14 @@ static int cmd_friend(int argc, char *argv[])
     u8_t frnd;
     int err;
 
-    if(argc < 2) {
+    if (argc < 2) {
         err = bt_mesh_cfg_friend_get(net.net_idx, net.dst, &frnd);
     } else {
         u8_t val = str2u8(argv[1]);
         err = bt_mesh_cfg_friend_set(net.net_idx, net.dst, val, &frnd);
     }
 
-    if(err) {
+    if (err) {
         printk("Unable to send Friend Get/Set (err %d)\n", err);
         return 0;
     }
@@ -1100,7 +1099,7 @@ static int cmd_gatt_proxy(int argc, char *argv[])
     u8_t proxy;
     int err;
 
-    if(argc < 2) {
+    if (argc < 2) {
         err = bt_mesh_cfg_gatt_proxy_get(net.net_idx, net.dst, &proxy);
     } else {
         u8_t val = str2u8(argv[1]);
@@ -1108,7 +1107,7 @@ static int cmd_gatt_proxy(int argc, char *argv[])
                                          &proxy);
     }
 
-    if(err) {
+    if (err) {
         printk("Unable to send GATT Proxy Get/Set (err %d)\n", err);
         return 0;
     }
@@ -1126,21 +1125,21 @@ static int cmd_relay(int argc, char *argv[])
     u8_t relay, transmit;
     int err;
 
-    if(argc < 2) {
+    if (argc < 2) {
         err = bt_mesh_cfg_relay_get(net.net_idx, net.dst, &relay,
                                     &transmit);
     } else {
         u8_t val = str2u8(argv[1]);
         u8_t count, interval, new_transmit;
 
-        if(val) {
-            if(argc > 2) {
+        if (val) {
+            if (argc > 2) {
                 count = strtoul(argv[2], NULL, 0);
             } else {
                 count = 2;
             }
 
-            if(argc > 3) {
+            if (argc > 3) {
                 interval = strtoul(argv[3], NULL, 0);
             } else {
                 interval = 20;
@@ -1155,7 +1154,7 @@ static int cmd_relay(int argc, char *argv[])
                                     new_transmit, &relay, &transmit);
     }
 
-    if(err) {
+    if (err) {
         printk("Unable to send Relay Get/Set (err %d)\n", err);
         return 0;
     }
@@ -1177,13 +1176,13 @@ static int cmd_net_key_add(int argc, char *argv[])
     u8_t status;
     int err;
 
-    if(argc < 2) {
+    if (argc < 2) {
         return -EINVAL;
     }
 
     key_net_idx = strtoul(argv[1], NULL, 0);
 
-    if(argc > 2) {
+    if (argc > 2) {
         size_t len;
         len = hex2bin(argv[3], key_val, sizeof(key_val));
         memset(key_val, 0, sizeof(key_val) - len);
@@ -1194,12 +1193,12 @@ static int cmd_net_key_add(int argc, char *argv[])
     err = bt_mesh_cfg_net_key_add(net.net_idx, net.dst, key_net_idx,
                                   key_val, &status);
 
-    if(err) {
+    if (err) {
         printk("Unable to send NetKey Add (err %d)\n", err);
         return 0;
     }
 
-    if(status) {
+    if (status) {
         printk("NetKeyAdd failed with status 0x%02x\n", status);
     } else {
         printk("NetKey added with NetKey Index 0x%03x\n", key_net_idx);
@@ -1219,14 +1218,14 @@ static int cmd_app_key_add(int argc, char *argv[])
     u8_t status;
     int err;
 
-    if(argc < 3) {
+    if (argc < 3) {
         return -EINVAL;
     }
 
     key_net_idx = strtoul(argv[1], NULL, 0);
     key_app_idx = strtoul(argv[2], NULL, 0);
 
-    if(argc > 3) {
+    if (argc > 3) {
         size_t len;
         len = hex2bin(argv[3], key_val, sizeof(key_val));
         memset(key_val, 0, sizeof(key_val) - len);
@@ -1237,12 +1236,12 @@ static int cmd_app_key_add(int argc, char *argv[])
     err = bt_mesh_cfg_app_key_add(net.net_idx, net.dst, key_net_idx,
                                   key_app_idx, key_val, &status);
 
-    if(err) {
+    if (err) {
         printk("Unable to send App Key Add (err %d)\n", err);
         return 0;
     }
 
-    if(status) {
+    if (status) {
         printk("AppKeyAdd failed with status 0x%02x\n", status);
     } else {
         printk("AppKey added, NetKeyIndex 0x%04x AppKeyIndex 0x%04x\n",
@@ -1262,7 +1261,7 @@ static int cmd_mod_app_bind(int argc, char *argv[])
     u8_t status;
     int err;
 
-    if(argc < 4) {
+    if (argc < 4) {
         return -EINVAL;
     }
 
@@ -1270,7 +1269,7 @@ static int cmd_mod_app_bind(int argc, char *argv[])
     mod_app_idx = strtoul(argv[2], NULL, 0);
     mod_id = strtoul(argv[3], NULL, 0);
 
-    if(argc > 4) {
+    if (argc > 4) {
         cid = strtoul(argv[4], NULL, 0);
         err = bt_mesh_cfg_mod_app_bind_vnd(net.net_idx, net.dst,
                                            elem_addr, mod_app_idx,
@@ -1280,12 +1279,12 @@ static int cmd_mod_app_bind(int argc, char *argv[])
                                        mod_app_idx, mod_id, &status);
     }
 
-    if(err) {
+    if (err) {
         printk("Unable to send Model App Bind (err %d)\n", err);
         return 0;
     }
 
-    if(status) {
+    if (status) {
         printk("Model App Bind failed with status 0x%02x\n", status);
     } else {
         printk("AppKey successfully bound\n");
@@ -1304,7 +1303,7 @@ static int cmd_mod_sub_add(int argc, char *argv[])
     u8_t status;
     int err;
 
-    if(argc < 4) {
+    if (argc < 4) {
         return -EINVAL;
     }
 
@@ -1312,7 +1311,7 @@ static int cmd_mod_sub_add(int argc, char *argv[])
     sub_addr = strtoul(argv[2], NULL, 0);
     mod_id = strtoul(argv[3], NULL, 0);
 
-    if(argc > 4) {
+    if (argc > 4) {
         cid = strtoul(argv[4], NULL, 0);
         err = bt_mesh_cfg_mod_sub_add_vnd(net.net_idx, net.dst,
                                           elem_addr, sub_addr, mod_id,
@@ -1322,12 +1321,12 @@ static int cmd_mod_sub_add(int argc, char *argv[])
                                       sub_addr, mod_id, &status);
     }
 
-    if(err) {
+    if (err) {
         printk("Unable to send Model Subscription Add (err %d)\n", err);
         return 0;
     }
 
-    if(status) {
+    if (status) {
         printk("Model Subscription Add failed with status 0x%02x\n",
                status);
     } else {
@@ -1347,7 +1346,7 @@ static int cmd_mod_sub_del(int argc, char *argv[])
     u8_t status;
     int err;
 
-    if(argc < 4) {
+    if (argc < 4) {
         return -EINVAL;
     }
 
@@ -1355,7 +1354,7 @@ static int cmd_mod_sub_del(int argc, char *argv[])
     sub_addr = strtoul(argv[2], NULL, 0);
     mod_id = strtoul(argv[3], NULL, 0);
 
-    if(argc > 4) {
+    if (argc > 4) {
         cid = strtoul(argv[4], NULL, 0);
         err = bt_mesh_cfg_mod_sub_del_vnd(net.net_idx, net.dst,
                                           elem_addr, sub_addr, mod_id,
@@ -1365,13 +1364,13 @@ static int cmd_mod_sub_del(int argc, char *argv[])
                                       sub_addr, mod_id, &status);
     }
 
-    if(err) {
+    if (err) {
         printk("Unable to send Model Subscription Delete (err %d)\n",
                err);
         return 0;
     }
 
-    if(status) {
+    if (status) {
         printk("Model Subscription Delete failed with status 0x%02x\n",
                status);
     } else {
@@ -1393,7 +1392,7 @@ static int cmd_mod_sub_add_va(int argc, char *argv[])
     size_t len;
     int err;
 
-    if(argc < 4) {
+    if (argc < 4) {
         return -EINVAL;
     }
 
@@ -1402,7 +1401,7 @@ static int cmd_mod_sub_add_va(int argc, char *argv[])
     memset(label + len, 0, sizeof(label) - len);
     mod_id = strtoul(argv[3], NULL, 0);
 
-    if(argc > 4) {
+    if (argc > 4) {
         cid = strtoul(argv[4], NULL, 0);
         err = bt_mesh_cfg_mod_sub_va_add_vnd(net.net_idx, net.dst,
                                              elem_addr, label, mod_id,
@@ -1413,12 +1412,12 @@ static int cmd_mod_sub_add_va(int argc, char *argv[])
                                          &sub_addr, &status);
     }
 
-    if(err) {
+    if (err) {
         printk("Unable to send Mod Sub VA Add (err %d)\n", err);
         return 0;
     }
 
-    if(status) {
+    if (status) {
         printk("Mod Sub VA Add failed with status 0x%02x\n",
                status);
     } else {
@@ -1441,7 +1440,7 @@ static int cmd_mod_sub_del_va(int argc, char *argv[])
     size_t len;
     int err;
 
-    if(argc < 4) {
+    if (argc < 4) {
         return -EINVAL;
     }
 
@@ -1450,7 +1449,7 @@ static int cmd_mod_sub_del_va(int argc, char *argv[])
     memset(label + len, 0, sizeof(label) - len);
     mod_id = strtoul(argv[3], NULL, 0);
 
-    if(argc > 4) {
+    if (argc > 4) {
         cid = strtoul(argv[4], NULL, 0);
         err = bt_mesh_cfg_mod_sub_va_del_vnd(net.net_idx, net.dst,
                                              elem_addr, label, mod_id,
@@ -1461,13 +1460,13 @@ static int cmd_mod_sub_del_va(int argc, char *argv[])
                                          &sub_addr, &status);
     }
 
-    if(err) {
+    if (err) {
         printk("Unable to send Model Subscription Delete (err %d)\n",
                err);
         return 0;
     }
 
-    if(status) {
+    if (status) {
         printk("Model Subscription Delete failed with status 0x%02x\n",
                status);
     } else {
@@ -1488,7 +1487,7 @@ static int mod_pub_get(u16_t addr, u16_t mod_id, u16_t cid)
     u8_t status;
     int err;
 
-    if(cid == CID_NVAL) {
+    if (cid == CID_NVAL) {
         err = bt_mesh_cfg_mod_pub_get(net.net_idx, net.dst, addr,
                                       mod_id, &pub, &status);
     } else {
@@ -1496,12 +1495,12 @@ static int mod_pub_get(u16_t addr, u16_t mod_id, u16_t cid)
                                           mod_id, cid, &pub, &status);
     }
 
-    if(err) {
+    if (err) {
         printk("Model Publication Get failed (err %d)\n", err);
         return 0;
     }
 
-    if(status) {
+    if (status) {
         printk("Model Publication Get failed (status 0x%02x)\n",
                status);
         return 0;
@@ -1534,21 +1533,21 @@ static int mod_pub_set(u16_t addr, u16_t mod_id, u16_t cid, char *argv[])
     pub.period = strtoul(argv[4], NULL, 0);
     count = strtoul(argv[5], NULL, 0);
 
-    if(count > 7) {
+    if (count > 7) {
         printk("Invalid retransmit count\n");
         return -EINVAL;
     }
 
     interval = strtoul(argv[6], NULL, 0);
 
-    if(interval > (31 * 50) || (interval % 50)) {
+    if (interval > (31 * 50) || (interval % 50)) {
         printk("Invalid retransmit interval %u\n", interval);
         return -EINVAL;
     }
 
     pub.transmit = BT_MESH_PUB_TRANSMIT(count, interval);
 
-    if(cid == CID_NVAL) {
+    if (cid == CID_NVAL) {
         err = bt_mesh_cfg_mod_pub_set(net.net_idx, net.dst, addr,
                                       mod_id, &pub, &status);
     } else {
@@ -1556,12 +1555,12 @@ static int mod_pub_set(u16_t addr, u16_t mod_id, u16_t cid, char *argv[])
                                           mod_id, cid, &pub, &status);
     }
 
-    if(err) {
+    if (err) {
         printk("Model Publication Set failed (err %d)\n", err);
         return 0;
     }
 
-    if(status) {
+    if (status) {
         printk("Model Publication Set failed (status 0x%02x)\n",
                status);
     } else {
@@ -1575,7 +1574,7 @@ static int cmd_mod_pub(int argc, char *argv[])
 {
     u16_t addr, mod_id, cid;
 
-    if(argc < 3) {
+    if (argc < 3) {
         return -EINVAL;
     }
 
@@ -1584,7 +1583,7 @@ static int cmd_mod_pub(int argc, char *argv[])
     argc -= 3;
     argv += 3;
 
-    if(argc == 1 || argc == 8) {
+    if (argc == 1 || argc == 8) {
         cid = strtoul(argv[0], NULL, 0);
         argc--;
         argv++;
@@ -1592,8 +1591,8 @@ static int cmd_mod_pub(int argc, char *argv[])
         cid = CID_NVAL;
     }
 
-    if(argc > 0) {
-        if(argc < 7) {
+    if (argc > 0) {
+        if (argc < 7) {
             return -EINVAL;
         }
 
@@ -1628,12 +1627,12 @@ static int hb_sub_get(int argc, char *argv[])
     int err;
     err = bt_mesh_cfg_hb_sub_get(net.net_idx, net.dst, &sub, &status);
 
-    if(err) {
+    if (err) {
         printk("Heartbeat Subscription Get failed (err %d)\n", err);
         return 0;
     }
 
-    if(status) {
+    if (status) {
         printk("Heartbeat Subscription Get failed (status 0x%02x)\n",
                status);
     } else {
@@ -1653,12 +1652,12 @@ static int hb_sub_set(int argc, char *argv[])
     sub.period = strtoul(argv[3], NULL, 0);
     err = bt_mesh_cfg_hb_sub_set(net.net_idx, net.dst, &sub, &status);
 
-    if(err) {
+    if (err) {
         printk("Heartbeat Subscription Set failed (err %d)\n", err);
         return 0;
     }
 
-    if(status) {
+    if (status) {
         printk("Heartbeat Subscription Set failed (status 0x%02x)\n",
                status);
     } else {
@@ -1670,8 +1669,8 @@ static int hb_sub_set(int argc, char *argv[])
 
 static int cmd_hb_sub(int argc, char *argv[])
 {
-    if(argc > 1) {
-        if(argc < 4) {
+    if (argc > 1) {
+        if (argc < 4) {
             return -EINVAL;
         }
 
@@ -1692,12 +1691,12 @@ static int hb_pub_get(int argc, char *argv[])
     int err;
     err = bt_mesh_cfg_hb_pub_get(net.net_idx, net.dst, &pub, &status);
 
-    if(err) {
+    if (err) {
         printk("Heartbeat Publication Get failed (err %d)\n", err);
         return 0;
     }
 
-    if(status) {
+    if (status) {
         printk("Heartbeat Publication Get failed (status 0x%02x)\n",
                status);
         return 0;
@@ -1724,12 +1723,12 @@ static int hb_pub_set(int argc, char *argv[])
     pub.net_idx = strtoul(argv[5], NULL, 0);
     err = bt_mesh_cfg_hb_pub_set(net.net_idx, net.dst, &pub, &status);
 
-    if(err) {
+    if (err) {
         printk("Heartbeat Publication Set failed (err %d)\n", err);
         return 0;
     }
 
-    if(status) {
+    if (status) {
         printk("Heartbeat Publication Set failed (status 0x%02x)\n",
                status);
     } else {
@@ -1741,8 +1740,8 @@ static int hb_pub_set(int argc, char *argv[])
 
 static int cmd_hb_pub(int argc, char *argv[])
 {
-    if(argc > 1) {
-        if(argc < 7) {
+    if (argc > 1) {
+        if (argc < 7) {
             return -EINVAL;
         }
 
@@ -1763,14 +1762,14 @@ static int cmd_pb(bt_mesh_prov_bearer_t bearer, int argc, char *argv[])
 {
     int err;
 
-    if(argc < 2) {
+    if (argc < 2) {
         return -EINVAL;
     }
 
-    if(str2bool(argv[1])) {
+    if (str2bool(argv[1])) {
         err = bt_mesh_prov_enable(bearer);
 
-        if(err) {
+        if (err) {
             printk("Failed to enable %s (err %d)\n",
                    bearer2str(bearer), err);
         } else {
@@ -1779,7 +1778,7 @@ static int cmd_pb(bt_mesh_prov_bearer_t bearer, int argc, char *argv[])
     } else {
         err = bt_mesh_prov_disable(bearer);
 
-        if(err) {
+        if (err) {
             printk("Failed to disable %s (err %d)\n",
                    bearer2str(bearer), err);
         } else {
@@ -1818,7 +1817,7 @@ static int cmd_provision_adv(int argc, char *argv[])
     attention_duration = strtoul(argv[4], NULL, 0);
     err = bt_mesh_provision_adv(uuid, net_idx, addr, attention_duration);
 
-    if(err) {
+    if (err) {
         printk("Provisioning failed (err %d)", err);
     }
 
@@ -1845,14 +1844,14 @@ static int cmd_provision(int argc, char *argv[])
     u32_t iv_index;
     int err;
 
-    if(argc < 3) {
+    if (argc < 3) {
         return -EINVAL;
     }
 
     net_idx = strtoul(argv[1], NULL, 0);
     addr = strtoul(argv[2], NULL, 0);
 
-    if(argc > 3) {
+    if (argc > 3) {
         iv_index = strtoul(argv[3], NULL, 0);
     } else {
         iv_index = 0;
@@ -1861,7 +1860,7 @@ static int cmd_provision(int argc, char *argv[])
     err = bt_mesh_provision(default_key, net_idx, 0, iv_index, addr,
                             default_key);
 
-    if(err) {
+    if (err) {
         printk("Provisioning failed (err %d)\n", err);
     }
 
@@ -1882,7 +1881,7 @@ static int cmd_fault_get(int argc, char *argv[])
     u16_t cid;
     int err;
 
-    if(argc < 2) {
+    if (argc < 2) {
         return -EINVAL;
     }
 
@@ -1891,7 +1890,7 @@ static int cmd_fault_get(int argc, char *argv[])
     err = bt_mesh_health_fault_get(net.net_idx, net.dst, net.app_idx, cid,
                                    &test_id, faults, &fault_count);
 
-    if(err) {
+    if (err) {
         printk("Failed to send Health Fault Get (err %d)\n", err);
     } else {
         show_faults(test_id, cid, faults, fault_count);
@@ -1912,7 +1911,7 @@ static int cmd_fault_clear(int argc, char *argv[])
     u16_t cid;
     int err;
 
-    if(argc < 2) {
+    if (argc < 2) {
         return -EINVAL;
     }
 
@@ -1921,7 +1920,7 @@ static int cmd_fault_clear(int argc, char *argv[])
     err = bt_mesh_health_fault_clear(net.net_idx, net.dst, net.app_idx,
                                      cid, &test_id, faults, &fault_count);
 
-    if(err) {
+    if (err) {
         printk("Failed to send Health Fault Clear (err %d)\n", err);
     } else {
         show_faults(test_id, cid, faults, fault_count);
@@ -1939,7 +1938,7 @@ static int cmd_fault_clear_unack(int argc, char *argv[])
     u16_t cid;
     int err;
 
-    if(argc < 2) {
+    if (argc < 2) {
         return -EINVAL;
     }
 
@@ -1947,7 +1946,7 @@ static int cmd_fault_clear_unack(int argc, char *argv[])
     err = bt_mesh_health_fault_clear(net.net_idx, net.dst, net.app_idx,
                                      cid, NULL, NULL, NULL);
 
-    if(err) {
+    if (err) {
         printk("Health Fault Clear Unacknowledged failed (err %d)\n",
                err);
     }
@@ -1967,7 +1966,7 @@ static int cmd_fault_test(int argc, char *argv[])
     u16_t cid;
     int err;
 
-    if(argc < 3) {
+    if (argc < 3) {
         return -EINVAL;
     }
 
@@ -1977,7 +1976,7 @@ static int cmd_fault_test(int argc, char *argv[])
     err = bt_mesh_health_fault_test(net.net_idx, net.dst, net.app_idx,
                                     cid, test_id, faults, &fault_count);
 
-    if(err) {
+    if (err) {
         printk("Failed to send Health Fault Test (err %d)\n", err);
     } else {
         show_faults(test_id, cid, faults, fault_count);
@@ -1996,7 +1995,7 @@ static int cmd_fault_test_unack(int argc, char *argv[])
     u8_t test_id;
     int err;
 
-    if(argc < 3) {
+    if (argc < 3) {
         return -EINVAL;
     }
 
@@ -2005,7 +2004,7 @@ static int cmd_fault_test_unack(int argc, char *argv[])
     err = bt_mesh_health_fault_test(net.net_idx, net.dst, net.app_idx,
                                     cid, test_id, NULL, NULL);
 
-    if(err) {
+    if (err) {
         printk("Health Fault Test Unacknowledged failed (err %d)\n",
                err);
     }
@@ -2024,7 +2023,7 @@ static int cmd_period_get(int argc, char *argv[])
     err = bt_mesh_health_period_get(net.net_idx, net.dst, net.app_idx,
                                     &divisor);
 
-    if(err) {
+    if (err) {
         printk("Failed to send Health Period Get (err %d)\n", err);
     } else {
         printk("Health FastPeriodDivisor: %u\n", divisor);
@@ -2038,7 +2037,7 @@ static int cmd_period_set(int argc, char *argv[])
     u8_t divisor, updated_divisor;
     int err;
 
-    if(argc < 2) {
+    if (argc < 2) {
         return -EINVAL;
     }
 
@@ -2046,7 +2045,7 @@ static int cmd_period_set(int argc, char *argv[])
     err = bt_mesh_health_period_set(net.net_idx, net.dst, net.app_idx,
                                     divisor, &updated_divisor);
 
-    if(err) {
+    if (err) {
         printk("Failed to send Health Period Set (err %d)\n", err);
     } else {
         printk("Health FastPeriodDivisor: %u\n", updated_divisor);
@@ -2064,7 +2063,7 @@ static int cmd_period_set_unack(int argc, char *argv[])
     u8_t divisor;
     int err;
 
-    if(argc < 2) {
+    if (argc < 2) {
         return -EINVAL;
     }
 
@@ -2072,7 +2071,7 @@ static int cmd_period_set_unack(int argc, char *argv[])
     err = bt_mesh_health_period_set(net.net_idx, net.dst, net.app_idx,
                                     divisor, NULL);
 
-    if(err) {
+    if (err) {
         printk("Failed to send Health Period Set (err %d)\n", err);
     }
 
@@ -2090,7 +2089,7 @@ static int cmd_attention_get(int argc, char *argv[])
     err = bt_mesh_health_attention_get(net.net_idx, net.dst, net.app_idx,
                                        &attention);
 
-    if(err) {
+    if (err) {
         printk("Failed to send Health Attention Get (err %d)\n", err);
     } else {
         printk("Health Attention Timer: %u\n", attention);
@@ -2104,7 +2103,7 @@ static int cmd_attention_set(int argc, char *argv[])
     u8_t attention, updated_attention;
     int err;
 
-    if(argc < 2) {
+    if (argc < 2) {
         return -EINVAL;
     }
 
@@ -2112,7 +2111,7 @@ static int cmd_attention_set(int argc, char *argv[])
     err = bt_mesh_health_attention_set(net.net_idx, net.dst, net.app_idx,
                                        attention, &updated_attention);
 
-    if(err) {
+    if (err) {
         printk("Failed to send Health Attention Set (err %d)\n", err);
     } else {
         printk("Health Attention Timer: %u\n", updated_attention);
@@ -2130,7 +2129,7 @@ static int cmd_attention_set_unack(int argc, char *argv[])
     u8_t attention;
     int err;
 
-    if(argc < 2) {
+    if (argc < 2) {
         return -EINVAL;
     }
 
@@ -2138,7 +2137,7 @@ static int cmd_attention_set_unack(int argc, char *argv[])
     err = bt_mesh_health_attention_set(net.net_idx, net.dst, net.app_idx,
                                        attention, NULL);
 
-    if(err) {
+    if (err) {
         printk("Failed to send Health Attention Set (err %d)\n", err);
     }
 
@@ -2156,37 +2155,37 @@ static int cmd_add_fault(int argc, char *argv[])
     u8_t fault_id;
     u8_t i;
 
-    if(argc < 2) {
+    if (argc < 2) {
         return -EINVAL;
     }
 
     fault_id = strtoul(argv[1], NULL, 0);
 
-    if(!fault_id) {
+    if (!fault_id) {
         printk("The Fault ID must be non-zero!\n");
         return -EINVAL;
     }
 
     for(i = 0; i < sizeof(cur_faults); i++) {
-        if(!cur_faults[i]) {
+        if (!cur_faults[i]) {
             cur_faults[i] = fault_id;
             break;
         }
     }
 
-    if(i == sizeof(cur_faults)) {
+    if (i == sizeof(cur_faults)) {
         printk("Fault array is full. Use \"del-fault\" to clear it\n");
         return 0;
     }
 
     for(i = 0; i < sizeof(reg_faults); i++) {
-        if(!reg_faults[i]) {
+        if (!reg_faults[i]) {
             reg_faults[i] = fault_id;
             break;
         }
     }
 
-    if(i == sizeof(reg_faults)) {
+    if (i == sizeof(reg_faults)) {
         printk("No space to store more registered faults\n");
     }
 
@@ -2203,7 +2202,7 @@ static int cmd_del_fault(int argc, char *argv[])
     u8_t fault_id;
     u8_t i;
 
-    if(argc < 2) {
+    if (argc < 2) {
         memset(cur_faults, 0, sizeof(cur_faults));
         printk("All current faults cleared\n");
         bt_mesh_fault_update(&elements[0]);
@@ -2212,13 +2211,13 @@ static int cmd_del_fault(int argc, char *argv[])
 
     fault_id = strtoul(argv[1], NULL, 0);
 
-    if(!fault_id) {
+    if (!fault_id) {
         printk("The Fault ID must be non-zero!\n");
         return -EINVAL;
     }
 
     for(i = 0; i < sizeof(cur_faults); i++) {
-        if(cur_faults[i] == fault_id) {
+        if (cur_faults[i] == fault_id) {
             cur_faults[i] = 0;
             printk("Fault cleared\n");
         }
@@ -2240,7 +2239,7 @@ static int cmd_gen_onoff_get(int argc, char *argv[])
     err = bt_mesh_gen_onoff_get(net.net_idx, net.dst, net.app_idx,
                                 &state);
 
-    if(err) {
+    if (err) {
         printk("Failed to send Generic OnOff Get (err %d)\n", err);
     } else {
         printk("Gen OnOff State %d\n", state);
@@ -2255,7 +2254,7 @@ static int cmd_gen_onoff_set(int argc, char *argv[])
     u8_t val;
     int err;
 
-    if(argc < 2) {
+    if (argc < 2) {
         return -EINVAL;
     }
 
@@ -2263,7 +2262,7 @@ static int cmd_gen_onoff_set(int argc, char *argv[])
     err = bt_mesh_gen_onoff_set(net.net_idx, net.dst, net.app_idx,
                                 val, &state);
 
-    if(err) {
+    if (err) {
         printk("Failed to send Generic OnOff Get (err %d)\n", err);
     } else {
         printk("Gen OnOff State %d\n", state);
@@ -2281,7 +2280,7 @@ static int cmd_gen_onoff_set_unack(int argc, char *argv[])
     u8_t val;
     int err;
 
-    if(argc < 2) {
+    if (argc < 2) {
         return -EINVAL;
     }
 
@@ -2289,7 +2288,7 @@ static int cmd_gen_onoff_set_unack(int argc, char *argv[])
     err = bt_mesh_gen_onoff_set(net.net_idx, net.dst, net.app_idx,
                                 val, NULL);
 
-    if(err) {
+    if (err) {
         printk("Failed to send Generic OnOff Get (err %d)\n", err);
     }
 
@@ -2307,7 +2306,7 @@ static int cmd_gen_level_get(int argc, char *argv[])
     err = bt_mesh_gen_level_get(net.net_idx, net.dst, net.app_idx,
                                 &state);
 
-    if(err) {
+    if (err) {
         printk("Failed to send Generic Level Get (err %d)\n", err);
     } else {
         printk("Gen Level State %d\n", state);
@@ -2322,7 +2321,7 @@ static int cmd_gen_level_set(int argc, char *argv[])
     s16_t val;
     int err;
 
-    if(argc < 2) {
+    if (argc < 2) {
         return -EINVAL;
     }
 
@@ -2330,7 +2329,7 @@ static int cmd_gen_level_set(int argc, char *argv[])
     err = bt_mesh_gen_level_set(net.net_idx, net.dst, net.app_idx,
                                 val, &state);
 
-    if(err) {
+    if (err) {
         printk("Failed to send Generic Level Get (err %d)\n", err);
     } else {
         printk("Gen Level State %d\n", state);
@@ -2348,7 +2347,7 @@ static int cmd_gen_level_set_unack(int argc, char *argv[])
     s16_t val;
     int err;
 
-    if(argc < 2) {
+    if (argc < 2) {
         return -EINVAL;
     }
 
@@ -2356,7 +2355,7 @@ static int cmd_gen_level_set_unack(int argc, char *argv[])
     err = bt_mesh_gen_level_set(net.net_idx, net.dst, net.app_idx,
                                 val, NULL);
 
-    if(err) {
+    if (err) {
         printk("Failed to send Generic Level Get (err %d)\n", err);
     }
 
@@ -2415,7 +2414,6 @@ static int cmd_print_composition_data(int argc, char *argv[])
 
     return 0;
 }
-
 
 static const struct shell_cmd mesh_commands[] = {
     {
@@ -2554,7 +2552,6 @@ static const struct shell_cmd mesh_commands[] = {
         .sc_cmd_func = cmd_print_composition_data,
         .help = NULL,
     },
-
 
 #if MYNEWT_VAL(BLE_MESH_CFG_CLI)
     /* Configuration Client Model operations */

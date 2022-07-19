@@ -26,13 +26,12 @@
 #ifndef TLS_EXSPIFLS_H
 #define TLS_EXSPIFLS_H
 
-#define SPI_SCLK							(10000000)  /** 10MHz. */
+#define SPI_SCLK                            (10000000)  /** 10MHz. */
 #define FLASH_TOTAL_SIZE            (1024*1024)
-#define PAGE_SIZE						256
-#define PROGRAM_SIZE					256
-#define PAGE_ADDR_OFFSET				8
-#define SECTOR_SIZE						4096
-
+#define PAGE_SIZE                        256
+#define PROGRAM_SIZE                    256
+#define PAGE_ADDR_OFFSET                8
+#define SECTOR_SIZE                        4096
 
 /**
  *  command code define.
@@ -52,7 +51,6 @@
 #define EXSPIFLASH_FLASH_DEVICEID      (0x90)  /** Read flash manufacturer/device ID */
 #define EXSPIFLASH_FLASH_ID      (0x9f)    /** Read flash ID */
 
-
 #define FLASH_STATUS_BUSY      (1 << 0)
 #define FLASH_STATUS_WEL      (1 << 1)
 
@@ -61,12 +59,12 @@
  *
  * @param[in]      None
  *
- * @retval         TLS_FLS_STATUS_OK	         if write flash success
+ * @retval         TLS_FLS_STATUS_OK             if write flash success
  * @retval         TLS_FLS_STATUS_EPERM     if flash struct point is null
- * @retval         TLS_FLS_STATUS_ENODRV	  if flash driver is not installed
- * @retval         TLS_FLS_STATUS_EINVAL	  if argument is invalid
- * @retval         TLS_FLS_STATUS_EIO	         if io error
- * @retval         TLS_FLS_STATUS_EEXIST	  if driver is already existed
+ * @retval         TLS_FLS_STATUS_ENODRV      if flash driver is not installed
+ * @retval         TLS_FLS_STATUS_EINVAL      if argument is invalid
+ * @retval         TLS_FLS_STATUS_EIO             if io error
+ * @retval         TLS_FLS_STATUS_EEXIST      if driver is already existed
  *
  * @note           None
  */

@@ -19,26 +19,26 @@
 #include "tls_common.h"
 #include "wm_osal.h"
 #include "list.h"
-//#include "netif.h"
+// #include "netif.h"
 
 struct tls_wif;
 struct wpa_supplicant;
 
 /* Maximum size of the SSID  */
-#define IW_SSID_MAX_SIZE	32
+#define IW_SSID_MAX_SIZE    32
 #if 0
-#define IEEE80211_MODE_INFRA	0
-#define IEEE80211_MODE_IBSS	    1
-#define IEEE80211_MODE_AP	    2
+#define IEEE80211_MODE_INFRA    0
+#define IEEE80211_MODE_IBSS        1
+#define IEEE80211_MODE_AP        2
 #endif
-//#define IEEE80211_RATE_MODE_B      BIT(0)
-//#define IEEE80211_RATE_MODE_G      BIT(1)
-//#define IEEE80211_RATE_MODE_BG     BIT(2)
-//#define IEEE80211_RATE_MODE_N      BIT(3)
-//#define IEEE80211_RATE_MODE_BGN    BIT(4)
+// #define IEEE80211_RATE_MODE_B      BIT(0)
+// #define IEEE80211_RATE_MODE_G      BIT(1)
+// #define IEEE80211_RATE_MODE_BG     BIT(2)
+// #define IEEE80211_RATE_MODE_N      BIT(3)
+// #define IEEE80211_RATE_MODE_BGN    BIT(4)
 
 enum ieee80211_wireless_mode {
-	IEEE80211_MODE_11B = 0,
+    IEEE80211_MODE_11B = 0,
     IEEE80211_MODE_11G,
     IEEE80211_MODE_11NG_HT20,
     IEEE80211_MODE_11NG_HT40PLUS,
@@ -46,71 +46,71 @@ enum ieee80211_wireless_mode {
     IEEE80211_MODE_MAX,
 };
 
-#define IW_AUTH_INDEX		0x0FFF
-#define IW_AUTH_FLAGS		0xF000
+#define IW_AUTH_INDEX        0x0FFF
+#define IW_AUTH_FLAGS        0xF000
 
-#define IW_AUTH_WPA_VERSION		0
-#define IW_AUTH_CIPHER_PAIRWISE		1
-#define IW_AUTH_CIPHER_GROUP		2
-#define IW_AUTH_KEY_MGMT		3
-#define IW_AUTH_TKIP_COUNTERMEASURES	4
-#define IW_AUTH_DROP_UNENCRYPTED	5
-#define IW_AUTH_80211_AUTH_ALG		6
-#define IW_AUTH_WPA_ENABLED		7
-#define IW_AUTH_RX_UNENCRYPTED_EAPOL	8
-#define IW_AUTH_ROAMING_CONTROL		9
-#define IW_AUTH_PRIVACY_INVOKED		10
-#define IW_AUTH_CIPHER_GROUP_MGMT	11
-#define IW_AUTH_MFP			12
+#define IW_AUTH_WPA_VERSION        0
+#define IW_AUTH_CIPHER_PAIRWISE        1
+#define IW_AUTH_CIPHER_GROUP        2
+#define IW_AUTH_KEY_MGMT        3
+#define IW_AUTH_TKIP_COUNTERMEASURES    4
+#define IW_AUTH_DROP_UNENCRYPTED    5
+#define IW_AUTH_80211_AUTH_ALG        6
+#define IW_AUTH_WPA_ENABLED        7
+#define IW_AUTH_RX_UNENCRYPTED_EAPOL    8
+#define IW_AUTH_ROAMING_CONTROL        9
+#define IW_AUTH_PRIVACY_INVOKED        10
+#define IW_AUTH_CIPHER_GROUP_MGMT    11
+#define IW_AUTH_MFP            12
 
 /* IW_AUTH_WPA_VERSION values (bit field) */
-#define IW_AUTH_WPA_VERSION_DISABLED	0x00000001
-#define IW_AUTH_WPA_VERSION_WPA		0x00000002
-#define IW_AUTH_WPA_VERSION_WPA2	0x00000004
+#define IW_AUTH_WPA_VERSION_DISABLED    0x00000001
+#define IW_AUTH_WPA_VERSION_WPA        0x00000002
+#define IW_AUTH_WPA_VERSION_WPA2    0x00000004
 
 /* IW_AUTH_PAIRWISE_CIPHER, IW_AUTH_GROUP_CIPHER, and IW_AUTH_CIPHER_GROUP_MGMT
  * values (bit field) */
-#define IW_AUTH_CIPHER_NONE	0x00000001
-#define IW_AUTH_CIPHER_WEP40	0x00000002
-#define IW_AUTH_CIPHER_TKIP	0x00000004
-#define IW_AUTH_CIPHER_CCMP	0x00000008
-#define IW_AUTH_CIPHER_WEP104	0x00000010
-#define IW_AUTH_CIPHER_AES_CMAC	0x00000020
+#define IW_AUTH_CIPHER_NONE    0x00000001
+#define IW_AUTH_CIPHER_WEP40    0x00000002
+#define IW_AUTH_CIPHER_TKIP    0x00000004
+#define IW_AUTH_CIPHER_CCMP    0x00000008
+#define IW_AUTH_CIPHER_WEP104    0x00000010
+#define IW_AUTH_CIPHER_AES_CMAC    0x00000020
 
 /* IW_AUTH_KEY_MGMT values (bit field) */
-#define IW_AUTH_KEY_MGMT_802_1X	1
-#define IW_AUTH_KEY_MGMT_PSK	2
+#define IW_AUTH_KEY_MGMT_802_1X    1
+#define IW_AUTH_KEY_MGMT_PSK    2
 
 /* IW_AUTH_80211_AUTH_ALG values (bit field) */
-#define IW_AUTH_ALG_OPEN_SYSTEM	0x00000001
-#define IW_AUTH_ALG_SHARED_KEY	0x00000002
-#define IW_AUTH_ALG_LEAP	0x00000004
+#define IW_AUTH_ALG_OPEN_SYSTEM    0x00000001
+#define IW_AUTH_ALG_SHARED_KEY    0x00000002
+#define IW_AUTH_ALG_LEAP    0x00000004
 
-#define IW_ENCODE_ALG_NONE	0
-#define IW_ENCODE_ALG_WEP	1
-#define IW_ENCODE_ALG_TKIP	2
-#define IW_ENCODE_ALG_CCMP	3
-#define IW_ENCODE_ALG_PMK	4
-#define IW_ENCODE_ALG_AES_CMAC	5
+#define IW_ENCODE_ALG_NONE    0
+#define IW_ENCODE_ALG_WEP    1
+#define IW_ENCODE_ALG_TKIP    2
+#define IW_ENCODE_ALG_CCMP    3
+#define IW_ENCODE_ALG_PMK    4
+#define IW_ENCODE_ALG_AES_CMAC    5
 
-#define IW_MAX_FREQUENCIES	32
+#define IW_MAX_FREQUENCIES    32
 
 #define IW_SCAN_TYPE_ACTIVE   0
 #define IW_SCAN_TYPE_PASSIVE  1
 
-struct	iw_scan_req {
-    u8		scan_type; /* IW_SCAN_TYPE_{ACTIVE,PASSIVE} */
-	u8 ssid_len;
-    u8		num_channels; /* num entries in channel_list;
+struct    iw_scan_req {
+    u8        scan_type; /* IW_SCAN_TYPE_{ACTIVE,PASSIVE} */
+    u8 ssid_len;
+    u8        num_channels; /* num entries in channel_list;
                            * 0 = scan all allowed channels */
-    u8		bssid[ETH_ALEN]; /* ff:ff:ff:ff:ff:ff for broadcast BSSID or
+    u8        bssid[ETH_ALEN]; /* ff:ff:ff:ff:ff:ff for broadcast BSSID or
                               * individual address of a specific BSS */
 
-    u8		ssid[IW_SSID_MAX_SIZE];
+    u8        ssid[IW_SSID_MAX_SIZE];
     u32     extra_ies_len;
     u8      extra_ies[0];
 
-	//struct iw_freq	channel_list[IW_MAX_FREQUENCIES];
+    // struct iw_freq    channel_list[IW_MAX_FREQUENCIES];
 };
 
 #if 0
@@ -166,11 +166,10 @@ struct iw_scan_bss {
  * @tail_len: length of @tail
  */
 struct iw_beacon_parameters {
-	u8 *head, *tail;
-	int interval, dtim_period;
-	int head_len, tail_len;
+    u8 *head, *tail;
+    int interval, dtim_period;
+    int head_len, tail_len;
 };
-
 
 struct iw_ssid_params {
     u8      ssid[IW_SSID_MAX_SIZE];
@@ -192,14 +191,14 @@ struct iw_key_params {
 };
 
 struct iw_sta_add_params {
-	const u8 *addr;
-	u16 aid;
-	u16 capability;
-	u16 listen_interval;
-	u8  mode;
-	const u8 *supp_rates;
-	u32 supp_rates_len;
-	u32 flags; /* bitmask of WPA_STA_* flags */
+    const u8 *addr;
+    u16 aid;
+    u16 capability;
+    u16 listen_interval;
+    u8  mode;
+    const u8 *supp_rates;
+    u32 supp_rates_len;
+    u32 flags; /* bitmask of WPA_STA_* flags */
 };
 
 /**
@@ -217,9 +216,9 @@ struct iw_sta_add_params {
  * @tail_len: length of @tail
  */
 struct beacon_parameters {
-	u8 *head, *tail;
-	int interval, dtim_period;
-	int head_len, tail_len;
+    u8 *head, *tail;
+    int interval, dtim_period;
+    int head_len, tail_len;
 };
 
 struct wl_event_reload {
@@ -323,8 +322,8 @@ struct tls_wl_event_ops {
             struct wl_event_rx_eapol *eapol);
     int (*rx_mgmt)(struct tls_wif *wif,
             struct wl_event_rx_mgmt *mgmt);
-	int (*mac_wdg)(struct tls_wif *wif);
-	int (*chip_wakeup)(struct tls_wif *wif);
+    int (*mac_wdg)(struct tls_wif *wif);
+    int (*chip_wakeup)(struct tls_wif *wif);
 #if TLS_CONFIG_AP_OPT_PS
     int (*beacon_done)(struct tls_wif *wif);
     int (*rx_ps)(struct tls_wif *wif,
@@ -337,7 +336,7 @@ struct tls_wl_event_ops {
     int (*rx_from_unknown_sta)(struct tls_wif *wif,
             struct wl_event_rx_from_unknown *rx_from_unknown);
     int (*net_down)(struct tls_wif *wif);
-	int (*net_fail)(struct tls_wif *wif);
+    int (*net_fail)(struct tls_wif *wif);
     int (*net_up)(struct tls_wif *wif);
     int (*update_stat)(struct tls_wif *wif, void *cur_bss);/* struct ieee80211_bss *cur_bss */
 };
@@ -351,7 +350,7 @@ struct sk_buff {
 };
 
 struct tls_wif {
-    //void *priv;
+    // void *priv;
     struct ieee80211_if_data *priv;
     struct wpa_supplicant *wpa_s;
     struct tls_wl_event_ops *ops;
@@ -359,8 +358,8 @@ struct tls_wif {
     struct hostapd_iface *apif;
 #endif
 
-    //struct netif *ethif;
-    //bool   net_up;
+    // struct netif *ethif;
+    // bool   net_up;
     bool   wlan_create;
     int (*rx_data_cb)(const u8 *bssid, u8 *buf, u32 buf_len);
 #if TLS_CONFIG_AP

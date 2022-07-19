@@ -111,7 +111,6 @@ void tls_rtc_timer_start(struct tm *tblock);
  */
 void tls_rtc_timer_stop(void);
 
-
 /**
  * @}
  */

@@ -30,7 +30,6 @@
 #include "wm_osal.h"
 #include "wm_ram_config.h"
 
-
 #define SPI_USE_DMA
 
 #define SPI_DMA_CMD_MAX_SIZE    (0x20)
@@ -65,7 +64,6 @@
 #define TLS_SPI_CS_HIGH      0x01   /** chipselect active high. */
 #define TLS_SPI_FCLK_MIN      (1000)    /** minimum work clock rate(Hz). */
 #define TLS_SPI_FCLK_MAX      (APB_CLK/2)   /** maximum work clock rate(Hz). */
-
 
 /**    default configuration data.    */
 #define SPI_DEFAULT_SPEED      (2000000)    /** default clock rate is 2MHz. */
@@ -105,7 +103,6 @@ struct tls_spi_transfer
     u32 len;                    /**< size of rx and tx buffers (in bytes). */
     u32 delay_usecs;       /**< microseconds to delay after this transfer. */
 };
-
 
 /**
  *  one multi-segment SPI transaction
@@ -196,7 +193,6 @@ struct tls_spi_port
  * @note           None
  */
 int tls_spi_init(void);
-
 
 /**
  * @brief          This function is used to setup the spi controller.

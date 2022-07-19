@@ -29,7 +29,7 @@ ble_store_read(int obj_type, const union ble_store_key *key,
     int rc;
     ble_hs_lock();
 
-    if(ble_hs_cfg.store_read_cb == NULL) {
+    if (ble_hs_cfg.store_read_cb == NULL) {
         rc = BLE_HS_ENOTSUP;
     } else {
         rc = ble_hs_cfg.store_read_cb(obj_type, key, val);
@@ -43,7 +43,7 @@ int
 ble_store_write(int obj_type, const union ble_store_value *val)
 {
 
-    if(ble_hs_cfg.store_write_cb == NULL) {
+    if (ble_hs_cfg.store_write_cb == NULL) {
         return BLE_HS_ENOTSUP;
     }
 
@@ -62,7 +62,7 @@ ble_store_write(int obj_type, const union ble_store_value *val)
                  */
                 rc = ble_store_overflow_event(obj_type, val);
 
-                if(rc != 0) {
+                if (rc != 0) {
                     return rc;
                 }
 
@@ -81,7 +81,7 @@ ble_store_delete(int obj_type, const union ble_store_key *key)
     int rc;
     ble_hs_lock();
 
-    if(ble_hs_cfg.store_delete_cb == NULL) {
+    if (ble_hs_cfg.store_delete_cb == NULL) {
         rc = BLE_HS_ENOTSUP;
     } else {
         rc = ble_hs_cfg.store_delete_cb(obj_type, key);
@@ -95,7 +95,7 @@ int ble_store_flush(void)
 {
     int rc;
     ble_hs_lock();
-     if(ble_hs_cfg.store_flush_cb == NULL) {
+     if (ble_hs_cfg.store_flush_cb == NULL) {
         rc = BLE_HS_ENOTSUP;
     } else {
         rc = ble_hs_cfg.store_flush_cb();
@@ -111,7 +111,7 @@ ble_store_status(struct ble_store_status_event *event)
     int rc;
     BLE_HS_DBG_ASSERT(!ble_hs_locked_by_cur_task());
 
-    if(ble_hs_cfg.store_status_cb == NULL) {
+    if (ble_hs_cfg.store_status_cb == NULL) {
         rc = BLE_HS_ENOTSUP;
     } else {
         rc = ble_hs_cfg.store_status_cb(event, ble_hs_cfg.store_status_arg);
@@ -213,7 +213,7 @@ ble_store_read_peer_sec(const struct ble_store_key_sec *key_sec,
     store_value = (void *)value_sec;
     rc = ble_store_read(BLE_STORE_OBJ_TYPE_PEER_SEC, store_key, store_value);
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
@@ -226,11 +226,11 @@ ble_store_write_peer_sec(const struct ble_store_value_sec *value_sec)
     int rc;
     rc = ble_store_persist_sec(BLE_STORE_OBJ_TYPE_PEER_SEC, value_sec);
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
-    if(ble_addr_cmp(&value_sec->peer_addr, BLE_ADDR_ANY) &&
+    if (ble_addr_cmp(&value_sec->peer_addr, BLE_ADDR_ANY) &&
             value_sec->irk_present) {
         /* Write the peer IRK to the controller keycache
          * There is not much to do here if it fails */
@@ -238,7 +238,7 @@ ble_store_write_peer_sec(const struct ble_store_value_sec *value_sec)
                                    value_sec->peer_addr.type,
                                    value_sec->irk);
 
-        if(rc != 0) {
+        if (rc != 0) {
             return rc;
         }
     }
@@ -355,10 +355,10 @@ ble_store_iterate(int obj_type,
 
         switch(rc) {
             case 0:
-                if(callback != NULL) {
+                if (callback != NULL) {
                     rc = callback(obj_type, &value, cookie);
 
-                    if(rc != 0) {
+                    if (rc != 0) {
                         /* User function indicates to stop iterating. */
                         return 0;
                     }
@@ -406,7 +406,7 @@ ble_store_clear(void)
         } while(rc == 0);
 
         /* BLE_HS_ENOENT means we deleted everything. */
-        if(rc != BLE_HS_ENOENT) {
+        if (rc != BLE_HS_ENOENT) {
             return rc;
         }
     }

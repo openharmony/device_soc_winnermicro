@@ -17,14 +17,12 @@
  * under the License.
  */
 
-
 /**
  * @addtogroup OSKernel
  * @{
  *   @defgroup OSMbuf Chained Memory Buffers
  *   @{
  */
-
 
 #ifndef _OS_MBUF_H
 #define _OS_MBUF_H
@@ -55,7 +53,6 @@ struct os_mbuf_pool {
 
     STAILQ_ENTRY(os_mbuf_pool) omp_next;
 };
-
 
 /**
  * A packet header structure that preceeds the mbuf packet headers.
@@ -171,7 +168,6 @@ struct os_mqueue {
 #define OS_MBUF_USRHDR_LEN(om) \
     ((om)->om_pkthdr_len - sizeof (struct os_mbuf_pkthdr))
 
-
 /** @cond INTERNAL_HIDDEN */
 
 /*
@@ -184,7 +180,7 @@ _os_mbuf_leadingspace(struct os_mbuf *om)
     uint16_t leadingspace;
     startoff = 0;
 
-    if(OS_MBUF_IS_PKTHDR(om)) {
+    if (OS_MBUF_IS_PKTHDR(om)) {
         startoff = om->om_pkthdr_len;
     }
 
@@ -206,7 +202,6 @@ _os_mbuf_leadingspace(struct os_mbuf *om)
  * @return Amount of leading space available in the mbuf
  */
 #define OS_MBUF_LEADINGSPACE(__om) _os_mbuf_leadingspace(__om)
-
 
 /** @cond INTERNAL_HIDDEN */
 
@@ -232,7 +227,6 @@ _os_mbuf_trailingspace(struct os_mbuf *om)
  * @return The amount of trailing space available in the mbuf
  */
 #define OS_MBUF_TRAILINGSPACE(__om) _os_mbuf_trailingspace(__om)
-
 
 /**
  * Initializes an mqueue.  An mqueue is a queue of mbufs that ties to a
@@ -395,7 +389,6 @@ struct os_mbuf *os_mbuf_dup(struct os_mbuf *m);
 struct os_mbuf *os_mbuf_off(const struct os_mbuf *om, int off,
                             uint16_t *out_off);
 
-
 /*
  * Copy data from an mbuf chain starting "off" bytes from the beginning,
  * continuing for "len" bytes, into the indicated buffer.
@@ -469,7 +462,6 @@ int os_mbuf_free_chain(struct os_mbuf *om);
  *                tail of the mbuf.
  */
 void os_mbuf_adj(struct os_mbuf *mp, int req_len);
-
 
 /**
  * Performs a memory compare of the specified region of an mbuf chain against a
@@ -566,7 +558,6 @@ int os_mbuf_copyinto(struct os_mbuf *om, int off, const void *src, int len);
  */
 void os_mbuf_concat(struct os_mbuf *first, struct os_mbuf *second);
 
-
 /**
  * Increases the length of an mbuf chain by the specified amount.  If there is
  * not sufficient room in the last buffer, a new buffer is allocated and
@@ -599,7 +590,6 @@ void *os_mbuf_extend(struct os_mbuf *om, uint16_t len);
  * @return The contiguous mbuf chain on success, NULL on failure.
  */
 struct os_mbuf *os_mbuf_pullup(struct os_mbuf *om, uint16_t len);
-
 
 /**
  * Removes and frees empty mbufs from the front of a chain.  If the chain
@@ -635,7 +625,6 @@ struct os_mbuf *os_mbuf_pack_chains(struct os_mbuf *m1, struct os_mbuf *m2);
 #endif
 
 #endif /* _OS_MBUF_H */
-
 
 /**
  *   @} OSMbuf

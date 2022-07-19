@@ -33,14 +33,14 @@ ble_hs_startup_read_sup_f_tx(void)
                                       BLE_HCI_OCF_IP_RD_LOC_SUPP_FEAT),
                            NULL, 0, &rsp, sizeof(rsp));
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
     /* for now we don't use it outside of init sequence so check this here
      * LE Supported (Controller) byte 4, bit 6
      */
-    if(!(rsp.features & 0x0000006000000000)) {
+    if (!(rsp.features & 0x0000006000000000)) {
         BLE_HS_LOG(ERROR, "Controller doesn't support LE\n");
         return BLE_HS_ECONTROLLER;
     }
@@ -58,7 +58,7 @@ ble_hs_startup_read_local_ver_tx(void)
                                       BLE_HCI_OCF_IP_RD_LOCAL_VER),
                            NULL, 0, &rsp, sizeof(rsp));
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
@@ -76,7 +76,7 @@ ble_hs_startup_le_read_sup_f_tx(void)
                                       BLE_HCI_OCF_LE_RD_LOC_SUPP_FEAT),
                            NULL, 0, &rsp, sizeof(rsp));
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
@@ -93,7 +93,7 @@ ble_hs_startup_le_read_buf_sz_tx(uint16_t *out_pktlen, uint8_t *out_max_pkts)
                                       BLE_HCI_OCF_LE_RD_BUF_SIZE), NULL, 0,
                            &rsp, sizeof(rsp));
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
@@ -111,7 +111,7 @@ ble_hs_startup_read_buf_sz_tx(uint16_t *out_pktlen, uint16_t *out_max_pkts)
                                       BLE_HCI_OCF_IP_RD_BUF_SIZE), NULL, 0,
                            &rsp, sizeof(rsp));
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
@@ -130,24 +130,24 @@ ble_hs_startup_read_buf_sz(void)
     int rc;
     rc = ble_hs_startup_le_read_buf_sz_tx(&le_pktlen, &le_max_pkts);
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
-    if(le_pktlen != 0) {
+    if (le_pktlen != 0) {
         pktlen = le_pktlen;
         max_pkts = le_max_pkts;
     } else {
         rc = ble_hs_startup_read_buf_sz_tx(&pktlen, &max_pkts);
 
-        if(rc != 0) {
+        if (rc != 0) {
             return rc;
         }
     }
 
     rc = ble_hs_hci_set_buf_sz(pktlen, max_pkts);
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
@@ -163,7 +163,7 @@ ble_hs_startup_read_bd_addr(void)
                                       BLE_HCI_OCF_IP_RD_BD_ADDR),
                            NULL, 0, &rsp, sizeof(rsp));
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
@@ -190,14 +190,14 @@ ble_hs_startup_le_set_evmask_tx(void)
      */
     mask = 0x000000000000001f;
 
-    if(version >= BLE_HCI_VER_BCS_4_1) {
+    if (version >= BLE_HCI_VER_BCS_4_1) {
         /**
          * Enable the following LE events:
          *   0x0000000000000020 LE Remote Connection Parameter Request Event */
         mask |= 0x0000000000000020;
     }
 
-    if(version >= BLE_HCI_VER_BCS_4_2) {
+    if (version >= BLE_HCI_VER_BCS_4_2) {
         /**
          * Enable the following LE events:
          *   0x0000000000000040 LE Data Length Change Event
@@ -207,7 +207,7 @@ ble_hs_startup_le_set_evmask_tx(void)
         mask |= 0x0000000000000640;
     }
 
-    if(version >= BLE_HCI_VER_BCS_5_0) {
+    if (version >= BLE_HCI_VER_BCS_5_0) {
         /**
          * Enable the following LE events:
          *   0x0000000000000800 LE PHY Update Complete Event
@@ -225,7 +225,7 @@ ble_hs_startup_le_set_evmask_tx(void)
 
 #if MYNEWT_VAL(BLE_PERIODIC_ADV_SYNC_TRANSFER)
 
-    if(version >= BLE_HCI_VER_BCS_5_1) {
+    if (version >= BLE_HCI_VER_BCS_5_1) {
         /**
          * Enable the following LE events:
          * 0x0000000000800000 LE Periodic Advertising Sync Transfer Received event
@@ -239,7 +239,7 @@ ble_hs_startup_le_set_evmask_tx(void)
                                       BLE_HCI_OCF_LE_SET_EVENT_MASK),
                            &cmd, sizeof(cmd), NULL, 0);
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
@@ -268,11 +268,11 @@ ble_hs_startup_set_evmask_tx(void)
                                       BLE_HCI_OCF_CB_SET_EVENT_MASK),
                            &cmd, sizeof(cmd), NULL, 0);
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
-    if(version >= BLE_HCI_VER_BCS_4_1) {
+    if (version >= BLE_HCI_VER_BCS_4_1) {
         /**
          * Enable the following events:
          *     0x0000000000800000 Authenticated Payload Timeout Event
@@ -282,7 +282,7 @@ ble_hs_startup_set_evmask_tx(void)
                                           BLE_HCI_OCF_CB_SET_EVENT_MASK2),
                                &cmd2, sizeof(cmd2), NULL, 0);
 
-        if(rc != 0) {
+        if (rc != 0) {
             return rc;
         }
     }
@@ -304,13 +304,13 @@ ble_hs_startup_go(void)
     int rc;
     rc = ble_hs_startup_reset_tx();
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
     rc = ble_hs_startup_read_local_ver_tx();
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
@@ -318,51 +318,51 @@ ble_hs_startup_go(void)
     /* we need to check this only if using external controller */
 #if !MYNEWT_VAL(BLE_CONTROLLER)
 
-    if(ble_hs_hci_get_hci_version() < BLE_HCI_VER_BCS_4_0) {
+    if (ble_hs_hci_get_hci_version() < BLE_HCI_VER_BCS_4_0) {
         BLE_HS_LOG(ERROR, "Required controller version is 4.0 (6)\n");
         return BLE_HS_ECONTROLLER;
     }
 
     rc = ble_hs_startup_read_sup_f_tx();
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
 #endif
     rc = ble_hs_startup_set_evmask_tx();
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
     rc = ble_hs_startup_le_set_evmask_tx();
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
     rc = ble_hs_startup_read_buf_sz();
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
     rc = ble_hs_startup_le_read_sup_f_tx();
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
     rc = ble_hs_startup_read_bd_addr();
 
-    if(rc != 0) {
+    if (rc != 0) {
         return rc;
     }
 
     rc = ble_hs_pvcy_set_our_irk(NULL);
 
-    if(rc != 0) {
+    if (rc != 0) {
         assert(0);
         return rc;
     }

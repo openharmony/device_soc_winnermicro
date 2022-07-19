@@ -17,5 +17,5 @@
 
 int puts(const char *s)
 {
-	return wm_printf(s);
+    return wm_printf(s);
 }

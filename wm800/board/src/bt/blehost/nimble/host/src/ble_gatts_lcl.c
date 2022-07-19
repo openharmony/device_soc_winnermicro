@@ -20,7 +20,7 @@
 #include <stddef.h>
 #include <string.h>
 #include "host/ble_uuid.h"
-//#include "console/console.h"
+// #include "console/console.h"
 #include "nimble/ble.h"
 #include "ble_hs_priv.h"
 
@@ -72,14 +72,14 @@ ble_gatts_flags_to_str(uint16_t flags, char *buf,
     length += 1;
 
     for(bit = 0; names[bit]; ++bit) {
-        if(flags & (1 << bit)) {
+        if (flags & (1 << bit)) {
             length += strlen(names[bit]);
 
-            if(length + 1 >= BLE_CHR_FLAGS_STR_LEN) {
+            if (length + 1 >= BLE_CHR_FLAGS_STR_LEN) {
                 return buf;
             }
 
-            if(non_empty) {
+            if (non_empty) {
                 strcat(buf, "|");
                 length += 1;
             }
@@ -92,7 +92,6 @@ ble_gatts_flags_to_str(uint16_t flags, char *buf,
     strcat(buf, "]");
     return buf;
 }
-
 
 #define STRINGIFY(X) #X
 #define FIELD_NAME_LEN STRINGIFY(12)
@@ -122,7 +121,7 @@ ble_gatt_show_local_chr(const struct ble_gatt_svc_def *svc,
                                       flags_buf, ble_gatt_chr_f_names));
         handle += 2;
 
-        if((chr->flags & BLE_GATT_CHR_F_NOTIFY) ||
+        if ((chr->flags & BLE_GATT_CHR_F_NOTIFY) ||
                 (chr->flags & BLE_GATT_CHR_F_INDICATE)) {
             printf("ccc descriptor\n");
             printf("%" FIELD_INDENT "s %" FIELD_NAME_LEN "s "
@@ -198,7 +197,7 @@ ble_gatt_show_local_svc(const struct ble_gatt_svc_def *svc,
            end_group_handle);
     handle++;
 
-    if(svc->includes) {
+    if (svc->includes) {
         handle += ble_gatt_show_local_inc_svc(svc, handle, uuid_buf);
     }
 

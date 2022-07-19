@@ -17,7 +17,6 @@
  * under the License.
  */
 
-
 /**
  * @addtogroup HAL
  * @{
@@ -33,7 +32,6 @@ extern "C" {
 #endif
 
 #include <stdint.h>
-
 
 /**
  * Function prototype for UART driver to ask for more data to send.
@@ -145,9 +143,7 @@ void hal_uart_blocking_tx(int uart, uint8_t byte);
 }
 #endif
 
-
 #endif /* H_HAL_UART_H_ */
-
 
 /**
  *   @} HALUart

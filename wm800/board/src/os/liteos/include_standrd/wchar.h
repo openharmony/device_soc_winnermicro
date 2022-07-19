@@ -118,10 +118,7 @@ unsigned long wcstoul (const wchar_t *__restrict, wchar_t **__restrict, int);
 long long wcstoll (const wchar_t *__restrict, wchar_t **__restrict, int);
 unsigned long long wcstoull (const wchar_t *__restrict, wchar_t **__restrict, int);
 
-
-
 int fwide (FILE *, int);
-
 
 int wprintf (const wchar_t *__restrict, ...);
 int fwprintf (FILE *__restrict, const wchar_t *__restrict, ...);

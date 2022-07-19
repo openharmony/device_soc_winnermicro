@@ -33,9 +33,6 @@
 
 #define MYNEWT_VAL_CHOICE(_name, _val)          MYNEWT_VAL_ ## _name ## __ ## _val
 
-
-
-
 /*** @apache-mynewt-core/crypto/tinycrypt */
 #ifndef MYNEWT_VAL_TINYCRYPT_SYSINIT_STAGE
 #define MYNEWT_VAL_TINYCRYPT_SYSINIT_STAGE (200)
@@ -644,7 +641,7 @@
 #endif
 
 #ifndef MYNEWT_VAL_BLE_L2CAP_COC_MAX_NUM
-//0->1; pts tools, connect parameters update
+// 0->1; pts tools, connect parameters update
 #define MYNEWT_VAL_BLE_L2CAP_COC_MAX_NUM (5)
 #endif
 
@@ -671,7 +668,6 @@
 #ifndef MYNEWT_VAL_BLE_L2CAP_SIG_MAX_PROCS
 #define MYNEWT_VAL_BLE_L2CAP_SIG_MAX_PROCS (1)
 #endif
-
 
 #ifndef MYNEWT_VAL_BLE_MONITOR_CONSOLE_BUFFER_SIZE
 #define MYNEWT_VAL_BLE_MONITOR_CONSOLE_BUFFER_SIZE (128)
@@ -751,12 +747,6 @@
 
 #ifndef MYNEWT_VAL_BLE_SM_SC_DEBUG_KEYS
 #define MYNEWT_VAL_BLE_SM_SC_DEBUG_KEYS (0)
-#endif
-
-
-
-#ifndef MYNEWT_VAL_BLE_SM_THEIR_KEY_DIST
-#define MYNEWT_VAL_BLE_SM_THEIR_KEY_DIST (0x0B)
 #endif
 
 #ifndef MYNEWT_VAL_BLE_STORE_MAX_BONDS
@@ -947,12 +937,6 @@
 #define MYNEWT_VAL_BLE_LL_CONN_INIT_MAX_TX_BYTES (27)
 #endif
 
-
-
-#ifndef MYNEWT_VAL_BLE_HCI_ACL_OUT_COUNT
-#define MYNEWT_VAL_BLE_HCI_ACL_OUT_COUNT (12)
-#endif
-
 #ifndef MYNEWT_VAL_BLE_HCI_EVT_BUF_SIZE
 #define MYNEWT_VAL_BLE_HCI_EVT_BUF_SIZE (70)
 #endif
@@ -1033,7 +1017,6 @@
 #ifndef MYNEWT_VAL_TARGET_porting_default
 #define MYNEWT_VAL_TARGET_porting_default (1)
 #endif
-
 
 /* Overridden by targets/porting-nimble (defined by nimble/transport/uart) */
 #ifndef MYNEWT_VAL_BLE_HCI_UART_BAUD
@@ -1326,8 +1309,5 @@
 #endif
 
 /*******************************************************/
-
-
-
 
 #endif  /*H_MYNEWT_SYSCFG_*/

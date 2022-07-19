@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 
-
 /*****************************************************************************
 *
 * File Name : wm_main.c
@@ -55,7 +54,6 @@
 #include "wm_ram_config.h"
 #include "wm_uart.h"
 #include "los_task.h"
-
 
 #define     TASK_START_STK_SIZE         640     /* Size of each task's stacks (# of WORDs)  */
 /*If you want to delete main task after it works, you can open this MACRO below*/
@@ -113,11 +111,11 @@ void wm_gpio_config()
     wm_uart0_tx_config(WM_IO_PB_19);
     wm_uart0_rx_config(WM_IO_PB_20);
 
-#if (TLS_CONFIG_LS_SPI)	
-	wm_spi_cs_config(WM_IO_PB_04);
-	wm_spi_ck_config(WM_IO_PB_02);
-	wm_spi_di_config(WM_IO_PB_03);
-	wm_spi_do_config(WM_IO_PB_05);
+#if (TLS_CONFIG_LS_SPI)    
+    wm_spi_cs_config(WM_IO_PB_04);
+    wm_spi_ck_config(WM_IO_PB_02);
+    wm_spi_di_config(WM_IO_PB_03);
+    wm_spi_do_config(WM_IO_PB_05);
 #endif
 }
 int main(void)
@@ -132,19 +130,18 @@ int main(void)
     value = tls_reg_read32(HR_PMU_PS_CR);
     value &= ~(BIT(5));
     tls_reg_write32(HR_PMU_PS_CR, value);
-	
+    
     /*Close those not initialized clk except uart0,sdadc,gpio,rfcfg
     value = tls_reg_read32(HR_CLK_BASE_ADDR);
     value &= ~0x3fffff;
     value |= 0x1a02;
     tls_reg_write32(HR_CLK_BASE_ADDR, value);*/
 
-
     tls_sys_clk_set(CPU_CLK_80M);
     tls_os_init(NULL);
 
     /*configure wake up source begin*/
-	csi_vic_set_wakeup_irq(SDIO_IRQn);
+    csi_vic_set_wakeup_irq(SDIO_IRQn);
     csi_vic_set_wakeup_irq(MAC_IRQn);
     csi_vic_set_wakeup_irq(SEC_IRQn);
     csi_vic_set_wakeup_irq(DMA_Channel0_IRQn);
@@ -156,7 +153,7 @@ int main(void)
     csi_vic_set_wakeup_irq(I2C_IRQn);
     csi_vic_set_wakeup_irq(ADC_IRQn);
     csi_vic_set_wakeup_irq(SPI_LS_IRQn);
-	csi_vic_set_wakeup_irq(SPI_HS_IRQn);
+    csi_vic_set_wakeup_irq(SPI_HS_IRQn);
     csi_vic_set_wakeup_irq(GPIOA_IRQn);
     csi_vic_set_wakeup_irq(GPIOB_IRQn);
     csi_vic_set_wakeup_irq(UART0_IRQn);
@@ -166,7 +163,7 @@ int main(void)
     csi_vic_set_wakeup_irq(BT_IRQn);
     csi_vic_set_wakeup_irq(PWM_IRQn);
     csi_vic_set_wakeup_irq(I2S_IRQn);
-	csi_vic_set_wakeup_irq(SIDO_HOST_IRQn);
+    csi_vic_set_wakeup_irq(SIDO_HOST_IRQn);
     csi_vic_set_wakeup_irq(SYS_TICK_IRQn);
     csi_vic_set_wakeup_irq(RSA_IRQn);
     csi_vic_set_wakeup_irq(CRYPTION_IRQn);
@@ -175,7 +172,7 @@ int main(void)
     csi_vic_set_wakeup_irq(WDG_IRQn);
     /*configure wake up source end*/
 #if TLS_OS_LITEOS
-	tls_os_task_create(&tststarthdl, "firstThr",
+    tls_os_task_create(&tststarthdl, "firstThr",
                        task_start,
                        (void *)0,
                        (void *)NULL,
@@ -184,8 +181,8 @@ int main(void)
                        0);
    tls_os_start_scheduler();
 #else
-	TaskStartStk = tls_mem_alloc(sizeof(u32)*TASK_START_STK_SIZE);
-	if (TaskStartStk)
+    TaskStartStk = tls_mem_alloc(sizeof(u32)*TASK_START_STK_SIZE);
+    if (TaskStartStk)
     {
         tls_os_task_create(&tststarthdl, NULL,
                            task_start,
@@ -194,12 +191,12 @@ int main(void)
                            TASK_START_STK_SIZE * sizeof(u32), /* 任务栈的大小     */
                            1,
                            0);
-	   tls_os_start_scheduler();
+       tls_os_start_scheduler();
     }
-	else
-	{
-		while(1);
-	}	
+    else
+    {
+        while(1);
+    }    
 #endif
 
     return 0;
@@ -207,7 +204,7 @@ int main(void)
 
 unsigned int tls_get_wifi_ver(void)
 {
-	return (WiFiVer[0]<<16)|(WiFiVer[1]<<8)|WiFiVer[2];
+    return (WiFiVer[0]<<16)|(WiFiVer[1]<<8)|WiFiVer[2];
 }
 
 void disp_version_info(void)
@@ -227,21 +224,19 @@ void disp_version_info(void)
     TLS_DBGPRT_INFO("****************************************************************\n");
 }
 
-
 void tls_pmu_chipsleep_callback(int sleeptime)
 {
-	//wm_printf("c:%d\r\n", sleeptime);
-	/*set wakeup time*/
-	tls_pmu_timer1_start(sleeptime);
-	/*enter chip sleep*/
-	tls_pmu_sleep_start();
+    // wm_printf("c:%d\r\n", sleeptime);
+    /*set wakeup time*/
+    tls_pmu_timer1_start(sleeptime);
+    /*enter chip sleep*/
+    tls_pmu_sleep_start();
 }
-
 
 /*****************************************************************************
  * Function Name        // task_start
  * Descriptor             // before create multi_task, we create a task_start task
- *                      	   // in this example, this task display the cpu usage
+ *                             // in this example, this task display the cpu usage
  * Input
  * Output
  * Return
@@ -249,9 +244,9 @@ void tls_pmu_chipsleep_callback(int sleeptime)
 void task_start (void *data)
 {
 #if defined(LOSCFG_KERNEL_TEST_FULL) || defined(LOSCFG_KERNEL_TEST)
-	/*nothing to do when kernel test is running*/
+    /*nothing to do when kernel test is running*/
 #else
-	u8 enable = 0;
+    u8 enable = 0;
 
 #if TLS_CONFIG_CRYSTAL_24M
     tls_wl_hw_using_24m_crystal();
@@ -279,14 +274,14 @@ void task_start (void *data)
     tls_param_load_factory_default();
     tls_param_init(); /*add param to init sysparam_lock sem*/
 
-	tls_wifi_netif_event_init();	
+    tls_wifi_netif_event_init();    
 
-	tls_param_get(TLS_PARAM_ID_PSM, &enable, TRUE);	
-	if (enable != TRUE)
-	{
-	    enable = TRUE;
-	    tls_param_set(TLS_PARAM_ID_PSM, &enable, TRUE);	  
-	}
+    tls_param_get(TLS_PARAM_ID_PSM, &enable, TRUE);    
+    if (enable != TRUE)
+    {
+        enable = TRUE;
+        tls_param_set(TLS_PARAM_ID_PSM, &enable, TRUE);      
+    }
 #endif
     UserMain();
 
@@ -296,13 +291,13 @@ void task_start (void *data)
     for (;;)
     {
 #if 1
-		tls_os_time_delay(0x10000000);
+        tls_os_time_delay(0x10000000);
 #else
-        //printf("start up\n");
+        // printf("start up\n");
         extern void tls_os_disp_task_stat_info(void);
         tls_os_disp_task_stat_info();
         tls_os_time_delay(1000);
-#endif		
+#endif        
     }
 }
 

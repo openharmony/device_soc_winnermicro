@@ -117,7 +117,7 @@ Reset_Handler:
     mov     sp, r0
 
 /*
- *	move __Vectors to irq_vectors
+ *    move __Vectors to irq_vectors
  */
     lrw     r1, __Vectors
     lrw     r2, __vdata_start__
@@ -199,7 +199,7 @@ Reset_Handler:
     jbsr    board_init
 #endif
 
-	jbsr	cxx_system_init
+    jbsr    cxx_system_init
 
     jbsr    main
     .size   Reset_Handler, . - Reset_Handler
@@ -213,7 +213,7 @@ __exit:
     .globl  g_intstackalloc
     .global g_intstackbase
     .global g_top_irqstack
-	.global __init_stack_s
+    .global __init_stack_s
 g_intstackalloc:
 g_intstackbase:
     .space CONFIG_ARCH_INTERRUPTSTACK
@@ -221,12 +221,12 @@ g_top_irqstack:
 __init_stack_s:
 
 .section .vdata
-	.align  10
+    .align  10
     .globl  irq_vectors
     .type   irq_vectors, @object
 irq_vectors:
-	.space CONFIG_IRQ_VECTOR_SIZE
-	.size   irq_vectors, . - irq_vectors
+    .space CONFIG_IRQ_VECTOR_SIZE
+    .size   irq_vectors, . - irq_vectors
 
     .globl  irq_vectors_end
 irq_vectors_end:

@@ -40,7 +40,6 @@
 #define TLS_FWUP_STATUS_ECRC      (8)
 #define TLS_FWUP_STATUS_EUNDEF      (9)
 
-
 /** firmware block size for one time */
 #define TLS_FWUP_BLK_SIZE      512
 
@@ -70,15 +69,15 @@
 #define TLS_FWUP_DEST_SPECIFIC_DATA      (1)
 
 enum IMAGE_TYPE_ENUM{
-	IMG_TYPE_SECBOOT    = 0x0,
-	IMG_TYPE_FLASHBIN0  = 0x1,
-	IMG_TYPE_CPFT       = 0xE
+    IMG_TYPE_SECBOOT    = 0x0,
+    IMG_TYPE_FLASHBIN0  = 0x1,
+    IMG_TYPE_CPFT       = 0xE
 };
 
 enum 
 {
-	NOT_ZIP_FILE = 0,
-	ZIP_FILE = 1
+    NOT_ZIP_FILE = 0,
+    ZIP_FILE = 1
 };
 typedef union {
     struct {
@@ -97,75 +96,74 @@ typedef union {
 } Img_Attr_Type;
 
 typedef struct IMAGE_HEADER_PARAM{
-	unsigned int   	magic_no;
-	Img_Attr_Type   img_attr;
-	unsigned int   	img_addr;
-	unsigned int   	img_len;
-	unsigned int   	img_header_addr;
-	unsigned int    upgrade_img_addr;
-	unsigned int	org_checksum;
-	unsigned int   	upd_no;
-	unsigned char  	ver[16];
-	unsigned int 	_reserved0;
-	unsigned int 	_reserved1;
-	struct IMAGE_HEADER_PARAM *next;
-	unsigned int	hd_checksum;
+    unsigned int   	magic_no;
+    Img_Attr_Type   img_attr;
+    unsigned int   	img_addr;
+    unsigned int   	img_len;
+    unsigned int   	img_header_addr;
+    unsigned int    upgrade_img_addr;
+    unsigned int	org_checksum;
+    unsigned int   	upd_no;
+    unsigned char  	ver[16];
+    unsigned int 	_reserved0;
+    unsigned int 	_reserved1;
+    struct IMAGE_HEADER_PARAM *next;
+    unsigned int	hd_checksum;
 }IMAGE_HEADER_PARAM_ST;
-
 
 /**   Structure for firmware image header   */
 struct tls_fwup_image_hdr {
-	u32 magic;
-	u8 crc8;
-	u8 dest_specific;
-	u16 dest_offset;  // unit: 4KB, valid when dest_specific is TRUE
-	u32 file_len;
-	char time[4];
+    u32 magic;
+    u8 crc8;
+    u8 dest_specific;
+    u16 dest_offset;  // unit: 4KB, valid when dest_specific is TRUE
+    u32 file_len;
+    char time[4];
 };
 
 /**   Structure for one packet data   */
 struct  tls_fwup_block {
-	u16 number;	//0~Sum-1
-	u16 sum;
-	u8 data[TLS_FWUP_BLK_SIZE];
-	u32 crc32;
-	u8 pad[8];
+    u16 number;	// 0~Sum-1
+    u16 sum;
+    u8 data[TLS_FWUP_BLK_SIZE];
+    u32 crc32;
+    u8 pad[8];
 };
 
 /**   Enumeration for image soure when firmware update   */
 enum tls_fwup_image_src {
-	TLS_FWUP_IMAGE_SRC_LUART = 0,    /**< LOW SPEED UART */
-	TLS_FWUP_IMAGE_SRC_HUART,		 /**< HIGH SPEED UART */
-	TLS_FWUP_IMAGE_SRC_HSPI,		 /**< HIGH SPEED SPI */
-	TLS_FWUP_IMAGE_SRC_WEB           /**< WEB SERVER */
+    TLS_FWUP_IMAGE_SRC_LUART = 0,    /**< LOW SPEED UART */
+    TLS_FWUP_IMAGE_SRC_HUART,		 /**< HIGH SPEED UART */
+    TLS_FWUP_IMAGE_SRC_HSPI,		 /**< HIGH SPEED SPI */
+    TLS_FWUP_IMAGE_SRC_WEB           /**< WEB SERVER */
 };
 
 /**   Structure for firmware update request   */
 struct tls_fwup_request {
-	struct dl_list list;
-	u8 *data;
-	u32 data_len;
-	int status;
-	void (*complete)(struct tls_fwup_request *request, void *arg);
-	void *arg;
+    struct dl_list list;
+    u8 *data;
+    u32 data_len;
+    int status;
+    void (*complete)(struct tls_fwup_request *request, void *arg);
+    void *arg;
 };
 
 /**   Structure for firmware update   */
 struct tls_fwup {
-	struct dl_list wait_list;
-	tls_os_sem_t *list_lock;
+    struct dl_list wait_list;
+    tls_os_sem_t *list_lock;
 
-	bool busy;
-	enum tls_fwup_image_src current_image_src;
-	u16 current_state;
-	u32 current_session_id;
+    bool busy;
+    enum tls_fwup_image_src current_image_src;
+    u16 current_state;
+    u32 current_session_id;
 
-	u32 received_len;
-	u32 total_len;
-	u32 updated_len;
-	u32 program_base;
-	u32 program_offset;
-	s32 received_number;
+    u32 received_len;
+    u32 total_len;
+    u32 updated_len;
+    u32 program_base;
+    u32 program_offset;
+    s32 received_number;
 };
 
 /**
@@ -204,9 +202,9 @@ int tls_fwup_init(void);
  * @brief          This function is used to enter firmware update progress.
  *
  * @param[in]      image_src   image file's source,
- 							   from TLS_FWUP_IMAGE_SRC_LUART,
- 							   TLS_FWUP_IMAGE_SRC_WEB,TLS_FWUP_IMAGE_SRC_HUART,
- 							   TLS_FWUP_IMAGE_SRC_HSPI
+                                from TLS_FWUP_IMAGE_SRC_LUART,
+                                TLS_FWUP_IMAGE_SRC_WEB,TLS_FWUP_IMAGE_SRC_HUART,
+                                TLS_FWUP_IMAGE_SRC_HSPI
  *
  * @retval         non-zero    successfully, return session id
  * @retval         0           failed
@@ -288,7 +286,7 @@ int tls_fwup_clear_error(u32 session_id);
 
 /**
  * @brief          This function is used to set update state to
- 				   TLS_FWUP_STATE_ERROR_CRC
+                    TLS_FWUP_STATE_ERROR_CRC
  *
  * @param[in]      session_id    current sessin id
  *
@@ -335,7 +333,6 @@ int tls_fwup_set_update_numer(int number);
  * @note           None
  */
 int tls_fwup_get_current_update_numer(void);
-
 
 /**
  * @brief          This function is used to get current session id
