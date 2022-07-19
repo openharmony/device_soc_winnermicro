@@ -201,7 +201,7 @@ void tls_pmu_timer1_start(u16 msec);
 void tls_pmu_timer1_stop(void);
 
 /**
- * @brief          	This function is used to start pmu goto standby 
+ * @brief          	This function is used to start pmu goto standby
  *
  * @param		None
  *
@@ -212,7 +212,7 @@ void tls_pmu_timer1_stop(void);
 void tls_pmu_standby_start(void);
 
 /**
- * @brief          	This function is used to start pmu goto sleep 
+ * @brief          	This function is used to start pmu goto sleep
  *
  * @param		None
  *

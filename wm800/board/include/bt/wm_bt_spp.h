@@ -98,7 +98,7 @@ tls_bt_status_t tls_bt_spp_disable(void);
  * @brief          Discovery the spp service by the given peer device.
  *
  * @param[in]      *bd_addr         remote device bluetooth device address
- * 
+ *
  * @retval         @ref tls_bt_status_t
  *
  * @note           None
@@ -107,13 +107,13 @@ tls_bt_status_t tls_bt_spp_disable(void);
 tls_bt_status_t tls_bt_spp_start_discovery(tls_bt_addr_t *bd_addr, tls_bt_uuid_t *uuid);
 
 /**
- * @brief          Create a spp connection to the remote device 
- * 
+ * @brief          Create a spp connection to the remote device
+ *
  * @param[in]   sec_mask:     Security Setting Mask
  * @param[in]   role:         Server or client
  * @param[in]   remote_scn:   Remote device bluetooth device SCN
  * @param[in]      *bd_addr         remote device bluetooth device address
- * 
+ *
  * @retval         @ref tls_bt_status_t
  *
  * @note           None
@@ -125,7 +125,7 @@ tls_bt_status_t tls_bt_spp_connect(wm_spp_sec_t sec_mask,
  * @brief          Close a spp connection
  *
  * @param[in]   handle:    The connection handle
- * 
+ *
  * @retval         @ref tls_bt_status_t
  *
  * @note           None

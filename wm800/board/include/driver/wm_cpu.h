@@ -30,7 +30,7 @@
 /**W800 BASE PLL CLOCK*/
 #define W800_PLL_CLK_MHZ  		(480)
 
-enum CPU_CLK{
+enum CPU_CLK {
     CPU_CLK_240M = 2,
     CPU_CLK_160M = 3,
     CPU_CLK_80M  = 6,
@@ -40,19 +40,19 @@ enum CPU_CLK{
 
 typedef union {
     struct {
-        uint32_t CPU: 8;                     /*!< bit:  0.. 7  cpu clock divider */
-        uint32_t WLAN: 8;                    /*!< bit:  8.. 15 Wlan clock divider */
-        uint32_t BUS2: 8;                    /*!< bit:  16.. 23 clock dividing ratio of bus2 & bus1 */
-        uint32_t PD: 4;                      /*!< bit:  24.. 27  peripheral divider */
-        uint32_t RSV: 3;                     /*!< bit:  28.. 30  Reserved */
-        uint32_t DIV_EN: 1;                  /*!< bit:  31     divide frequency enable */
+        uint32_t CPU : 8;                     /*!< bit:  0.. 7  cpu clock divider */
+        uint32_t WLAN : 8;                    /*!< bit:  8.. 15 Wlan clock divider */
+        uint32_t BUS2 : 8;                    /*!< bit:  16.. 23 clock dividing ratio of bus2 & bus1 */
+        uint32_t PD : 4;                      /*!< bit:  24.. 27  peripheral divider */
+        uint32_t RSV : 3;                     /*!< bit:  28.. 30  Reserved */
+        uint32_t DIV_EN : 1;                  /*!< bit:  31     divide frequency enable */
     } b;
     uint32_t w;
 } clk_div_reg;
 
 #define UNIT_MHZ		(1000000)
 
-typedef struct{
+typedef struct {
     u32 apbclk;
     u32 cpuclk;
     u32 wlanclk;

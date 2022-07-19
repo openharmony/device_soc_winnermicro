@@ -238,7 +238,7 @@ struct ieee80211_qos_hdr {
      u16 seq_ctrl;
      u16 qos_ctrl;
 }__attribute__((packed));
-typedef enum _phy_type{
+typedef enum _phy_type {
     phy_80211_b,
     phy_80211_bg,
     phy_80211_bgn,
@@ -738,43 +738,43 @@ struct ieee80211_mgmt {
                     u8 status_code;
                     u8 variable[0];
                 } __attribute__ ((packed)) wme_action;
-                struct{
+                struct {
                     u8 action_code;
                     u8 element_id;
                     u8 length;
                     struct ieee80211_channel_sw_ie sw_elem;
                 } __attribute__ ((packed)) chan_switch;
-                struct{
+                struct {
                     u8 action_code;
                     u8 channel_width;
                 } __attribute__ ((packed)) chan_width;
-                struct{
+                struct {
                     u8 action_code;
                     u8 dialog_token;
                     u8 element_id;
                     u8 length;
                     struct ieee80211_msrment_ie msr_elem;
                 } __attribute__ ((packed)) measurement;
-                struct{
+                struct {
                     u8 action_code;
                     u8 dialog_token;
                     u16 capab;
                     u16 timeout;
                     u16 start_seq_num;
                 } __attribute__ ((packed)) addba_req;
-                struct{
+                struct {
                     u8 action_code;
                     u8 dialog_token;
                     u16 status;
                     u16 capab;
                     u16 timeout;
                 } __attribute__ ((packed)) addba_resp;
-                struct{
+                struct {
                     u8 action_code;
                     u16 params;
                     u16 reason_code;
                 } __attribute__ ((packed)) delba;
-                struct{
+                struct {
                     u8 action_code;
                     /* capab_info for open and confirm,
                      * reason for close
@@ -787,7 +787,7 @@ struct ieee80211_mgmt {
                      */
                     u8 variable[0];
                 } __attribute__ ((packed)) plink_action;
-                struct{
+                struct {
                     u8 action_code;
                     u8 variable[0];
                 } __attribute__ ((packed)) mesh_action;

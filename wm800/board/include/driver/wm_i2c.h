@@ -34,8 +34,7 @@ extern "C" {
 #include "wm_cpu.h"
 #include "wm_irq.h"
 
-typedef struct 
-{
+typedef struct {
     __IO uint32_t PRER_LO;
     __IO uint32_t PRER_HI;
     __IO uint32_t CTRL;
@@ -75,7 +74,7 @@ typedef struct
 void tls_i2c_init(u32 freq);
 
 /** I2C initialization mask */
-#define  wm_i2c_int_mask(bl)   do { tls_bitband_write(HR_I2C_CTRL, 6, bl);}while(0);
+#define  wm_i2c_int_mask(bl)   do { tls_bitband_write(HR_I2C_CTRL, 6, bl);}while (0);
 
 /**
  * @brief	send stop signal
@@ -121,11 +120,11 @@ void wm_i2c_transfer_done_register(void (*done)(void));
 
 /**
  * @brief	Start writing through int mode
- * @param[in] devaddr	the device address 
+ * @param[in] devaddr	the device address
  * @param[in] wordaddr when one send stop signal after read, when zero do not send stop
  * @param[in] buf	the address point where data shoule be stored
- * @param[in] len	the length of data will be received 
- * @retval	
+ * @param[in] len	the length of data will be received
+ * @retval
  *	- \ref WM_FAILED
  *	- \ref WM_SUCCESS
  */
@@ -135,7 +134,7 @@ int wm_i2c_start_write_it(uint8_t devaddr, uint8_t wordaddr, uint8_t * buf, uint
  * @brief	Get the data stored in data register of I2C module
  * @param[in] ifack	when one send ack after reading the data register,when zero don't
  * @param[in] ifstop when one send stop signal after read, when zero do not send stop
- * @retval	the received data 
+ * @retval	the received data
  */
 int wm_i2c_start_read_it(uint8_t devaddr, uint8_t wordaddr, uint8_t * buf, uint16_t len);
 /**

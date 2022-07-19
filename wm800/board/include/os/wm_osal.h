@@ -43,7 +43,7 @@ struct os_time {
     os_time_t usec;
 };
 /** ENUMERATION of OS */
-enum TLS_OS_TYPE{
+enum TLS_OS_TYPE {
     OS_UCOSII = 0,
     OS_FREERTOS = 1,
     OS_LITEOS = 2,
@@ -227,7 +227,7 @@ int tls_os_get_type(void);
  *
  * @note          1) Stack Range: [stk_start, stk_start + stk_size) must be between 0x20000000 and 0x20028000
  *                2) task stack:  Using static memory like array, not using dynamic memory.
- *                3) And if you use static memory like array (large size) as data storage in your application, 
+ *                3) And if you use static memory like array (large size) as data storage in your application,
  *                   we suggest you change it to dynamic memory by tls_mem_alloc.
  */
 tls_os_status_t tls_os_task_create(tls_os_task_t *task,
@@ -275,7 +275,7 @@ tls_os_status_t tls_os_task_del_by_task_handle(tls_os_task_t task, void (*freefu
 /**
  * @brief          This function query current task id;
  *
- * @retval         tls_os_task_t 
+ * @retval         tls_os_task_t
  *
  */
 tls_os_task_t tls_os_task_id(void);
@@ -283,7 +283,7 @@ tls_os_task_t tls_os_task_id(void);
 /**
  * @brief          This function query current task schedule state;
  *
- * @retval         task state value; 
+ * @retval         task state value;
  *
  */
 u8 tls_os_task_schedule_state();
@@ -342,7 +342,7 @@ tls_os_status_t tls_os_mutex_create(u8 prio, tls_os_mutex_t **mutex);
                       being deleted,that task will be made ready-to-run at
                       its original priority.
  */
- tls_os_status_t tls_os_mutex_delete(tls_os_mutex_t *mutex);
+tls_os_status_t tls_os_mutex_delete(tls_os_mutex_t *mutex);
 
 /**
  * @brief          This function waits for a mutual exclusion semaphore
@@ -366,8 +366,8 @@ tls_os_status_t tls_os_mutex_create(u8 prio, tls_os_mutex_t **mutex);
                     2) You MUST NOT change the priority of the task
                           that owns the mutex
  */
- tls_os_status_t tls_os_mutex_acquire(tls_os_mutex_t *mutex,
-        u32 wait_time);
+tls_os_status_t tls_os_mutex_acquire(tls_os_mutex_t *mutex,
+                                     u32 wait_time);
 
 /**
  * @brief          This function releases a mutual exclusion semaphore
@@ -380,7 +380,7 @@ tls_os_status_t tls_os_mutex_create(u8 prio, tls_os_mutex_t **mutex);
  *
  * @note           None
  */
- tls_os_status_t tls_os_mutex_release(tls_os_mutex_t *mutex);
+tls_os_status_t tls_os_mutex_release(tls_os_mutex_t *mutex);
 
 /**
  * @brief          This function creates a semaphore
@@ -434,8 +434,8 @@ tls_os_status_t tls_os_sem_delete(tls_os_sem_t *sem);
  *
  * @note           None
  */
- tls_os_status_t tls_os_sem_acquire(tls_os_sem_t *sem,
-        u32 wait_time);
+tls_os_status_t tls_os_sem_acquire(tls_os_sem_t *sem,
+                                   u32 wait_time);
 
 /**
  * @brief          This function signals a semaphore
@@ -448,7 +448,7 @@ tls_os_status_t tls_os_sem_delete(tls_os_sem_t *sem);
  *
  * @note           None
  */
- tls_os_status_t tls_os_sem_release(tls_os_sem_t *sem);
+tls_os_status_t tls_os_sem_release(tls_os_sem_t *sem);
 
 /**
  * @brief          This function sets the semaphore count to the value specified
@@ -466,7 +466,7 @@ tls_os_status_t tls_os_sem_delete(tls_os_sem_t *sem);
  *
  * @note           None
  */
- tls_os_status_t tls_os_sem_set(tls_os_sem_t *sem, u16 cnt);
+tls_os_status_t tls_os_sem_set(tls_os_sem_t *sem, u16 cnt);
 
 /**
  * @brief          This function creates a message queue if free event cont
@@ -546,9 +546,9 @@ tls_os_status_t tls_os_queue_flush(tls_os_queue_t *queue);
  *
  * @note           None
  */
- tls_os_status_t tls_os_queue_receive(tls_os_queue_t *queue,void **msg,
-        u32 msg_size,
-        u32 wait_time);
+tls_os_status_t tls_os_queue_receive(tls_os_queue_t *queue, void **msg,
+                                     u32 msg_size,
+                                     u32 wait_time);
 
 /**
  * @brief          This function is used to query  the message queue is empty or not.
@@ -559,7 +559,7 @@ tls_os_status_t tls_os_queue_flush(tls_os_queue_t *queue);
  * @retval         0                not empty;
  *                 2         queue is damaged;
  * @note           None
- */        
+ */
 u8 tls_os_queue_is_empty(tls_os_queue_t *queue);
 
 /**
@@ -575,7 +575,7 @@ u8 tls_os_queue_is_empty(tls_os_queue_t *queue);
  *
  * @note           None
  */
- tls_os_status_t tls_os_mailbox_create(tls_os_mailbox_t **mailbox, u32 mailbox_size);
+tls_os_status_t tls_os_mailbox_create(tls_os_mailbox_t **mailbox, u32 mailbox_size);
 
 /**
  * @brief          This function deletes a mailbox and readies all of the tasks
@@ -589,7 +589,7 @@ u8 tls_os_queue_is_empty(tls_os_queue_t *queue);
  *
  * @note           None
  */
- tls_os_status_t tls_os_mailbox_delete(tls_os_mailbox_t *mailbox);
+tls_os_status_t tls_os_mailbox_delete(tls_os_mailbox_t *mailbox);
 
 /**
  * @brief          This function sends a message to a mailbox
@@ -604,7 +604,7 @@ u8 tls_os_queue_is_empty(tls_os_queue_t *queue);
  *
  * @note           None
  */
- tls_os_status_t tls_os_mailbox_send(tls_os_mailbox_t *mailbox,void *msg);
+tls_os_status_t tls_os_mailbox_send(tls_os_mailbox_t *mailbox,void *msg);
 
 /**
  * @brief          This function waits for a message to be sent to a mailbox
@@ -627,9 +627,9 @@ u8 tls_os_queue_is_empty(tls_os_queue_t *queue);
  *
  * @note           None
  */
- tls_os_status_t tls_os_mailbox_receive(tls_os_mailbox_t *mailbox,
-        void **msg,
-        u32 wait_time);
+tls_os_status_t tls_os_mailbox_receive(tls_os_mailbox_t *mailbox,
+                                       void **msg,
+                                       u32 wait_time);
 
 /**
  * @brief          This function is used by your application to obtain the
@@ -642,7 +642,7 @@ u8 tls_os_queue_is_empty(tls_os_queue_t *queue);
  *
  * @note           None
  */
- u32 tls_os_get_time(void);
+u32 tls_os_get_time(void);
 
 /**
  * @brief          This function is used to disable interrupts by preserving
@@ -654,7 +654,7 @@ u8 tls_os_queue_is_empty(tls_os_queue_t *queue);
  *
  * @note           None
  */
- u32 tls_os_set_critical(void);
+u32 tls_os_set_critical(void);
 
 /**
  * @brief          This function is used to enable interrupts by preserving
@@ -666,7 +666,7 @@ u8 tls_os_queue_is_empty(tls_os_queue_t *queue);
  *
  * @note           None
  */
- void tls_os_release_critical(u32 cpu_sr);
+void tls_os_release_critical(u32 cpu_sr);
 
 /**
  * @brief          This function is called by your application code to create
@@ -695,12 +695,12 @@ u8 tls_os_queue_is_empty(tls_os_queue_t *queue);
  *
  * @note           None
  */
- tls_os_status_t tls_os_timer_create(tls_os_timer_t **timer,
-        TLS_OS_TIMER_CALLBACK callback,
-        void *callback_arg,
-        u32 period,
-        bool repeat,
-        u8 *name);
+tls_os_status_t tls_os_timer_create(tls_os_timer_t **timer,
+                                    TLS_OS_TIMER_CALLBACK callback,
+                                    void *callback_arg,
+                                    u32 period,
+                                    bool repeat,
+                                    u8 *name);
 
 /**
  * @brief          This function is called by your application code to start
@@ -712,7 +712,7 @@ u8 tls_os_queue_is_empty(tls_os_queue_t *queue);
  *
  * @note           None
  */
- tls_os_status_t tls_os_timer_start(tls_os_timer_t *timer);
+tls_os_status_t tls_os_timer_start(tls_os_timer_t *timer);
 
 /*
 ************************************************************************************************************************
@@ -725,7 +725,7 @@ u8 tls_os_queue_is_empty(tls_os_queue_t *queue);
 *            ticks            is the wait time
 ************************************************************************************************************************
 */
- tls_os_status_t tls_os_timer_change(tls_os_timer_t *timer, u32 ticks);
+tls_os_status_t tls_os_timer_change(tls_os_timer_t *timer, u32 ticks);
 
 /**
  * @brief          This function is called by your application code to stop
@@ -769,7 +769,7 @@ tls_os_status_t tls_os_timer_delete(tls_os_timer_t *timer);
  *
  * @note           None
  */
- void tls_os_time_delay(u32 ticks);
+void tls_os_time_delay(u32 ticks);
 
 /**
  * @brief          This function is used to display all the tasks' detail status.
@@ -792,7 +792,7 @@ void tls_os_disp_task_stat_info(void);
  * @note           None
  */
 
-void vPortExitCritical( void );
+void vPortExitCritical(void);
 
 /**
  * @brief          This function is used to enter critical state.
@@ -804,8 +804,8 @@ void vPortExitCritical( void );
  * @note           None
  */
 
-void vPortEnterCritical( void );
-
+void vPortEnterCritical(void);
+/*
  * @}
  */
 

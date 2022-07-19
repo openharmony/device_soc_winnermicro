@@ -18,7 +18,7 @@
  *
  * @brief   touchsensor Driver Module
  *
- * @author  
+ * @author
  *
  * Copyright (c) 2021 Winner Microelectronics Co., Ltd.
  */
@@ -39,13 +39,13 @@
 int tls_touchsensor_init_config(u32 sensorno, u8 scan_period, u8 window, u32 enable);
 
 /**
- * @brief          This function is used to deinit touch sensor's selection and disable touch.
+ * @brief        This function is used to deinit touch sensor's selection and disable touch.
  *
- * @param[in]      sensorno    is the touch sensor number from 1-15
+ * @param[in]    sensorno    is the touch sensor number from 1-15
  *
- * @retval         0:success
+ * @retval       0:success
  *
- * @note           if do not use touch sensor, user can deinit by this interface and configure this touch sensor as GPIO.
+ * @note         if do not use touch sensor, user can deinit by this interface and configure this touch sensor as GPIO.
  */
 int tls_touchsensor_deinit(u32 sensorno);
 

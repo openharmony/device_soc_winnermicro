@@ -281,7 +281,8 @@ WifiErrorCode GetBand(int* result)
     return WIFI_SUCCESS;
 }
 
-WifiErrorCode DisassociateSta(unsigned char* mac, int macLen) {
+WifiErrorCode DisassociateSta(unsigned char* mac, int macLen)
+{
     if (mac == NULL) {
         printf("[wifi_service]: MAC is NULL\r\n");
         return ERROR_WIFI_INVALID_ARGS;
@@ -294,7 +295,8 @@ WifiErrorCode DisassociateSta(unsigned char* mac, int macLen) {
     return WIFI_SUCCESS;
 }
 
-WifiErrorCode AddTxPowerInfo(int power) {
+WifiErrorCode AddTxPowerInfo(int power)
+{
     printf("Neptune not support.\r\n");
     return ERROR_WIFI_UNKNOWN;
 }
