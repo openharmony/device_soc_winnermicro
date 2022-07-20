@@ -73,7 +73,7 @@ static void writeBpBit_for_1wreg(char cmp, char bp4, char bp3, char bp2, char bp
     M32(HR_FLASH_CMD_START) = CMD_START_Msk;
     status  |=  (read_first_value() & 0xFF) << 8;
 
-    /*Write Enable*/
+    /* Write Enable */
     M32(HR_FLASH_CMD_ADDR) = 0x6;
     M32(HR_FLASH_CMD_START) = CMD_START_Msk;
 
@@ -98,7 +98,7 @@ static void writeBpBit_for_2wreg(char cmp, char bp4, char bp3, char bp2, char bp
     M32(HR_FLASH_CMD_START) = CMD_START_Msk;
     status  |=  (read_first_value() & 0xFF) << 8;
 
-    /*Write Enable*/
+    /* Write Enable */
     M32(HR_FLASH_CMD_ADDR) = 0x6;
     M32(HR_FLASH_CMD_START) = CMD_START_Msk;
 
@@ -129,7 +129,7 @@ static void writeESMTBpBit(char cmp, char bp4, char bp3, char bp2, char bp1, cha
     bpstatus  = (bp4 << 6) | (bp3 << 5) | (bp2 << 4) | (bp1 << 3) | (bp0 << 2);
     status      = (status & 0x83) | bpstatus;
 
-    /*Write Enable*/
+    /* Write Enable */
     M32(HR_FLASH_CMD_ADDR) = 0x6;
     M32(HR_FLASH_CMD_START) = CMD_START_Msk;
 
@@ -144,7 +144,7 @@ static void writeESMTBpBit(char cmp, char bp4, char bp3, char bp2, char bp1, cha
     M32(HR_FLASH_CMD_START) = CMD_START_Msk;
     status  =  read_first_value() & 0xFF;
 
-    /*Write Enable*/
+    /* Write Enable */
     M32(HR_FLASH_CMD_ADDR) = 0x6;
     M32(HR_FLASH_CMD_START) = CMD_START_Msk;
 
@@ -158,22 +158,22 @@ static int flashunlock(void)
 {
     switch(readRID())
     {
-    case SPIFLASH_MID_GD:
-    case SPIFLASH_MID_TSINGTENG:
-        writeBpBit_for_1wreg(0, 0, 0, 0, 0, 0);
-        break;
-    case SPIFLASH_MID_PUYA:
-    case SPIFLASH_MID_XTX:
-    case SPIFLASH_MID_BOYA:
-    case SPIFLASH_MID_FUDANMICRO:
-    case SPIFLASH_MID_XMC:
-        writeBpBit_for_2wreg(0, 0, 0, 0, 0, 0);
-        break;
-    case SPIFLASH_MID_ESMT:
-        writeESMTBpBit(0, 0, 0, 0, 0, 0);
-        break;
-    default:
-        return -1;
+        case SPIFLASH_MID_GD:
+        case SPIFLASH_MID_TSINGTENG:
+            writeBpBit_for_1wreg(0, 0, 0, 0, 0, 0);
+            break;
+        case SPIFLASH_MID_PUYA:
+        case SPIFLASH_MID_XTX:
+        case SPIFLASH_MID_BOYA:
+        case SPIFLASH_MID_FUDANMICRO:
+        case SPIFLASH_MID_XMC:
+            writeBpBit_for_2wreg(0, 0, 0, 0, 0, 0);
+            break;
+        case SPIFLASH_MID_ESMT:
+            writeESMTBpBit(0, 0, 0, 0, 0, 0);
+            break;
+        default:
+            return -1;
     }
     return 0;
 }
@@ -182,22 +182,22 @@ static int flashlock(void)
 {
     switch(readRID())
     {
-    case SPIFLASH_MID_GD:
-    case SPIFLASH_MID_TSINGTENG:        
-        writeBpBit_for_1wreg(0, 1, 1, 0, 1, 0);
-        break;
-    case SPIFLASH_MID_PUYA:
-    case SPIFLASH_MID_XTX:
-    case SPIFLASH_MID_BOYA:
-    case SPIFLASH_MID_FUDANMICRO:
-    case SPIFLASH_MID_XMC:
-        writeBpBit_for_2wreg(0, 1, 1, 0, 1, 0);
-        break;
-    case SPIFLASH_MID_ESMT:
-        writeESMTBpBit(0, 1, 1, 0, 1, 0);
-        break;
-    default:
-        return -1;/*do not clear QIO Mode*/
+        case SPIFLASH_MID_GD:
+        case SPIFLASH_MID_TSINGTENG:        
+            writeBpBit_for_1wreg(0, 1, 1, 0, 1, 0);
+            break;
+        case SPIFLASH_MID_PUYA:
+        case SPIFLASH_MID_XTX:
+        case SPIFLASH_MID_BOYA:
+        case SPIFLASH_MID_FUDANMICRO:
+        case SPIFLASH_MID_XMC:
+            writeBpBit_for_2wreg(0, 1, 1, 0, 1, 0);
+            break;
+        case SPIFLASH_MID_ESMT:
+            writeESMTBpBit(0, 1, 1, 0, 1, 0);
+            break;
+        default:
+            return -1; /* do not clear QIO Mode */
     }
     return 0;
 }
@@ -214,7 +214,7 @@ static void writeLbBit_for_1wreg(unsigned int val)
     M32(HR_FLASH_CMD_START) = CMD_START_Msk;
     status  |=  (read_first_value() & 0xFF) << 8;
 
-    /*Write Enable*/
+    /* Write Enable */
     M32(HR_FLASH_CMD_ADDR) = 0x6;
     M32(HR_FLASH_CMD_START) = CMD_START_Msk;
 
@@ -237,7 +237,7 @@ static void writeLbBit_for_2wreg(unsigned int val)
     M32(HR_FLASH_CMD_START) = CMD_START_Msk;
     status  |=  (read_first_value() & 0xFF) << 8;
 
-    /*Write Enable*/
+    /* Write Enable */
     M32(HR_FLASH_CMD_ADDR) = 0x6;
     M32(HR_FLASH_CMD_START) = CMD_START_Msk;
 
@@ -284,7 +284,7 @@ static int programPage (unsigned long adr, unsigned long sz, unsigned char *buf)
 
 static int eraseSR(unsigned int cmd, unsigned long addr)
 {
-    /*Write Enable*/
+    /* Write Enable */
     writeEnable();
     M32(HR_FLASH_CMD_ADDR) = cmd;
     M32(HR_FLASH_ADDR) = (addr & 0x1FFFFFF);
@@ -300,7 +300,7 @@ static int eraseSector (unsigned long adr)
     return (0);                                                  // Finished without Errors
 }
 
-/*only for w800 c400 flash*/
+/* only for w800 c400 flash */
 static int erasePage (unsigned long addr)
 {
     eraseSR(0x80000881, addr);
@@ -315,7 +315,6 @@ static unsigned int getFlashDensity(void)
     M32(HR_FLASH_CMD_START) = CMD_START_Msk;
 
     density = ((read_first_value() & 0xFFFFFF) >> 16) & 0xFF;
-    //    printf("density %x\n", density);
     if (density && (density <= 28)) 
     {
         return (1 << density);
@@ -330,7 +329,7 @@ int __readByCMD(unsigned char cmd, unsigned long addr, unsigned char *buf, unsig
     int word = sz / 4;
     int byte = sz % 4;
     unsigned long addr_read;
-    if (!(M32(HR_FLASH_CR)&0x1))/*non-QIO mode, only single line command can be used*/
+    if (!(M32(HR_FLASH_CR)&0x1)) /* non-QIO mode, only single line command can be used */
     {
         if (cmd > 0x0B)
         {
@@ -340,41 +339,38 @@ int __readByCMD(unsigned char cmd, unsigned long addr, unsigned char *buf, unsig
     
     switch (cmd)
     {
-    case 0x03:
-        M32(HR_FLASH_CMD_ADDR) = 0x8000C003 | (((sz - 1) & 0x3FF) << 16);
-        M32(HR_FLASH_ADDR) = addr & 0x1FFFFFF;
-        M32(HR_FLASH_CMD_START) = CMD_START_Msk;
-        break;
-    case 0x0B:
-        if ((M32(HR_FLASH_CR) & 0x2) == 0x2)
-        {
-            M32(HR_FLASH_CMD_ADDR) = 0xB400C00B | (((sz - 1) & 0x3FF) << 16);
-        }
-        else
-        {
-            M32(HR_FLASH_CMD_ADDR) = 0xBC00C00B | (((sz - 1) & 0x3FF) << 16);
-        }
-        M32(HR_FLASH_ADDR) = addr & 0x1FFFFFF;
-        M32(HR_FLASH_CMD_START) = CMD_START_Msk;
-        break;
-    case 0xBB:
-        M32(HR_FLASH_CMD_ADDR) = 0xE400C0BB | (((sz - 1) & 0x3FF) << 16);
-        M32(HR_FLASH_ADDR) = addr & 0x1FFFFFF;
-        M32(HR_FLASH_CMD_START) = CMD_START_Msk;
-        break;
+        case 0x03:
+            M32(HR_FLASH_CMD_ADDR) = 0x8000C003 | (((sz - 1) & 0x3FF) << 16);
+            M32(HR_FLASH_ADDR) = addr & 0x1FFFFFF;
+            M32(HR_FLASH_CMD_START) = CMD_START_Msk;
+            break;
+        case 0x0B:
+            if ((M32(HR_FLASH_CR) & 0x2) == 0x2)
+            {
+                M32(HR_FLASH_CMD_ADDR) = 0xB400C00B | (((sz - 1) & 0x3FF) << 16);
+            }
+            else
+            {
+                M32(HR_FLASH_CMD_ADDR) = 0xBC00C00B | (((sz - 1) & 0x3FF) << 16);
+            }
+            M32(HR_FLASH_ADDR) = addr & 0x1FFFFFF;
+            M32(HR_FLASH_CMD_START) = CMD_START_Msk;
+            break;
+        case 0xBB:
+            M32(HR_FLASH_CMD_ADDR) = 0xE400C0BB | (((sz - 1) & 0x3FF) << 16);
+            M32(HR_FLASH_ADDR) = addr & 0x1FFFFFF;
+            M32(HR_FLASH_CMD_START) = CMD_START_Msk;
+            break;
 
-    case 0xEB:
-        M32(HR_FLASH_CMD_ADDR) = 0xEC00C0EB | (((sz - 1) & 0x3FF) << 16);
-        M32(HR_FLASH_ADDR) = addr & 0x1FFFFFF;
-        M32(HR_FLASH_CMD_START) = CMD_START_Msk;
-        break;
+        case 0xEB:
+            M32(HR_FLASH_CMD_ADDR) = 0xEC00C0EB | (((sz - 1) & 0x3FF) << 16);
+            M32(HR_FLASH_ADDR) = addr & 0x1FFFFFF;
+            M32(HR_FLASH_CMD_START) = CMD_START_Msk;
+            break;
 
-    default:
-        return -1;
+        default:
+            return -1;
     }
-
-    //    printf("delay delay delay delay\n");
-    //    dumpUint32("readByCMD RSA_BASE_ADDRESS", RSA_BASE_ADDRESS, sz/4);
     addr_read = RSA_BASE_ADDRESS;
     for(i = 0; i < word; i ++)
     {
@@ -434,10 +430,9 @@ int flashRead(unsigned long addr, unsigned char *buf, unsigned long sz)
     int i = 0;
     int page_offset = addr & (INSIDE_FLS_PAGE_SIZE - 1);
     
-
     if ((page_offset == 0) 
         && (((unsigned int)buf&0x3) == 0) 
-        && ((sz&0x3) == 0))/*Use 4-bytes aligned and buf must be 4 times, sz must be 4 times*/
+        && ((sz&0x3) == 0)) /* Use 4-bytes aligned and buf must be 4 times, sz must be 4 times */
     {
         flash_addr = addr;
         unsigned int max_size = 0;
@@ -463,7 +458,6 @@ int flashRead(unsigned long addr, unsigned char *buf, unsigned long sz)
         {
             __readByCMD(0xEB, flash_addr, (unsigned char *)buf, sz_remain);
         }
-
     }
     else
     {
@@ -552,7 +546,6 @@ int tls_flash_lock(void)
     tls_os_sem_release(inside_fls->fls_lock);
 
     return ret;
-
 }
 
 /**
@@ -943,7 +936,7 @@ int tls_fls_write(u32 addr, u8 *buf, u32 len)
     offaddr = addr & (INSIDE_FLS_BASE_ADDR - 1);            // Offset of 0X08000000
     secpos = offaddr / INSIDE_FLS_SECTOR_SIZE;                // Section addr
     secoff = (offaddr % INSIDE_FLS_SECTOR_SIZE);            // Offset in section
-    secremain = INSIDE_FLS_SECTOR_SIZE - secoff;    // ÉÈÇøÊ£Óà¿Õ¼ä´óÐ¡
+    secremain = INSIDE_FLS_SECTOR_SIZE - secoff;    // ï¿½ï¿½ï¿½ï¿½Ê£ï¿½ï¿½Õ¼ï¿½ï¿½Ð¡
     if (len <= secremain)
     {
         secremain = len;                                // Not bigger with remain size in section
@@ -953,7 +946,7 @@ int tls_fls_write(u32 addr, u8 *buf, u32 len)
     while (1)
     {
         eraseSector(secpos * INSIDE_FLS_SECTOR_SIZE);
-        for (i = 0; i < secremain; i++) // ¸´ÖÆ
+        for (i = 0; i < secremain; i++) // ï¿½ï¿½ï¿½ï¿½
         {
             cache[i + secoff] = buf[i];
         }
@@ -963,17 +956,17 @@ int tls_fls_write(u32 addr, u8 *buf, u32 len)
         }
         if (len == secremain)
         {
-            break;              // Ð´Èë½áÊøÁË
+            break;              // Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         }
-        else                    // Ð´ÈëÎ´½áÊø
+        else                    // Ð´ï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½
         {
-            secpos++;           // ÉÈÇøµØÖ·Ôö1
-            secoff = 0;         // Æ«ÒÆÎ»ÖÃÎª0
-            buf += secremain;   // Ö¸ÕëÆ«ÒÆ
+            secpos++;           // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½1
+            secoff = 0;         // Æ«ï¿½ï¿½Î»ï¿½ï¿½Îª0
+            buf += secremain;   // Ö¸ï¿½ï¿½Æ«ï¿½ï¿½
             len -= secremain;
             if (len > (INSIDE_FLS_SECTOR_SIZE))
             {
-                secremain = INSIDE_FLS_SECTOR_SIZE; // ÏÂÒ»¸öÉÈÇø»¹ÊÇÐ´²»Íê
+                secremain = INSIDE_FLS_SECTOR_SIZE; // ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½
             }
             else
             {
@@ -1050,7 +1043,7 @@ int tls_fls_write_without_erase(u32 addr, u8 *buf, u32 len)
         }
 
         programPage(pagepos * INSIDE_FLS_PAGE_SIZE, INSIDE_FLS_PAGE_SIZE, &cache[0]); // Write
-        if (len == pageremain)// page program over
+        if (len == pageremain) // page program over
         {
             break;              
         }
@@ -1067,7 +1060,7 @@ int tls_fls_write_without_erase(u32 addr, u8 *buf, u32 len)
             else
             {
                 pageremain = len;                    // last data to write
-                   flashRead(pagepos * INSIDE_FLS_PAGE_SIZE, cache, INSIDE_FLS_PAGE_SIZE);
+                flashRead(pagepos * INSIDE_FLS_PAGE_SIZE, cache, INSIDE_FLS_PAGE_SIZE);
             }
         }
     }
@@ -1114,7 +1107,6 @@ int tls_fls_erase(u32 sector)
 }
 
 static u8 *gsflscache = NULL;
-// static u32 gsSecOffset = 0;
 static u32 gsSector = 0;
 
 /**
@@ -1141,7 +1133,6 @@ static void tls_fls_flush_sector(void)
                         &gsflscache[i * INSIDE_FLS_PAGE_SIZE]);
         }
     }
-    // gsSecOffset = 0;
 }
 
 /**
@@ -1156,7 +1147,6 @@ static void tls_fls_flush_sector(void)
  */
 int tls_fls_fast_write_init(void)
 {
-
     if (inside_fls == NULL)
     {
         TLS_DBGPRT_ERR("flash driver module not beed installed!\n");
@@ -1220,7 +1210,6 @@ void tls_fls_fast_write_destroy(void)
  */
 int tls_fls_fast_write(u32 addr, u8 *buf, u32 length)
 {
-
     u32 sector, offset, maxlen, len;
 
     if (inside_fls == NULL)
@@ -1413,7 +1402,6 @@ int tls_fls_init(void)
         return TLS_FLS_STATUS_ENOMEM;
     }
     fls->flashid = readRID();
-    // printf("flashid %x\n", fls->flashid);
     fls->density = getFlashDensity();
     fls->OTPWRParam.pageSize = 256;
     switch(fls->flashid)
@@ -1423,7 +1411,7 @@ int tls_fls_init(void)
         break;
     case SPIFLASH_MID_FUDANMICRO:
         fls->OTPWRParam.eraseSize = 1024;
-        if (fls->density <= (1 << 20))// 8Mbit
+        if (fls->density <= (1 << 20)) // 8Mbit
         {
             fls->OTPWRParam.eraseSize = 256;
         }
@@ -1439,7 +1427,7 @@ int tls_fls_init(void)
         break;
     case SPIFLASH_MID_XTX:
     case SPIFLASH_MID_ESMT:
-        fls->OTPWRParam.eraseSize = 0;// not support
+        fls->OTPWRParam.eraseSize = 0; // not support
         break;
     default:
         tls_mem_free(fls);
@@ -1486,4 +1474,3 @@ void tls_fls_sys_param_postion_init(void)
         TLS_DBGPRT_ERR("system parameter postion use default!\n");
     }
 }
-
