@@ -32,7 +32,6 @@
 #include "wm_mem.h"
 #include "tls_common.h"
 #include "wm_debug.h"
-// #include "wm_sockets.h"
 #include "utils.h"
 
 static const u8 crc8_tbl[256] = {
@@ -131,7 +130,6 @@ static u32 _cal_crc32(u32 crc_result, u8 data_8)
         crc_out[i] = 0;
     }
     
-
     for (i = 0; i < 8; i++) {
         in_data_buf[i] = (data_8 >> i) & flag;
     }
@@ -146,9 +144,9 @@ static u32 _cal_crc32(u32 crc_result, u8 data_8)
     crc_out[3]  = in_data_buf[0]^in_data_buf[4]^in_data_buf[5]^in_data_buf[6]^crc_buf[31]^crc_buf[27]^crc_buf[26]^crc_buf[25];
     crc_out[4]  = in_data_buf[1]^in_data_buf[3]^in_data_buf[4]^in_data_buf[5]^in_data_buf[7]^crc_buf[30]^crc_buf[28]^crc_buf[27]^crc_buf[26]^crc_buf[24];
     crc_out[5]  = in_data_buf[0]^in_data_buf[1]^in_data_buf[2]^in_data_buf[3]^in_data_buf[4]^in_data_buf[6]^in_data_buf[7]^
-                 crc_buf[31]^crc_buf[30]^crc_buf[29]^crc_buf[28]^crc_buf[27]^crc_buf[25]^crc_buf[24];
+                crc_buf[31]^crc_buf[30]^crc_buf[29]^crc_buf[28]^crc_buf[27]^crc_buf[25]^crc_buf[24];
     crc_out[6]  = in_data_buf[0]^in_data_buf[1]^in_data_buf[2]^in_data_buf[3]^in_data_buf[5]^in_data_buf[6]^
-                 crc_buf[31]^crc_buf[30]^crc_buf[29]^crc_buf[28]^crc_buf[26]^crc_buf[25];
+                crc_buf[31]^crc_buf[30]^crc_buf[29]^crc_buf[28]^crc_buf[26]^crc_buf[25];
     crc_out[7]  = in_data_buf[0]^in_data_buf[2]^in_data_buf[4]^in_data_buf[5]^in_data_buf[7]^crc_buf[31]^crc_buf[29]^crc_buf[27]^crc_buf[26]^crc_buf[24];
     crc_out[8]  = in_data_buf[3]^in_data_buf[4]^in_data_buf[6]^in_data_buf[7]^crc_buf[28]^crc_buf[27]^crc_buf[25]^crc_buf[24]^crc_buf[0];
     crc_out[9]  = in_data_buf[2]^in_data_buf[3]^in_data_buf[5]^in_data_buf[6]^crc_buf[29]^crc_buf[28]^crc_buf[26]^crc_buf[25]^crc_buf[1];
@@ -156,9 +154,9 @@ static u32 _cal_crc32(u32 crc_result, u8 data_8)
     crc_out[11] = in_data_buf[3]^in_data_buf[4]^in_data_buf[6]^in_data_buf[7]^crc_buf[28]^crc_buf[27]^crc_buf[25]^crc_buf[24]^crc_buf[3];
   
     crc_out[12] = in_data_buf[1]^in_data_buf[2]^in_data_buf[3]^in_data_buf[5]^in_data_buf[6]^in_data_buf[7]^
-                 crc_buf[30]^crc_buf[29]^crc_buf[28]^crc_buf[26]^crc_buf[25]^crc_buf[24]^crc_buf[4];
+                crc_buf[30]^crc_buf[29]^crc_buf[28]^crc_buf[26]^crc_buf[25]^crc_buf[24]^crc_buf[4];
     crc_out[13] = in_data_buf[0]^in_data_buf[1]^in_data_buf[2]^in_data_buf[4]^in_data_buf[5]^in_data_buf[6]^
-                 crc_buf[31]^crc_buf[30]^crc_buf[29]^crc_buf[27]^crc_buf[26]^crc_buf[25]^crc_buf[5];
+                crc_buf[31]^crc_buf[30]^crc_buf[29]^crc_buf[27]^crc_buf[26]^crc_buf[25]^crc_buf[5];
     crc_out[14] = in_data_buf[0]^in_data_buf[1]^in_data_buf[3]^in_data_buf[4]^in_data_buf[5]^crc_buf[31]^crc_buf[30]^crc_buf[28]^crc_buf[27]^crc_buf[26]^crc_buf[6];
     crc_out[15] = in_data_buf[0]^in_data_buf[2]^in_data_buf[3]^in_data_buf[4]^crc_buf[31]^crc_buf[29]^crc_buf[28]^crc_buf[27]^crc_buf[7];
     crc_out[16] = in_data_buf[2]^in_data_buf[3]^in_data_buf[7]^crc_buf[29]^crc_buf[28]^crc_buf[24]^crc_buf[8];
@@ -440,8 +438,6 @@ char * strdup(const char *s)
 {
     char * ret;
     int len;
-    // if (s == NULL)
-    //    return NULL;
     len = strlen(s) + 1;
     ret = tls_mem_alloc(len);
     if (ret == NULL)
@@ -454,8 +450,6 @@ char * strdup(const char *s)
 char * strndup(const char *s, size_t len)
 {
     char * ret;
-    // if (s == NULL)
-    //    return NULL;
     ret = tls_mem_alloc(len + 1);
     if (ret == NULL)
         return NULL;
@@ -463,18 +457,6 @@ char * strndup(const char *s, size_t len)
     memcpy(ret, s, len);
     return ret;
 }
-#if 0
-int gettimeofday(struct timeval *tv, void *tz)
-{
-    int ret = 0;
-    u32 current_tick; 
-
-    current_tick = tls_os_get_time();// OSTimeGet();
-    tv->tv_sec = (current_tick) / 100;
-    tv->tv_usec = 10000 * (current_tick % 100);
-    return ret;
-}
-#endif
 
 void delay_cnt(int count)
 {
@@ -536,7 +518,5 @@ int strcasecmp(const char *s1, const char *s2)
         if (a != b)
             return 1;
     }
-
     return 0;
 }
-

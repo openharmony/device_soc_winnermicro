@@ -316,25 +316,6 @@ static int param_to_flash(int id, int modify_count, int partition_num)
         case TLS_PARAM_ID_BT_REMOTE_DEVICE_5:
             MEMCPY(&dest->remote_device5, &src->remote_device5, sizeof(bt_remote_device_t));
             break;
-#if 0
-
-        case TLS_PARAM_ID_BT_REMOTE_DEVICE_6:
-            MEMCPY(&dest->remote_device6, &src->remote_device6, sizeof(bt_remote_device_t));
-            break;
-            
-        case TLS_PARAM_ID_BT_REMOTE_DEVICE_7:
-            MEMCPY(&dest->remote_device7, &src->remote_device7, sizeof(bt_remote_device_t));
-            break;
-        case TLS_PARAM_ID_BT_REMOTE_DEVICE_8:
-            MEMCPY(&dest->remote_device8, &src->remote_device8, sizeof(bt_remote_device_t));
-            break;
-        case TLS_PARAM_ID_BT_REMOTE_DEVICE_9:
-            MEMCPY(&dest->remote_device9, &src->remote_device9, sizeof(bt_remote_device_t));
-            break;
-        case TLS_PARAM_ID_BT_REMOTE_DEVICE_10:
-            MEMCPY(&dest->remote_device10, &src->remote_device10, sizeof(bt_remote_device_t));
-            break;
-#endif
         default:
             err = TLS_PARAM_STATUS_EINVALIDID;
             goto exit;
@@ -560,15 +541,6 @@ int tls_param_init(void)
     {
         tls_mem_free(flash);
     }
-
-#if 0
-     TLS_DBGPRT_INFO("sys_param = 0x%x, *sys_param = 0x%x\n", sys_param, *sys_param);
-    if (sys_param)
-    {
-        *sys_param = &sram_param;
-    }
-    TLS_DBGPRT_INFO("sys_param = 0x%x, *sys_param = 0x%x\n", sys_param, *sys_param);
-#endif
     return err;
 }
 
@@ -635,10 +607,6 @@ void tls_param_load_factory_default(void)
     param->ssid_broadcast_enable = TLS_PARAM_SSIDBRD_ENABLE;
     param->encry = TLS_PARAM_ENCRY_OPEN;
 #if 0 // def CONFIG_AP
-    param->wireless_protocol = TLS_PARAM_IEEE80211_SOFTAP;
-    tls_efuse_read(TLS_EFUSE_MACADDR_OFFSET, mac_addr, 6);
-    ssid_len = sprintf((char *)&param->ssid.ssid, "cuckoo_softap_%02x%02x%02x", mac_addr[3], mac_addr[4], mac_addr[5]);
-    param->ssid.ssid_len = ssid_len;
 #else
     param->wireless_protocol = TLS_PARAM_IEEE80211_INFRA;
 
@@ -648,7 +616,6 @@ void tls_param_load_factory_default(void)
     param->auto_roam = TLS_PARAM_ROAM_DISABLE;
     param->auto_powersave = TLS_PARAM_PSM_DISABLE;
     param->auto_reconnect = 0;
-    // param->wps.wps_enable = TLS_PARAM_WPS_DISABLE;
 
     param->auto_mode = TLS_PARAM_MANUAL_MODE;
     param->transparent_trigger_length = 512;
@@ -987,26 +954,6 @@ int tls_param_set(int id, void *argv, bool to_flash)
         case TLS_PARAM_ID_BT_REMOTE_DEVICE_5:
             MEMCPY(&param->remote_device5, argv, sizeof(bt_remote_device_t));
             break;
-#if 0
-
-        case TLS_PARAM_ID_BT_REMOTE_DEVICE_6:
-            MEMCPY(&param->remote_device6, argv, sizeof(bt_remote_device_t));
-            break;
-        
-        case TLS_PARAM_ID_BT_REMOTE_DEVICE_7:
-            MEMCPY(&param->remote_device7, argv, sizeof(bt_remote_device_t));
-            break;
-        case TLS_PARAM_ID_BT_REMOTE_DEVICE_8:
-            MEMCPY(&param->remote_device8, argv, sizeof(bt_remote_device_t));
-            break;
-        case TLS_PARAM_ID_BT_REMOTE_DEVICE_9:
-            MEMCPY(&param->remote_device9, argv, sizeof(bt_remote_device_t));
-            break;
-        case TLS_PARAM_ID_BT_REMOTE_DEVICE_10:
-            MEMCPY(&param->remote_device10, argv, sizeof(bt_remote_device_t));
-            break;
-#endif
-
         default:
             TLS_DBGPRT_WARNING("invalid parameter id - %d!\n", id);
             err = TLS_PARAM_STATUS_EINVALIDID;
@@ -1286,26 +1233,6 @@ int tls_param_get(int id, void *argv, bool from_flash)
         case TLS_PARAM_ID_BT_REMOTE_DEVICE_5:
             MEMCPY(argv,&src->remote_device5, sizeof(bt_remote_device_t));
             break;
-#if 0
-
-        case TLS_PARAM_ID_BT_REMOTE_DEVICE_6:
-            MEMCPY(argv,&src->remote_device6, sizeof(bt_remote_device_t));
-            break;
-            
-        case TLS_PARAM_ID_BT_REMOTE_DEVICE_7:
-            MEMCPY(argv,&src->remote_device7, sizeof(bt_remote_device_t));
-            break;
-        case TLS_PARAM_ID_BT_REMOTE_DEVICE_8:
-            MEMCPY(argv,&src->remote_device8, sizeof(bt_remote_device_t));
-            break;
-        case TLS_PARAM_ID_BT_REMOTE_DEVICE_9:
-            MEMCPY(argv,&src->remote_device9, sizeof(bt_remote_device_t));
-            break;
-        case TLS_PARAM_ID_BT_REMOTE_DEVICE_10:
-            MEMCPY(argv,&src->remote_device10, sizeof(bt_remote_device_t));
-            break;
-#endif
-
         default:
             TLS_DBGPRT_WARNING("invalid parameter id - %d!\n", id);
             err = TLS_PARAM_STATUS_EINVALIDID;
@@ -1382,10 +1309,6 @@ int tls_param_to_flash(int id)
 /**********************************************************************************************************
 * Description:     This function is used to load default parametes to memory.
 *
-* Arguments  :
-*
-* Returns    :
-*
 * Notes        :    This function read user defined parameters first, if wrong, all the parameters restore factory settings.
 **********************************************************************************************************/
 int tls_param_to_default(void)
@@ -1415,10 +1338,6 @@ struct tls_sys_param * tls_param_user_param_init(void)
 
 /**********************************************************************************************************
 * Description:     This function is used to modify user default parameters,then write to flash.
-*
-* Arguments  :
-*
-* Returns    :
 **********************************************************************************************************/
 int tls_param_save_user(struct tls_user_param *user_param)
 {
@@ -1457,7 +1376,6 @@ int tls_param_save_user(struct tls_user_param *user_param)
 
     param->auto_retrycnt = 255;
     param->auto_roam = TLS_PARAM_ROAM_DISABLE;
-    // param->wps.wps_enable = TLS_PARAM_WPS_DISABLE;
 
     param->transparent_trigger_length = 512;
 
@@ -1479,10 +1397,6 @@ int tls_param_save_user(struct tls_user_param *user_param)
 
 /**********************************************************************************************************
 * Description:     This function is used to save user parameters to the flash.
-*
-* Arguments  :
-*
-* Returns    :
 **********************************************************************************************************/
 int tls_param_save_user_default(void)
 {

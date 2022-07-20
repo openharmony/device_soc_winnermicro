@@ -136,7 +136,6 @@ static void fwup_scheduler(void *data)
     u32 msg;
     u32 len;    
     u32 image_checksum = 0;
-    // u32 org_checksum = 0;
     struct tls_fwup_request *request;
     struct tls_fwup_request *temp;
     IMAGE_HEADER_PARAM_ST booter;
@@ -144,9 +143,9 @@ static void fwup_scheduler(void *data)
     while (1) 
     {
         err = tls_os_queue_receive(fwup_msg_queue, (void **)&msg, 0, 0);
-           tls_watchdog_clr();
+            tls_watchdog_clr();
         if (err != TLS_OS_SUCCESS) 
-        {
+        {   
             continue;
         }
         switch(msg) 
@@ -218,7 +217,7 @@ static void fwup_scheduler(void *data)
                                 {
                                     fwup->total_len += 128;
                                 }
-                                /*write booter header to flash*/
+                                /* write booter header to flash */
                                 err = tls_fls_fast_write(fwup->program_base + fwup->program_offset, (u8 *)&booter, sizeof(IMAGE_HEADER_PARAM_ST));
                                 if (err != TLS_FLS_STATUS_OK) 
                                 {
@@ -227,7 +226,7 @@ static void fwup_scheduler(void *data)
                                     fwup->current_state |= TLS_FWUP_STATE_ERROR_IO;
                                     goto request_finish;
                                 }
-                                /*initialize updated_len*/
+                                /* initialize updated_len */
                                 fwup->updated_len = sizeof(IMAGE_HEADER_PARAM_ST);
                                 fwup->program_offset = sizeof(IMAGE_HEADER_PARAM_ST);
                             }
@@ -236,7 +235,6 @@ static void fwup_scheduler(void *data)
                     }
                     if (request->data_len > 0) 
                     {
-                    //    TLS_DBGPRT_INFO("write the firmware image to the flash. %x\n\r", fwup->program_base + fwup->program_offset);
                         err = tls_fls_fast_write(fwup->program_base + fwup->program_offset, buffer, request->data_len);
                         if (err != TLS_FLS_STATUS_OK) 
                         {
@@ -248,11 +246,8 @@ static void fwup_scheduler(void *data)
 
                         fwup->program_offset += request->data_len;
                         fwup->updated_len += request->data_len;
-
-                        // TLS_DBGPRT_INFO("updated: %d bytes\n" , fwup->updated_len);
                         if (fwup->updated_len >= (fwup->total_len)) 
                         {
-
                             u8 *buffer_t;
                             u32 len, left, offset;    
 
@@ -307,20 +302,18 @@ static void fwup_scheduler(void *data)
                             }
                             else
                             {
-                                /*Write OTA flag to flash used by boot loader*/
+                                /* Write OTA flag to flash used by boot loader */
                                 tls_fls_write(TLS_FLASH_OTA_FLAG_ADDR, (u8 *)&booter.org_checksum, sizeof(booter.org_checksum));
                             }
 
                             TLS_DBGPRT_INFO("update the firmware successfully!\n");
                             fwup->current_state |= TLS_FWUP_STATE_COMPLETE;
                             if (oneshotback != 0){
-                                tls_wifi_set_oneshot_flag(oneshotback);    // »Ö¸´Ò»¼üÅäÖÃ
+                                tls_wifi_set_oneshot_flag(oneshotback);    // ï¿½Ö¸ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                             }
-                            
                         }
                     }
                     request->status = TLS_FWUP_REQ_STATUS_SUCCESS;
-
 request_finish:
                     tls_os_sem_acquire(fwup->list_lock, 0);
                     dl_list_del(&request->list);
@@ -399,7 +392,7 @@ u32 tls_fwup_enter(enum tls_fwup_image_src image_src)
     fwup->busy = TRUE;
     oneshotback = tls_wifi_get_oneshot_flag();
     if (oneshotback != 0){
-        tls_wifi_set_oneshot_flag(0);    // ÍË³öÒ»¼üÅäÖÃ
+        tls_wifi_set_oneshot_flag(0);    // ï¿½Ë³ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     }
     tls_param_get(TLS_PARAM_ID_PSM, &enable, TRUE);    
     if (TRUE == enable)
@@ -415,8 +408,6 @@ int tls_fwup_exit(u32 session_id)
 {
     u32 cpu_sr;
     bool enable = FALSE;
-    // tls_os_task_t fwtask;
-    // tls_os_status_t osstatus = 0;
     
     if ((fwup == NULL) || (fwup->busy == FALSE)) 
     {
@@ -445,7 +436,7 @@ int tls_fwup_exit(u32 session_id)
     fwup->current_session_id = 0;
     fwup->busy = FALSE;
     if (oneshotback != 0){
-        tls_wifi_set_oneshot_flag(oneshotback); // »Ö¸´Ò»¼üÅäÖÃ
+        tls_wifi_set_oneshot_flag(oneshotback); // ï¿½Ö¸ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     }
     tls_param_get(TLS_PARAM_ID_PSM, &enable, TRUE);    
     tls_wifi_set_psflag(enable, 0);
@@ -737,4 +728,3 @@ int tls_fwup_init(void)
 
     return TLS_FWUP_STATUS_OK;
 }
-

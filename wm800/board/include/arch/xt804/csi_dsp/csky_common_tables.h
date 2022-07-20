@@ -135,12 +135,12 @@ extern const float32_t cos_factors_2048[2048];
 extern const float32_t cos_factors_8192[8192];
 
 /* floating-point bit reversal tables */
-#define CSKYBITREVINDEXTABLE__16_TABLE_LENGTH ((uint16_t)20)
-#define CSKYBITREVINDEXTABLE__32_TABLE_LENGTH ((uint16_t)48)
-#define CSKYBITREVINDEXTABLE__64_TABLE_LENGTH ((uint16_t)56)
-#define CSKYBITREVINDEXTABLE_128_TABLE_LENGTH ((uint16_t)208)
-#define CSKYBITREVINDEXTABLE_256_TABLE_LENGTH ((uint16_t)440)
-#define CSKYBITREVINDEXTABLE_512_TABLE_LENGTH ((uint16_t)448)
+#define CSKYBITREVINDEXTABLE__16_TABLE_LENGTH ((uint16_t)20  )
+#define CSKYBITREVINDEXTABLE__32_TABLE_LENGTH ((uint16_t)48  )
+#define CSKYBITREVINDEXTABLE__64_TABLE_LENGTH ((uint16_t)56  )
+#define CSKYBITREVINDEXTABLE_128_TABLE_LENGTH ((uint16_t)208 )
+#define CSKYBITREVINDEXTABLE_256_TABLE_LENGTH ((uint16_t)440 )
+#define CSKYBITREVINDEXTABLE_512_TABLE_LENGTH ((uint16_t)448 )
 #define CSKYBITREVINDEXTABLE1024_TABLE_LENGTH ((uint16_t)1800)
 #define CSKYBITREVINDEXTABLE2048_TABLE_LENGTH ((uint16_t)3808)
 #define CSKYBITREVINDEXTABLE4096_TABLE_LENGTH ((uint16_t)4032)
@@ -156,13 +156,13 @@ extern const uint16_t cskyBitRevIndexTable2048[CSKYBITREVINDEXTABLE2048_TABLE_LE
 extern const uint16_t cskyBitRevIndexTable4096[CSKYBITREVINDEXTABLE4096_TABLE_LENGTH];
 
 /* fixed-point bit reversal tables */
-#define CSKYBITREVINDEXTABLE_FIXED___16_TABLE_LENGTH ((uint16_t)12)
-#define CSKYBITREVINDEXTABLE_FIXED___32_TABLE_LENGTH ((uint16_t)24)
-#define CSKYBITREVINDEXTABLE_FIXED___64_TABLE_LENGTH ((uint16_t)56)
-#define CSKYBITREVINDEXTABLE_FIXED__128_TABLE_LENGTH ((uint16_t)112)
-#define CSKYBITREVINDEXTABLE_FIXED__256_TABLE_LENGTH ((uint16_t)240)
-#define CSKYBITREVINDEXTABLE_FIXED__512_TABLE_LENGTH ((uint16_t)480)
-#define CSKYBITREVINDEXTABLE_FIXED_1024_TABLE_LENGTH ((uint16_t)992)
+#define CSKYBITREVINDEXTABLE_FIXED___16_TABLE_LENGTH ((uint16_t)12  )
+#define CSKYBITREVINDEXTABLE_FIXED___32_TABLE_LENGTH ((uint16_t)24  )
+#define CSKYBITREVINDEXTABLE_FIXED___64_TABLE_LENGTH ((uint16_t)56  )
+#define CSKYBITREVINDEXTABLE_FIXED__128_TABLE_LENGTH ((uint16_t)112 )
+#define CSKYBITREVINDEXTABLE_FIXED__256_TABLE_LENGTH ((uint16_t)240 )
+#define CSKYBITREVINDEXTABLE_FIXED__512_TABLE_LENGTH ((uint16_t)480 )
+#define CSKYBITREVINDEXTABLE_FIXED_1024_TABLE_LENGTH ((uint16_t)992 )
 #define CSKYBITREVINDEXTABLE_FIXED_2048_TABLE_LENGTH ((uint16_t)1984)
 #define CSKYBITREVINDEXTABLE_FIXED_4096_TABLE_LENGTH ((uint16_t)4032)
 
@@ -209,10 +209,9 @@ const static mynumber
     bigv    = {{0xfff8016a, 0x4207ffff}}, /* 1.5*2**33-1+362*2**-19 */
     t52     = {{0x00000000, 0x43300000}}, /* 2**52         */
     two52e  = {{0x000003ff, 0x43300000}}, /* 2**52'        */
-    // nan     = {{0x00000000, 0x7ff80000}}, /* NAN           */
     t256    = {{0, 0x4ff00000}},          /* 2^256         */
     ln_two1 = {{0xFEFA3800, 0x3FE62E42}}, /* 0.69314718055989033 */
-    ln_two2 = {{0x93C76730, 0x3D2EF357}}, /* 5.4979230187083712e-14 */
+    ln_two2 = {{0x93C76730, 0x3D2EF357}}, /* 5.4979230187083712e-14*/
     log2e   = {{0x652B82FE, 0x3FF71547}}, /* 1.4426950408889634  */
     ep2     = {{0x000004DC, 0x3FE00000}}, /* 0.50000000000013811 */
     ep3     = {{0x55555A0F, 0x3FC55555}}, /* 0.16666666666670024 */
@@ -235,12 +234,11 @@ const static float64_t
     s5 =  1.999999999999960937e-01,
     s6 = -1.666666666666592447e-01,
     s7 =  1.428571845238194705e-01;
-//  s8 = -1.250000500000149097e-01;
 
 const static float64_t huge = 1.0e300, tiny = 1.0e-300;
 const static float64_t err_0 = 1.000014, err_1 = 0.000016, zero = 0.0;
 const static q31_t bigint = 0x40862002,
-    badint = 0x40876000, smallint = 0x3C8fffff;
+              badint = 0x40876000, smallint = 0x3C8fffff;
 const static q31_t hugeint = 0x7fffffff, infint = 0x7ff00000;
 
 static const mynumber
@@ -291,21 +289,21 @@ static const mynumber
     d18   = {{0x1c71c71c, 0xbfac71c7} }, /* -1/18     */
     d19   = {{0xbca1af28, 0x3faaf286} }, /*  1/19     */
     d20   = {{0x9999999a, 0xbfa99999} }, /* -1/20     */
-    /* constants */
-    h1    = {{0x00000000, 0x3fd2e000} },  /* 151/2**9  */
-    h2    = {{0x00000000, 0x3f669000} },  /* 361/2**17 */
-    delu  = {{0x00000000, 0x3f700000} },  /* 1/2**8    */
-    delv  = {{0x00000000, 0x3ef00000} },  /* 1/2**16   */
-    e1    = {{0x00000000, 0x3bbcc868} },  /* 6.095e-21 */
-    e2    = {{0x00000000, 0x3c1138ce} },  /* 2.334e-19 */
-    e3    = {{0x00000000, 0x3aa1565d} },  /* 2.801e-26 */
-    e4    = {{0x00000000, 0x39809d88} },  /* 1.024e-31 */
-    e[4]  = {{{0x00000000, 0x37da223a} }, /* 1.2e-39   */
-            {{0x00000000, 0x35c851c4} },  /* 1.3e-49   */
-            {{0x00000000, 0x2ab85e51} },  /* 6.8e-103  */
-            {{0x00000000, 0x17383827} }}, /* 8.1e-197  */
-    two54 = {{0x00000000, 0x43500000} },  /* 2**54     */
-    u03   = {{0xeb851eb8, 0x3f9eb851} };  /* 0.03      */
+    /*constants    */
+    h1    = {{0x00000000, 0x3fd2e000} }, /* 151/2**9  */
+    h2    = {{0x00000000, 0x3f669000} }, /* 361/2**17 */
+    delu  = {{0x00000000, 0x3f700000} }, /* 1/2**8    */
+    delv  = {{0x00000000, 0x3ef00000} }, /* 1/2**16   */
+    e1    = {{0x00000000, 0x3bbcc868} }, /* 6.095e-21 */
+    e2    = {{0x00000000, 0x3c1138ce} }, /* 2.334e-19 */
+    e3    = {{0x00000000, 0x3aa1565d} }, /* 2.801e-26 */
+    e4    = {{0x00000000, 0x39809d88} }, /* 1.024e-31 */
+    e[4]  = {{{0x00000000, 0x37da223a} },/* 1.2e-39   */
+            {{0x00000000, 0x35c851c4} }, /* 1.3e-49   */
+            {{0x00000000, 0x2ab85e51} }, /* 6.8e-103  */
+            {{0x00000000, 0x17383827} }},/* 8.1e-197  */
+    two54 = {{0x00000000, 0x43500000} }, /* 2**54     */
+    u03   = {{0xeb851eb8, 0x3f9eb851} }; /* 0.03      */
 
 #define  SQRT_2    sqrt_2.x
 #define  DEL_U     delu.x
@@ -322,25 +320,25 @@ static const mynumber
 
 /* coeffient for log2 funtion */
 static const float64_t
-  ln2     = 0.69314718055994530942,
-  two54_d = 1.80143985094819840000e+16,   /* 43500000 00000000 */
-  Lg1     = 6.666666666666735130e-01,     /* 3FE55555 55555593 */
-  Lg2     = 3.999999999940941908e-01,     /* 3FD99999 9997FA04 */
-  Lg3     = 2.857142874366239149e-01,     /* 3FD24924 94229359 */
-  Lg4     = 2.222219843214978396e-01,     /* 3FCC71C5 1D8E78AF */
-  Lg5     = 1.818357216161805012e-01,     /* 3FC74664 96CB03DE */
-  Lg6     = 1.531383769920937332e-01,     /* 3FC39A09 D078C69F */
-  Lg7     = 1.479819860511658591e-01;     /* 3FC2F112 DF3E5244 */
+    ln2     = 0.69314718055994530942,
+    two54_d = 1.80143985094819840000e+16,   /* 43500000 00000000 */
+    Lg1     = 6.666666666666735130e-01,     /* 3FE55555 55555593 */
+    Lg2     = 3.999999999940941908e-01,     /* 3FD99999 9997FA04 */
+    Lg3     = 2.857142874366239149e-01,     /* 3FD24924 94229359 */
+    Lg4     = 2.222219843214978396e-01,     /* 3FCC71C5 1D8E78AF */
+    Lg5     = 1.818357216161805012e-01,     /* 3FC74664 96CB03DE */
+    Lg6     = 1.531383769920937332e-01,     /* 3FC39A09 D078C69F */
+    Lg7     = 1.479819860511658591e-01;     /* 3FC2F112 DF3E5244 */
 
 /* coeffient for log10 function */
 static const float64_t
-  ivln10    = 4.34294481903251816668e-01, /* 0x3FDBCB7B, 0x1526E50E */
-  log10_2hi = 3.01029995663611771306e-01, /* 0x3FD34413, 0x509F6000 */
-  log10_2lo = 3.69423907715893078616e-13; /* 0x3D59FEF3, 0x11F12B36 */
+    ivln10    = 4.34294481903251816668e-01, /* 0x3FDBCB7B, 0x1526E50E */
+    log10_2hi = 3.01029995663611771306e-01, /* 0x3FD34413, 0x509F6000 */
+    log10_2lo = 3.69423907715893078616e-13; /* 0x3D59FEF3, 0x11F12B36 */
 
 /* constant for log10 function */
 static const float64_t
-  TWO1023  = 8.988465674311579539e+307,
-  TWOM1000 = 9.3326361850321887899e-302;
+    TWO1023  = 8.988465674311579539e+307,
+    TWOM1000 = 9.3326361850321887899e-302;
 
-#endif /*  CSKY_COMMON_TABLES_H */
+#endif /* CSKY_COMMON_TABLES_H */

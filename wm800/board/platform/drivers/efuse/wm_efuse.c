@@ -102,7 +102,7 @@ int tls_ft_param_init(void)
     }
     tls_mem_free(pft);
 
-    /*lock parameter*/
+    /* lock parameter */
     tls_flash_unlock();
     return TRUE;
 }
@@ -130,8 +130,8 @@ int tls_ft_param_get(unsigned int opnum, void *data, unsigned int rdlen)
                     (memcmp(gftParam.bt_mac_addr, invalid_bt_mac1, 6) == 0))
                 {
                     memcpy(data, default_mac, rdlen);
-                    *((u8*)data+5) +=1;      /*defalut plus 1*/
-                    *((u8*)data) |= 0xC0;    /*defalut public static type*/
+                    *((u8*)data+5) +=1;      /* defalut plus 1 */
+                    *((u8*)data) |= 0xC0;    /* defalut public static type */
                 }
                 else
                 {
@@ -141,11 +141,11 @@ int tls_ft_param_get(unsigned int opnum, void *data, unsigned int rdlen)
         break;
 
         
-        case CMD_TX_DC: /*tx_dcoffset*/
+        case CMD_TX_DC: /* tx_dcoffset */
             *(unsigned int *)data = gftParam.tx_dcoffset;
         break;    
         
-        case CMD_RX_DC: /*rx_dcoffset*/
+        case CMD_RX_DC: /* rx_dcoffset */
             *(unsigned int *)data = gftParam.rx_dcoffset;
         break;    
         
@@ -165,7 +165,7 @@ int tls_ft_param_get(unsigned int opnum, void *data, unsigned int rdlen)
             *(unsigned int *)data = gftParam.rx_iq_phase;
         break;
         
-        case CMD_TX_GAIN: /*gain*/
+        case CMD_TX_GAIN: /* gain */
             if (rdlen < FT_GAIN_LEN)
             {
                 memcpy(data, gftParam.tx_gain, rdlen);
@@ -179,7 +179,6 @@ int tls_ft_param_get(unsigned int opnum, void *data, unsigned int rdlen)
         default:
         return -1;
     }
-    // printf("tls_ft_param_get: opnum=%d, val=%x\n", opnum, *(unsigned int *)data);
     return 0;
 }
 
@@ -192,8 +191,6 @@ int tls_ft_param_set(unsigned int opnum, void *data, unsigned int len)
     {
         return -1;
     }
-    // printf("tls_ft_param_set: opnum=%d, val=%x\n", opnum, *(unsigned int *)data);
-    // tls_fls_read(FT_MAGICNUM_ADDR, (unsigned char *)&gftParam, sizeof(gftParam));
     switch (opnum)
     {
         case CMD_WIFI_MAC:    /* MAC */
@@ -228,7 +225,7 @@ int tls_ft_param_set(unsigned int opnum, void *data, unsigned int len)
             gftParam.rx_iq_phase = *(unsigned int *) data;            
         break;    
         
-        case CMD_TX_GAIN: /*gain*/
+        case CMD_TX_GAIN: /* gain */
             if (len >= FT_GAIN_LEN)
             {
                 writelen = FT_GAIN_LEN;
@@ -505,9 +502,5 @@ int tls_get_tx_gain(u8 *txgain)
 **********************************************************************************************************/
 int tls_set_tx_gain(u8 *txgain)
 {
-
     return tls_ft_param_set(CMD_TX_GAIN, txgain, TX_GAIN_LEN);
-    
-
 }
-

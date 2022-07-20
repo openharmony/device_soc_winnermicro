@@ -217,7 +217,7 @@ void tls_pmu_timer0_start(u16 second)
     }
     
     val = tls_reg_read32(HR_PMU_PS_CR);
-    /*cal 32K osc*/
+    /* cal 32K osc */
     val |= BIT(3);
     tls_reg_write32(HR_PMU_PS_CR, val);        
 
@@ -264,7 +264,7 @@ void tls_pmu_timer1_start(u16 msec)
     }
     
     val = tls_reg_read32(HR_PMU_PS_CR);
-    /*cal 32K osc*/
+    /* cal 32K osc */
     val |= BIT(3);    
     if (!(val & BIT(4)))
     {
@@ -277,12 +277,12 @@ void tls_pmu_timer1_start(u16 msec)
         {
             val = msec;
         }
-        // Ä¬ÈÏ²ÉÓÃ×îÐ¡µ¥Î»1ms
+        // Ä¬ï¿½Ï²ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½Î»1ms
         val = (val - 5) | (1<<16) | (0<<17) | (0<<20) | (0<<24);
     }
     else
     {
-        // Ä¬ÈÏ²ÉÓÃ×îÐ¡µ¥Î»1ms
+        // Ä¬ï¿½Ï²ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½Î»1ms
         val = (msec-1)|(1<<16) | (0<<17) | (0<<20) | (0<<24);
     }
     tls_reg_write32(HR_PMU_TIMER1, val);
@@ -319,9 +319,9 @@ void tls_pmu_standby_start(void)
 {
     u32 val;
 
-    tls_irq_enable(PMU_IRQn);        // Ä¬ÈÏ´ò¿ªÖÐ¶ÏÎªÁËÇå³þIO»½ÐÑµÄÖÐ¶Ï±ê¼Ç
+    tls_irq_enable(PMU_IRQn);        // Ä¬ï¿½Ï´ï¿½ï¿½Ð¶ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½IOï¿½ï¿½ï¿½Ñµï¿½ï¿½Ð¶Ï±ï¿½ï¿½
 
-    /*Clear Sleep status after exit sleep mode and enter standby mode*/
+    /* Clear Sleep status after exit sleep mode and enter standby mode */
     val = tls_reg_read32(HR_PMU_INTERRUPT_SRC);
     if (val&0x180)
     {
@@ -348,9 +348,9 @@ void tls_pmu_sleep_start(void)
     u32 val;
     u32 use40M;
 
-    tls_irq_enable(PMU_IRQn);        // Ä¬ÈÏ´ò¿ªÖÐ¶ÏÎªÁËÇå³þIO»½ÐÑ
+    tls_irq_enable(PMU_IRQn);        // Ä¬ï¿½Ï´ï¿½ï¿½Ð¶ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½IOï¿½ï¿½ï¿½ï¿½
 
-    /*Clear Standby status after exit standby mode and enter sleep mode*/
+    /* Clear Standby status after exit standby mode and enter sleep mode */
     val = tls_reg_read32(HR_PMU_INTERRUPT_SRC);
     if (val&0x180)
     {
@@ -380,8 +380,6 @@ void tls_pmu_sleep_start(void)
  */
 void tls_close_peripheral_clock(tls_peripheral_type_s devices)
 {
-    // tls_reg_write32(HR_CLK_BASE_ADDR, tls_reg_read32(HR_CLK_BASE_ADDR) & ~(devices));
-
     return;
 }
 
@@ -396,8 +394,5 @@ void tls_close_peripheral_clock(tls_peripheral_type_s devices)
  */
 void tls_open_peripheral_clock(tls_peripheral_type_s devices)
 {
-    // tls_reg_write32(HR_CLK_BASE_ADDR, tls_reg_read32(HR_CLK_BASE_ADDR) | devices);
-
     return;
 }
-

@@ -44,7 +44,6 @@ static int tls_spifls_read_id(u32 * id)
     *id = 0;
 
     err = tls_spi_read_with_cmd((const u8 *) &cmd, 4, (u8 *) id, 3);
-
     if (err != TLS_SPI_STATUS_OK)
     {
         TLS_DBGPRT_ERR("flash read ID fail(%d)!\n", err);
@@ -259,11 +258,11 @@ int tls_spifls_write(u32 addr, u8 * buf, u32 len)
             break;
         }
 
-        if (1 == sector_num){/*flash write only in one sector*/
+        if (1 == sector_num) { /* flash write only in one sector */
             MEMCPY(cache + (addr%drv->sector_size), buf, write_bytes);    
             buf += write_bytes;
             write_bytes = 0;            
-        }else{/*flash write through some sectors*/
+        } else { /* flash write through some sectors */
             if (0 == i) {
                 MEMCPY(cache+(addr%drv->sector_size), buf, drv->sector_size - (addr%drv->sector_size));
                 buf += drv->sector_size - (addr%drv->sector_size);

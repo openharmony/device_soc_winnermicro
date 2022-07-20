@@ -20,7 +20,7 @@
 
 /* Nonzero if either X or Y is not aligned on a "long" boundary.  */
 #define UNALIGNED(X, Y) \
-  (((uint32_t)X & (sizeof (uint32_t) - 1)) | ((uint32_t)Y & (sizeof (uint32_t) - 1)))
+    (((uint32_t)X & (sizeof (uint32_t) - 1)) | ((uint32_t)Y & (sizeof (uint32_t) - 1)))
 /* How many bytes are copied each iteration of the 4X unrolled loop.  */
 #define BIGBLOCKSIZE    (sizeof (uint32_t) << 2)
 /* Threshhold for punting to the byte copier.  */
@@ -74,7 +74,7 @@ void psram_init(psram_mode_t mode)
         value |= 0x03;
     }
 
-    /*reset psram*/
+    /* reset psram */
     value |= 0x01;
     tls_reg_write32(HR_PSRAM_CTRL_ADDR, value);
     do{
@@ -83,7 +83,6 @@ void psram_init(psram_mode_t mode)
 
     psram_channel = tls_dma_request(0, 0);
     tls_dma_irq_register(psram_channel, psram_DMA_Channel0_IRQHandler, NULL, TLS_DMA_IRQ_TRANSFER_DONE);
-
 }
 
 int memcpy_dma(unsigned char *dst, unsigned char *src, int num)
@@ -128,8 +127,6 @@ int memcpy_dma(unsigned char *dst, unsigned char *src, int num)
             M8(dst++) = M8(psram_access_start++);
             offset++;
         }
-        
     }
     return offset;
 }
-

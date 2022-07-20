@@ -229,7 +229,6 @@ int tls_io_cfg_get(enum tls_io_name name)
     u8  pin;
     u16 offset;
     u32 afsel,afs1,afs0,dir,pullupen, pulldownen;
-    
 
     if (name >= WM_IO_PB_00)
     {

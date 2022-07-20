@@ -47,8 +47,7 @@
     #define WM_BLE_CENTRAL_INCLUDED    CFG_OFF
 #endif
 
-#if (WM_BTA_AV_SINK_INCLUDED == CFG_ON) || (WM_BTA_HFP_HSP_INCLUDED == CFG_ON) || \
-    (WM_BTA_SPPS_INCLUDED == CFG_ON) || (WM_BTA_SPPC_INCLUDED == CFG_ON)
+#if (WM_BTA_AV_SINK_INCLUDED == CFG_ON) || (WM_BTA_HFP_HSP_INCLUDED == CFG_ON) || (WM_BTA_SPPS_INCLUDED == CFG_ON) || (WM_BTA_SPPC_INCLUDED == CFG_ON)
     #define WM_BT_INCLUDED                CFG_ON
 #else
     #define WM_BT_INCLUDED                CFG_OFF
@@ -78,4 +77,3 @@
 #endif
 
 #endif /* __WM_WIFI_CONFIG_H__ */
-
