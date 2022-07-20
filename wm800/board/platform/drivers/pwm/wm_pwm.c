@@ -127,7 +127,7 @@ int tls_pwm_freq_config(u8 channel, u16 clkdiv, u8 period)
     {
         temp = tls_reg_read32(HR_PWM_CH4_REG1) & ~0xFFFF0000;
         temp |= (clkdiv << 16);
-        tls_reg_write32(HR_PWM_CH4_REG1, temp);/* clock divider */
+        tls_reg_write32(HR_PWM_CH4_REG1, temp); /* clock divider */
 
         temp = tls_reg_read32(HR_PWM_CH4_REG1) & ~0x0000FF00;
         temp |= (period << 8);
@@ -137,11 +137,11 @@ int tls_pwm_freq_config(u8 channel, u16 clkdiv, u8 period)
     {
         temp = tls_reg_read32(HR_PWM_CLKDIV01 + (channel / 2) * 4) & ~(0xFFFF << ((channel % 2) * 16));
         temp |= (clkdiv << ((channel % 2) * 16));
-        tls_reg_write32(HR_PWM_CLKDIV01 + (channel / 2) * 4, temp);/* clock divider */
+        tls_reg_write32(HR_PWM_CLKDIV01 + (channel / 2) * 4, temp); /* clock divider */
 
         temp = tls_reg_read32(HR_PWM_PERIOD) & ~(0xFF << channel * 8);
         temp |= (period << (channel * 8));
-        tls_reg_write32(HR_PWM_PERIOD, temp);/* the number of the counting clock cycle */
+        tls_reg_write32(HR_PWM_PERIOD, temp); /* the number of the counting clock cycle */
     }
 
     return WM_SUCCESS;
@@ -164,7 +164,7 @@ int tls_pwm_out_mode_config(u8 channel, enum tls_pwm_out_mode mode)
         return WM_FAILED;
 
     if (WM_PWM_OUT_MODE_BRAKE == mode)
-        tls_reg_write32(HR_PWM_BRKCTL, tls_reg_read32(HR_PWM_BRKCTL) | BIT(11 + channel));/* the brake mode */
+        tls_reg_write32(HR_PWM_BRKCTL, tls_reg_read32(HR_PWM_BRKCTL) | BIT(11 + channel)); /* the brake mode */
     else if (WM_PWM_OUT_MODE_ALLSYC == mode)
     {
         if (channel != 0)
@@ -184,7 +184,7 @@ int tls_pwm_out_mode_config(u8 channel, enum tls_pwm_out_mode mode)
     {
         if (channel != 0 && channel != 2)
             return WM_FAILED;
-        tls_reg_write32(HR_PWM_BRKCTL, tls_reg_read32(HR_PWM_BRKCTL) & ~(0x1800<<channel));/* disable the brake mode */
+        tls_reg_write32(HR_PWM_BRKCTL, tls_reg_read32(HR_PWM_BRKCTL) & ~(0x1800<<channel)); /* disable the brake mode */
         tls_reg_write32(HR_PWM_CTL,  tls_reg_read32(HR_PWM_CTL) & ~BIT(6));                /* disable the all synchronous mode mode */
         tls_reg_write32(HR_PWM_CTL,  tls_reg_read32(HR_PWM_CTL) & ~BIT(14 + channel / 2)); /* disable the two channel synchronous mode */
         tls_reg_write32(HR_PWM_CTL,  tls_reg_read32(HR_PWM_CTL) | BIT(0 + channel / 2));   /* enable the complementary mode */
@@ -238,7 +238,6 @@ int tls_pwm_cnt_type_config(u8 channel, enum tls_pwm_cnt_type cnt_type)
             tls_reg_write32(HR_PWM_CH4_REG2, tls_reg_read32(HR_PWM_CH4_REG2) |   BIT(4));
             tls_reg_write32(HR_PWM_CH4_REG2, tls_reg_read32(HR_PWM_CH4_REG2) & (~BIT(3)));
         }
-
     }
     else
     {
@@ -362,9 +361,7 @@ int tls_pwm_stoptime_by_period_config(u8 channel, u8 pnum)
         temp = tls_reg_read32(HR_PWM_PNUM) & ~(0xFF << channel * 8);
         temp |= (pnum << (channel * 8));
         tls_reg_write32(HR_PWM_PNUM, temp);
-        
     }
-
     return WM_SUCCESS;
 }
 
@@ -426,22 +423,21 @@ int tls_pwm_deadzone_config(u8 channel, bool dten, u8 dtclkdiv, u8 dtcnt)
     {
         temp = tls_reg_read32(HR_PWM_DTCTL) & ~0x00030000;
         temp |= (dtclkdiv<<16);
-        tls_reg_write32(HR_PWM_DTCTL, temp);/* dead zone clock divider */
+        tls_reg_write32(HR_PWM_DTCTL, temp); /* dead zone clock divider */
 
         if (channel == 0 || channel == 1)
         {
             temp = tls_reg_read32(HR_PWM_DTCTL) & ~0x000000FF;
             temp |= dtcnt;
-            tls_reg_write32(HR_PWM_DTCTL, temp);/* the number of the counting clock cycle */
+            tls_reg_write32(HR_PWM_DTCTL, temp); /* the number of the counting clock cycle */
 
             tls_reg_write32(HR_PWM_DTCTL, tls_reg_read32(HR_PWM_CTL) | BIT(20));       /* whether enalbe the deat time */
-
         }
         else if (channel == 2 || channel == 3)
         {
             temp = tls_reg_read32(HR_PWM_DTCTL) & ~0x0000FF00;
             temp |= (dtcnt<<8);
-            tls_reg_write32(HR_PWM_DTCTL, temp);/* the number of the counting clock cycle */
+            tls_reg_write32(HR_PWM_DTCTL, temp); /* the number of the counting clock cycle */
 
             tls_reg_write32(HR_PWM_DTCTL, tls_reg_read32(HR_PWM_CTL) | BIT(21));       /* whether enalbe the deat time */
         }
@@ -798,7 +794,7 @@ int tls_pwm_stop(u8 channel)
     if (channel > (PWM_CHANNEL_MAX_NUM - 1))
         return WM_FAILED;
 
-    tls_reg_write32(HR_PWM_CTL, tls_reg_read32(HR_PWM_CTL) & (~BIT(27 + channel)));/* stop counter */
+    tls_reg_write32(HR_PWM_CTL, tls_reg_read32(HR_PWM_CTL) & (~BIT(27 + channel))); /* stop counter */
 
     return WM_SUCCESS;
 }
@@ -886,10 +882,6 @@ int tls_pwm_init(u8 channel,u32 freq, u8 duty, u8 pnum)
     pwm_param.duty = duty;
     pwm_param.channel = channel;
     pwm_param.clkdiv = sysclk.apbclk*UNIT_MHZ/256/freq;
-//   printf("clkdiv:%d\n", pwm_param.clkdiv);
     ret = tls_pwm_out_init(&pwm_param);
-//   tls_pwm_start(channel);
-
     return     ret;
 }
-

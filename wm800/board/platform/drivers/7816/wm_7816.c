@@ -266,9 +266,9 @@ void wm_sc_colreset(void)
     wm_sc_7816_mode(1);
     /* select the clk io pin in 7816 mode */
     wm_sc_io_clk_config(0);
-    /* config the output clock freq*/
+    /* config the output clock freq */
     wm_sc_set_frequency(5000000);
-    /* set the F/D to default (372)*/
+    /* set the F/D to default (372) */
     wm_sc_set_etu(WM_SC_DEFAULT_FD);
     /* set the rst pin to high */
     wm_sc_rst_high();
@@ -281,7 +281,7 @@ void wm_sc_colreset(void)
  */
 void wm_sc_deactive(void)
 {    
-    /* set the rst pin in low level*/
+    /* set the rst pin in low level */
     wm_sc_rst_low();
     /* select the clk and io pin to 7816 mode */
     wm_sc_io_clk_config(0);
@@ -296,4 +296,3 @@ void wm_sc_deactive(void)
     /* set the power pin to low */
     wm_sc_poweroff();
 }
-

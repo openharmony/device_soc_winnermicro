@@ -104,25 +104,14 @@ WifiErrorCode EnableHotspot()
     tls_wifi_init();
     struct tls_softap_info_t apinfo = {0};
     strcpy(apinfo.ssid, g_wifiApConfig.ssid);
-    // errno_t err = strcpy_s(apinfo.ssid, sizeof(apinfo.ssid), g_wifiApConfig.ssid);
     apinfo.encrypt = HoSec2WmSec(g_wifiApConfig.securityType);
     apinfo.channel = g_wifiApConfig.channelNum;
     strcpy(apinfo.keyinfo.key, g_wifiApConfig.preSharedKey);
-    // err += strcpy_s(apinfo.keyinfo.key, sizeof(apinfo.keyinfo.key), g_wifiApConfig.preSharedKey);
     apinfo.keyinfo.key_len = strlen(g_wifiApConfig.preSharedKey);
     apinfo.keyinfo.format = 1;  // 0-hex, 1-ascii
     if (g_wifiApConfig.securityType == WIFI_SEC_TYPE_WEP) {
         apinfo.keyinfo.index = 1; // 1-4 (only wep)
     }
-    // if (err != EOK) {
-    //     printf("[wifi_service]:EnableHotspot memset fail, err = %d\n", err);
-    //     if (UnlockWifiGlobalLock() != WIFI_SUCCESS) {
-    //         return ERROR_WIFI_UNKNOWN;
-    //     }
-    //     return ERROR_WIFI_UNKNOWN;
-    // }
-
-    // TODO(xu): add API to set AP's ipinfo
     struct tls_ip_info_t ipinfo = {0};
     ipinfo.ip_addr[0] = 192;
     ipinfo.ip_addr[1] = 168;

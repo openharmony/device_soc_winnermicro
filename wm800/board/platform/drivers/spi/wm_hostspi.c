@@ -237,8 +237,6 @@ static int SpiDmaBlockRead(u8 * data, u32 len, u8 * txdata, u8 txlen)
     u8 blocknum;
     u32 blocksize = 0;
     int ret = TLS_SPI_STATUS_OK;
-
-// printf("\nentry SpiDmaBlockRead\n");
     if (NULL == data)
     {
         return TLS_SPI_STATUS_EINVAL;
@@ -284,18 +282,14 @@ static int SpiDmaBlockRead(u8 * data, u32 len, u8 * txdata, u8 txlen)
     {
         if (rxlenbk > 0)
         {
-        // printf("\ni =%d\n",i);
             DmaDesc.dest_addr = (int) (data + i * SPI_DMA_MAX_TRANS_SIZE);
             blocksize = (rxlen > SPI_DMA_MAX_TRANS_SIZE) ? SPI_DMA_MAX_TRANS_SIZE : rxlen;
             if (0 == blocksize)
                 break;
-        // printf("\nblocksize= %d\n",blocksize);
             DmaDesc.dma_ctrl =
                 TLS_DMA_DESC_CTRL_DEST_ADD_INC | TLS_DMA_DESC_CTRL_BURST_SIZE1 |
                 TLS_DMA_DESC_CTRL_DATA_SIZE_WORD |
                 TLS_DMA_DESC_CTRL_TOTAL_BYTES(blocksize);
-        // word32 = DmaDesc.dma_ctrl;
-        // printf("\ndma ctrl = %x\n",DmaDesc.dma_ctrl);
             DmaDesc.valid = TLS_DMA_DESC_VALID;
             DmaDesc.next = NULL;
             tls_dma_start(dmaCh, &DmaDesc, 0);
@@ -379,7 +373,6 @@ static int SpiDmaBlockRead(u8 * data, u32 len, u8 * txdata, u8 txlen)
  */
 void tls_spi_trans_type(u8 type)
 {
-
     spi_port->transtype = type;
     if (SPI_WORD_TRANSFER == type)
     {
@@ -421,18 +414,11 @@ static u32 spi_fill_txfifo(struct tls_spi_transfer *current_transfer,
         return 0;
 
     tx_remaining_bytes = current_remaining_bytes;
-
-// printf("ready to write to fifo size - %d.\n", tx_remaining_bytes);
     spi_get_status(NULL, NULL, &fifo_level);
-
-// TLS_DBGPRT_SPI("\nfifo_level 0= %d\n",fifo_level);
     rw_words =
         ((fifo_level > tx_remaining_bytes) ? tx_remaining_bytes : fifo_level) / 4;
     rw_bytes =
         ((fifo_level > tx_remaining_bytes) ? tx_remaining_bytes : fifo_level) % 4;
-
-// TLS_DBGPRT_SPI("write to spi fifo words - %d, bytes - %d.\n", rw_words,
-// rw_bytes);
 
     for (i = 0; i < rw_words; i++)
     {
@@ -510,22 +496,15 @@ static u32 spi_get_rxfifo(struct tls_spi_transfer *current_transfer,
 
     rx_remaining_bytes = current_remaining_bytes;
     spi_get_status(NULL, &fifo_level, NULL);
-//  TLS_DBGPRT_SPI("rx fifo level: %d.\n", fifo_level);
 
     rw_words = fifo_level / 4;
     rw_bytes = fifo_level % 4;
 
-// TLS_DBGPRT_SPI("rx data: %d words, %d bytes.\n", rw_words, rw_bytes);
-
     for (i = 0; i < rw_words; i++)
     {
-
         data32 = spi_data_get();
-
-    // TLS_DBGPRT_SPI("rx data[%d](w): 0x%08x.\n", i, data32);
         if (current_transfer->rx_buf)
         {
-
             if (SPI_BYTE_TRANSFER == spi_port->transtype)
             {
                 data32 = swap_32(data32);
@@ -545,13 +524,11 @@ static u32 spi_get_rxfifo(struct tls_spi_transfer *current_transfer,
             }
         }
         rx_remaining_bytes -= 4;
-
     }
 
     if (rw_bytes)
     {
         data32 = spi_data_get();
-    // TLS_DBGPRT_SPI("\nrx data=%x\n",data32);
         if (current_transfer->rx_buf)
         {
             for (i = 0; i < rw_bytes; i++)
@@ -560,8 +537,6 @@ static u32 spi_get_rxfifo(struct tls_spi_transfer *current_transfer,
                     data8 = (u8) (data32 >> ((3 - i) * 8));
                 else if (SPI_WORD_TRANSFER == spi_port->transtype)
                     data8 = (u8) (data32 >> (i * 8));
-
-            // TLS_DBGPRT_SPI("rx data[%d](b): 0x%02x.\n", i, data8);
                 ((u8 *) current_transfer->rx_buf)[current_transfer->len -rx_remaining_bytes] = data8;
                 rx_remaining_bytes -= 1;
             }
@@ -649,7 +624,6 @@ static void spi_continue_transfer(void)
             spi_next_transfer(spi_port->current_message);
         if (spi_port->current_transfer == NULL)
         {
-//           tls_sys_clk_set(CPU_CLK_40M);
             spi_set_chipselect_mode(SPI_CS_INACTIVE_MODE);
             current_message->status = SPI_MESSAGE_STATUS_DONE;
             dl_list_del(&current_message->queue);
@@ -657,8 +631,6 @@ static void spi_continue_transfer(void)
         }
 
         tls_os_sem_release(spi_port->lock);
-
-    // TLS_DBGPRT_SPI("get the next spi transfer pair.\n");
         current_transfer = spi_port->current_transfer;
         if (current_transfer != NULL)
         {
@@ -676,8 +648,6 @@ static void spi_continue_transfer(void)
 
     if (current_message->status == SPI_MESSAGE_STATUS_DONE)
     {
-    // TLS_DBGPRT_SPI("current spi transaction finish and notify the
-    // submitter.\n");
         current_message->complete(current_message->context);
     }
 }
@@ -697,7 +667,6 @@ static void spi_scheduler(void *data)
             switch (msg)
             {
                 case SPI_SCHED_MSG_START_ENGINE:
-//                   tls_sys_clk_set(CPU_CLK_80M);            // 80MHZ
                     if (spi_port->current_message)
                     {
                         TLS_DBGPRT_WARNING
@@ -712,18 +681,12 @@ static void spi_scheduler(void *data)
                     spi_port->current_message = spi_next_message();
 
                     tls_os_sem_release(spi_port->lock);
-
-                // TLS_DBGPRT_SPI("acquire the first transfer pair in the
-                // current transaction message.\n");
                     current_transfer = spi_port->current_transfer;
                     if (current_transfer == NULL)
                     {
                         break;
                     }
                     spi_port->current_remaining_bytes = current_transfer->len;
-
-                // TLS_DBGPRT_SPI("current transfer lenght - %d.\n",
-                // spi_port->current_remaining_bytes);
 
                     TLS_DBGPRT_SPI_INFO("fill the tx fifo.\n");
                     transfer_bytes = spi_fill_txfifo(current_transfer, spi_port->current_remaining_bytes);
@@ -756,18 +719,14 @@ static void spi_scheduler(void *data)
 
 ATTRIBUTE_ISR void SPI_LS_IRQHandler(void)
 {
-
     u32 int_status;
     u32 int_mask;
     csi_kernel_intrpt_enter();
     int_status = spi_get_int_status();
-// printf("\nspi int sta=%x\n",int_status);
     spi_clear_int_status(int_status);
 
     int_mask = spi_int_mask();
     int_status &= ~int_mask;
-
-// printf("spi interrupt - 0x%x.\n", int_status);
 
     if (int_status & SPI_INT_TX_FIFO_RDY)
     {
@@ -787,7 +746,6 @@ ATTRIBUTE_ISR void SPI_LS_IRQHandler(void)
         } else {
             tls_spi_queue_send(SPI_SCHED_MSG_TRANSFER_COMPLETE);
         }
-
     }
     csi_kernel_intrpt_exit();
 }
@@ -1371,7 +1329,7 @@ int tls_spi_init(void)
 
     spi_set_rx_channel(1);
     spi_set_tx_channel(1);
-    spi_unmask_int(SPI_INT_TRANSFER_DONE  /* | SPI_INT_RX_FIFO_RDY |SPI_INT_TX_FIFO_RDY */ );
+    spi_unmask_int(SPI_INT_TRANSFER_DONE);
     tls_close_peripheral_clock(TLS_PERIPHERAL_TYPE_LSPI);
 
     TLS_DBGPRT_SPI_INFO("register spi master interrupt handler.\n");
@@ -1439,7 +1397,6 @@ int tls_spi_task_init(void)
 #endif
 
     return TLS_SPI_STATUS_OK;
-
 }
 
 void tls_spi_queue_send(u32 msg)
@@ -1473,20 +1430,15 @@ int tls_spi_exit(void)
 **********************************************************************************************************/
 void tls_spi_slave_sel(u16 slave)
 {
-// u16 ret;
     tls_gpio_cfg((enum tls_io_name) SPI_SLAVE_CONTROL_PIN, WM_GPIO_DIR_OUTPUT,
                  WM_GPIO_ATTR_FLOATING);
     if (SPI_SLAVE_FLASH == slave)
     {
         tls_gpio_write((enum tls_io_name) SPI_SLAVE_CONTROL_PIN, 0);
-    // ret = tls_gpio_read(SPI_SLAVE_CONTROL_PIN);
-    // printf("\nflash gpio 0 ===%d\n",ret);
     }
     else if (SPI_SLAVE_CARD == slave)
     {
         tls_gpio_write((enum tls_io_name) SPI_SLAVE_CONTROL_PIN, 1);
-    // ret = tls_gpio_read(SPI_SLAVE_CONTROL_PIN);
-    // printf("\ncard gpio 0 ===%d\n",ret);
     }
 }
 
@@ -1519,8 +1471,6 @@ int32_t tls_spi_xfer(const void *data_out, void *data_in, uint32_t num_out, uint
     remain_length = tot_num;
     tls_transfer.len = tot_num;    
     tls_irq_disable(SPI_LS_IRQn);
-    // spi_set_rx_channel(1);
-    // spi_set_tx_channel(1);    
     length = spi_fill_txfifo(&tls_transfer, remain_length);
     spi_set_sclk_length(length * 8, 0);
     spi_sclk_start();
@@ -1552,6 +1502,4 @@ int32_t tls_spi_xfer(const void *data_out, void *data_in, uint32_t num_out, uint
     tls_close_peripheral_clock(TLS_PERIPHERAL_TYPE_LSPI);
 
     return (ret == TLS_SPI_STATUS_OK) ? 0 : -1;
-}    
-    
-
+}

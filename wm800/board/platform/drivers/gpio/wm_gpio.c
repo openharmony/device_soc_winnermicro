@@ -126,8 +126,7 @@ void tls_gpio_cfg(enum tls_io_name gpio_pin, enum tls_gpio_dir dir, enum tls_gpi
     if (WM_GPIO_ATTR_FLOATING == attr)
     {
         tls_reg_write32(HR_GPIO_PULLUP_EN + offset, tls_reg_read32(HR_GPIO_PULLUP_EN + offset) | BIT(pin));        /* 1 disable pullup */
-        tls_reg_write32(HR_GPIO_PULLDOWN_EN + offset, tls_reg_read32(HR_GPIO_PULLDOWN_EN + offset)&(~BIT(pin)));       /* 1 disable pulldown */ 
-        
+        tls_reg_write32(HR_GPIO_PULLDOWN_EN + offset, tls_reg_read32(HR_GPIO_PULLDOWN_EN + offset)&(~BIT(pin)));       /* 1 disable pulldown */
     }
     if (WM_GPIO_ATTR_PULLHIGH == attr)
     {
@@ -140,7 +139,6 @@ void tls_gpio_cfg(enum tls_io_name gpio_pin, enum tls_gpio_dir dir, enum tls_gpi
         tls_reg_write32(HR_GPIO_PULLUP_EN + offset, tls_reg_read32(HR_GPIO_PULLUP_EN + offset) | BIT(pin));     /* 0 disable pullup */
         tls_reg_write32(HR_GPIO_PULLDOWN_EN + offset, tls_reg_read32(HR_GPIO_PULLDOWN_EN + offset) | BIT(pin));        /* 1 disable pulldown */
     }
-
 }
 
 /**
@@ -212,7 +210,6 @@ void tls_gpio_write(enum tls_io_name gpio_pin, u8 value)
         offset = 0;
     }
 
-    
     cpu_sr = tls_os_set_critical();
     
     reg_en = tls_reg_read32(HR_GPIO_DATA_EN + offset);
@@ -222,7 +219,7 @@ void tls_gpio_write(enum tls_io_name gpio_pin, u8 value)
     if (value)
         tls_reg_write32(HR_GPIO_DATA + offset, reg |  (1 << pin));    /* write high */
     else
-        tls_reg_write32(HR_GPIO_DATA + offset, reg & (~(1 << pin)));/* write low */
+        tls_reg_write32(HR_GPIO_DATA + offset, reg & (~(1 << pin))); /* write low */
 
     tls_reg_write32(HR_GPIO_DATA_EN + offset, reg_en);
 
@@ -313,7 +310,6 @@ void tls_gpio_irq_enable(enum tls_io_name gpio_pin, enum tls_gpio_irq_trig mode)
 
     reg = tls_reg_read32(HR_GPIO_IE + offset);
     reg |= (0x1 << pin);
-//   TLS_DBGPRT_INFO("\nie ret=%x\n",reg);
     tls_reg_write32(HR_GPIO_IE + offset, reg);        /* enable interrupt */
 
     tls_irq_enable(vec_no);
@@ -358,7 +354,6 @@ void tls_gpio_irq_disable(enum tls_io_name gpio_pin)
             tls_irq_disable(GPIOA_IRQn);
         }
     }
-
 }
 
 /**
@@ -444,4 +439,3 @@ void tls_gpio_isr_register(enum tls_io_name gpio_pin,
     gpio_context[gpio_pin].callback = callback;
     gpio_context[gpio_pin].arg = arg;
 }
-

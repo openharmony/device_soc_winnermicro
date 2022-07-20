@@ -144,9 +144,6 @@ ATTRIBUTE_ISR void i2c_I2C_IRQHandler(void)
             }
         }
     }
-//   if ((i2c_sr & 0x40) == 0) {
-//       i2c_transfer.state = IDLE;
-//   }
     csi_kernel_intrpt_exit();
 }
 
@@ -172,7 +169,6 @@ void tls_i2c_init(u32 freq)
     /** enable I2C | Disable Int*/
     tls_reg_write32(HR_I2C_CTRL, I2C_CTRL_INT_DISABLE | I2C_CTRL_ENABLE);
     tls_irq_enable(I2C_IRQn);
-    
 }
 
 /**

@@ -74,7 +74,7 @@ static void tls_uart_tx_chars(struct tls_uart_port *port)
         tx_msg = dl_list_first(pending_list, tls_uart_tx_msg_t, list);
         while (tx_count-- > 0 && tx_msg->offset < tx_msg->buflen)
         {
-        /* ¼ì²étx fifoÊÇ·ñÒÑÂú */
+        /* ï¿½ï¿½ï¿½tx fifoï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ */
             if ((port->regs->UR_FIFOS & UFS_TX_FIFO_CNT_MASK) == port->tx_fifofull)
             {
                 break;
@@ -207,15 +207,7 @@ static int tls_uart_set_parity_inside(struct tls_uart_port *port, TLS_UART_PMODE
         return WM_FAILED;
 
     return WM_SUCCESS;
-
 }
-
-#if 0
-static TLS_UART_PMODE_T tls_uart_get_parity(struct tls_uart_port * port)
-{
-    return port->opts.paritytype;
-}
-#endif
 
 static int tls_uart_set_data_bits(struct tls_uart_port *port, TLS_UART_CHSIZE_T charlength)
 {
@@ -240,13 +232,6 @@ static int tls_uart_set_data_bits(struct tls_uart_port *port, TLS_UART_CHSIZE_T 
     return WM_SUCCESS;
 }
 
-#if 0
-static TLS_UART_CHSIZE_T tls_uart_get_data_bits(struct tls_uart_port * port)
-{
-    return port->opts.charlength;
-}
-#endif
-
 static int tls_uart_set_stop_bits_inside(struct tls_uart_port *port, TLS_UART_STOPBITS_T stopbits)
 {
     if (!port)
@@ -261,12 +246,6 @@ static int tls_uart_set_stop_bits_inside(struct tls_uart_port *port, TLS_UART_ST
 
     return WM_SUCCESS;
 }
-
-#if 0
-static TLS_UART_STOPBITS_T tls_uart_get_stop_bits(struct tls_uart_port * port)
-{
-    return port->opts.stopbits;
-}
 #endif
 
 static TLS_UART_STATUS_T tls_uart_set_flow_ctrl(struct tls_uart_port * port, TLS_UART_FLOW_CTRL_MODE_T flow_ctrl)
@@ -275,10 +254,6 @@ static TLS_UART_STATUS_T tls_uart_set_flow_ctrl(struct tls_uart_port * port, TLS
 
     if (!port)
         return TLS_UART_STATUS_ERROR;
-
-// port->opts.flow_ctrl = flow_ctrl;
-// // ²»ÄÜÔÚÕâÀïÐÞ¸Ä£¬ÎªÁËÅäºÏÍ¸´«ºÍATÖ¸Áî£¬Èí¼þ»á×Ô¼ºÐÞ¸ÄflowctrlÅäÖÃ£¬µ«ÊÇ²ÎÊý»¹ÊÇ¹Ì¶¨²»±äµÄ
-// printf("\nport %d flow ctrl==%d\n",port->uart_no,flow_ctrl);
     switch (flow_ctrl)
     {
         case TLS_UART_FLOW_CTRL_NONE:
@@ -304,7 +279,7 @@ void tls_uart_set_fc_status(int uart_no, TLS_UART_FLOW_CTRL_MODE_T status)
     port = &uart_port[uart_no];
     port->fcStatus = status;
     tls_uart_set_flow_ctrl(port, status);
-    if (TLS_UART_FLOW_CTRL_HARDWARE == port->opts.flow_ctrl && 0 == status && port->hw_stopped) // ×¼±¸¹Ø±ÕÁ÷¿ØÊ±£¬·¢ÏÖtxÒÑ¾­Í£Ö¹£¬ÐèÒªÔÙ´ò¿ªtx
+    if (TLS_UART_FLOW_CTRL_HARDWARE == port->opts.flow_ctrl && 0 == status && port->hw_stopped) // ×¼ï¿½ï¿½ï¿½Ø±ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½txï¿½Ñ¾ï¿½Í£Ö¹ï¿½ï¿½ï¿½ï¿½Òªï¿½Ù´ï¿½tx
     {
         tls_uart_tx_enable(port);
         tls_uart_tx_chars(port);
@@ -501,7 +476,7 @@ void tls_uart_tx_chars_start(struct tls_uart_port *port)
         tx_msg = dl_list_first(pending_list, tls_uart_tx_msg_t, list);
         while (tx_count-- > 0 && tx_msg->offset < tx_msg->buflen)
         {
-        /* ¼ì²étx fifoÊÇ·ñÒÑÂú */
+        /* ï¿½ï¿½ï¿½tx fifoï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ */
             if ((port->regs->UR_FIFOS & UFS_TX_FIFO_CNT_MASK) ==
                 port->tx_fifofull)
             {
@@ -523,12 +498,11 @@ void tls_uart_tx_chars_start(struct tls_uart_port *port)
 
             if (port->tx_callback)
                 port->tx_callback(port);
-        }else{
+        } else {
                 tls_os_release_critical(cpu_sr);
         }
-    }else{
+    } else {
         tls_os_release_critical(cpu_sr);
-
     }
 }
 
@@ -551,7 +525,7 @@ void tls_set_uart_rx_status(int uart_no, int status)
                 && (TLS_UART_FLOW_CTRL_HARDWARE == port->fcStatus))
             {
                 cpu_sr = tls_os_set_critical();
-                // ¹Ørxfifo trigger level interruptºÍoverrun error
+                // ï¿½ï¿½rxfifo trigger level interruptï¿½ï¿½overrun error
                 port->regs->UR_INTM |= ((0x1 << 2) | (0x01 << 8));
                 port->rxstatus = TLS_UART_RX_DISABLE;
                 tls_os_release_critical(cpu_sr);
@@ -602,7 +576,7 @@ ATTRIBUTE_ISR void UART0_IRQHandler(void)
                 if (TLS_UART_FLOW_CTRL_HARDWARE == port->fcStatus)
                 {
                     tls_set_uart_rx_status(port->uart_no, TLS_UART_RX_DISABLE);
-                    rx_fifocnt = 0; // Èç¹ûÓÐÓ²¼þÁ÷¿Ø£¬¹Ø±Õ½ÓÊÕ£¬°Ñ×îºóÒ»¸ö×Ö·û·Å½ø»·ÐÎbufferÖÐ
+                    rx_fifocnt = 0; // ï¿½ï¿½ï¿½ï¿½ï¿½Ó²ï¿½ï¿½ï¿½ï¿½ï¿½Ø£ï¿½ï¿½Ø±Õ½ï¿½ï¿½Õ£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ö·ï¿½ï¿½Å½ï¿½ï¿½ï¿½ï¿½ï¿½bufferï¿½ï¿½
                 }
                 else
                     break;
@@ -996,8 +970,7 @@ int tls_uart_try_read(u16 uart_no, int32_t read_size)
     if (data_cnt >= read_size)
     {
         return read_size;
-    }else
-    {
+    } else {
         return 0;
     }
 }
@@ -1029,9 +1002,7 @@ int tls_uart_read(u16 uart_no, u8 * buf, u16 readsize)
         int bufcopylen = (TLS_UART_RX_BUF_SIZE - recv->tail);
         MEMCPY(buf, (void *)(recv->buf + recv->tail), bufcopylen);
         MEMCPY(buf + bufcopylen, (void *)recv->buf, buflen - bufcopylen);
-    }
-    else
-    {
+    } else {
         MEMCPY(buf, (void *)(recv->buf + recv->tail), buflen);
     }
     recv->tail = (recv->tail + buflen) & (TLS_UART_RX_BUF_SIZE - 1);
@@ -1064,7 +1035,6 @@ static void tls_uart_dma_write_complte_callback(void *parg)
     {
         port->tx_sent_callback((void*)uart_no);
     }
-    
 } 
 int tls_uart_dma_write(char *buf, u16 writesize, void (*cmpl_callback) (void *p), u16 uart_no)
 {
@@ -1172,7 +1142,6 @@ int tls_uart_tx_length(u16 uart_no)
 int tls_uart_write(u16 uart_no, char *buf, u16 writesize)
 {
     return tls_uart_write_async(uart_no, buf, writesize);
-
 }
 
 /**

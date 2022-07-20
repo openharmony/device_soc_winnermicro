@@ -86,38 +86,38 @@ typedef void *(*start_routine)(void *arg);
 
 /** message type of task */
 enum task_msg_type {
-  TASK_MSG_TIMEOUT,
-  TASK_MSG_UNTIMEOUT,
-  TASK_MSG_CALLBACK_WITH_BLOCK,
-  TASK_MSG_CALLBACK,
-  TASK_MSG_CALLBACK_STATIC,
-  TASK_MSG_NULL
+    TASK_MSG_TIMEOUT,
+    TASK_MSG_UNTIMEOUT,
+    TASK_MSG_CALLBACK_WITH_BLOCK,
+    TASK_MSG_CALLBACK,
+    TASK_MSG_CALLBACK_STATIC,
+    TASK_MSG_NULL
 };
 
 /** message of task */
 struct task_msg {
-  enum task_msg_type type;
-  tls_sem_t *sem;
-  union {
-    struct {
-      start_routine function;
-      void *ctx;
-    } cb;
-    struct {
-      start_routine function;
-      void *ctx;
-      u8 cnt;
-    } cbs;
-    struct {
-      u32 msecs;
-      tls_timeout_handler h;
-      void *arg;
-    } tmo;
-  } msg;
+    enum task_msg_type type;
+    tls_sem_t *sem;
+    union {
+      struct {
+          start_routine function;
+          void *ctx;
+      } cb;
+      struct {
+          start_routine function;
+          void *ctx;
+          u8 cnt;
+      } cbs;
+      struct {
+          u32 msecs;
+          tls_timeout_handler h;
+          void *arg;
+      } tmo;
+    } msg;
 };
 
 /** task parameters */
-struct task_parameter {
+struct task_parameter{
     u8 task_id;             /**< task ID */
     const char * name;      /**< task name */
     u8 *stk_start;          /**< start address of task stack */

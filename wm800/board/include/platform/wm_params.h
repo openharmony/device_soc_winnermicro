@@ -351,7 +351,7 @@ struct tls_param_original_key {
 };
 
 /**   Structure of SHA1 KEY parameter    */
-struct tls_param_sha1 {
+struct tls_param_sha1{
     u8 psk_set;
     u8 psk[32];
 };
@@ -414,8 +414,7 @@ struct tls_webs_cfg {
 };
 
 /**   Structure of user default parameter    */
-typedef struct tls_user_param {
-
+typedef struct tls_user_param{
     u8 wireless_protocol;
     u8 auto_mode;
     u8 dhcp_enable;
@@ -435,6 +434,7 @@ typedef struct tls_user_param {
     u8 auto_powersave;
     u8 PassWord[6];
 }ST_Wm_User_Param;
+
 typedef struct {
     u32 valid_tag;  /* 0xdeadbeaf means valid */
     u32 valid_bit;
@@ -485,7 +485,6 @@ typedef struct {
     u32 manufacturer;
     u32 lmpver;
     u32 lmpsubver;
-    
 } bt_remote_device_t;
 
 /**
@@ -693,4 +692,3 @@ int tls_param_set_program_param(u32 base, u32 totallen, u32 checksum);
  */
 
 #endif /* WM_PARAM_H */
-

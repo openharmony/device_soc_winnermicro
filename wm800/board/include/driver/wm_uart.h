@@ -25,7 +25,6 @@
 #ifndef WM_UART_H
 #define WM_UART_H
 #include "list.h"
-// #include "wm_regs.h"
 #include "wm_type_def.h"
 #include "wm_osal.h"
 
@@ -96,7 +95,8 @@
 /**
  * @struct tls_uart_baud_rate    baudrate define
  */
-struct tls_uart_baud_rate {
+struct tls_uart_baud_rate
+{
     u32 baud_rate;
     u16 ubdiv;
     u16 ubdiv_frac;
@@ -105,20 +105,22 @@ struct tls_uart_baud_rate {
 /**
  * @enum    uart number enum
  */
-enum {
+enum
+{
     TLS_UART_0 = 0,
     TLS_UART_1 = 1,
     TLS_UART_2 = 2,
     TLS_UART_3 = 3,
     TLS_UART_4 = 4,
-    TLS_UART_5 = 5,
+    TLS_UART_5 = 5,    
     TLS_UART_MAX = 6,
 };
 
 /**
  * @typedef enum TLS_UART_PMODE    Parity Mode
  */
-typedef enum TLS_UART_PMODE {
+typedef enum TLS_UART_PMODE
+{
     TLS_UART_PMODE_DISABLED = 0,    /**< No Parity */
     TLS_UART_PMODE_ODD = 1,     /**< Odd Parity */
     TLS_UART_PMODE_EVEN = 2,    /**< Even Parity */
@@ -129,7 +131,8 @@ typedef enum TLS_UART_PMODE {
 /**
  * @typedef enum TLS_UART_CHSIZE    Character Size
  */
-typedef enum TLS_UART_CHSIZE {
+typedef enum TLS_UART_CHSIZE
+{
     TLS_UART_CHSIZE_5BIT = (0x00 << 0), /**< Character size: 5 bit */
     TLS_UART_CHSIZE_6BIT = (0x01 << 0), /**< Character size: 6 bit */
     TLS_UART_CHSIZE_7BIT = (0x02 << 0), /**< Character size: 7 bit */
@@ -139,7 +142,8 @@ typedef enum TLS_UART_CHSIZE {
 /**
  * @typedef enum TLS_UART_FLOW_CTRL_MODE    flow control mode
  */
-typedef enum TLS_UART_FLOW_CTRL_MODE {
+typedef enum TLS_UART_FLOW_CTRL_MODE
+{
     TLS_UART_FLOW_CTRL_NONE,
     TLS_UART_FLOW_CTRL_HARDWARE,
 } TLS_UART_FLOW_CTRL_MODE_T;
@@ -147,7 +151,8 @@ typedef enum TLS_UART_FLOW_CTRL_MODE {
 /**
  * @typedef enum TLS_UART_RX_FLOW_CTRL_FLAG    flow control rx flag
  */
-typedef enum TLS_UART_RX_FLOW_CTRL_FLAG {
+typedef enum TLS_UART_RX_FLOW_CTRL_FLAG
+{
     TLS_UART_RX_DISABLE,
     TLS_UART_RX_ENABLE,
 } TLS_UART_RX_FLOW_CTRL_FLAG_T;
@@ -155,7 +160,8 @@ typedef enum TLS_UART_RX_FLOW_CTRL_FLAG {
 /**
  * @typedef enum TLS_UART_STOPBITS
  */
-typedef enum TLS_UART_STOPBITS {
+typedef enum TLS_UART_STOPBITS
+{
     TLS_UART_ONE_STOPBITS,
     TLS_UART_TWO_STOPBITS,
 } TLS_UART_STOPBITS_T;
@@ -163,7 +169,8 @@ typedef enum TLS_UART_STOPBITS {
 /**
  * @typedef enum TLS_UART_STATUS
  */
-typedef enum TLS_UART_STATUS {
+typedef enum TLS_UART_STATUS
+{
     TLS_UART_STATUS_OK,
     TLS_UART_STATUS_ERROR,
 } TLS_UART_STATUS_T;
@@ -171,7 +178,8 @@ typedef enum TLS_UART_STATUS {
 /**
  * @typedef enum TLS_UART_MODE   operation mode
  */
-typedef enum TLS_UART_MODE {
+typedef enum TLS_UART_MODE
+{
     TLS_UART_MODE_POLL,         /**< uart operation mode: poll */
     TLS_UART_MODE_INT,          /**< uart operation mode: interrupt mode */
 } TLS_UART_MODE_T;
@@ -179,7 +187,8 @@ typedef enum TLS_UART_MODE {
 /**
  * @struct tls_uart_icount
  */
-struct tls_uart_icount {
+struct tls_uart_icount
+{
     u32 cts;
     u32 dsr;
     u32 rng;
@@ -196,7 +205,8 @@ struct tls_uart_icount {
 /**
  * @typedef struct tls_uart_options
  */
-typedef struct tls_uart_options {
+typedef struct tls_uart_options
+{
     u32 baudrate;    /**< Set baud rate of the UART */
 
     TLS_UART_CHSIZE_T charlength;   /**< Number of bits to transmit as a character (5 to 8). */
@@ -206,22 +216,25 @@ typedef struct tls_uart_options {
     TLS_UART_FLOW_CTRL_MODE_T flow_ctrl;    /**< Flow control type */
 
     TLS_UART_STOPBITS_T stopbits;    /**< Number of stop bits */
+
 } tls_uart_options_t;
 
 /**
  * @typedef struct tls_uart_circ_buf
  */
-typedef struct tls_uart_circ_buf {
-volatile    u8 *buf;
-volatile   u32 head;
-volatile   u32 tail;
+typedef struct tls_uart_circ_buf
+{
+    volatile    u8 *buf;
+    volatile   u32 head;
+    volatile   u32 tail;
 } tls_uart_circ_buf_t;
 
 #if TLS_CONFIG_CMD_NET_USE_LIST_FTR
 /**
  * @typedef struct tls_uart_net_buf
  */
-typedef struct tls_uart_net_buf {
+typedef struct tls_uart_net_buf
+{
     struct dl_list list;
     char *buf;
     void *pbuf;
@@ -229,7 +242,8 @@ typedef struct tls_uart_net_buf {
     u16 offset;
 } tls_uart_net_buf_t;
 
-typedef struct tls_uart_net_msg {
+typedef struct tls_uart_net_msg
+{
     struct dl_list tx_msg_pending_list;
 } tls_uart_net_msg_t;
 #endif
@@ -237,7 +251,8 @@ typedef struct tls_uart_net_msg {
 /**
  * @typedef struct TLS_UART_REGS
  */
-typedef struct TLS_UART_REGS {
+typedef struct TLS_UART_REGS
+{
     u32 UR_LC;                       /**< line control register */
     u32 UR_FC;                       /**<  flow control register */
     u32 UR_DMAC;                  /**< dma control register */
@@ -256,7 +271,8 @@ typedef struct TLS_UART_REGS {
 /**
  * @typedef struct tls_uart_port
  */
-typedef struct tls_uart_port {
+typedef struct tls_uart_port
+{
     u32 uart_no;                    /**< uart number: 0 or 1 */
 
     u32 uart_irq_no;             /**< uart interrupt number */
@@ -278,8 +294,6 @@ typedef struct tls_uart_port {
     struct tls_uart_icount icount;          /**< uart statistics information */
 
     struct tls_uart_circ_buf recv;          /**< uart ring buffer */
-
-// struct tls_uart_circ_buf xmit;
 
     struct dl_list tx_msg_pending_list;
 
@@ -307,7 +321,8 @@ typedef struct tls_uart_port {
 /**
  * @typedef struct tls_uart_tx_msg
  */
-typedef struct tls_uart_tx_msg {
+typedef struct tls_uart_tx_msg
+{
     struct dl_list list;
     char *buf;
     u16 buflen;
@@ -342,8 +357,7 @@ typedef struct tls_uart_tx_msg {
  * @param[in] uart_no: is the uart number.
  *    - \ref TLS_UART_0 TLS_UART_1 TLS_UART_2 TLS_UART_3 TLS_UART_4 TLS_UART_5
  * @param[in] opts: is the uart setting options,if this param is NULL,this function will use the default options.
- * @param[in] modeChoose:;
- * choose uart2 mode or 7816 mode when uart_no is TLS_UART_2, 0 for uart2 mode and 1 for 7816 mode.
+ * @param[in] modeChoose:; choose uart2 mode or 7816 mode when uart_no is TLS_UART_2, 0 for uart2 mode and 1 for 7816 mode.
  *
  * @retval
  *    - \ref WM_SUCCESS

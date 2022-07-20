@@ -226,25 +226,11 @@ void tls_touchsensor_irq_register(void (*callback)(u32 status))
  *
  * @note           None
  */
-// static u32 tc1cnt[16] = {0};
 ATTRIBUTE_ISR void tls_touchsensor_irq_handler(void)
 {
     u32 value = 0;
     csi_kernel_intrpt_enter();
-//   int i = 0;
     value = tls_reg_read32(HR_TC_INT_EN);
-#if 0    
-    for (i = 0; i < 15; i++)
-    {
-        if (value&BIT(i))
-        {
-            tc1cnt[i]++;
-            printf("tcnum[%02d]:%04d,%04d\r\n", i+1, tc1cnt[i], tls_touchsensor_countnum_get(i+1));
-        }    
-    }
-    totalvalue |= (value&0xFFFF);
-    printf("val:%04x,%04x\r\n", value&0xFFFF, totalvalue);
-#endif
     if (tc_callback)
     {
         tc_callback(value&0xFFFF);
