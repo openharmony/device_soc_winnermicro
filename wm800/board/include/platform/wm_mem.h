@@ -33,7 +33,7 @@
 #include "csi_config.h"
 #include "wm_type_def.h"
 
-#if 1// for doxygen
+#if 1 // for doxygen
 // #ifdef CONFIG_KERNEL_FREERTOS
 // #define WM_MEM_DEBUG 1
 #if WM_MEM_DEBUG
@@ -61,7 +61,7 @@ typedef struct _MEMORY_BLOCK {
     u32    length;           /**< ulong index of trailer (=(length/4)-1 relative to data start */
     u32    header_pattern;   /**< To help detect underflows. A trailer is also added to find overflows */
 } MEMORY_BLOCK, *PMEMORY_BLOCK;
-typedef struct _MEMORY_PATTERN{
+typedef struct _MEMORY_PATTERN {
     u32 pattern0;
     // u32 pattern1;
     // u32 pattern2;
@@ -178,7 +178,9 @@ void *mem_calloc_debug(u32 length, u32 size);
  * @note           None
  */
 #define MEMCPY(dst,src,len)      memcpy(dst,src,len)
-// #define MEMCPY(dst,src,len)      do{extern void delay_cnt(int count); delay_cnt(10); memcpy(dst,src,len); delay_cnt(100); }while(0)
+/* #define MEMCPY(dst,src,len)
+ * do{extern void delay_cnt(int count); delay_cnt(10); memcpy(dst,src,len); delay_cnt(100); }while (0)
+ */
 
 /**
  * @brief          This function is used to copy memory content from one address to another address

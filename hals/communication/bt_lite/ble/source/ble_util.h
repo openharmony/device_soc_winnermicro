@@ -26,15 +26,15 @@
 
 #if BLE_IF_DBG
 #define BLE_IF_DEBUG(fmt, ...)  \
-    do{\
+    do { \
         if (1) \
             printf("%s(L%d): " fmt, __FUNCTION__, __LINE__,  ## __VA_ARGS__); \
-    }while(0)
+    } while (0)
 #define BLE_IF_PRINTF(fmt, ...)  \
-    do{\
+    do { \
         if (1) \
             printf(fmt, ## __VA_ARGS__); \
-    }while(0)    
+    } while (0)
 #else
 #define BLE_IF_DEBUG(param, ...)
 #define BLE_IF_PRINTF(param, ...)

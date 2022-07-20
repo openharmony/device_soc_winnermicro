@@ -117,7 +117,7 @@ struct task_msg {
 };
 
 /** task parameters */
-struct task_parameter{
+struct task_parameter {
     u8 task_id;             /**< task ID */
     const char * name;      /**< task name */
     u8 *stk_start;          /**< start address of task stack */

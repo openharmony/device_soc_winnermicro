@@ -40,13 +40,13 @@ extern "C" {
  */
 
 /*  CSI CK804 definitions */
-#define __CK804_CSI_VERSION_MAIN  (0x04U)                                      /*!< [31:16] CSI HAL main version */
-#define __CK804_CSI_VERSION_SUB   (0x1EU)                                      /*!< [15:0]  CSI HAL sub version */
+#define __CK804_CSI_VERSION_MAIN  (0x04U)                                      /* !< [31:16] CSI HAL main version */
+#define __CK804_CSI_VERSION_SUB   (0x1EU)                                      /* !< [15:0]  CSI HAL sub version */
 #define __CK804_CSI_VERSION       ((__CK804_CSI_VERSION_MAIN << 16U) | \
-                                   __CK804_CSI_VERSION_SUB           )         /*!< CSI HAL version number */
+                                   __CK804_CSI_VERSION_SUB           )         /* !< CSI HAL version number */
 
 #ifndef __CK80X
-#define __CK80X                (0x03U)                                         /*!< CK80X Core */
+#define __CK80X                (0x03U)                                         /* !< CK80X Core */
 #endif
 
 /* __FPU_USED indicates whether an FPU is used or not. */
@@ -113,19 +113,19 @@ extern "C" {
     \li for automatic generation of peripheral register debug information.
 */
 #ifdef __cplusplus
-#define     __I      volatile             /*!< Defines 'read only' permissions */
+#define     __I      volatile             /* !< Defines 'read only' permissions */
 #else
-#define     __I      volatile const       /*!< Defines 'read only' permissions */
+#define     __I      volatile const       /* !< Defines 'read only' permissions */
 #endif
-#define     __O      volatile             /*!< Defines 'write only' permissions */
-#define     __IO     volatile             /*!< Defines 'read / write' permissions */
+#define     __O      volatile             /* !< Defines 'write only' permissions */
+#define     __IO     volatile             /* !< Defines 'read / write' permissions */
 
 /* following defines should be used for structure members */
-#define     __IM     volatile const       /*! Defines 'read only' structure member permissions */
-#define     __OM     volatile             /*! Defines 'write only' structure member permissions */
-#define     __IOM    volatile             /*! Defines 'read / write' structure member permissions */
+#define     __IM     volatile const       /* ! Defines 'read only' structure member permissions */
+#define     __OM     volatile             /* ! Defines 'write only' structure member permissions */
+#define     __IOM    volatile             /* ! Defines 'read / write' structure member permissions */
 
-/*@} end of group CK804 */
+/* @} end of group CK804 */
 
 /*******************************************************************************
  *                 Register Abstraction
@@ -152,24 +152,24 @@ extern "C" {
  */
 typedef union {
     struct {
-        uint32_t C: 1;                       /*!< bit:      0  Conditional code/Carry flag */
-        uint32_t _reserved0: 5;              /*!< bit:  2.. 5  Reserved */
-        uint32_t IE: 1;                      /*!< bit:      6  Interrupt effective control bit */
-        uint32_t IC: 1;                      /*!< bit:      7  Interrupt control bit */
-        uint32_t EE: 1;                      /*!< bit:      8  Abnormally effective control bit */
-        uint32_t MM: 1;                      /*!< bit:      9  Unsymmetrical masking bit */
-        uint32_t _reserved1: 6;              /*!< bit: 10..15  Reserved */
-        uint32_t VEC: 8;                     /*!< bit: 16..23  Abnormal event vector value */
-        uint32_t _reserved2: 1;              /*!< bit:     24  Reserved */
-        uint32_t SV: 1;                      /*!< bit:     25  Stacked valid */
-        uint32_t SD: 1;                      /*!< bit:     26  Stacked dirty */
-        uint32_t SC: 1;                      /*!< bit:     27  Secure call bit */
-        uint32_t HS: 1;                      /*!< bit:     28  Hardware stacked bit */
-        uint32_t SP: 1;                      /*!< bit:     29  Secure pending bit */
-        uint32_t T: 1;                       /*!< bit:     30  TEE mode bit */
-        uint32_t S: 1;                       /*!< bit:     31  Superuser mode set bit */
-    } b;                                   /*!< Structure    Access by bit */
-    uint32_t w;                            /*!< Type         Access by whole register */
+        uint32_t C : 1;                       /* !< bit:      0  Conditional code/Carry flag */
+        uint32_t _reserved0 : 5;              /* !< bit:  2.. 5  Reserved */
+        uint32_t IE : 1;                      /* !< bit:      6  Interrupt effective control bit */
+        uint32_t IC : 1;                      /* !< bit:      7  Interrupt control bit */
+        uint32_t EE : 1;                      /* !< bit:      8  Abnormally effective control bit */
+        uint32_t MM : 1;                      /* !< bit:      9  Unsymmetrical masking bit */
+        uint32_t _reserved1 : 6;              /* !< bit: 10..15  Reserved */
+        uint32_t VEC : 8;                     /* !< bit: 16..23  Abnormal event vector value */
+        uint32_t _reserved2: 1;              /* !< bit:     24  Reserved */
+        uint32_t SV : 1;                      /* !< bit:     25  Stacked valid */
+        uint32_t SD : 1;                      /* !< bit:     26  Stacked dirty */
+        uint32_t SC : 1;                      /* !< bit:     27  Secure call bit */
+        uint32_t HS : 1;                      /* !< bit:     28  Hardware stacked bit */
+        uint32_t SP : 1;                      /* !< bit:     29  Secure pending bit */
+        uint32_t T : 1;                       /* !< bit:     30  TEE mode bit */
+        uint32_t S : 1;                       /* !< bit:     31  Superuser mode set bit */
+    } b;                                   /* !< Structure    Access by bit */
+    uint32_t w;                            /* !< Type         Access by whole register */
 } PSR_Type;
 
 /* PSR Register Definitions */
@@ -202,15 +202,15 @@ typedef union {
  */
 typedef union {
     struct {
-        uint32_t MP: 1;                      /*!< bit:  0.. 1  memory protection settings */
-        uint32_t _reserved0: 6;              /*!< bit:  2.. 6  Reserved */
-        uint32_t BE: 1;                      /*!< bit:      7  Endian mode */
-        uint32_t SCK: 3;                     /*!< bit:  8..10  the clock ratio of the system and the processor */
-        uint32_t _reserved1: 2;              /*!< bit: 11..12  Reserved */
-        uint32_t BE_V2: 1;                   /*!< bit:     13  V2 Endian mode */
-        uint32_t _reserved2: 18;             /*!< bit: 14..31  Reserved */
-    } b;                                   /*!< Structure    Access by bit */
-    uint32_t w;                            /*!< Type         Access by whole register */
+        uint32_t MP : 1;                      /*! < bit:  0.. 1  memory protection settings */
+        uint32_t _reserved0: 6;               /*! < bit:  2.. 6  Reserved */
+        uint32_t BE : 1;                      /*! < bit:      7  Endian mode */
+        uint32_t SCK : 3;                     /*! < bit:  8..10  the clock ratio of the system and the processor */
+        uint32_t _reserved1 : 2;              /*! < bit: 11..12  Reserved */
+        uint32_t BE_V2 : 1;                   /*! < bit:     13  V2 Endian mode */
+        uint32_t _reserved2 : 18;             /*! < bit: 14..31  Reserved */
+    } b;                                   /* !< Structure    Access by bit */
+    uint32_t w;                            /* !< Type         Access by whole register */
 } CCR_Type;
 
 /* CCR Register Definitions */
@@ -231,32 +231,32 @@ typedef union {
  */
 typedef union {
     struct {
-        uint32_t X0: 1;                      /*!< bit:      0  Non executable attribute setting */
-        uint32_t X1: 1;                      /*!< bit:      1  Non executable attribute setting */
-        uint32_t X2: 1;                      /*!< bit:      2  Non executable attribute setting */
-        uint32_t X3: 1;                      /*!< bit:      3  Non executable attribute setting */
-        uint32_t X4: 1;                      /*!< bit:      4  Non executable attribute setting */
-        uint32_t X5: 1;                      /*!< bit:      5  Non executable attribute setting */
-        uint32_t X6: 1;                      /*!< bit:      6  Non executable attribute setting */
-        uint32_t X7: 1;                      /*!< bit:      7  Non executable attribute setting */
-        uint32_t AP0: 2;                     /*!< bit:  8.. 9  access permissions settings bit */
-        uint32_t AP1: 2;                     /*!< bit: 10..11  access permissions settings bit */
-        uint32_t AP2: 2;                     /*!< bit: 12..13  access permissions settings bit */
-        uint32_t AP3: 2;                     /*!< bit: 14..15  access permissions settings bit */
-        uint32_t AP4: 2;                     /*!< bit: 16..17  access permissions settings bit */
-        uint32_t AP5: 2;                     /*!< bit: 18..19  access permissions settings bit */
-        uint32_t AP6: 2;                     /*!< bit: 20..21  access permissions settings bit */
-        uint32_t AP7: 2;                     /*!< bit: 22..23  access permissions settings bit */
-        uint32_t S0: 1;                      /*!< bit:     24  Security property settings */
-        uint32_t S1: 1;                      /*!< bit:     25  Security property settings */
-        uint32_t S2: 1;                      /*!< bit:     26  Security property settings */
-        uint32_t S3: 1;                      /*!< bit:     27  Security property settings */
-        uint32_t S4: 1;                      /*!< bit:     28  Security property settings */
-        uint32_t S5: 1;                      /*!< bit:     29  Security property settings */
-        uint32_t S6: 1;                      /*!< bit:     30  Security property settings */
-        uint32_t S7: 1;                      /*!< bit:     31  Security property settings */
-    } b;                                   /*!< Structure    Access by bit */
-    uint32_t w;                            /*!< Type         Access by whole register */
+        uint32_t X0 : 1;                      /* !< bit:      0  Non executable attribute setting */
+        uint32_t X1 : 1;                      /* !< bit:      1  Non executable attribute setting */
+        uint32_t X2 : 1;                      /* !< bit:      2  Non executable attribute setting */
+        uint32_t X3 : 1;                      /* !< bit:      3  Non executable attribute setting */
+        uint32_t X4 : 1;                      /* !< bit:      4  Non executable attribute setting */
+        uint32_t X5 : 1;                      /* !< bit:      5  Non executable attribute setting */
+        uint32_t X6 : 1;                      /* !< bit:      6  Non executable attribute setting */
+        uint32_t X7 : 1;                      /* !< bit:      7  Non executable attribute setting */
+        uint32_t AP0 : 2;                     /* !< bit:  8.. 9  access permissions settings bit */
+        uint32_t AP1 : 2;                     /* !< bit: 10..11  access permissions settings bit */
+        uint32_t AP2 : 2;                     /* !< bit: 12..13  access permissions settings bit */
+        uint32_t AP3 : 2;                     /* !< bit: 14..15  access permissions settings bit */
+        uint32_t AP4 : 2;                     /* !< bit: 16..17  access permissions settings bit */
+        uint32_t AP5 : 2;                     /* !< bit: 18..19  access permissions settings bit */
+        uint32_t AP6 : 2;                     /* !< bit: 20..21  access permissions settings bit */
+        uint32_t AP7 : 2;                     /* !< bit: 22..23  access permissions settings bit */
+        uint32_t S0 : 1;                      /* !< bit:     24  Security property settings */
+        uint32_t S1 : 1;                      /* !< bit:     25  Security property settings */
+        uint32_t S2 : 1;                      /* !< bit:     26  Security property settings */
+        uint32_t S3 : 1;                      /* !< bit:     27  Security property settings */
+        uint32_t S4 : 1;                      /* !< bit:     28  Security property settings */
+        uint32_t S5 : 1;                      /* !< bit:     29  Security property settings */
+        uint32_t S6 : 1;                      /* !< bit:     30  Security property settings */
+        uint32_t S7 : 1;                      /* !< bit:     31  Security property settings */
+    } b;                                   /* !< Structure    Access by bit */
+    uint32_t w;                            /* !< Type         Access by whole register */
 } CAPR_Type;
 
 /* CAPR Register Definitions */
@@ -337,33 +337,33 @@ typedef union {
  */
 typedef union {
     struct {
-        uint32_t E: 1;                       /*!< bit:      0  Effective setting of protected area */
-        uint32_t size: 5;                    /*!< bit:  1.. 5  Size of protected area */
-        uint32_t _reserved0: 6;              /*!< bit:  6.. 11 Reserved */
-        uint32_t base_addr: 20;              /*!< bit:  10..31 The high position of the address of a protected area */
-    } b;                                   /*!< Structure    Access by bit */
-    uint32_t w;                            /*!< Type         Access by whole register */
+        uint32_t E : 1;                     /* !< bit:      0  Effective setting of protected area */
+        uint32_t size : 5;                  /* !< bit:  1.. 5  Size of protected area */
+        uint32_t _reserved0 : 6;            /* !< bit:  6.. 11 Reserved */
+        uint32_t base_addr : 20;            /* !< bit:  10..31 The high position of the address of a protected area */
+    } b;                                 /* !< Structure    Access by bit */
+    uint32_t w;                          /* !< Type         Access by whole register */
 } PACR_Type;
 
 /* PACR Register Definitions */
-#define PACR_BASE_ADDR_Pos                 12U                                            /*!< PACR: base_addr Position */
-#define PACR_BASE_ADDR_Msk                 (0xFFFFFUL << PACR_BASE_ADDR_Pos)              /*!< PACR: base_addr Mask */
+#define PACR_BASE_ADDR_Pos                 12U                                       /* !< PACR: base_addr Position */
+#define PACR_BASE_ADDR_Msk                 (0xFFFFFUL << PACR_BASE_ADDR_Pos)         /* !< PACR: base_addr Mask */
 
-#define PACR_SIZE_Pos                      1U                                             /*!< PACR: Size Position */
-#define PACR_SIZE_Msk                      (0x1FUL << PACR_SIZE_Pos)                      /*!< PACR: Size Mask */
+#define PACR_SIZE_Pos                      1U                                        /* !< PACR: Size Position */
+#define PACR_SIZE_Msk                      (0x1FUL << PACR_SIZE_Pos)                 /* !< PACR: Size Mask */
 
-#define PACR_E_Pos                         0U                                             /*!< PACR: E Position */
-#define PACR_E_Msk                         (0x1UL << PACR_E_Pos)                          /*!< PACR: E Mask */
+#define PACR_E_Pos                         0U                                        /* !< PACR: E Position */
+#define PACR_E_Msk                         (0x1UL << PACR_E_Pos)                     /* !< PACR: E Mask */
 
 /**
   \brief  Consortium definition for accessing protection area selection register(PRSR,CR<21,0>).
  */
 typedef union {
     struct {
-        uint32_t RID: 3;                     /*!< bit:  0.. 2  Protected area index value */
-        uint32_t _reserved0: 29;             /*!< bit:  3..31  Reserved */
-    } b;                                     /*!< Structure    Access by bit */
-    uint32_t w;                              /*!< Type         Access by whole register */
+        uint32_t RID : 3;                     /* !< bit:  0.. 2  Protected area index value */
+        uint32_t _reserved0 : 29;             /* !< bit:  3..31  Reserved */
+    } b;                                     /* !< Structure    Access by bit */
+    uint32_t w;                              /* !< Type         Access by whole register */
 } PRSR_Type;
 
 /* PRSR Register Definitions */
@@ -375,15 +375,15 @@ typedef union {
  */
 typedef union {
     struct {
-        uint32_t _reserved0: 1;              /*!< bit:  0      Reserved */
-        uint32_t BE: 1;                      /*!< bit:  1      System bus support burst transer */
-        uint32_t IPE: 1;                     /*!< bit:  2      Instruction prefetch function enable */
-        uint32_t RPE: 1;                     /*!< bit:  3      Function return instruction RTS will speculate execution */
-        uint32_t IAE: 1;                     /*!< bit:  4      Interrupt response acceleration enable */
-        uint32_t _reserved1: 9;              /*!< bit:  5..13  Reserved */
-        uint32_t ISE: 1;                     /*!< bit: 14      Interrupt SP enable */
-        uint32_t HS_EXP: 1;                  /*!< bit: 15      Exception bit for TEE world switch */
-        uint32_t SRST_VAL: 16;               /*!< bit: 16..31  Software reset decision value */
+        uint32_t _reserved0 : 1;         /* !< bit:  0      Reserved */
+        uint32_t BE : 1;                 /* !< bit:  1      System bus support burst transer */
+        uint32_t IPE : 1;                /* !< bit:  2      Instruction prefetch function enable */
+        uint32_t RPE : 1;                /* !< bit:  3      Function return instruction RTS will speculate execution */
+        uint32_t IAE : 1;                /* !< bit:  4      Interrupt response acceleration enable */
+        uint32_t _reserved1 : 9;         /* !< bit:  5..13  Reserved */
+        uint32_t ISE : 1;                /* !< bit: 14      Interrupt SP enable */
+        uint32_t HS_EXP : 1;             /* !< bit: 15      Exception bit for TEE world switch */
+        uint32_t SRST_VAL : 16;          /* !< bit: 16..31  Software reset decision value */
     } b;
     uint32_t w;
 } CHR_Type;
@@ -404,7 +404,7 @@ typedef union {
 #define CHR_SRST_VAL_Pos                   16U                                           /*!< CHR: SRST_VAL Position */
 #define CHR_SRST_VAL_Mask                  (0xFFFFUL << CHR_SRST_VAL_Pos)                /*!< CHR: SRST_VAL Mask */
 
-/*@} end of group CSI_CORE */
+/* @} end of group CSI_CORE */
 
 /**
   \ingroup    CSI_core_register
@@ -417,34 +417,34 @@ typedef union {
   \brief Access to the structure of a vector interrupt controller.
  */
 typedef struct {
-    __IOM uint32_t ISER[4U];               /*!< Offset: 0x000 (R/W)  Interrupt set enable register */
+    __IOM uint32_t ISER[4U];               /* !< Offset: 0x000 (R/W)  Interrupt set enable register */
     uint32_t RESERVED0[12U];
-    __IOM uint32_t IWER[4U];               /*!< Offset: 0x040 (R/W)  Interrupt wake-up set register */
+    __IOM uint32_t IWER[4U];               /* !< Offset: 0x040 (R/W)  Interrupt wake-up set register */
     uint32_t RESERVED1[12U];
-    __IOM uint32_t ICER[4U];               /*!< Offset: 0x080 (R/W)  Interrupt clear enable register */
+    __IOM uint32_t ICER[4U];               /* !< Offset: 0x080 (R/W)  Interrupt clear enable register */
     uint32_t RESERVED2[12U];
-    __IOM uint32_t IWDR[4U];               /*!< Offset: 0x0c0 (R/W)  Interrupt wake-up clear register */
+    __IOM uint32_t IWDR[4U];               /* !< Offset: 0x0c0 (R/W)  Interrupt wake-up clear register */
     uint32_t RESERVED3[12U];
-    __IOM uint32_t ISPR[4U];               /*!< Offset: 0x100 (R/W)  Interrupt set pend register */
+    __IOM uint32_t ISPR[4U];               /* !< Offset: 0x100 (R/W)  Interrupt set pend register */
     uint32_t RESERVED4[12U];
-    __IOM uint32_t ISSR[4U];               /*!< Offset: 0x140 (R/W)  Security interrupt set register */
+    __IOM uint32_t ISSR[4U];               /* !< Offset: 0x140 (R/W)  Security interrupt set register */
     uint32_t RESERVED5[12U];
-    __IOM uint32_t ICPR[4U];               /*!< Offset: 0x180 (R/W)  Interrupt clear pend register */
+    __IOM uint32_t ICPR[4U];               /* !< Offset: 0x180 (R/W)  Interrupt clear pend register */
     uint32_t RESERVED6[12U];
-    __IOM uint32_t ICSR[4U];               /*!< Offset: 0x1c0 (R/W)  Security interrupt clear register */
+    __IOM uint32_t ICSR[4U];               /* !< Offset: 0x1c0 (R/W)  Security interrupt clear register */
     uint32_t RESERVED7[12U];
-    __IOM uint32_t IABR[4U];               /*!< Offset: 0x200 (R/W)  Interrupt answer stateregister */
+    __IOM uint32_t IABR[4U];               /* !< Offset: 0x200 (R/W)  Interrupt answer stateregister */
     uint32_t RESERVED8[60U];
-    __IOM uint32_t IPR[32U];               /*!< Offset: 0x300 (R/W)  Interrupt priority register */
+    __IOM uint32_t IPR[32U];               /* !< Offset: 0x300 (R/W)  Interrupt priority register */
     uint32_t RESERVED9[480U];
-    __IM  uint32_t ISR;                    /*!< Offset: 0xB00 (R/ )  Interrupt state register */
-    __IOM uint32_t IPTR;                   /*!< Offset: 0xB04 (R/W)  Interrupt priority thershold register */
-    __IOM uint32_t TSPEND;                 /*!< Offset: 0xB08 (R/W)  Task pending register */
-    __IOM uint32_t TSABR;                  /*!< Offset: 0xB0c (R/W)  Tspend acknowledge register */
-    __IOM uint32_t TSPR;                   /*!< Offset: 0xB10 (R/W)  Tspend priority register */
+    __IM  uint32_t ISR;                    /* !< Offset: 0xB00 (R/ )  Interrupt state register */
+    __IOM uint32_t IPTR;                   /* !< Offset: 0xB04 (R/W)  Interrupt priority thershold register */
+    __IOM uint32_t TSPEND;                 /* !< Offset: 0xB08 (R/W)  Task pending register */
+    __IOM uint32_t TSABR;                  /* !< Offset: 0xB0c (R/W)  Tspend acknowledge register */
+    __IOM uint32_t TSPR;                   /* !< Offset: 0xB10 (R/W)  Tspend priority register */
 } VIC_Type;
 
-/*@} end of group CSI_VIC */
+/* @} end of group CSI_VIC */
 
 /**
   \ingroup    CSI_core_register
@@ -456,65 +456,66 @@ typedef struct {
 /**
   \brief On chip cache structure.
  */
-typedef struct
-{
-  __IOM uint32_t CER;                    /*!< Offset: 0x000 (R/W)  Cache enable register */
-  __IOM uint32_t CIR;                    /*!< Offset: 0x004 (R/W)  Cache invalid register */
-  __IOM uint32_t CRCR[4U];               /*!< Offset: 0x008 (R/W)  Cache Configuration register */
-        uint32_t RSERVED0[1015U];
-  __IOM uint32_t CPFCR;                  /*!< Offset: 0xFF4 (R/W)  Cache performance analisis control register */
-  __IOM uint32_t CPFATR;                 /*!< Offset: 0xFF8 (R/W)  Cache access times register */
-  __IOM uint32_t CPFMTR;                 /*!< Offset: 0xFFC (R/W)  Cache missing times register */
+typedef struct {
+    __IOM uint32_t CER;                    /* !< Offset: 0x000 (R/W)  Cache enable register */
+    __IOM uint32_t CIR;                    /* !< Offset: 0x004 (R/W)  Cache invalid register */
+    __IOM uint32_t CRCR[4U];               /* !< Offset: 0x008 (R/W)  Cache Configuration register */
+          uint32_t RSERVED0[1015U];
+    __IOM uint32_t CPFCR;                  /* !< Offset: 0xFF4 (R/W)  Cache performance analisis control register */
+    __IOM uint32_t CPFATR;                 /* !< Offset: 0xFF8 (R/W)  Cache access times register */
+    __IOM uint32_t CPFMTR;                 /* !< Offset: 0xFFC (R/W)  Cache missing times register */
 } CACHE_Type;
 
 /* CACHE Register Definitions */
-#define CACHE_CER_EN_Pos                       0U                                            /*!< CACHE CER: EN Position */
-#define CACHE_CER_EN_Msk                       (0x1UL << CACHE_CER_EN_Pos)                   /*!< CACHE CER: EN Mask */
+#define CACHE_CER_EN_Pos                       0U                                    /* !< CACHE CER: EN Position */
+#define CACHE_CER_EN_Msk                       (0x1UL << CACHE_CER_EN_Pos)           /* !< CACHE CER: EN Mask */
 
-#define CACHE_CER_CFIG_Pos                     1U                                            /*!< CACHE CER: CFIG Position */
-#define CACHE_CER_CFIG_Msk                     (0x1UL << CACHE_CER_CFIG_Pos)                 /*!< CACHE CER: CFIG Mask */
+#define CACHE_CER_CFIG_Pos                     1U                                    /* !< CACHE CER: CFIG Position */
+#define CACHE_CER_CFIG_Msk                     (0x1UL << CACHE_CER_CFIG_Pos)         /* !< CACHE CER: CFIG Mask */
 
-#define CACHE_CER_WB_Pos                       2U                                            /*!< CACHE CER: WB Position */
-#define CACHE_CER_WB_Msk                       (0x1UL << CACHE_CER_WB_Pos)                   /*!< CACHE CER: WB Mask */
+#define CACHE_CER_WB_Pos                       2U                                    /* !< CACHE CER: WB Position */
+#define CACHE_CER_WB_Msk                       (0x1UL << CACHE_CER_WB_Pos)           /* !< CACHE CER: WB Mask */
 
-#define CACHE_CER_DCW_Pos                      4U                                            /*!< CACHE CER: DCW Position */
-#define CACHE_CER_DCW_Msk                      (0x1UL << CACHE_CER_DCW_Pos)                  /*!< CACHE CER: DCW Mask */
+#define CACHE_CER_DCW_Pos                      4U                                    /* !< CACHE CER: DCW Position */
+#define CACHE_CER_DCW_Msk                      (0x1UL << CACHE_CER_DCW_Pos)          /* !< CACHE CER: DCW Mask */
 
-#define CACHE_CER_WA_Pos                       5U                                            /*!< CACHE CER: WA Position */
-#define CACHE_CER_WA_Msk                       (0x1UL << CACHE_CER_WA_Pos)                   /*!< CACHE CER: WA Mask */
+#define CACHE_CER_WA_Pos                       5U                                     /* !< CACHE CER: WA Position */
+#define CACHE_CER_WA_Msk                       (0x1UL << CACHE_CER_WA_Pos)            /* !< CACHE CER: WA Mask */
 
-#define CACHE_CIR_INV_ALL_Pos                  0U                                            /*!< CACHE CIR: INV_ALL Position */
-#define CACHE_CIR_INV_ALL_Msk                  (0x1UL << CACHE_CIR_INV_ALL_Pos)              /*!< CACHE CIR: INV_ALL Mask */
+#define CACHE_CIR_INV_ALL_Pos                  0U                                  /* !< CACHE CIR: INV_ALL Position */
+#define CACHE_CIR_INV_ALL_Msk                  (0x1UL << CACHE_CIR_INV_ALL_Pos)    /* !< CACHE CIR: INV_ALL Mask */
 
-#define CACHE_CIR_INV_ONE_Pos                  1U                                            /*!< CACHE CIR: INV_ONE Position */
-#define CACHE_CIR_INV_ONE_Msk                  (0x1UL << CACHE_CIR_INV_ONE_Pos)              /*!< CACHE CIR: INV_ONE Mask */
+#define CACHE_CIR_INV_ONE_Pos                  1U                                  /* !< CACHE CIR: INV_ONE Position */
+#define CACHE_CIR_INV_ONE_Msk                  (0x1UL << CACHE_CIR_INV_ONE_Pos)    /* !< CACHE CIR: INV_ONE Mask */
 
-#define CACHE_CIR_CLR_ALL_Pos                  2U                                            /*!< CACHE CIR: CLR_ALL Position */
-#define CACHE_CIR_CLR_ALL_Msk                  (0x1UL << CACHE_CIR_CLR_ALL_Pos)              /*!< CACHE CIR: CLR_ALL Mask */
+#define CACHE_CIR_CLR_ALL_Pos                  2U                                  /* !< CACHE CIR: CLR_ALL Position */
+#define CACHE_CIR_CLR_ALL_Msk                  (0x1UL << CACHE_CIR_CLR_ALL_Pos)    /* !< CACHE CIR: CLR_ALL Mask */
 
-#define CACHE_CIR_CLR_ONE_Pos                  3U                                            /*!< CACHE CIR: CLR_ONE Position */
-#define CACHE_CIR_CLR_ONE_Msk                  (0x1UL << CACHE_CIR_CLR_ONE_Pos)              /*!< CACHE CIR: CLR_ONE Mask */
+#define CACHE_CIR_CLR_ONE_Pos                  3U                                  /* !< CACHE CIR: CLR_ONE Position */
+#define CACHE_CIR_CLR_ONE_Msk                  (0x1UL << CACHE_CIR_CLR_ONE_Pos)    /* !< CACHE CIR: CLR_ONE Mask */
 
-#define CACHE_CIR_INV_ADDR_Pos                 4U                                            /*!< CACHE CIR: INV_ADDR Position */
-#define CACHE_CIR_INV_ADDR_Msk                 (0xFFFFFFFUL << CACHE_CIR_INV_ADDR_Pos)       /*!< CACHE CIR: INV_ADDR Mask */
+#define CACHE_CIR_INV_ADDR_Pos                 4U                                 /* !< CACHE CIR: INV_ADDR Position */
+#define CACHE_CIR_INV_ADDR_Msk                 (0xFFFFFFFUL << CACHE_CIR_INV_ADDR_Pos)
+                                                                                   /* !< CACHE CIR: INV_ADDR Mask */
 
-#define CACHE_CRCR_EN_Pos                      0U                                            /*!< CACHE CRCR: EN Position */
-#define CACHE_CRCR_EN_Msk                      (0x1UL << CACHE_CRCR_EN_Pos)                  /*!< CACHE CRCR: EN Mask */
+#define CACHE_CRCR_EN_Pos                      0U                                  /* !< CACHE CRCR: EN Position */
+#define CACHE_CRCR_EN_Msk                      (0x1UL << CACHE_CRCR_EN_Pos)        /* !< CACHE CRCR: EN Mask */
 
-#define CACHE_CRCR_SIZE_Pos                    1U                                            /*!< CACHE CRCR: Size Position */
-#define CACHE_CRCR_SIZE_Msk                    (0x1FUL << CACHE_CRCR_SIZE_Pos)               /*!< CACHE CRCR: Size Mask */
+#define CACHE_CRCR_SIZE_Pos                    1U                                  /* !< CACHE CRCR: Size Position */
+#define CACHE_CRCR_SIZE_Msk                    (0x1FUL << CACHE_CRCR_SIZE_Pos)     /* !< CACHE CRCR: Size Mask */
 
-#define CACHE_CRCR_SE_Pos                      6U                                            /*!< CACHE CRCR: SE Position */
-#define CACHE_CRCR_SE_Msk                      (0x1UL << CACHE_CRCR_SE_Pos)                  /*!< CACHE CRCR: SE Mask */
+#define CACHE_CRCR_SE_Pos                      6U                                  /* !< CACHE CRCR: SE Position */
+#define CACHE_CRCR_SE_Msk                      (0x1UL << CACHE_CRCR_SE_Pos)        /* !< CACHE CRCR: SE Mask */
 
-#define CACHE_CRCR_BASE_ADDR_Pos               10U                                           /*!< CACHE CRCR: base addr Position */
-#define CACHE_CRCR_BASE_ADDR_Msk               (0x3FFFFFUL << CACHE_CRCR_BASE_ADDR_Pos)      /*!< CACHE CRCR: base addr Mask */
+#define CACHE_CRCR_BASE_ADDR_Pos               10U                              /* !< CACHE CRCR: base addr Position */
+#define CACHE_CRCR_BASE_ADDR_Msk               (0x3FFFFFUL << CACHE_CRCR_BASE_ADDR_Pos)
+                                                                                  /* !< CACHE CRCR: base addr Mask */
 
-#define CACHE_CPFCR_PFEN_Pos                   0U                                            /*!< CACHE CPFCR: PFEN Position */
-#define CACHE_CPFCR_PFEN_Msk                   (0x1UL << CACHE_CPFCR_PFEN_Pos)               /*!< CACHE CPFCR: PFEN Mask */
+#define CACHE_CPFCR_PFEN_Pos                   0U                                  /* !< CACHE CPFCR: PFEN Position */
+#define CACHE_CPFCR_PFEN_Msk                   (0x1UL << CACHE_CPFCR_PFEN_Pos)     /* !< CACHE CPFCR: PFEN Mask */
 
-#define CACHE_CPFCR_PFRST_Pos                  1U                                            /*!< CACHE CPFCR: PFRST Position */
-#define CACHE_CPFCR_PFRST_Msk                  (0x1UL << CACHE_CPFCR_PFRST_Pos)              /*!< CACHE CPFCR: PFRST Mask */
+#define CACHE_CPFCR_PFRST_Pos                  1U                                  /* !< CACHE CPFCR: PFRST Position */
+#define CACHE_CPFCR_PFRST_Msk                  (0x1UL << CACHE_CPFCR_PFRST_Pos)    /* !< CACHE CPFCR: PFRST Mask */
 
 #define CACHE_CRCR_4K                          0xB                                           /* 01011 */
 #define CACHE_CRCR_8K                          0xC                                           /* 01100 */
@@ -538,7 +539,7 @@ typedef struct
 #define CACHE_CRCR_2G                          0x1E                                          /* 11110 */
 #define CACHE_CRCR_4G                          0x1F                                          /* 11111 */
 
-/*@} end of group CSI_CACHE */
+/* @} end of group CSI_CACHE */
 
 /**
   \ingroup  CSI_core_register
@@ -551,44 +552,44 @@ typedef struct
   \brief  The data structure of the access system timer.
  */
 typedef struct {
-    __IOM uint32_t CTRL;                   /*!< Offset: 0x000 (R/W)  Control register */
-    __IOM uint32_t LOAD;                   /*!< Offset: 0x004 (R/W)  Backfill register */
-    __IOM uint32_t VAL;                    /*!< Offset: 0x008 (R/W)  Current register */
-    __IM  uint32_t CALIB;                  /*!< Offset: 0x00C (R/ )  Calibration register */
+    __IOM uint32_t CTRL;                   /* !< Offset: 0x000 (R/W)  Control register */
+    __IOM uint32_t LOAD;                   /* !< Offset: 0x004 (R/W)  Backfill register */
+    __IOM uint32_t VAL;                    /* !< Offset: 0x008 (R/W)  Current register */
+    __IM  uint32_t CALIB;                  /* !< Offset: 0x00C (R/ )  Calibration register */
 } CORET_Type;
 
 /* CORET Control / Status Register Definitions */
-#define CORET_CTRL_COUNTFLAG_Pos           16U                                            /*!< CORET CTRL: COUNTFLAG Position */
-#define CORET_CTRL_COUNTFLAG_Msk           (1UL << CORET_CTRL_COUNTFLAG_Pos)              /*!< CORET CTRL: COUNTFLAG Mask */
+#define CORET_CTRL_COUNTFLAG_Pos           16U                                  /* !< CORET CTRL: COUNTFLAG Position */
+#define CORET_CTRL_COUNTFLAG_Msk           (1UL << CORET_CTRL_COUNTFLAG_Pos)    /* !< CORET CTRL: COUNTFLAG Mask */
 
-#define CORET_CTRL_CLKSOURCE_Pos           2U                                             /*!< CORET CTRL: CLKSOURCE Position */
-#define CORET_CTRL_CLKSOURCE_Msk           (1UL << CORET_CTRL_CLKSOURCE_Pos)              /*!< CORET CTRL: CLKSOURCE Mask */
+#define CORET_CTRL_CLKSOURCE_Pos           2U                                   /* !< CORET CTRL: CLKSOURCE Position */
+#define CORET_CTRL_CLKSOURCE_Msk           (1UL << CORET_CTRL_CLKSOURCE_Pos)    /* !< CORET CTRL: CLKSOURCE Mask */
 
-#define CORET_CTRL_TICKINT_Pos             1U                                             /*!< CORET CTRL: TICKINT Position */
-#define CORET_CTRL_TICKINT_Msk             (1UL << CORET_CTRL_TICKINT_Pos)                /*!< CORET CTRL: TICKINT Mask */
+#define CORET_CTRL_TICKINT_Pos             1U                                   /* !< CORET CTRL: TICKINT Position */
+#define CORET_CTRL_TICKINT_Msk             (1UL << CORET_CTRL_TICKINT_Pos)      /* !< CORET CTRL: TICKINT Mask */
 
-#define CORET_CTRL_ENABLE_Pos              0U                                             /*!< CORET CTRL: ENABLE Position */
-#define CORET_CTRL_ENABLE_Msk              (1UL /*<< CORET_CTRL_ENABLE_Pos*/)             /*!< CORET CTRL: ENABLE Mask */
+#define CORET_CTRL_ENABLE_Pos              0U                                    /* !< CORET CTRL: ENABLE Position */
+#define CORET_CTRL_ENABLE_Msk              (1UL /* << CORET_CTRL_ENABLE_Pos */)  /* !< CORET CTRL: ENABLE Mask */
 
     /* CORET Reload Register Definitions */
-#define CORET_LOAD_RELOAD_Pos              0U                                             /*!< CORET LOAD: RELOAD Position */
-#define CORET_LOAD_RELOAD_Msk              (0xFFFFFFUL /*<< CORET_LOAD_RELOAD_Pos*/)      /*!< CORET LOAD: RELOAD Mask */
+#define CORET_LOAD_RELOAD_Pos              0U                                      /* !< CORET LOAD: RELOAD Position */
+#define CORET_LOAD_RELOAD_Msk              (0xFFFFFFUL /* << CORET_LOAD_RELOAD_Pos */) /* !< CORET LOAD: RELOAD Mask */
 
     /* CORET Current Register Definitions */
-#define CORET_VAL_CURRENT_Pos              0U                                             /*!< CORET VAL: CURRENT Position */
-#define CORET_VAL_CURRENT_Msk              (0xFFFFFFUL /*<< CORET_VAL_CURRENT_Pos*/)      /*!< CORET VAL: CURRENT Mask */
+#define CORET_VAL_CURRENT_Pos              0U                                      /* !< CORET VAL: CURRENT Position */
+#define CORET_VAL_CURRENT_Msk              (0xFFFFFFUL /* << CORET_VAL_CURRENT_Pos */) /* !< CORET VAL: CURRENT Mask */
 
     /* CORET Calibration Register Definitions */
-#define CORET_CALIB_NOREF_Pos              31U                                            /*!< CORET CALIB: NOREF Position */
-#define CORET_CALIB_NOREF_Msk              (1UL << CORET_CALIB_NOREF_Pos)                 /*!< CORET CALIB: NOREF Mask */
+#define CORET_CALIB_NOREF_Pos              31U                                     /* !< CORET CALIB: NOREF Position */
+#define CORET_CALIB_NOREF_Msk              (1UL << CORET_CALIB_NOREF_Pos)          /* !< CORET CALIB: NOREF Mask */
 
-#define CORET_CALIB_SKEW_Pos               30U                                            /*!< CORET CALIB: SKEW Position */
-#define CORET_CALIB_SKEW_Msk               (1UL << CORET_CALIB_SKEW_Pos)                  /*!< CORET CALIB: SKEW Mask */
+#define CORET_CALIB_SKEW_Pos               30U                                     /* !< CORET CALIB: SKEW Position */
+#define CORET_CALIB_SKEW_Msk               (1UL << CORET_CALIB_SKEW_Pos)           /* !< CORET CALIB: SKEW Mask */
 
-#define CORET_CALIB_TENMS_Pos              0U                                             /*!< CORET CALIB: TENMS Position */
-#define CORET_CALIB_TENMS_Msk              (0xFFFFFFUL /*<< CORET_CALIB_TENMS_Pos*/)      /*!< CORET CALIB: TENMS Mask */
+#define CORET_CALIB_TENMS_Pos              0U                                      /* !< CORET CALIB: TENMS Position */
+#define CORET_CALIB_TENMS_Msk              (0xFFFFFFUL /* << CORET_CALIB_TENMS_Pos */) /* !< CORET CALIB: TENMS Mask */
 
-/*@} end of group CSI_SysTick */
+/* @} end of group CSI_SysTick */
 
 /**
   \ingroup  CSI_core_register
@@ -602,29 +603,29 @@ typedef struct {
  */
 typedef struct {
     uint32_t RESERVED0[13U];
-    __IOM uint32_t HCR;                    /*!< Offset: 0x034 (R/W) */
-    __IM uint32_t EHSR;                    /*!< Offset: 0x03C (R/ ) */
+    __IOM uint32_t HCR;                    /*! < Offset: 0x034 (R/W) */
+    __IM uint32_t EHSR;                    /*! < Offset: 0x03C (R/ ) */
     uint32_t RESERVED1[6U];
     union {
-        __IM uint32_t DERJW;               /*!< Offset: 0x058 (R/ )  Data exchange register CPU read*/
-        __OM uint32_t DERJR;               /*!< Offset: 0x058 ( /W)  Data exchange register CPU writer*/
+        __IM uint32_t DERJW;               /* !< Offset: 0x058 (R/ )  Data exchange register CPU read */
+        __OM uint32_t DERJR;               /* !< Offset: 0x058 ( /W)  Data exchange register CPU writer */
     };
 
 } DCC_Type;
 
-#define DCC_HCR_JW_Pos                   18U                                            /*!< DCC HCR: jw_int_en Position */
-#define DCC_HCR_JW_Msk                   (1UL << DCC_HCR_JW_Pos)                        /*!< DCC HCR: jw_int_en Mask */
+#define DCC_HCR_JW_Pos                   18U                                       /* !< DCC HCR: jw_int_en Position */
+#define DCC_HCR_JW_Msk                   (1UL << DCC_HCR_JW_Pos)                   /* !< DCC HCR: jw_int_en Mask */
 
-#define DCC_HCR_JR_Pos                   19U                                            /*!< DCC HCR: jr_int_en Position */
-#define DCC_HCR_JR_Msk                   (1UL << DCC_HCR_JR_Pos)                        /*!< DCC HCR: jr_int_en Mask */
+#define DCC_HCR_JR_Pos                   19U                                       /* !< DCC HCR: jr_int_en Position */
+#define DCC_HCR_JR_Msk                   (1UL << DCC_HCR_JR_Pos)                   /* !< DCC HCR: jr_int_en Mask */
 
-#define DCC_EHSR_JW_Pos                  1U                                             /*!< DCC EHSR: jw_vld Position */
-#define DCC_EHSR_JW_Msk                  (1UL << DCC_EHSR_JW_Pos)                       /*!< DCC EHSR: jw_vld Mask */
+#define DCC_EHSR_JW_Pos                  1U                                        /* !< DCC EHSR: jw_vld Position */
+#define DCC_EHSR_JW_Msk                  (1UL << DCC_EHSR_JW_Pos)                  /* !< DCC EHSR: jw_vld Mask */
 
-#define DCC_EHSR_JR_Pos                  2U                                             /*!< DCC EHSR: jr_vld Position */
-#define DCC_EHSR_JR_Msk                  (1UL << DCC_EHSR_JR_Pos)                       /*!< DCC EHSR: jr_vld Mask */
+#define DCC_EHSR_JR_Pos                  2U                                        /* !< DCC EHSR: jr_vld Position */
+#define DCC_EHSR_JR_Msk                  (1UL << DCC_EHSR_JR_Pos)                  /* !< DCC EHSR: jr_vld Mask */
 
-/*@} end of group CSI_DCC */
+/* @} end of group CSI_DCC */
 
 /**
   \ingroup    CSI_core_register
@@ -649,7 +650,7 @@ typedef struct {
 */
 #define _FLD2VAL(field, value)    ((value & field ## _Msk) >> field ## _Pos)
 
-/*@} end of group CSI_core_bitfield */
+/* @} end of group CSI_core_bitfield */
 
 /**
   \ingroup    CSI_core_register
@@ -670,7 +671,7 @@ typedef struct {
 #define DCC                 ((DCC_Type     *)     DCC_BASE    )       /*!< DCC configuration struct */
 #define CACHE               ((CACHE_Type   *)     CACHE_BASE  )       /*!< cache configuration struct */
 
-/*@} */
+/* @} */
 
 /*******************************************************************************
  *                Hardware Abstraction Layer
@@ -699,7 +700,7 @@ typedef struct {
 extern uint32_t __Vectors[];
 extern uint32_t irq_vectors[];
 
-/*Forward declaration*/
+/* Forward declaration*/
 __STATIC_INLINE void csi_icache_invalid (void);
 
 /**
@@ -764,7 +765,8 @@ __STATIC_INLINE uint32_t csi_vic_get_enabled_irq(int32_t IRQn)
 {
     IRQn &= 0x7FUL;
 
-    return ((uint32_t)(((VIC->ISER[_IR_IDX(IRQn)] & (1UL << (((uint32_t)(int32_t)IRQn % 32) & 0x7FUL))) != 0UL) ? 1UL : 0UL));
+    return ((uint32_t)(((VIC->ISER[_IR_IDX(IRQn)] & (1UL << (((uint32_t)(int32_t)IRQn % 32) & 0x7FUL))) \
+            != 0UL) ? 1UL : 0UL));
 }
 
 /**
@@ -778,7 +780,8 @@ __STATIC_INLINE uint32_t csi_vic_get_pending_irq(int32_t IRQn)
 {
     IRQn &= 0x7FUL;
 
-    return ((uint32_t)(((VIC->ISPR[_IR_IDX(IRQn)] & (1UL << (((uint32_t)(int32_t)IRQn % 32) & 0x7FUL))) != 0UL) ? 1UL : 0UL));
+    return ((uint32_t)(((VIC->ISPR[_IR_IDX(IRQn)] & (1UL << (((uint32_t)(int32_t)IRQn % 32) & 0x7FUL))) \
+            != 0UL) ? 1UL : 0UL));
 }
 
 /**
@@ -816,7 +819,8 @@ __STATIC_INLINE uint32_t csi_vic_get_wakeup_irq(int32_t IRQn)
 {
     IRQn &= 0x7FUL;
 
-    return ((uint32_t)(((VIC->IWER[_IR_IDX(IRQn)] & (1UL << (((uint32_t)(int32_t)IRQn % 32) & 0x7FUL))) != 0UL) ? 1UL : 0UL));
+    return ((uint32_t)(((VIC->IWER[_IR_IDX(IRQn)] & (1UL << (((uint32_t)(int32_t)IRQn % 32) & 0x7FUL))) \
+            != 0UL) ? 1UL : 0UL));
 }
 
 /**
@@ -855,7 +859,8 @@ __STATIC_INLINE uint32_t csi_vic_get_active(int32_t IRQn)
 {
     IRQn &= 0x7FUL;
 
-    return ((uint32_t)(((VIC->IABR[_IR_IDX(IRQn)] & (1UL << (((uint32_t)(int32_t)IRQn % 32) & 0x7FUL))) != 0UL) ? 1UL : 0UL));
+    return ((uint32_t)(((VIC->IABR[_IR_IDX(IRQn)] & (1UL << (((uint32_t)(int32_t)IRQn % 32) & 0x7FUL))) \
+            != 0UL) ? 1UL : 0UL));
 }
 
 /**
@@ -935,7 +940,7 @@ __STATIC_INLINE uint32_t csi_vic_get_vector(int32_t IRQn)
     return 0;
 }
 
-/*@} end of CSI_Core_VICFunctions */
+/* @} end of CSI_Core_VICFunctions */
 
 /* ##################################    SysTick function  ############################################ */
 /**
@@ -983,13 +988,13 @@ __STATIC_INLINE uint32_t csi_coret_get_load(void)
 /**
   \brief   get CORE timer counter value
   \return          CORE timer counter value.
- */
+*/
 __STATIC_INLINE uint32_t csi_coret_get_value(void)
 {
     return CORET->VAL;
 }
 
-/*@} end of CSI_Core_SysTickFunctions */
+/* @} end of CSI_Core_SysTickFunctions */
 
 /* ##################################### DCC function ########################################### */
 /**
@@ -1096,7 +1101,8 @@ __STATIC_INLINE void csi_dcache_enable (void)
 {
 #if (__DCACHE_PRESENT == 1U)
     CACHE->CIR = CACHE_CIR_INV_ALL_Msk;         /* invalidate all Cache */
-    CACHE->CER =  (uint32_t)(CACHE_CER_EN_Msk | CACHE_CER_WB_Msk | CACHE_CER_DCW_Msk) & (~CACHE_CER_CFIG_Msk);  /* enable all Cache */
+    CACHE->CER =  (uint32_t)(CACHE_CER_EN_Msk | CACHE_CER_WB_Msk | CACHE_CER_DCW_Msk) & (~CACHE_CER_CFIG_Msk);
+    /* enable all Cache */
 #endif
 }
 
@@ -1285,7 +1291,8 @@ __STATIC_INLINE void csi_dcache_clean_invalid_range (uint32_t *addr, int32_t dsi
   \brief   setup cacheable range Cache
   \details setup Cache range
   */
-__STATIC_INLINE void csi_cache_set_range (uint32_t index, uint32_t baseAddr, uint32_t se, uint32_t size, uint32_t enable)
+__STATIC_INLINE void csi_cache_set_range (uint32_t index, uint32_t baseAddr, uint32_t se, \
+                                          uint32_t size, uint32_t enable)
 {
     CACHE->CRCR[index] =  ((baseAddr & CACHE_CRCR_BASE_ADDR_Msk) |
                            (_VAL2FLD(CACHE_CRCR_SE, se)) |
@@ -1384,9 +1391,9 @@ typedef enum {
 } access_permission_e;
 
 typedef struct {
-    uint32_t nx: 1;               /* instruction fetched excution */
-    access_permission_e ap: 2;    /* super user and normal user access.*/
-    uint32_t s: 1;                /* security */
+    uint32_t nx : 1;               /* instruction fetched excution */
+    access_permission_e ap : 2;    /* super user and normal user access.*/
+    uint32_t s : 1;                /* security */
 } mpu_region_attr_t;
 
 /**
@@ -1480,7 +1487,7 @@ __STATIC_INLINE void csi_mpu_disable_region(uint32_t idx)
     __set_PACR(__get_PACR() & (~PACR_E_Msk));
 }
 
-/*@} end of CSI_Core_MMUFunctions */
+/* @} end of CSI_Core_MMUFunctions */
 
 /* ##################################    IRQ Functions  ############################################ */
 
@@ -1488,7 +1495,7 @@ __STATIC_INLINE void csi_mpu_disable_region(uint32_t idx)
   \brief   Save the Irq context
   \details save the psr result before disable irq.
   \param [in]      irq_num  External interrupt number. Value cannot be negative.
- */
+*/
 __STATIC_INLINE uint32_t csi_irq_save(void)
 {
     uint32_t result;
@@ -1507,7 +1514,7 @@ __STATIC_INLINE void csi_irq_restore(uint32_t irq_state)
     __set_PSR(irq_state);
 }
 
-/*@} end of IRQ Functions */
+/* @} end of IRQ Functions */
 
 /**
   \brief   System Reset
@@ -1524,14 +1531,13 @@ __STATIC_INLINE void csi_system_reset(void)
     chr.b.SRST_VAL = 0xABCD;
 #endif
 
-    __DSB();                                                          /* Ensure all outstanding memory accesses included
+    __DSB();                                                         /* Ensure all outstanding memory accesses included
                                                                          buffered write are completed before reset */
     __set_CHR(chr.w);
 
     __DSB();                                                          /* Ensure completion of memory access */
 
-    for(;;)                                                           /* wait until reset */
-    {
+    for (;;) {                                                          /* wait until reset */
         __NOP();
     }
 }

@@ -23,50 +23,50 @@
 
 typedef union {
     struct {
-        uint32_t I2C: 1;                         /*!< bit:      0 */
-        uint32_t SAR_ADC: 1;                     /*!< bit:      1 */
-        uint32_t SPI_LS: 1;                      /*!< bit:      2 */
-        uint32_t UART0: 1;                       /*!< bit:      3 */
-        uint32_t UART1: 1;                       /*!< bit:      4 */
-        uint32_t UART2: 1;                       /*!< bit:      5 */
-        uint32_t UART3: 1;                       /*!< bit:      6 */
-        uint32_t UART4: 1;                       /*!< bit:      7 */
-        uint32_t UART5: 1;                       /*!< bit:      8 */
-        uint32_t PORTA: 1;                       /*!< bit:      9 */
-        uint32_t PORTB: 1;                       /*!< bit:      10 */
-        uint32_t WD: 1;                          /*!< bit:      11 */
-        uint32_t TIMER: 1;                       /*!< bit:      12 */
-        uint32_t RFC: 1;                         /*!< bit:      13 */
-        uint32_t LCD: 1;                         /*!< bit:      14 */
-        uint32_t PWM: 1;                         /*!< bit:      15 */
-        uint32_t I2S: 1;                         /*!< bit:      16 */
-        uint32_t BT_MODEM: 1;                    /*!< bit:      17 */
-        uint32_t _reserved0: 14;
+        uint32_t I2C : 1;                         /*!< bit :      0 */
+        uint32_t SAR_ADC : 1;                     /*!< bit :      1 */
+        uint32_t SPI_LS : 1;                      /*!< bit :      2 */
+        uint32_t UART0 : 1;                       /*!< bit :      3 */
+        uint32_t UART1 : 1;                       /*!< bit :      4 */
+        uint32_t UART2 : 1;                       /*!< bit :      5 */
+        uint32_t UART3 : 1;                       /*!< bit :      6 */
+        uint32_t UART4 : 1;                       /*!< bit :      7 */
+        uint32_t UART5 : 1;                       /*!< bit :      8 */
+        uint32_t PORTA : 1;                       /*!< bit :      9 */
+        uint32_t PORTB : 1;                       /*!< bit :      10 */
+        uint32_t WD : 1;                          /*!< bit :      11 */
+        uint32_t TIMER : 1;                       /*!< bit :      12 */
+        uint32_t RFC : 1;                         /*!< bit :      13 */
+        uint32_t LCD : 1;                         /*!< bit :      14 */
+        uint32_t PWM : 1;                         /*!< bit :      15 */
+        uint32_t I2S : 1;                         /*!< bit :      16 */
+        uint32_t BT_MODEM : 1;                    /*!< bit :      17 */
+        uint32_t _reserved0 : 14;
     }b;
     uint32_t w;
 } TIPC_VLD0_Type;
 
 typedef union {
     struct {
-        uint32_t SDIO_HOST: 1;                   /*!< bit:      0 */
-        uint32_t FLASH: 1;                       /*!< bit:      1 */
-        uint32_t PSRAM: 1;                       /*!< bit:      2 */
-        uint32_t RSA: 1;                         /*!< bit:      3 */
-        uint32_t DMA: 1;                         /*!< bit:      4 */
-        uint32_t GPSEC: 1;                       /*!< bit:      5 */
-        uint32_t BT: 1;                          /*!< bit:      6 */
-        uint32_t PMU: 1;                         /*!< bit:      7 */
-        uint32_t CLK_RST: 1;                     /*!< bit:      8 */
-        uint32_t MMU: 1;                         /*!< bit:      9 */
-        uint32_t BBP: 1;                         /*!< bit:      10 */
-        uint32_t MAC: 1;                         /*!< bit:      11 */
-        uint32_t SEC: 1;                         /*!< bit:      12 */
-        uint32_t _reserved0: 1;                  /*!< bit:      13 */
-        uint32_t SDIO_SLAVE: 1;                  /*!< bit:      14 */
-        uint32_t SPI_HS: 1;                      /*!< bit:      15 */
-        uint32_t SDIO_WRAPPER: 1;                /*!< bit:      16 */
-        uint32_t RF_BIST: 1;                     /*!< bit:      17 */
-        uint32_t _reserved1: 14;
+        uint32_t SDIO_HOST : 1;                   /*!< bit :      0 */
+        uint32_t FLASH : 1;                       /*!< bit :      1 */
+        uint32_t PSRAM : 1;                       /*!< bit :      2 */
+        uint32_t RSA : 1;                         /*!< bit :      3 */
+        uint32_t DMA : 1;                         /*!< bit :      4 */
+        uint32_t GPSEC : 1;                       /*!< bit :      5 */
+        uint32_t BT : 1;                          /*!< bit :      6 */
+        uint32_t PMU : 1;                         /*!< bit :      7 */
+        uint32_t CLK_RST : 1;                     /*!< bit :      8 */
+        uint32_t MMU : 1;                         /*!< bit :      9 */
+        uint32_t BBP : 1;                         /*!< bit :      10 */
+        uint32_t MAC : 1;                         /*!< bit :      11 */
+        uint32_t SEC : 1;                         /*!< bit :      12 */
+        uint32_t _reserved0 : 1;                  /*!< bit :      13 */
+        uint32_t SDIO_SLAVE : 1;                  /*!< bit :      14 */
+        uint32_t SPI_HS : 1;                      /*!< bit :      15 */
+        uint32_t SDIO_WRAPPER : 1;                /*!< bit :      16 */
+        uint32_t RF_BIST : 1;                     /*!< bit :      17 */
+        uint32_t _reserved1 : 14;
     }b;
     uint32_t w;
 } TIPC_VLD1_Type;

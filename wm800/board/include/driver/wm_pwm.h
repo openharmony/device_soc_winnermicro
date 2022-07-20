@@ -31,8 +31,7 @@
 #define PWM_CHANNEL_MAX_NUM        5
 
 /** pwm work mode for signal generate */
-enum tls_pwm_out_mode
-{
+enum tls_pwm_out_mode {
     WM_PWM_OUT_MODE_BRAKE = 0, /**< brake mode */
     WM_PWM_OUT_MODE_ALLSYC,    /**< all synchronous mode */
     WM_PWM_OUT_MODE_2SYC,      /**< two channel synchronous mode */
@@ -41,7 +40,7 @@ enum tls_pwm_out_mode
 };
 
 /** interrupt type for capture mode */
-enum tls_pwm_cap_int_type{
+enum tls_pwm_cap_int_type {
     WM_PWM_CAP_RISING_EDGE_INT,         /**< rising edge arises the interrupt */
     WM_PWM_CAP_FALLING_EDGE_INT,        /**< falling edge arises the interrupt */
     WM_PWM_CAP_RISING_FALLING_EDGE_INT, /**< both rising edge and falling edge arise the interrupt */
@@ -49,51 +48,51 @@ enum tls_pwm_cap_int_type{
 };
 
 /** pwm output status */
-enum tls_pwm_out_en_state{
+enum tls_pwm_out_en_state {
     WM_PWM_OUT_EN_STATE_TRI,    /**< set tristate status */
     WM_PWM_OUT_EN_STATE_OUT     /**< set output status */
 };
 
 /** pwm count mode */
-enum tls_pwm_cnt_type{
+enum tls_pwm_cnt_type {
     WM_PWM_CNT_TYPE_EDGE_ALLGN_CAP,     /**< edge alignment(only capture mode) */
     WM_PWM_CNT_TYPE_EDGE_ALIGN_OUT,     /**< edge alignment(only output mode) */
     WM_PWM_CNT_TYPE_CENTER_ALIGN        /**< central alignment */
 };
 
 /** pwm cycle type */
-enum tls_pwm_loop_type{
+enum tls_pwm_loop_type {
     WM_PWM_LOOP_TYPE_SINGLE,    /**< single mode */
     WM_PWM_LOOP_TYPE_LOOP       /**< auto load */
 };
 
 /** pwm waveform inversion mode */
-enum tls_pwm_waveform_inversion{
+enum tls_pwm_waveform_inversion {
     WM_PWM_WAVEFORM_NOINVERSION,    /**< not inverse */
     WM_PWM_WAVEFORM_INVERSION       /**< inversion */
 };
 
 /** pwm output level in the brake mode */
-enum tls_pwm_brake_out_level{
+enum tls_pwm_brake_out_level {
     WM_PWM_BRAKE_OUT_HIGH,          /**< output high level */
     WM_PWM_BRAKE_OUT_LOW            /**< output low  level */
 };
 
 /** pwm initial parameters */
-typedef struct _pwm_init_param{
-    enum tls_pwm_out_mode mode;         /**< work mode */
-    u8 channel;                         /**< channel id 0~4 */
-    u16 clkdiv;                         /**< clock divided value */
-    u8 period;                          /**< period value(output frequency F = CLK/CLK_DIV/PERIOD) */
-    u8 duty;                            /**< duty radio (range 0~255, high level or low level by out_inversion decided */
-    bool dten;                          /**< enable dead zone time (ENABLE or DISABLE) */
-    u8 dtclkdiv;                        /**< dead zone clock divided value (0~3) */
-    u8 dtcnt;                           /**< period number of dead zone time  (0~255) */
-    enum tls_pwm_cnt_type cnt_type;     /**< count type */
-    enum tls_pwm_loop_type loop_type;   /**< cycle type */
-    bool inverse_en;                    /**< output is inverse */
-    u8 pnum;                            /**< generate interrupt after pnum period */
-    bool pnum_int;                      /**< period interrupt is enable */
+typedef struct _pwm_init_param {
+    enum tls_pwm_out_mode mode;       /**< work mode */
+    u8 channel;                       /**< channel id 0~4 */
+    u16 clkdiv;                       /**< clock divided value */
+    u8 period;                        /**< period value(output frequency F = CLK/CLK_DIV/PERIOD) */
+    u8 duty;                          /**< duty radio (range 0~255, high level or low level by out_inversion decided */
+    bool dten;                        /**< enable dead zone time (ENABLE or DISABLE) */
+    u8 dtclkdiv;                      /**< dead zone clock divided value (0~3) */
+    u8 dtcnt;                         /**< period number of dead zone time  (0~255) */
+    enum tls_pwm_cnt_type cnt_type;   /**< count type */
+    enum tls_pwm_loop_type loop_type; /**< cycle type */
+    bool inverse_en;                  /**< output is inverse */
+    u8 pnum;                          /**< generate interrupt after pnum period */
+    bool pnum_int;                    /**< period interrupt is enable */
 }pwm_init_param;
 
 /**
@@ -389,7 +388,7 @@ void tls_pwm_duty_set(u8 channel, u8 duty);
  *
  * @note           None
  */
-int tls_pwm_init(u8 channel,u32 freq, u8 duty, u8 pnum);
+int tls_pwm_init(u8 channel, u32 freq, u8 duty, u8 pnum);
 
 /**
  * @brief          This function is used to stop pwm

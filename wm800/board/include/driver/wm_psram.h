@@ -19,7 +19,7 @@
 #define PSRAM_ADDR_START          0x30000000
 #define PSRAM_SIZE_BYTE           0x00800000
 
-typedef enum{
+typedef enum {
     PSRAM_SPI = 0,
     PSRAM_QPI,
 } psram_mode_t;

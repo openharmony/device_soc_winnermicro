@@ -351,7 +351,7 @@ struct tls_param_original_key {
 };
 
 /**   Structure of SHA1 KEY parameter    */
-struct tls_param_sha1{
+struct tls_param_sha1 {
     u8 psk_set;
     u8 psk[32];
 };
@@ -414,7 +414,7 @@ struct tls_webs_cfg {
 };
 
 /**   Structure of user default parameter    */
-typedef struct tls_user_param{
+typedef struct tls_user_param {
 
     u8 wireless_protocol;
     u8 auto_mode;
@@ -436,17 +436,17 @@ typedef struct tls_user_param{
     u8 PassWord[6];
 }ST_Wm_User_Param;
 typedef struct {
-    u32 valid_tag;  /*0xdeadbeaf means valid*/
+    u32 valid_tag;  /* 0xdeadbeaf means valid */
     u32 valid_bit;
-    u8 bd_addr[6];      /*Local Address*/ 
+    u8 bd_addr[6];      /* Local Address */ 
     uint8_t name_len;
-    u8 name[16];        /*Local Name*/
-    u32 class_of_device; /*Class of Device*/
+    u8 name[16];        /* Local Name */
+    u32 class_of_device; /* Class of Device */
     u8 io_cap;
     u8 discoverable;
     u8 connectable;
     u8 bt_auth_req;
-    u8 mode;			  /*Adv, Initiator, ......*/
+    u8 mode;			  /* Adv, Initiator, ...... */
     u8 ble_auth_req;
     u8 ir[16];
     u8 irk[16];
@@ -455,7 +455,7 @@ typedef struct {
 } bt_adapter_t;
 
 typedef struct {
-    u32 valid_tag;  /*0xdeadbeaf means valid*/
+    u32 valid_tag;  /* 0xdeadbeaf means valid */
     u8 in_use;
     u32 valid_bit;
     u8 bd_addr[6];

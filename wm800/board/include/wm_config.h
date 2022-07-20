@@ -29,11 +29,11 @@
 #define CFG_ON                                          1
 #define CFG_OFF                                         0
 
-#define WM_CONFIG_DEBUG_UART1                           CFG_OFF/*PRINTF PORT USE UART1*/
+#define WM_CONFIG_DEBUG_UART1                           CFG_OFF /* PRINTF PORT USE UART1 */
 /**Driver Support**/
-#define TLS_CONFIG_HS_SPI                               CFG_OFF /*High Speed SPI*/
-#define TLS_CONFIG_LS_SPI                               CFG_OFF /*Low Speed SPI*/
-#define TLS_CONFIG_UART                                 CFG_ON  /*UART*/
+#define TLS_CONFIG_HS_SPI                               CFG_OFF /* High Speed SPI */
+#define TLS_CONFIG_LS_SPI                               CFG_OFF /* Low Speed SPI */
+#define TLS_CONFIG_UART                                 CFG_ON  /* UART */
 
 /**Only Factory Test At Command**/
 #define TLS_CONFIG_ONLY_FACTORY_ATCMD                   CFG_OFF
@@ -75,11 +75,12 @@ CRYPTO
 #define TLS_CONFIG_HTTP_CLIENT_SECURE                   (CFG_ON && (TLS_CONFIG_USE_POLARSSL || TLS_CONFIG_USE_MBEDTLS))
 #define TLS_CONFIG_HTTP_CLIENT_TASK                     (CFG_ON && TLS_CONFIG_HTTP_CLIENT)
 
-/*MatrixSSL will be used except one of the following two Macros is CFG_ON*/
+/* MatrixSSL will be used except one of the following two Macros is CFG_ON */
 #define TLS_CONFIG_USE_POLARSSL                         CFG_OFF
 #define TLS_CONFIG_USE_MBEDTLS                          CFG_ON
 
-#define TLS_CONFIG_SERVER_SIDE_SSL                      (CFG_ON && TLS_CONFIG_HTTP_CLIENT_SECURE && TLS_CONFIG_USE_MBEDTLS)         /*MUST configure TLS_CONFIG_HTTP_CLIENT_SECURE CFG_ON */
+/* MUST configure TLS_CONFIG_HTTP_CLIENT_SECURE CFG_ON */
+#define TLS_CONFIG_SERVER_SIDE_SSL                      (CFG_ON && TLS_CONFIG_HTTP_CLIENT_SECURE && TLS_CONFIG_USE_MBEDTLS)
 
 /**IGMP**/
 #define TLS_CONFIG_IGMP                                 CFG_ON
@@ -100,5 +101,5 @@ CRYPTO
 #include "wm_wifi_config.h"
 
 #include "wm_ram_config.h"
-#endif /*__WM_CONFIG_H__*/
+#endif /* __WM_CONFIG_H__ */
 

@@ -75,7 +75,7 @@ tls_bt_status_t tls_bt_av_sink_deinit(void);
  * @brief          Establishes the AV signalling channel with the source
  *
  * @param[in]      *bd_addr         remote device bluetooth device address
- * 
+ *
  * @retval         @ref tls_bt_status_t
  *
  * @note           None
@@ -86,7 +86,7 @@ tls_bt_status_t tls_bt_av_sink_connect_src(tls_bt_addr_t *bd_addr);
  * @brief          Tears down the AV signalling channel with the source side
  *
  * @param[in]      *bd_addr         remote device bluetooth device address
- * 
+ *
  * @retval         @ref tls_bt_status_t
  *
  * @note           None
@@ -121,7 +121,7 @@ tls_bt_status_t tls_bt_av_src_deinit(void);
  * @brief          Establishes the AV signalling channel with the sink
  *
  * @param[in]      *bd_addr         remote device bluetooth device address
- * 
+ *
  * @retval         @ref tls_bt_status_t
  *
  * @note           None
@@ -132,7 +132,7 @@ tls_bt_status_t tls_bt_av_src_connect_sink(tls_bt_addr_t *bd_addr);
  * @brief          Tears down the AV signalling channel with the sink side
  *
  * @param[in]      *bd_addr         remote device bluetooth device address
- * 
+ *
  * @retval         @ref tls_bt_status_t
  *
  * @note           None
@@ -167,7 +167,7 @@ tls_bt_status_t tls_btrc_deinit(void);
  * @brief          Returns the current play status.
  *
  * @param[in]     tls_btrc_play_status_t      stopped, playing, paused...
- * @param[in]     song_len     seconds of the song 
+ * @param[in]     song_len     seconds of the song
  * @param[in]     song_pos    played seconds of the song
  *
  * @retval         @ref tls_bt_status_t
@@ -279,7 +279,8 @@ tls_bt_status_t tls_btrc_ctrl_send_groupnavigation_cmd(tls_bt_addr_t *bd_addr, u
  *
  * @note           None
  */
-tls_bt_status_t tls_btrc_ctrl_change_player_app_setting(tls_bt_addr_t *bd_addr, uint8_t num_attrib, uint8_t *attrib_ids, uint8_t *attrib_vals);
+tls_bt_status_t tls_btrc_ctrl_change_player_app_setting(tls_bt_addr_t *bd_addr, uint8_t num_attrib,
+                                                        uint8_t *attrib_ids, uint8_t *attrib_vals);
 
 /**
  * @brief          Rsp for SetAbsoluteVolume Command
@@ -306,6 +307,8 @@ tls_bt_status_t tls_btrc_ctrl_set_volume_rsp(tls_bt_addr_t *bd_addr, uint8_t abs
  *
  * @note           None
  */
-tls_bt_status_t tls_btrc_ctrl_volume_change_notification_rsp(tls_bt_addr_t *bd_addr, tls_btrc_notification_type_t rsp_type,uint8_t abs_vol, uint8_t label);
+tls_bt_status_t tls_btrc_ctrl_volume_change_notification_rsp(tls_bt_addr_t *bd_addr,
+                                                             tls_btrc_notification_type_t rsp_type,
+                                                             uint8_t abs_vol, uint8_t label);
 
 #endif

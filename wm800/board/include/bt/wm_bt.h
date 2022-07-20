@@ -104,7 +104,7 @@ tls_bt_status_t tls_bt_set_adapter_property(const tls_bt_property_t *property, u
 tls_bt_status_t tls_bt_get_adapter_property(tls_bt_property_type_t type);
 
 /**
- * @brief          
+ * @brief
  *
  * @param          None
  *
@@ -115,7 +115,7 @@ tls_bt_status_t tls_bt_get_adapter_property(tls_bt_property_type_t type);
 tls_bt_status_t tls_bt_start_discovery(void);
 
 /**
- * @brief          
+ * @brief
  *
  * @param          None
  *
@@ -126,7 +126,7 @@ tls_bt_status_t tls_bt_start_discovery(void);
 tls_bt_status_t tls_bt_cancel_discovery(void);
 
 /**
- * @brief          
+ * @brief
  *
  * @param[in]      *bd_addr
  * @param[in]      transport
@@ -138,7 +138,7 @@ tls_bt_status_t tls_bt_cancel_discovery(void);
 tls_bt_status_t tls_bt_create_bond(const tls_bt_addr_t *bd_addr, int transport);
 
 /**
- * @brief          
+ * @brief
  *
  * @param[in]      *bd_addr
  *
@@ -149,7 +149,7 @@ tls_bt_status_t tls_bt_create_bond(const tls_bt_addr_t *bd_addr, int transport);
 tls_bt_status_t tls_bt_cancel_bond(const tls_bt_addr_t *bd_addr);
 
 /**
- * @brief          
+ * @brief
  *
  * @param[in]      *bd_addr
  *
@@ -160,7 +160,7 @@ tls_bt_status_t tls_bt_cancel_bond(const tls_bt_addr_t *bd_addr);
 tls_bt_status_t tls_bt_remove_bond(const tls_bt_addr_t *bd_addr);
 
 /**
- * @brief          
+ * @brief
  *
  * @param          None
  *
@@ -171,7 +171,7 @@ tls_bt_status_t tls_bt_remove_bond(const tls_bt_addr_t *bd_addr);
 tls_bt_status_t tls_bt_host_cleanup(void);
 
 /**
- * @brief          
+ * @brief
  *
  * @param[in]      callback
  * @param[in]      *p_hci_if
@@ -184,7 +184,7 @@ tls_bt_status_t tls_bt_host_cleanup(void);
 tls_bt_status_t tls_bt_enable(tls_bt_host_callback_t callback, tls_bt_hci_if_t *p_hci_if, tls_bt_log_level_t log_level);
 
 /**
- * @brief          
+ * @brief
  *
  * @param          None
  *
@@ -239,7 +239,7 @@ tls_bt_status_t tls_bt_ctrl_disable(void);
  *
  * @retval         @ref tls_bt_status_t
  *
- * @note           power_type, supports TLS_BLE_PWR_TYPE_DEFAULT only. 
+ * @note           power_type, supports TLS_BLE_PWR_TYPE_DEFAULT only.
  */
 tls_bt_status_t tls_ble_set_tx_power(tls_ble_power_type_t power_type, int8_t power_level_index);
 
@@ -250,7 +250,7 @@ tls_bt_status_t tls_ble_set_tx_power(tls_ble_power_type_t power_type, int8_t pow
  *
  * @retval         power value db
  *
- * @note           power_type, supports TLS_BLE_PWR_TYPE_DEFAULT only. 
+ * @note           power_type, supports TLS_BLE_PWR_TYPE_DEFAULT only.
  */
 int8_t  tls_ble_get_tx_power(tls_ble_power_type_t power_type);
 
@@ -264,7 +264,7 @@ int8_t  tls_ble_get_tx_power(tls_ble_power_type_t power_type);
  *
  * @note           None
  */
-tls_bt_status_t tls_bredr_set_tx_power(int8_t min_power_level,int8_t max_power_level);
+tls_bt_status_t tls_bredr_set_tx_power(int8_t min_power_level, int8_t max_power_level);
 
 /**
  * @brief          get the classic/enhanced bluetooth transmit power level
@@ -310,10 +310,10 @@ tls_bt_ctrl_status_t tls_bt_controller_get_status(void);
  *
  * @note           None
  */
-tls_bt_status_t tls_bt_vuart_host_send_packet( uint8_t *data, uint16_t len);
+tls_bt_status_t tls_bt_vuart_host_send_packet(uint8_t *data, uint16_t len);
 
 /**
- * @brief          this function register the host stack receive message function 
+ * @brief          this function register the host stack receive message function
  *                 and indication the controller receive hci command avaiable
  *
  * @param[in]      *p_host_if       @ref tls_bt_host_if_t
@@ -325,7 +325,7 @@ tls_bt_status_t tls_bt_vuart_host_send_packet( uint8_t *data, uint16_t len);
 tls_bt_status_t tls_bt_ctrl_if_register(const tls_bt_host_if_t *p_host_if);
 
 /**
- * @brief          this function unregister the host stack receive message function 
+ * @brief          this function unregister the host stack receive message function
  *                 and indication the controller receive hci command avaiable
  *
  * @param     None

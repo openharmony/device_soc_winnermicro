@@ -24,7 +24,7 @@
 #include "wm_type_def.h"
 
 #define FLASH_FILE_NAME_LEN      32
-#define FLASH_FILE_MAX_NUM       64 
+#define FLASH_FILE_MAX_NUM       64
 
 #define MAX_NUM_OF_OPENED_FILES 32
 static int g_openFileNum = 0;
@@ -74,9 +74,8 @@ static char *_path_convert(const char *path)
     // target_path[j++] = '/';
     memcpy(target_path, "/data/", 6);
     j += 6;
-    for (i = 0; i < strlen(path); i++){
-        if (path[i] != '/')  
-        {
+    for (i = 0; i < strlen(path); i++) {
+        if (path[i] != '/') {
             target_path[j++] = path[i];
         }
     }
@@ -87,7 +86,6 @@ static char *_path_convert(const char *path)
 
 int HalFileOpen(const char* path, int oflag, int mode)
 {
-
     // printf("%s: path %s enter\n", __func__, path);
     if ((path == NULL) || (strlen(path) >= FLASH_FILE_NAME_LEN)) {
         return -1;
@@ -176,7 +174,6 @@ int HalFileStat(const char* path, unsigned int* fileSize)
     if ((path == NULL) || (strlen(path) >= FLASH_FILE_NAME_LEN)) {
         return -1;
     }
-    
 
     char *target_path = _path_convert(path);
     if (target_path == NULL) {
@@ -212,7 +209,6 @@ int HalFileSeek(int fd, int offset, unsigned int whence)
         return -1;
     }
     return ret;
-
 }
 #if 0
 int WM_KvRead(const char* path, char* buf, unsigned int len)
