@@ -811,7 +811,7 @@ static void hd_sha1_compress(psDigestContext_t *md)
     tls_open_peripheral_clock(TLS_PERIPHERAL_TYPE_GPSEC);
     tls_reg_write32(HR_CRYPTO_SRC_ADDR, (unsigned int)md->u.sha1.buf);
 
-    sec_cfg = (CRYPTO_METHOD_SHA1 << 16) | (64 & 0xFFFF); // TODO
+    sec_cfg = (CRYPTO_METHOD_SHA1 << 16) | (64 & 0xFFFF);
     tls_reg_write32(HR_CRYPTO_SEC_CFG, sec_cfg);
     tls_reg_write32(HR_CRYPTO_SHA1_DIGEST0, md->u.sha1.state[0]);
     tls_reg_write32(HR_CRYPTO_SHA1_DIGEST1, md->u.sha1.state[1]);

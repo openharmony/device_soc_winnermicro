@@ -155,7 +155,7 @@ void tls_rtc_timer_start(struct tm *tblock)
     ctrl2 |= tblock->tm_year << 8;
     tls_reg_write32(HR_PMU_RTC_CTRL2, ctrl2 | BIT(16));
 
-    tls_reg_write32(HR_PMU_RTC_CTRL1, ctrl1 | BIT(31));/* must set the enable */
+    tls_reg_write32(HR_PMU_RTC_CTRL1, ctrl1 | BIT(31)); /* must set the enable */
 
     return;
 }

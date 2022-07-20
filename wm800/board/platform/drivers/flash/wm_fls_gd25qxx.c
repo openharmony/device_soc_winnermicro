@@ -254,8 +254,6 @@ static int tls_spifls_drv_chip_erase(void)
 
 static int tls_spifls_drv_probe(u32 id)
 {
-//   int i = 0;
-
     if (!id)
     {
         return TLS_FLS_STATUS_EINVAL;
@@ -266,14 +264,12 @@ static int tls_spifls_drv_probe(u32 id)
     {
         exspi_fls.total_size = 1 << (id>>16);
     }else{
-        exspi_fls.total_size = FLASH_TOTAL_SIZE;  /*1MByte*/
+        exspi_fls.total_size = FLASH_TOTAL_SIZE; /* 1MByte */
     }
     
     exspi_fls.page_size = PAGE_SIZE;
     exspi_fls.program_size = PROGRAM_SIZE;
     exspi_fls.sector_size = SECTOR_SIZE;
-    
-    
     exspifls_drv = &exspi_fls;
     return TLS_FLS_STATUS_OK;
 }

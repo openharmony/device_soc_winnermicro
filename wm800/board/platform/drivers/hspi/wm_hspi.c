@@ -32,7 +32,6 @@
 #include "wm_mem.h"
 #include "wm_osal.h"
 #include "wm_irq.h"
-// #include "lwip/mem.h"
 #include "wm_io.h"
 
 #if TLS_CONFIG_HS_SPI
@@ -110,7 +109,6 @@ void hspi_tx_init(struct tls_slave_hspi *hspi)
         }
         hspi_tx_desc++;
     }
-
 }
 
 static int slave_spi_rx_data(struct tls_slave_hspi *hspi)
@@ -131,7 +129,6 @@ static int slave_spi_rx_data(struct tls_slave_hspi *hspi)
     }
 
     return 0;
-
 }
 
 void SDIO_RX_IRQHandler(void)
@@ -151,7 +148,7 @@ void SDIO_TX_IRQHandler(void)
 {
     struct tls_slave_hspi *hspi = (struct tls_slave_hspi *) &g_slave_hspi;
 
-// ÓÃ»§Ä£Ê½ÏÂ£¬Ö±½Ó¸ø³öÊý¾Ý£¬Á´±íµÄ²Ù×÷²»¶ÔÍâ¿ª·Å£¬±ÜÃâÔì³ÉÁ´±í²Ù×÷´íÎó
+// ï¿½Ã»ï¿½Ä£Ê½ï¿½Â£ï¿½Ö±ï¿½Ó¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½â¿ªï¿½Å£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     if (hspi->ifusermode)
     {
         slave_spi_rx_data(hspi);
@@ -173,7 +170,7 @@ void SDIO_RX_CMD_IRQHandler(void)
     if (hspi->rx_cmd_callback)
         hspi->rx_cmd_callback((char *) SDIO_CMD_RXBUF_ADDR);
 
-    if (hspi->ifusermode)       // ÓÃ»§Ä£Ê½ÏÂ£¬Êý¾Ý¸ø³öÈ¥Ö®ºó£¬¼Ä´æÆ÷ÓÉÇý¶¯×Ô¼º²Ù×÷
+    if (hspi->ifusermode)       // ï¿½Ã»ï¿½Ä£Ê½ï¿½Â£ï¿½ï¿½ï¿½ï¿½Ý¸ï¿½ï¿½ï¿½È¥Ö®ï¿½ó£¬¼Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½ï¿½ï¿½
     {
         tls_reg_write32(HR_SDIO_DOWNCMDVALID, 0x1);
     }
@@ -213,7 +210,7 @@ ATTRIBUTE_ISR void SDIOA_IRQHandler(void)
 void hspi_free_rxdesc(struct tls_hspi_rx_desc *rx_desc)
 {
     rx_desc->valid_ctrl = SET_BIT(31);
-/* ÉèÖÃhspi/sdio tx enable¼Ä´æÆ÷£¬ÈÃsdioÓ²¼þÖªµÀÓÐ¿ÉÓÃµÄtx descriptor */
+/* ï¿½ï¿½ï¿½ï¿½hspi/sdio tx enableï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½sdioÓ²ï¿½ï¿½Öªï¿½ï¿½ï¿½Ð¿ï¿½ï¿½Ãµï¿½tx descriptor */
     tls_reg_write32(HR_SDIO_TXEN, SET_BIT(0));
 }
 
@@ -284,7 +281,6 @@ int tls_slave_spi_init(void)
 
     hspi_rx_init(hspi);
     hspi_tx_init(hspi);
-//    tls_set_high_speed_interface_type(HSPI_INTERFACE_SPI);
 /* regiseter hspi tx rx cmd interrupt handler */
 
 /* setting hw interrupt module isr enable regiset */
@@ -324,7 +320,6 @@ int tls_slave_spi_init(void)
  */
 void tls_set_high_speed_interface_type(int type)
 {
-
     if (HSPI_INTERFACE_SPI == type)
     {
         hspi_regs_cfg();
@@ -369,7 +364,7 @@ void tls_set_hspi_user_mode(u8 ifenable)
  *
  * @note               None
  */
- void tls_hspi_rx_cmd_callback_register(s16(*rx_cmd_callback) (char *buf))
+void tls_hspi_rx_cmd_callback_register(s16(*rx_cmd_callback) (char *buf))
 {
     g_slave_hspi.rx_cmd_callback = rx_cmd_callback;
 }
@@ -442,7 +437,7 @@ int tls_hspi_tx_data(char *txbuf, int len)
                 mem_free((void *) tx_desc->txbuf_addr);
                 tx_desc->txbuf_addr = NULL;
             }
-            else                // ²»Ó¦¸Ã³öÏÖ
+            else                // ï¿½ï¿½Ó¦ï¿½Ã³ï¿½ï¿½ï¿½
             {
                 printf("\nhspi tx mem error\n");
                 break;

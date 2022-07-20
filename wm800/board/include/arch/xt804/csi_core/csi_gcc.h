@@ -1061,7 +1061,7 @@ __ALWAYS_STATIC_INLINE void __DMB(void)
 /**
   \brief   Search from the highest bit that the very first bit which's value is 1.
   \param [in]    value  Value to  bit search.
-  \return  if the highest bit' value is 1, return 0, and if lowest bit's value is 1, return 31, otherwise return 32.
+  \return               if the highest bit' value is 1,  return 0, and if lowest bit's value is 1, return 31, otherwise return 32.
  */
 #if !defined(__CK610) || !(__CK80X == 1)
 __ALWAYS_STATIC_INLINE uint32_t __FF0(uint32_t value)
@@ -1076,7 +1076,7 @@ __ALWAYS_STATIC_INLINE uint32_t __FF0(uint32_t value)
 /**
   \brief   Search from the highest bit that the very first bit which's value is 0.
   \param [in]    value  Value to  bit search.
-  \return  if the highest bit' value is 0,  return 0, and if lowest bit's value is 0, return 31, otherwise return 32.
+  \return               if the highest bit' value is 0,  return 0, and if lowest bit's value is 0, return 31, otherwise return 32.
  */
 #if !(__CK80X == 1)
 __ALWAYS_STATIC_INLINE uint32_t __FF1(uint32_t value)
@@ -1134,8 +1134,7 @@ __ALWAYS_STATIC_INLINE int32_t __REVSH(int32_t value)
 
 /**
   \brief   Rotate Right in unsigned value (32 bit)
-  \details
-    Rotate Right (immediate) provides the value of the contents of a register rotated by a variable number of bits.
+  \details Rotate Right (immediate) provides the value of the contents of a register rotated by a variable number of bits.
   \param [in]    op1  Value to rotate
   \param [in]    op2  Number of Bits to rotate
   \return               Rotated value
@@ -1168,7 +1167,7 @@ __ALWAYS_STATIC_INLINE uint32_t __RBIT(uint32_t value)
 #if (__CK80X >= 0x03U)
     __ASM volatile("brev %0, %1" : "=r"(result) : "r"(value));
 #else
-    int32_t s = 4 /* sizeof(v) */ * 8 - 1; /* extra shift needed at end */
+    int32_t s = 4 * 8 - 1; /* extra shift needed at end */ /* 4:sizeof(v)*/ 
 
     result = value;                      /* r will be reversed bits of v; first get LSB of v */
 
@@ -1213,16 +1212,12 @@ __ALWAYS_STATIC_INLINE int32_t __SSAT(int32_t x, uint32_t y)
         if (x > posMax) {
             x = posMax;
         }
-
-//    x &= (posMax * 2 + 1);
     } else {
         negMin = -posMax;
 
         if (x < negMin) {
             x = negMin;
         }
-
-//    x &= (posMax * 2 - 1);
     }
 
     return (x);
@@ -1402,7 +1397,6 @@ __ALWAYS_STATIC_INLINE void __STRT(uint32_t value, volatile uint32_t *addr)
  */
 __ALWAYS_STATIC_INLINE uint32_t __get_FPUType(void)
 {
-// FIXME:
     return 0;
 }
 
@@ -1411,9 +1405,7 @@ __ALWAYS_STATIC_INLINE uint32_t __get_FPUType(void)
 /* ###################  Compiler specific Intrinsics  ########################### */
 /** \defgroup CSI_SIMD_intrinsics CSI SIMD Intrinsics
   Access to dedicated SIMD instructions \n
-  Single Instruction Multiple Data (SIMD) extensions are provided to simplify development of application software.
-  SIMD extensions increase the processing capability without materially increasing the power consumption.
-  The SIMD extensions are completely transparent to the operating system (OS), allowing existing OS ports to be used.
+  Single Instruction Multiple Data (SIMD) extensions are provided to simplify development of application software. SIMD extensions increase the processing capability without materially increasing the power consumption. The SIMD extensions are completely transparent to the operating system (OS), allowing existing OS ports to be used.
 
   @{
 */
@@ -2501,8 +2493,7 @@ __ALWAYS_STATIC_INLINE uint32_t __SMUSDX(uint32_t x, uint32_t y)
            halfwords of the second operand, adding the products together.
   \param [in]    x   first 16-bit operands for each multiplication.
   \param [in]    y   second 16-bit operands for each multiplication.
-  \return
-    the sum of the products of the two 16-bit signed multiplications with exchanged halfwords of the second operand.
+  \return        the sum of the products of the two 16-bit signed multiplications with exchanged halfwords of the second operand.
   \remark
                  p1 = val1[15:0]  * val2[31:16]       \n
                  p2 = val1[31:16] * val2[15:0]        \n
@@ -2724,11 +2715,10 @@ __ALWAYS_STATIC_INLINE uint64_t __SMLSLD(uint32_t x, uint32_t y, uint64_t sum)
 
 /**
   \brief   Dual 16-bit signed multiply with exchange subtract with 64-bit accumulate.
-  \details
-        This function enables you to exchange the halfwords of the second operand, perform two 16-bit multiplications,
-        adding the difference of the products to a 64-bit accumulate operand. Overflow cannot occur during the
-        multiplications or the subtraction. Overflow can occur as a result of the 64-bit addition, and this overflow
-        is not detected. Instead, the result wraps round to modulo2^64.
+  \details This function enables you to exchange the halfwords of the second operand, perform two 16-bit multiplications,
+           adding the difference of the products to a 64-bit accumulate operand. Overflow cannot occur during the
+           multiplications or the subtraction. Overflow can occur as a result of the 64-bit addition, and this overflow
+           is not detected. Instead, the result wraps round to modulo2^64.
   \param [in]    x   first 16-bit operands for each multiplication.
   \param [in]    y   second 16-bit operands for each multiplication.
   \param [in]  sum   accumulate value.
@@ -2752,8 +2742,7 @@ __ALWAYS_STATIC_INLINE uint64_t __SMLSLDX(uint32_t x, uint32_t y, uint64_t sum)
   \param [in]    x   first operand for multiplication.
   \param [in]    y   second operand for multiplication.
   \param [in]  sum   accumulate value.
-  \return
-  the product of multiplication (most significant 32 bits) is added to the accumulate value, as a 32-bit integer.
+  \return        the product of multiplication (most significant 32 bits) is added to the accumulate value, as a 32-bit integer.
   \remark
                  p = val1 * val2      \n
                  res[31:0] = p[63:32] + val3[31:0]

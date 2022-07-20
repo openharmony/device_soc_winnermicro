@@ -84,18 +84,6 @@ static void wm_i2s_tx_fifo_clear()
     tls_bitband_write(HR_I2S_CTRL, 18, 1);
 }
 
-#if 0
-static void wm_i2s_left_zerocross_enable(bool bl)
-{
-    tls_bitband_write(HR_I2S_CTRL, 17, bl);
-}
-
-static void wm_i2s_right_zerocross_enable(bool bl)
-{
-    tls_bitband_write(HR_I2S_CTRL, 16, bl);
-}
-#endif
-
 static void wm_i2s_set_rxth(uint8_t th)
 {
     uint32_t reg;
@@ -124,14 +112,6 @@ static void wm_i2s_set_txth(uint8_t th)
     tls_reg_write32(HR_I2S_CTRL, reg);    
 }
 
-#if 0
-static void wm_i2s_clk_inverse(bool bl)
-{
-    tls_bitband_write(HR_I2S_CTRL, 8, bl);
-    tls_bitband_write(HR_I2S_CTRL, 15, bl);
-}
-#endif
-
 static void wm_i2s_set_word_len(uint8_t len)
 {
     uint32_t reg;
@@ -142,13 +122,6 @@ static void wm_i2s_set_word_len(uint8_t len)
     reg |= (len<<4);
     tls_reg_write32(HR_I2S_CTRL, reg);
 }
-
-#if 0
-static void wm_i2s_set_mute(bool bl)
-{
-    tls_bitband_write(HR_I2S_CTRL, 3, bl);
-}
-#endif
 
 void wm_i2s_rx_enable(bool bl)
 {
@@ -165,61 +138,15 @@ static void wm_i2s_enable(bool bl)
     tls_bitband_write(HR_I2S_CTRL, 0, bl);
 }
 
-#if 0
-static void wm_i2s_lzc_int_mask(bool bl)
-{
-    tls_bitband_write(HR_I2S_INT_MASK, 9, bl);
-}
-
-static void wm_i2s_rzc_int_mask(bool bl)
-{
-    tls_bitband_write(HR_I2S_INT_MASK, 8, bl);
-}
-
-static void wm_i2s_txdone_int_mask(bool bl)
-{
-    tls_bitband_write(HR_I2S_INT_MASK, 7, bl);
-}
-#endif
-
 static void wm_i2s_txth_int_mask(bool bl)
 {
     tls_bitband_write(HR_I2S_INT_MASK, 6, bl);
 }
 
-#if 0
-static void wm_i2s_txover_int_mask(bool bl)
-{
-    tls_bitband_write(HR_I2S_INT_MASK, 5, bl);
-}
-
-static void wm_i2s_txuderflow_int_mask(bool bl)
-{
-    tls_bitband_write(HR_I2S_INT_MASK, 4, bl);
-}
-
-static void wm_i2s_rxdone_int_mask(bool bl)
-{
-    tls_bitband_write(HR_I2S_INT_MASK, 3, bl);
-}
-#endif
-
 static void wm_i2s_rxth_int_mask(bool bl)
 {
     tls_bitband_write(HR_I2S_INT_MASK, 2, bl);
 }
-
-#if 0
-static void wm_i2s_rx_overflow_int_mask(bool bl)
-{
-    tls_bitband_write(HR_I2S_INT_MASK, 1, bl);
-}
-
-static void wm_i2s_rx_uderflow_int_mask(bool bl)
-{
-    tls_bitband_write(HR_I2S_INT_MASK, 0, bl);
-}
-#endif
 
 static void wm_i2s_set_freq(uint32_t lr_freq, uint32_t mclk) 
 {
@@ -236,9 +163,6 @@ static void wm_i2s_set_freq(uint32_t lr_freq, uint32_t mclk)
 #if FPGA_800_I2S
     div = div/2;
 #endif
-
-    // Mclk should be set bigger than sample_rate * 256.
-    // mclk_div = I2S_CLK / ( freq*256 ) + 1;
     mclk_div = I2S_CLK / mclk;
 
     if (mclk_div > 0x3F){
@@ -249,24 +173,6 @@ static void wm_i2s_set_freq(uint32_t lr_freq, uint32_t mclk)
     // set bclk div ,mclk div, inter clk be used, mclk enabled.
     *(volatile uint32_t *)HR_CLK_I2S_CTL |= (uint32_t)(div<<8 | mclk_div<<2 | 2);
 }
-
-#if 0
-static void wm_i2s_set_freq_exclk(uint32_t freq, uint32_t exclk)
-{
-    uint32_t div;
-    uint32_t temp;
-    uint8_t wdwidth, stereo;
-    
-    temp = I2S->CTRL;
-    wdwidth = (((temp>>4)&0x03)+1)<<3;
-    stereo = tls_bitband_read(HR_I2S_CTRL, 22) ? 1:2;    
-    div = (exclk * 2 + freq * wdwidth * stereo)/(2* freq * wdwidth * stereo) - 1;
-    
-    *(volatile uint32_t *)HR_CLK_I2S_CTL &= ~0x3FF00;
-    *(volatile uint32_t *)HR_CLK_I2S_CTL |= (uint32_t)div<<8;    
-    *(volatile uint32_t *)HR_CLK_I2S_CTL |= 0x01;
-}
-#endif
 
 static void wm_i2s_int_clear_all(void)
 {
@@ -282,18 +188,6 @@ static void wm_i2s_dma_start(uint8_t ch)
 {
     DMA_CHNLCTRL_REG(ch) = DMA_CHNL_CTRL_CHNL_ON;
 }
-
-#if 0
-static void wm_i2s_dma_stop(uint8_t ch)
-{
-    if (DMA_CHNLCTRL_REG(ch) & DMA_CHNL_CTRL_CHNL_ON)
-    {
-        DMA_CHNLCTRL_REG(ch) |= DMA_CHNL_CTRL_CHNL_OFF;
-
-        while(DMA_CHNLCTRL_REG(ch) & DMA_CHNL_CTRL_CHNL_ON);
-    }
-}
-#endif
 
 static void wm_i2s_module_reset(void)
 {
@@ -348,7 +242,6 @@ ATTRIBUTE_ISR void i2s_I2S_IRQHandler(void)
                 }
             }
         }
-        // printf("s\n");
         tls_reg_write32(HR_I2S_INT_SRC, 0x40);
     }
     /*LZC */
@@ -505,37 +398,11 @@ int wm_i2s_port_init(I2S_InitDef *opts)
     wm_i2s_set_txth(4);
     wm_i2s_set_rxth(4);
 
-//   tx_channel = tls_dma_request(WM_I2S_TX_DMA_CHANNEL, TLS_DMA_FLAGS_CHANNEL_SEL(TLS_DMA_SEL_I2S_TX) | TLS_DMA_FLAGS_HARD_MODE);
-//   rx_channel = tls_dma_request(WM_I2S_RX_DMA_CHANNEL, TLS_DMA_FLAGS_CHANNEL_SEL(TLS_DMA_SEL_I2S_RX) | TLS_DMA_FLAGS_HARD_MODE);
-//
-//   if (tx_channel == 0 || rx_channel == 0)
-//   {
-//       return WM_FAILED;
-//   }
-//   if (tls_dma_stop(tx_channel) || tls_dma_stop(rx_channel))
-//   {
-//       return WM_FAILED;
-//   }
-//
-//   tls_dma_irq_register(tx_channel, i2s_DMA_TX_Channel_IRQHandler, NULL, TLS_DMA_IRQ_TRANSFER_DONE);
-//   tls_dma_irq_register(rx_channel, i2s_DMA_RX_Channel_IRQHandler, NULL, TLS_DMA_IRQ_TRANSFER_DONE);
-
     return WM_SUCCESS;
 }
 
 void wm_i2s_tx_rx_stop(void)
 {
-//   if ( I2S_MODE_MASTER==wm_i2s_get_mode() )
-//   {
-//       int i;
-//
-//       for(i = 0; i < APPEND_NUM; i++)
-//       {
-//           tls_reg_write32(HR_I2S_TX, 0x00);
-//       }
-//       wm_i2s_tx_enable(1);
-//       while( tls_reg_read32(HR_I2S_STATUS)&0xF0 );
-//   }
     wm_i2s_tx_enable(0);
     wm_i2s_rx_enable(0);
     
@@ -778,7 +645,6 @@ int wm_i2s_receive_dma(wm_dma_handler_type *hdma, uint16_t *data, uint16_t len)
     }
 
     wm_i2s_buf->rxdata_ready = 0;
-    // wm_i2s_set_mode(I2S_MODE_SLAVE);
 
     if (rx_channel)
     {
@@ -835,7 +701,6 @@ int wm_i2s_transmit_dma(wm_dma_handler_type *hdma, uint16_t *data, uint16_t len)
     }
 
     wm_i2s_buf->txdata_done = 0;
-    // wm_i2s_set_mode(I2S_MODE_MASTER);
 
     if (tx_channel)
     {
@@ -932,8 +797,6 @@ int wm_i2s_tranceive_dma(uint32_t i2s_mode, wm_dma_handler_type *hdma_tx, wm_dma
     dma_desc_tx[1].src_addr = (unsigned int)next_data_tx;
     dma_desc_tx[1].dma_ctrl = dma_ctrl>>1;
     dma_desc_tx[1].valid = 0x80000000;
-
-//   DMA_INTMASK_REG |= (0x03<<(tx_channel*2));
     DMA_MODE_REG(tx_channel) = DMA_MODE_SEL_I2S_TX | DMA_MODE_CHAIN_MODE | DMA_MODE_HARD_MODE | DMA_MODE_CHAIN_LINK_EN;
     tls_reg_write32(HR_DMA_CHNL0_LINK_DEST_ADDR + 0x30*tx_channel, (uint32_t)dma_desc_tx);
 
@@ -971,8 +834,6 @@ int wm_i2s_tranceive_dma(uint32_t i2s_mode, wm_dma_handler_type *hdma_tx, wm_dma
     dma_desc_rx[1].src_addr = HR_I2S_RX;
     dma_desc_rx[1].dma_ctrl = dma_ctrl>>1;
     dma_desc_rx[1].valid = 0x80000000;
-
-//   DMA_INTMASK_REG &= ~(0x02<<(rx_channel*2));
     DMA_MODE_REG(rx_channel) = DMA_MODE_SEL_I2S_RX | DMA_MODE_CHAIN_MODE | DMA_MODE_HARD_MODE | DMA_MODE_CHAIN_LINK_EN;
     tls_reg_write32(HR_DMA_CHNL0_LINK_DEST_ADDR + 0x30*rx_channel, (uint32_t)dma_desc_rx);
 
@@ -986,86 +847,3 @@ int wm_i2s_tranceive_dma(uint32_t i2s_mode, wm_dma_handler_type *hdma_tx, wm_dma
     wm_i2s_enable(1);
     return WM_SUCCESS;
 }
-
-/**
-  *******************************************************
-  *               TEST CODE IS BELOW
-  *******************************************************
-  */
-
-#if 0
-
-#define UNIT_SIZE   2*1024
-#define PCM_ADDRDSS 0x100000
-#define FIRM_SIZE   940
-
-int16_t data_1[2][UNIT_SIZE];
-
-void i2s_demo_callback_play(int16_t *data, uint32_t *len)
-{
-    static int number = 0;
-
-    tls_fls_read(PCM_ADDRDSS+number*UNIT_SIZE*2, data, UNIT_SIZE*2);
-
-    number ++;
-    if ( number > FIRM_SIZE/UNIT_SIZE/1024/2 )
-    {
-        number = 0;
-        *len = 0xFFFF;
-    }
-    printf("%d, %x\n", number, data[0]);
-}
-
-void wm_i2s_play_demo(void)
-{
-    wm_i2s_ck_config(WM_IO_PB_08);
-    wm_i2s_ws_config(WM_IO_PB_09);
-    wm_i2s_di_config(WM_IO_PB_10);
-    wm_i2s_do_config(WM_IO_PB_11);
-
-    wm_i2s_mclk_config(WM_IO_PA_00);
-    
-    // wm_i2c_scl_config(WM_IO_PA_01);
-    // wm_i2c_sda_config(WM_IO_PA_04);
-
-    // CodecInit();
-    // CodecSetSampleRate(cur_sample_rate);
-
-    // CodecMute(1);
-    // CodecMute(0);
-
-    I2S_InitDef i2s_config = { I2S_MODE_MASTER, I2S_CTRL_MONO, I2S_RIGHT_CHANNEL, I2S_Standard, I2S_DataFormat_16, 8000, 5000000 };
-    int i;
-    
-    wm_i2s_port_init(&i2s_config);
-    wm_i2s_register_callback(i2s_demo_callback_play);
-    memset(data_1[0], 1, sizeof(data_1[0]));
-    memset(data_1[1], 2, sizeof(data_1[1]));
-    
-    printf("1\n");
-    // wm_i2s_tx_int(data_1[0], UNIT_SIZE, data_1[1]);
-    
-    // wm_i2s_tx_dma(data_1[0], UNIT_SIZE, data_1[1]);
-    
-    // wm_i2s_tx_dma_link(data_1[0], UNIT_SIZE, data_1[1]);
-    
-    // wm_i2s_rx_int(data_1[0], UNIT_SIZE);
-    // for( i=0; i<UNIT_SIZE; i++ ) { printf("%x\n", data_1[0][i]); }
-
-    // wm_i2s_rx_dma(data_1[0], UNIT_SIZE);
-    // for( i=0; i<UNIT_SIZE; i++ ) { printf("%x\n", data_1[0][i]); }
-
-    // wm_i2s_tx_rx_int(&i2s_config, data_1[0], data_1[1], UNIT_SIZE);
-    // for( i=0; i<UNIT_SIZE; i++ ) { printf("%x\n", data_1[1][i]); }
-
-    wm_i2s_tx_rx_dma(&i2s_config, data_1[0], data_1[1], UNIT_SIZE);
-    for( i=0; i<UNIT_SIZE; i++ ) { printf("%x\n", data_1[1][i]); }
-    
-    printf("2\n");
-
-    wm_i2s_tx_rx_stop();
-    printf("stop\n");
-}
-
-#endif
-

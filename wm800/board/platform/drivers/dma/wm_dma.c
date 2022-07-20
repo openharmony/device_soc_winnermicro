@@ -248,9 +248,8 @@ int tls_dma_wait_complt(unsigned char ch)
  * @retval         0     failed
  *
  * @note
- *                  DMA Descriptor:
- *                    +--------------------------------------------------------------+
- *                    |Vld[31] |                    RSV                              |
+ *     DMA Descriptor: +--------------------------------------------------------------+
+ *                     |Vld[31] |                    RSV                              |
  *                     +--------------------------------------------------------------+
  *                     |                  RSV           |         Dma_Ctrl[16:0]      |
  *                     +--------------------------------------------------------------+
@@ -288,9 +287,8 @@ unsigned char tls_dma_start_by_wrap(unsigned char ch, struct tls_dma_descriptor 
  * @retval         0     failed
  *
  * @note
- *                  DMA Descriptor:
- *                    +--------------------------------------------------------------+
- *                    |Vld[31] |                    RSV                              |
+ *     DMA Descriptor: +--------------------------------------------------------------+
+ *                     |Vld[31] |                    RSV                              |
  *                     +--------------------------------------------------------------+
  *                     |                  RSV           |         Dma_Ctrl[16:0]      |
  *                     +--------------------------------------------------------------+
@@ -357,7 +355,7 @@ unsigned char tls_dma_request(unsigned char ch, unsigned char flags)
 {
     unsigned char freeCh = 0xFF;
 
-    /*If channel is valid, try to use specified DMA channel!*/
+    /* If channel is valid, try to use specified DMA channel! */
     if ((ch < 8))
     {
         if (!(channels.channels[ch] & TLS_DMA_FLAGS_CHANNEL_VALID))
@@ -366,10 +364,10 @@ unsigned char tls_dma_request(unsigned char ch, unsigned char flags)
         }
     }
 
-    /*If ch is not valid, or ch has been used, try to select another free channel for the caller*/
+    /* If ch is not valid, or ch has been used, try to select another free channel for the caller */
     if (freeCh == 0xFF)
     {
-         int i = 0;
+        int i = 0;
         for (i = 0; i < 8; i++)
         {
             if (!(channels.channels[i] & TLS_DMA_FLAGS_CHANNEL_VALID))
@@ -419,7 +417,6 @@ void tls_dma_free(unsigned char ch)
         DMA_DESTADDR_REG(ch) = 0;
         DMA_MODE_REG(ch) = 0;
         DMA_CTRL_REG(ch) = 0;
-//        DMA_INTSRC_REG = 0xffff;
         DMA_INTSRC_REG |= 0x03<<(ch*2);
 
         channels.channels[ch] = 0x00;
@@ -455,4 +452,3 @@ void tls_dma_init(void)
     DMA_INTMASK_REG = value;
     DMA_INTSRC_REG  = value;
 }
-

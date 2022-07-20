@@ -13,7 +13,6 @@
  * limitations under the License.
  */
  
-
 /***************************************************************************** 
 * 
 * File Name : wm_adc.c 
@@ -37,7 +36,6 @@
 #include "wm_mem.h"
 #include "wm_adc.h"
 
-// TODO
 #define HR_SD_ADC_CONFIG_REG 0
 static int adc_offset = 0;
 static int *adc_dma_buffer = NULL;
@@ -62,7 +60,6 @@ ATTRIBUTE_ISR void ADC_IRQHandler(void)
     }
     if (reg & CMP_INT_MASK)
     {
-
         tls_adc_clear_irq(ADC_INT_TYPE_ADC_COMP);
         if (gst_adc.adc_bigger_cb)
             gst_adc.adc_bigger_cb(NULL, 0);
@@ -92,12 +89,10 @@ void tls_adc_init(u8 ifusedma,u8 dmachannel)
         gst_adc.dmachannel = tls_dma_request(dmachannel, TLS_DMA_FLAGS_CHANNEL_SEL(TLS_DMA_SEL_SDADC_CH0 + dmachannel) |
                             TLS_DMA_FLAGS_HARD_MODE);    // 请求dma，不要直接指定，因为请求的dma可能会被别的任务使用
         if (gst_adc.dmachannel != 0xFF)
-           {
+        {
             tls_dma_irq_register(gst_adc.dmachannel, (void(*)(void*))adc_dma_isr_callbk, NULL, TLS_DMA_IRQ_TRANSFER_DONE);
         }
     }
-
-    // printf("\ndma channel = %d\n",gst_adc.dmachannel);
 }
 
 void tls_adc_clear_irq(int inttype)
@@ -196,7 +191,7 @@ void tls_adc_start_with_dma(int Channel, int Length)
 
     Channel &= 0xF;
 
-    /*disable adc:set adc pd, rstn and ldo disable*/
+    /* disable adc:set adc pd, rstn and ldo disable */
     value = tls_reg_read32(HR_SD_ADC_ANA_CTRL);
     value |= CONFIG_PD_ADC_VAL(1);
     value &= ~(CONFIG_RSTN_ADC_VAL(1)|CONFIG_EN_LDO_ADC_VAL(1));    
@@ -219,7 +214,7 @@ void tls_adc_start_with_dma(int Channel, int Length)
     DMA_INTMASK_REG &= ~(0x01 << (gst_adc.dmachannel *2 + 1));
     DMA_CHNLCTRL_REG(gst_adc.dmachannel) = 1;        /* Enable dma */
 
-    /*Enable dma*/
+    /* Enable dma*/
     value = tls_reg_read32(HR_SD_ADC_CTRL);
     value |= (1<<0);
     tls_reg_write32(HR_SD_ADC_CTRL, value); 
@@ -229,8 +224,7 @@ void tls_adc_start_with_dma(int Channel, int Length)
     value |= CONFIG_ADC_CHL_SEL(Channel);
     value &= ~(CONFIG_PD_ADC_VAL(1));
     value |= (CONFIG_RSTN_ADC_VAL(1)|CONFIG_EN_LDO_ADC_VAL(1));    
-    tls_reg_write32(HR_SD_ADC_ANA_CTRL, value);        /*start adc*/
-
+    tls_reg_write32(HR_SD_ADC_ANA_CTRL, value);        /* start adc */
 }
 
 void tls_adc_stop(int ifusedma)
@@ -244,12 +238,12 @@ void tls_adc_stop(int ifusedma)
     value &= ~(CONFIG_RSTN_ADC_VAL(1)|CONFIG_EN_LDO_ADC_VAL(1));    
     tls_reg_write32(HR_SD_ADC_ANA_CTRL, value);
 
-    /*Disable dma*/
+    /* Disable dma */
     value = tls_reg_read32(HR_SD_ADC_CTRL);
     value &= ~(1<<0);
     tls_reg_write32(HR_SD_ADC_CTRL, value); 
 
-    /*Disable compare function and compare irq*/
+    /* Disable compare function and compare irq */
     value = tls_reg_read32(HR_SD_ADC_CTRL);
     value &= ~(3<<4);
     tls_reg_write32(HR_SD_ADC_CTRL, value);    
@@ -298,9 +292,9 @@ void tls_adc_cmp_start(int Channel, int cmp_data, int cmp_pol)
     value = tls_reg_read32(HR_SD_ADC_ANA_CTRL);
     value &= ~(CONFIG_PD_ADC_VAL(1));
     value |= (CONFIG_RSTN_ADC_VAL(1)|CONFIG_EN_LDO_ADC_VAL(1));    
-    tls_reg_write32(HR_SD_ADC_ANA_CTRL, value);        /*start adc*/
+    tls_reg_write32(HR_SD_ADC_ANA_CTRL, value);        /* start adc */
 
-    /*Enable compare function and compare irq*/
+    /* Enable compare function and compare irq */
     value = tls_reg_read32(HR_SD_ADC_CTRL);
     value |= (3<<4);
     tls_reg_write32(HR_SD_ADC_CTRL, value);    
@@ -406,7 +400,7 @@ static void waitForAdcDone(void)
     u32 timeout = 10000;
     u32 reg = 0;
 
-    /*wait for transfer success*/
+    /* wait for transfer success */
     tls_irq_disable(ADC_IRQn);
     while(timeout--)
     {
@@ -511,7 +505,6 @@ u32 adc_get_interVolt(void)
     tls_adc_stop(0);
     voltValue = ((voltValue - adc_offset)*685/20+1200000)*2;
     value = voltValue - voltValue*10/100;
-    // printf("Power voltage code:0x%x, interVolt:%d(uV)---%d.%d(V)\r\n", code, value, value/1000000, (value%1000000)/1000);
 
     return value/1000;
 }
@@ -562,4 +555,3 @@ int adc_temp(void)
 
     return temperature;
 }
-
