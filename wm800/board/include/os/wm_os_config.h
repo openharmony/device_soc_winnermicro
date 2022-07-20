@@ -29,6 +29,6 @@
 #define OS_CFG_OFF 0
 
 #undef TLS_OS_FREERTOS
-#define TLS_OS_FREERTOS                     OS_CFG_OFF   /*FreeRTOS need to modify wm_config.inc*/
+#define TLS_OS_FREERTOS                     OS_CFG_OFF   /* FreeRTOS need to modify wm_config.inc */
 #define TLS_OS_LITEOS                       OS_CFG_ON
 #endif

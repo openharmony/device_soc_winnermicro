@@ -56,8 +56,7 @@
 /**
  * @struct fls_list     list
  */
-struct fls_list
-{
+struct fls_list {
     struct fls_list *next;
     struct fls_list *prev;
 };
@@ -65,8 +64,7 @@ struct fls_list
 /**
  * @struct tls_fls_drv     flash driver
  */
-struct tls_fls_drv
-{
+struct tls_fls_drv {
     struct fls_list drv_list;
     u32 id;
     u32 total_size;
@@ -89,8 +87,7 @@ struct tls_fls_drv
 /**
  * @struct tls_fls     flash
  */
-struct tls_fls
-{
+struct tls_fls {
     struct fls_list fls_drvs;
     struct tls_fls_drv *current_drv;
     tls_os_sem_t *fls_lock;

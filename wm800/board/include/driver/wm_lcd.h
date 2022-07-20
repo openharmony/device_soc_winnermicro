@@ -37,8 +37,7 @@ extern "C" {
  * @brief LCD Register Declaration
  *
  */
-typedef struct
-{
+typedef struct {
     /** Control Register */
     __IO uint32_t CTRL;
     /** Refresh Rate Prescaler Register */
@@ -59,8 +58,7 @@ typedef struct
 /** LCD base pointer */
 #define LCD         ((LCD_T *)HR_LCD_REG_BASE)
 
-typedef enum
-{
+typedef enum {
     /** Static (2 levels) */
     BIAS_STATIC        = LCD_BIAS_STATIC,
     /** 1/2 Bias (3 levels) */
@@ -71,8 +69,7 @@ typedef enum
     BIAS_ONEFOURTH    = LCD_BIAS_ONEFOURTH,
 } LCD_BiasDef;
 
-typedef enum
-{
+typedef enum {
     /** VLCD 2.7v */
     VLCD27        = LCD_VLCD_27,
     /** VLCD 2.9v */
@@ -103,8 +100,7 @@ typedef enum
     DUTY_ONEEIGHTH    = LCD_DUTY_ONEEIGHTH,
 } LCD_DutyDef;
 
-typedef struct tls_lcd_options
-{
+typedef struct tls_lcd_options {
     /** */
     bool enable;
     /** Bias configuration */
@@ -211,7 +207,7 @@ void tls_lcd_bias_set(LCD_BiasDef bias);
 #define TLS_LCD_CLK_ENABLE(enable) \
         do { \
             tls_bitband_write(HR_CLK_BASE_ADDR, HR_CLK_LCD_GATE_Pos, enable); \
-        } while(0)
+        } while (0)
 
 /**
  * @brief   Enable or disable the LCD module
@@ -221,7 +217,7 @@ void tls_lcd_bias_set(LCD_BiasDef bias);
 #define TLS_LCD_ENABLE(enable) \
         do { \
             tls_bitband_write(HR_LCD_CR, LCD_CR_EN_Pos, enable); \
-        } while(0)
+        } while (0)
 
 /**
  * @brief   Enable or disable the LCD module
@@ -231,7 +227,7 @@ void tls_lcd_bias_set(LCD_BiasDef bias);
 #define TLS_LCD_POWERDOWM(enable) \
         do { \
             tls_bitband_write(HR_LCD_CR, LCD_CR_PD_Pos, enable); \
-        } while(0)        
+        } while (0)        
 
 /**
  * @}
