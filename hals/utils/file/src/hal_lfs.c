@@ -164,7 +164,7 @@ int HalFileStat(const char* path, unsigned int* fileSize)
     if ((path == NULL) || (strlen(path) >= FLASH_FILE_NAME_LEN)) {
         return -1;
     }
-    
+
     char *target_path = _path_convert(path);
     if (target_path == NULL) {
         printf("\r\n_file_open: target_path is null");

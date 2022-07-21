@@ -52,6 +52,7 @@ extern u32 alloc_heap_mem_max_size;
 //       be multiple of 16 bytes.
 // 
 typedef struct _MEMORY_BLOCK {
+
     struct dl_list  list;    /**< Pointer to next and previous blocks */
     char  *file;             /**< name of the file which is doing the allocation */
     u32    pad;              /**< pad to make the size of whole structure multiple of 16 bytes */
@@ -59,7 +60,7 @@ typedef struct _MEMORY_BLOCK {
     u32    length;           /**< ulong index of trailer (=(length/4)-1 relative to data start */
     u32    header_pattern;   /**< To help detect underflows. A trailer is also added to find overflows */
 } MEMORY_BLOCK, *PMEMORY_BLOCK;
-typedef struct _MEMORY_PATTERN{
+typedef struct _MEMORY_PATTERN {
     u32 pattern0;
 }MEMORY_PATTERN, *PMEMORY_PATTERN;
 void mem_free_debug(void *p, char* file, int line);
