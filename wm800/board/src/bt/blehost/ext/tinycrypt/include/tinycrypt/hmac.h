@@ -136,4 +136,4 @@ int tc_hmac_final(uint8_t *tag, unsigned int taglen, TCHmacState_t ctx);
 }
 #endif
 
-#endif /*__TC_HMAC_H__*/
+#endif /* __TC_HMAC_H__ */
