@@ -43,7 +43,6 @@ static void _mdelay(void)
 
     while (1) {
         uint32_t cur = csi_coret_get_value();
-
         if (start > cur) {
             if (start - cur >= cnt) {
                 return;

@@ -27,8 +27,8 @@
 #include "wm_config.h"
 
 /* see gcc_csky.ld in directory ld/w800,__heap_end must be bigger than 0x20028000
-if __heap_end is lower than 0x20028000,then SLAVE_HSPI_SDIO_ADDR must be changed to 0x20028000 or bigger.
-*/
+ *if __heap_end is lower than 0x20028000,then SLAVE_HSPI_SDIO_ADDR must be changed to 0x20028000 or bigger.
+ */
 extern unsigned int __heap_end;
 extern unsigned int __heap_start;
 

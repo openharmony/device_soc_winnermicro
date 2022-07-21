@@ -20,7 +20,7 @@
  * Date                        :
  * Description                 : Use Flash Addr as virtual efuse
  *
- * Copyright (c) 2014 Winner Microelectronics Co., Ltd. 
+ * Copyright (c) 2014 Winner Microelectronics Co., Ltd.
  * All rights reserved.
  *
  ***************************************************************************/
@@ -51,12 +51,12 @@ typedef struct FT_PARAM
     unsigned char        wifi_mac_addr[MAC_ADDR_LEN];
     unsigned char        bt_mac_addr[MAC_ADDR_LEN];
     unsigned int        tx_dcoffset;
-    unsigned int        rx_dcoffset;    
+    unsigned int        rx_dcoffset;
     unsigned int        tx_iq_gain;
-    unsigned int        rx_iq_gain;    
+    unsigned int        rx_iq_gain;
     unsigned int        tx_iq_phase;
-    unsigned int        rx_iq_phase;    
-    unsigned char        tx_gain[FT_GAIN_LEN];    
+    unsigned int        rx_iq_phase;
+    unsigned char        tx_gain[FT_GAIN_LEN];
 }FT_PARAM_ST;
 
 static u8 default_mac[6] = {0x00,0x25,0x08,0x09,0x01,0x0F};
@@ -65,17 +65,15 @@ FT_PARAM_ST gftParam;
 int tls_ft_param_init(void)
 {
     u32 crcvalue = 0;
-    psCrcContext_t ctx;    
+    psCrcContext_t ctx;
     FT_PARAM_ST *pft = NULL;
-    
-    if (gftParam.magic_no == SIGNATURE_WORD)
-    {
+
+    if (gftParam.magic_no == SIGNATURE_WORD) {
         return TRUE;
     }
 
     pft = tls_mem_alloc(sizeof(FT_PARAM_ST));
-    if (pft == NULL)
-    {
+    if (pft == NULL) {
         return FALSE;
     }
 
@@ -83,20 +81,17 @@ int tls_ft_param_init(void)
     memset(&gftParam, 0xFF, sizeof(FT_PARAM_ST));
 
     tls_fls_read(FT_MAGICNUM_ADDR, (unsigned char *)pft, sizeof(FT_PARAM_ST));
-    if (pft->magic_no == SIGNATURE_WORD)
-    {
+    if (pft->magic_no == SIGNATURE_WORD) {
         tls_crypto_init();
         tls_crypto_crc_init(&ctx, 0xFFFFFFFF, CRYPTO_CRC_TYPE_32, INPUT_REFLECT | OUTPUT_REFLECT);
         tls_crypto_crc_update(&ctx, (unsigned char *)pft + 8, sizeof(FT_PARAM_ST) - 8);
-        tls_crypto_crc_final(&ctx, &crcvalue);        
-        if (pft->checksum != crcvalue)
-        {
+        tls_crypto_crc_final(&ctx, &crcvalue);
+        if (pft->checksum != crcvalue) {
             tls_mem_free(pft);
             return FALSE;
         }
 
-        if (gftParam.magic_no != SIGNATURE_WORD)
-        {
+        if (gftParam.magic_no != SIGNATURE_WORD) {
             memcpy(&gftParam, pft, sizeof(FT_PARAM_ST));
         }
     }
@@ -109,73 +104,64 @@ int tls_ft_param_init(void)
 
 int tls_ft_param_get(unsigned int opnum, void *data, unsigned int rdlen)
 {
-    switch (opnum)
-    {
+    switch (opnum) {
         case CMD_WIFI_MAC:    /* MAC */
             if ((gftParam.wifi_mac_addr[0]&0x1)
-                ||(0 == (gftParam.wifi_mac_addr[0]|gftParam.wifi_mac_addr[1]|gftParam.wifi_mac_addr[2]|gftParam.wifi_mac_addr[3]|gftParam.wifi_mac_addr[4]|gftParam.wifi_mac_addr[5])))        
-            {
+                ||(0 == (gftParam.wifi_mac_addr[0]|gftParam.wifi_mac_addr[1]|gftParam.wifi_mac_addr[2]|
+                gftParam.wifi_mac_addr[3]|gftParam.wifi_mac_addr[4]|gftParam.wifi_mac_addr[5]))) {
                 memcpy(data, default_mac, rdlen);
-            }
-            else
-            {
+            } else  {
                 memcpy(data, gftParam.wifi_mac_addr, rdlen);
             }
-        break;
+            break;
         case CMD_BT_MAC:    /* MAC */
             {
                 u8 invalid_bt_mac[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
                 u8 invalid_bt_mac1[6] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
                 if ((memcmp(gftParam.bt_mac_addr, invalid_bt_mac, 6) == 0)|| \
-                    (memcmp(gftParam.bt_mac_addr, invalid_bt_mac1, 6) == 0))
-                {
+                    (memcmp(gftParam.bt_mac_addr, invalid_bt_mac1, 6) == 0)) {
                     memcpy(data, default_mac, rdlen);
                     *((u8*)data+5) +=1;      /* defalut plus 1 */
                     *((u8*)data) |= 0xC0;    /* defalut public static type */
-                }
-                else
-                {
+                } else {
                     memcpy(data, gftParam.bt_mac_addr, rdlen);
                 }
-           }
-        break;
+            }
+            break;
 
-        
+
         case CMD_TX_DC: /* tx_dcoffset */
             *(unsigned int *)data = gftParam.tx_dcoffset;
-        break;    
-        
+            break;
+
         case CMD_RX_DC: /* rx_dcoffset */
             *(unsigned int *)data = gftParam.rx_dcoffset;
-        break;    
-        
-        case CMD_TX_IQ_GAIN:
+            break;
+
+            case CMD_TX_IQ_GAIN:
             *(unsigned int *)data = gftParam.tx_iq_gain;
-        break;    
-        
+            break;
+
         case CMD_RX_IQ_GAIN:
             *(unsigned int *)data = gftParam.rx_iq_gain;
-        break;
-        
+            break;
+
         case CMD_TX_IQ_PHASE:
             *(unsigned int *)data = gftParam.tx_iq_phase;
-        break;    
-        
+            break;
+
         case CMD_RX_IQ_PHASE:
             *(unsigned int *)data = gftParam.rx_iq_phase;
-        break;
-        
+            break;
+
         case CMD_TX_GAIN: /* gain */
-            if (rdlen < FT_GAIN_LEN)
-            {
+            if (rdlen < FT_GAIN_LEN) {
                 memcpy(data, gftParam.tx_gain, rdlen);
-            }
-            else
-            {
+            } else {
                 memcpy(data, gftParam.tx_gain, FT_GAIN_LEN);
             }
-        break;
-        
+            break;
+
         default:
         return -1;
     }
@@ -187,56 +173,51 @@ int tls_ft_param_set(unsigned int opnum, void *data, unsigned int len)
     psCrcContext_t ctx;
     unsigned int writelen = 0;
 
-    if (!data || !len)
-    {
+    if (!data || !len) {
         return -1;
     }
-    switch (opnum)
-    {
+    switch (opnum) {
         case CMD_WIFI_MAC:    /* MAC */
             memcpy(gftParam.wifi_mac_addr, (unsigned char *)data, len);
-        break;
+            break;
 
         case CMD_BT_MAC:    /* BT MAC */
             memcpy(gftParam.bt_mac_addr, (unsigned char *)data, len);
-        break;
+            break;
 
         case CMD_TX_DC:    /* tx_dcoffset */
             gftParam.tx_dcoffset = *(unsigned int *)data;
-        break;    
-        
+            break;
+
         case CMD_RX_DC:    /* rx_dcoffset */
             gftParam.rx_dcoffset = *(unsigned int *)data;
-        break;    
-        
+            break;
+
         case CMD_TX_IQ_GAIN:
             gftParam.tx_iq_gain = *(unsigned int *)data;
-        break;    
-        
+            break;
+
         case CMD_RX_IQ_GAIN:
-            gftParam.rx_iq_gain = *(unsigned int *) data;            
-        break;    
-        
+            gftParam.rx_iq_gain = *(unsigned int *) data;
+            break;
+
         case CMD_TX_IQ_PHASE:
             gftParam.tx_iq_phase = *(unsigned int *)data;
-        break;    
-        
+            break;
+
         case CMD_RX_IQ_PHASE:
-            gftParam.rx_iq_phase = *(unsigned int *) data;            
-        break;    
-        
+            gftParam.rx_iq_phase = *(unsigned int *) data;
+            break;
+
         case CMD_TX_GAIN: /* gain */
-            if (len >= FT_GAIN_LEN)
-            {
+            if (len >= FT_GAIN_LEN) {
                 writelen = FT_GAIN_LEN;
-            }
-            else
-            {
+            } else {
                 writelen = len;
             }
             memcpy(gftParam.tx_gain, data, writelen);
-        break;
-        
+            break;
+
         default:
             return -1;
     }
@@ -438,20 +419,15 @@ int tls_freq_err_op(u8 *freqerr, u8 flag)
 {
     int ret = 0;
     tls_flash_unlock();
-    if (flag){
+    if (flag) {
         ret = tls_fls_write(FREQERR_ADDR, freqerr, FREQERR_LEN);
-    }
-    else
-    {
+    } else {
         ret = tls_fls_read(FREQERR_ADDR, freqerr, FREQERR_LEN);
     }
     tls_flash_lock();
-    if (ret == 0)
-    {
+    if (ret == 0) {
         return TLS_EFUSE_STATUS_OK;
-    }
-    else
-    {
+    } else {
         return TLS_EFUSE_STATUS_EINVALID;
     }
 }
@@ -460,21 +436,16 @@ int tls_rf_cal_finish_op(u8 *calflag, u8 flag)
 {
     int ret = 0;
     tls_flash_unlock();
-    if (flag){
+    if (flag) {
         ret = tls_fls_write(CAL_FLAG_ADDR, calflag, CAL_FLAG_LEN);
-    }
-    else
-    {
+    } else {
         ret = tls_fls_read(CAL_FLAG_ADDR, calflag, CAL_FLAG_LEN);
     }
     tls_flash_lock();
 
-    if (ret == 0)
-    {
+    if (ret == 0) {
         return TLS_EFUSE_STATUS_OK;
-    }
-    else
-    {
+    } else {
         return TLS_EFUSE_STATUS_EINVALID;
     }
 }
