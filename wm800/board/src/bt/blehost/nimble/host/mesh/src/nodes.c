@@ -34,7 +34,7 @@ static int addr_is_free(u16_t addr_start, u8_t num_elem, u16_t *next)
 
     if (!BT_MESH_ADDR_IS_UNICAST(addr_start) ||
             !BT_MESH_ADDR_IS_UNICAST(addr_end) ||
-            num_elem == 0 || next == NULL) {
+                num_elem == 0 || next == NULL) {
         return -EINVAL;
     }
 
@@ -47,7 +47,7 @@ static int addr_is_free(u16_t addr_start, u8_t num_elem, u16_t *next)
         return -EAGAIN;
     }
 
-    for(i = 0; i < ARRAY_SIZE(bt_mesh.nodes); i++) {
+    for (i = 0; i < ARRAY_SIZE(bt_mesh.nodes); i++) {
         struct bt_mesh_node *node = &bt_mesh.nodes[i];
 
         if (node->net_idx == BT_MESH_KEY_UNUSED) {
@@ -85,9 +85,8 @@ static u16_t find_lowest_free_addr(u8_t num_elem)
      * is any. +1 for our own address and +1 for making sure that the
      * address range is valid.
      */
-    for(i = 0; i < ARRAY_SIZE(bt_mesh.nodes) + 2; ++i) {
+    for (i = 0; i < ARRAY_SIZE(bt_mesh.nodes) + 2; ++i) { // 2:byte alignment
         err = addr_is_free(addr, num_elem, &next);
-
         if (err == 0) {
             break;
         } else if (err != -EAGAIN) {
@@ -105,7 +104,7 @@ struct bt_mesh_node *bt_mesh_node_find(u16_t addr)
 {
     int i;
 
-    for(i = 0; i < ARRAY_SIZE(bt_mesh.nodes); i++) {
+    for (i = 0; i < ARRAY_SIZE(bt_mesh.nodes); i++) {
         struct bt_mesh_node *node = &bt_mesh.nodes[i];
 
         if (addr >= node->addr &&
@@ -125,7 +124,6 @@ struct bt_mesh_node *bt_mesh_node_alloc(u16_t addr, u8_t num_elem,
 
     if (addr == BT_MESH_ADDR_UNASSIGNED) {
         addr = find_lowest_free_addr(num_elem);
-
         if (addr == BT_MESH_ADDR_UNASSIGNED) {
             return NULL;
         }
@@ -133,7 +131,7 @@ struct bt_mesh_node *bt_mesh_node_alloc(u16_t addr, u8_t num_elem,
         return NULL;
     }
 
-    for(i = 0; i < ARRAY_SIZE(bt_mesh.nodes); i++) {
+    for (i = 0; i < ARRAY_SIZE(bt_mesh.nodes); i++) {
         struct bt_mesh_node *node = &bt_mesh.nodes[i];
 
         if (node->addr == BT_MESH_ADDR_UNASSIGNED) {

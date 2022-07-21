@@ -56,7 +56,7 @@ struct ble_store_key_sec {
     /** Key by rand_num; ediv_rand_present=0 means don't key off rand_num. */
     uint64_t rand_num;
 
-    unsigned ediv_rand_present: 1;
+    unsigned ediv_rand_present : 1;
 
     /** Number of results to skip; 0 means retrieve the first match. */
     uint8_t idx;
@@ -75,16 +75,16 @@ struct ble_store_value_sec {
     uint16_t ediv;
     uint64_t rand_num;
     uint8_t ltk[16];
-    uint8_t ltk_present: 1;
+    uint8_t ltk_present : 1;
 
     uint8_t irk[16];
-    uint8_t irk_present: 1;
+    uint8_t irk_present : 1;
 
     uint8_t csrk[16];
-    uint8_t csrk_present: 1;
+    uint8_t csrk_present : 1;
 
-    unsigned authenticated: 1;
-    uint8_t sc: 1;
+    unsigned authenticated : 1;
+    uint8_t sc : 1;
 };
 
 /**
@@ -117,7 +117,7 @@ struct ble_store_value_cccd {
     ble_addr_t peer_addr;
     uint16_t chr_val_handle;
     uint16_t flags;
-    unsigned value_changed: 1;
+    unsigned value_changed : 1;
 };
 
 /**

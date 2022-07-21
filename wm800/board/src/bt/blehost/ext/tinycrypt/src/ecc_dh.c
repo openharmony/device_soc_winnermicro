@@ -102,12 +102,11 @@ int uECC_make_key(uint8_t *public_key, uint8_t *private_key, uECC_Curve curve)
     uECC_word_t _public[NUM_ECC_WORDS * 2];
     uECC_word_t tries;
 
-    for(tries = 0; tries < uECC_RNG_MAX_TRIES; ++tries) {
+    for (tries = 0; tries < uECC_RNG_MAX_TRIES; ++tries) {
         /* Generating _private uniformly at random: */
         uECC_RNG_Function rng_function = uECC_get_rng();
-
         if (!rng_function ||
-                !rng_function((uint8_t *)_random, 2 * NUM_ECC_WORDS * uECC_WORD_SIZE)) {
+                !rng_function((uint8_t *)_random, 2 * NUM_ECC_WORDS * uECC_WORD_SIZE)) { // 2:byte alignment
             return 0;
         }
 

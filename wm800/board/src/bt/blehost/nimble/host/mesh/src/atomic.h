@@ -286,8 +286,7 @@ static inline atomic_val_t atomic_nand(atomic_t *target, atomic_val_t value)
  *
  * @return 1 if the bit was set, 0 if it wasn't.
  */
-static inline int
-atomic_test_bit(const atomic_t *target, int bit)
+static inline int atomic_test_bit(const atomic_t *target, int bit)
 {
     atomic_val_t val = atomic_get(ATOMIC_ELEM(target, bit));
     return (1 & (val >> (bit & (ATOMIC_BITS - 1))));
@@ -304,8 +303,7 @@ atomic_test_bit(const atomic_t *target, int bit)
  *
  * @return 1 if the bit was set, 0 if it wasn't.
  */
-static inline int
-atomic_test_and_clear_bit(atomic_t *target, int bit)
+static inline int atomic_test_and_clear_bit(atomic_t *target, int bit)
 {
     atomic_val_t mask = ATOMIC_MASK(bit);
     atomic_val_t old;
@@ -324,8 +322,7 @@ atomic_test_and_clear_bit(atomic_t *target, int bit)
  *
  * @return 1 if the bit was set, 0 if it wasn't.
  */
-static inline int
-atomic_test_and_set_bit(atomic_t *target, int bit)
+static inline int atomic_test_and_set_bit(atomic_t *target, int bit)
 {
     atomic_val_t mask = ATOMIC_MASK(bit);
     atomic_val_t old;
@@ -344,8 +341,7 @@ atomic_test_and_set_bit(atomic_t *target, int bit)
  *
  * @return N/A
  */
-static inline void
-atomic_clear_bit(atomic_t *target, int bit)
+static inline void atomic_clear_bit(atomic_t *target, int bit)
 {
     atomic_val_t mask = ATOMIC_MASK(bit);
     atomic_and(ATOMIC_ELEM(target, bit), ~mask);
@@ -362,8 +358,7 @@ atomic_clear_bit(atomic_t *target, int bit)
  *
  * @return N/A
  */
-static inline void
-atomic_set_bit(atomic_t *target, int bit)
+static inline void atomic_set_bit(atomic_t *target, int bit)
 {
     atomic_val_t mask = ATOMIC_MASK(bit);
     atomic_or(ATOMIC_ELEM(target, bit), mask);
