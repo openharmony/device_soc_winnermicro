@@ -52,12 +52,12 @@ int tc_sha256_init(TCSha256State_t s)
     _set((uint8_t *) s, 0x00, sizeof(*s));
     s->iv[0] = 0x6a09e667;
     s->iv[1] = 0xbb67ae85;
-    s->iv[2] = 0x3c6ef372;
-    s->iv[3] = 0xa54ff53a;
-    s->iv[4] = 0x510e527f;
-    s->iv[5] = 0x9b05688c;
-    s->iv[6] = 0x1f83d9ab;
-    s->iv[7] = 0x5be0cd19;
+    s->iv[2] = 0x3c6ef372; // 2:array element
+    s->iv[3] = 0xa54ff53a; // 3:array element
+    s->iv[4] = 0x510e527f; // 4:array element
+    s->iv[5] = 0x9b05688c; // 5:array element
+    s->iv[6] = 0x1f83d9ab; // 6:array element
+    s->iv[7] = 0x5be0cd19; // 7:array element
     return TC_CRYPTO_SUCCESS;
 }
 
@@ -71,13 +71,13 @@ int tc_sha256_update(TCSha256State_t s, const uint8_t *data, size_t datalen)
         return TC_CRYPTO_SUCCESS;
     }
 
-    while(datalen-- > 0) {
+    while (datalen-- > 0) {
         s->leftover[s->leftover_offset++] = *(data++);
 
         if (s->leftover_offset >= TC_SHA256_BLOCK_SIZE) {
             compress(s->iv, s->leftover);
             s->leftover_offset = 0;
-            s->bits_hashed += (TC_SHA256_BLOCK_SIZE << 3);
+            s->bits_hashed += (TC_SHA256_BLOCK_SIZE << 3); // 3:byte alignment
         }
     }
 
@@ -94,10 +94,10 @@ int tc_sha256_final(uint8_t *digest, TCSha256State_t s)
         return TC_CRYPTO_FAIL;
     }
 
-    s->bits_hashed += (s->leftover_offset << 3);
+    s->bits_hashed += (s->leftover_offset << 3); // 3:byte alignment
     s->leftover[s->leftover_offset++] = 0x80; /* always room for one byte */
 
-    if (s->leftover_offset > (sizeof(s->leftover) - 8)) {
+    if (s->leftover_offset > (sizeof(s->leftover) - 8)) { // 8:byte alignment
         /* there is not room for all the padding in this block */
         _set(s->leftover + s->leftover_offset, 0x00,
              sizeof(s->leftover) - s->leftover_offset);
@@ -107,24 +107,24 @@ int tc_sha256_final(uint8_t *digest, TCSha256State_t s)
 
     /* add the padding and the length in big-Endian format */
     _set(s->leftover + s->leftover_offset, 0x00,
-         sizeof(s->leftover) - 8 - s->leftover_offset);
+         sizeof(s->leftover) - 8 - s->leftover_offset); // 8:byte alignment
     s->leftover[sizeof(s->leftover) - 1] = (uint8_t)(s->bits_hashed);
-    s->leftover[sizeof(s->leftover) - 2] = (uint8_t)(s->bits_hashed >> 8);
-    s->leftover[sizeof(s->leftover) - 3] = (uint8_t)(s->bits_hashed >> 16);
-    s->leftover[sizeof(s->leftover) - 4] = (uint8_t)(s->bits_hashed >> 24);
-    s->leftover[sizeof(s->leftover) - 5] = (uint8_t)(s->bits_hashed >> 32);
-    s->leftover[sizeof(s->leftover) - 6] = (uint8_t)(s->bits_hashed >> 40);
-    s->leftover[sizeof(s->leftover) - 7] = (uint8_t)(s->bits_hashed >> 48);
-    s->leftover[sizeof(s->leftover) - 8] = (uint8_t)(s->bits_hashed >> 56);
+    s->leftover[sizeof(s->leftover) - 2] = (uint8_t)(s->bits_hashed >> 8); // 2:byte alignment, 8:byte alignment
+    s->leftover[sizeof(s->leftover) - 3] = (uint8_t)(s->bits_hashed >> 16); // 3:byte alignment, 16:byte alignment
+    s->leftover[sizeof(s->leftover) - 4] = (uint8_t)(s->bits_hashed >> 24); // 4:byte alignment, 24:byte alignment
+    s->leftover[sizeof(s->leftover) - 5] = (uint8_t)(s->bits_hashed >> 32); // 5:byte alignment, 32:byte alignment
+    s->leftover[sizeof(s->leftover) - 6] = (uint8_t)(s->bits_hashed >> 40); // 6:byte alignment, 40:byte alignment
+    s->leftover[sizeof(s->leftover) - 7] = (uint8_t)(s->bits_hashed >> 48); // 7:byte alignment, 48:byte alignment
+    s->leftover[sizeof(s->leftover) - 8] = (uint8_t)(s->bits_hashed >> 56); // 8:byte alignment, 56:byte alignment
     /* hash the padding and length */
     compress(s->iv, s->leftover);
 
     /* copy the iv out to digest */
-    for(i = 0; i < TC_SHA256_STATE_BLOCKS; ++i) {
+    for (i = 0; i < TC_SHA256_STATE_BLOCKS; ++i) {
         unsigned int t = *((unsigned int *) &s->iv[i]);
-        *digest++ = (uint8_t)(t >> 24);
-        *digest++ = (uint8_t)(t >> 16);
-        *digest++ = (uint8_t)(t >> 8);
+        *digest++ = (uint8_t)(t >> 24); // 24:byte alignment
+        *digest++ = (uint8_t)(t >> 16); // 16:byte alignment
+        *digest++ = (uint8_t)(t >> 8); // 8:byte alignment
         *digest++ = (uint8_t)(t);
     }
 
@@ -138,7 +138,7 @@ int tc_sha256_final(uint8_t *digest, TCSha256State_t s)
  * These values correspond to the first 32 bits of the fractional parts of the
  * cube roots of the first 64 primes between 2 and 311.
  */
-static const unsigned int k256[64] = {
+static const unsigned int k256[64] = { // 64:array length
     0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1,
     0x923f82a4, 0xab1c5ed5, 0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3,
     0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174, 0xe49b69c1, 0xefbe4786,
@@ -154,7 +154,7 @@ static const unsigned int k256[64] = {
 
 static inline unsigned int ROTR(unsigned int a, unsigned int n)
 {
-    return (((a) >> n) | ((a) << (32 - n)));
+    return (((a) >> n) | ((a) << (32 - n))); // 32:byte alignment
 }
 
 #define Sigma0(a)(ROTR((a), 2) ^ ROTR((a), 13) ^ ROTR((a), 22))
@@ -168,9 +168,9 @@ static inline unsigned int ROTR(unsigned int a, unsigned int n)
 static inline unsigned int BigEndian(const uint8_t **c)
 {
     unsigned int n = 0;
-    n = (((unsigned int)(*((*c)++))) << 24);
-    n |= ((unsigned int)(*((*c)++)) << 16);
-    n |= ((unsigned int)(*((*c)++)) << 8);
+    n = (((unsigned int)(*((*c)++))) << 24); // 24:byte alignment
+    n |= ((unsigned int)(*((*c)++)) << 16); // 16:byte alignment
+    n |= ((unsigned int)(*((*c)++)) << 8); // 8:byte alignment
     n |= ((unsigned int)(*((*c)++)));
     return n;
 }
@@ -183,14 +183,14 @@ static void compress(unsigned int *iv, const uint8_t *data)
     unsigned int i;
     a = iv[0];
     b = iv[1];
-    c = iv[2];
-    d = iv[3];
-    e = iv[4];
-    f = iv[5];
-    g = iv[6];
-    h = iv[7];
+    c = iv[2]; // 2:array element
+    d = iv[3]; // 3:array element
+    e = iv[4]; // 4:array element
+    f = iv[5]; // 5:array element
+    g = iv[6]; // 6:array element
+    h = iv[7]; // 7:array element
     
-    for(i = 0; i < 16; ++i) {
+    for (i = 0; i < 16; ++i) { // 16:loop cap
         unsigned int n = BigEndian(&data);
         t1 = work_space[i] = n;
         t1 += h + Sigma1(e) + Ch(e, f, g) + k256[i];
@@ -205,13 +205,13 @@ static void compress(unsigned int *iv, const uint8_t *data)
         a = t1 + t2;
     }
 
-    for(; i < 64; ++i) {
+    for (; i < 64; ++i) { // 64:loop cap
         unsigned int s0, s1;
         s0 = work_space[(i + 1) & 0x0f];
         s0 = sigma0(s0);
-        s1 = work_space[(i + 14) & 0x0f];
+        s1 = work_space[(i + 14) & 0x0f]; // 14:array element
         s1 = sigma1(s1);
-        t1 = work_space[i & 0xf] += s0 + s1 + work_space[(i + 9) & 0xf];
+        t1 = work_space[i & 0xf] += s0 + s1 + work_space[(i + 9) & 0xf]; // 9:array element
         t1 += h + Sigma1(e) + Ch(e, f, g) + k256[i];
         t2 = Sigma0(a) + Maj(a, b, c);
         h = g;
@@ -226,10 +226,10 @@ static void compress(unsigned int *iv, const uint8_t *data)
 
     iv[0] += a;
     iv[1] += b;
-    iv[2] += c;
-    iv[3] += d;
-    iv[4] += e;
-    iv[5] += f;
-    iv[6] += g;
-    iv[7] += h;
+    iv[2] += c; // 2:array element
+    iv[3] += d; // 3:array element
+    iv[4] += e; // 4:array element
+    iv[5] += f; // 5:array element
+    iv[6] += g; // 6:array element
+    iv[7] += h; // 7:array element
 }

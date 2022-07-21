@@ -5,8 +5,6 @@
  */
 
 #include <stddef.h>
-
-// #include "console/console.h"
 #include "mesh/testing.h"
 #include "mesh/slist.h"
 #include "mesh/glue.h"
@@ -112,9 +110,9 @@ void bt_test_print_credentials(void)
     struct bt_mesh_subnet *sub;
     struct bt_mesh_app_key *app_key;
     printf("IV Index: %08lx\n", (long) bt_mesh.iv_index);
-    printf("Dev key: %s\n", bt_hex(bt_mesh.dev_key, 16));
+    printf("Dev key: %s\n", bt_hex(bt_mesh.dev_key, 16)); // 16:len
 
-    for(i = 0; i < MYNEWT_VAL(BLE_MESH_SUBNET_COUNT); ++i) {
+    for (i = 0; i < MYNEWT_VAL(BLE_MESH_SUBNET_COUNT); ++i) {
         if (bt_mesh.app_keys[i].net_idx == BT_MESH_KEY_UNUSED) {
             continue;
         }
@@ -124,10 +122,10 @@ void bt_test_print_credentials(void)
         printf("\tNetKeyIdx: %04x\n",
                sub->net_idx);
         printf("\tNetKey: %s\n",
-               bt_hex(sub->keys[sub->kr_flag].net, 16));
+               bt_hex(sub->keys[sub->kr_flag].net, 16)); // 16:len
     }
 
-    for(i = 0; i < MYNEWT_VAL(BLE_MESH_APP_KEY_COUNT); ++i) {
+    for (i = 0; i < MYNEWT_VAL(BLE_MESH_APP_KEY_COUNT); ++i) {
         if (bt_mesh.app_keys[i].net_idx == BT_MESH_KEY_UNUSED) {
             continue;
         }
@@ -140,16 +138,16 @@ void bt_test_print_credentials(void)
         printf("\tAppKeyIdx: %04x\n",
                app_key->app_idx);
         printf("\tAppKey: %s\n",
-               bt_hex(app_key->keys[sub->kr_flag].val, 16));
+               bt_hex(app_key->keys[sub->kr_flag].val, 16)); // 16:len
     }
 
-    for(i = 0; i < MYNEWT_VAL(BLE_MESH_SUBNET_COUNT); ++i) {
+    for (i = 0; i < MYNEWT_VAL(BLE_MESH_SUBNET_COUNT); ++i) {
         if (bt_mesh.sub[i].net_idx == BT_MESH_KEY_UNUSED) {
             continue;
         }
 
         if (friend_cred_get(&bt_mesh.sub[i], BT_MESH_ADDR_UNASSIGNED,
-                           &nid, &enc, &priv)) {
+            &nid, &enc, &priv)) {
             return;
         }
 
@@ -158,9 +156,9 @@ void bt_test_print_credentials(void)
                bt_mesh.sub[i].net_idx);
         printf("\tNID: %02x\n", nid);
         printf("\tEncKey: %s\n",
-               bt_hex(enc, 16));
+               bt_hex(enc, 16)); // 16:len
         printf("\tPrivKey: %s\n",
-               bt_hex(priv, 16));
+               bt_hex(priv, 16)); // 16:len
     }
 }
 
@@ -177,7 +175,6 @@ int bt_test_bind_app_key_to_model(struct bt_mesh_model *model, u16_t key_idx, u1
 {
     struct bt_mesh_model *found_model;
     found_model = bt_mesh_model_find(bt_mesh_model_elem(model), id);
-
     if (!found_model) {
         return STATUS_INVALID_MODEL;
     }

@@ -43,13 +43,13 @@ int tc_cbc_mode_encrypt(uint8_t *out, unsigned int outlen, const uint8_t *in,
 
     /* input sanity check: */
     if (out == (uint8_t *) 0 ||
-            in == (const uint8_t *) 0 ||
-            sched == (TCAesKeySched_t) 0 ||
-            inlen == 0 ||
-            outlen == 0 ||
-            (inlen % TC_AES_BLOCK_SIZE) != 0 ||
-            (outlen % TC_AES_BLOCK_SIZE) != 0 ||
-            outlen != inlen + TC_AES_BLOCK_SIZE) {
+        in == (const uint8_t *) 0 ||
+        sched == (TCAesKeySched_t) 0 ||
+        inlen == 0 ||
+        outlen == 0 ||
+        (inlen % TC_AES_BLOCK_SIZE) != 0 ||
+        (outlen % TC_AES_BLOCK_SIZE) != 0 ||
+        outlen != inlen + TC_AES_BLOCK_SIZE) {
         return TC_CRYPTO_FAIL;
     }
 
@@ -59,7 +59,7 @@ int tc_cbc_mode_encrypt(uint8_t *out, unsigned int outlen, const uint8_t *in,
     (void)_copy(out, TC_AES_BLOCK_SIZE, iv, TC_AES_BLOCK_SIZE);
     out += TC_AES_BLOCK_SIZE;
 
-    for(n = m = 0; n < inlen; ++n) {
+    for (n = m = 0; n < inlen; ++n) {
         buffer[m++] ^= *in++;
 
         if (m == TC_AES_BLOCK_SIZE) {
@@ -70,7 +70,6 @@ int tc_cbc_mode_encrypt(uint8_t *out, unsigned int outlen, const uint8_t *in,
             m = 0;
         }
     }
-
     return TC_CRYPTO_SUCCESS;
 }
 
@@ -84,13 +83,13 @@ int tc_cbc_mode_decrypt(uint8_t *out, unsigned int outlen, const uint8_t *in,
 
     /* sanity check the inputs */
     if (out == (uint8_t *) 0 ||
-            in == (const uint8_t *) 0 ||
-            sched == (TCAesKeySched_t) 0 ||
-            inlen == 0 ||
-            outlen == 0 ||
-            (inlen % TC_AES_BLOCK_SIZE) != 0 ||
-            (outlen % TC_AES_BLOCK_SIZE) != 0 ||
-            outlen != inlen - TC_AES_BLOCK_SIZE) {
+        in == (const uint8_t *) 0 ||
+        sched == (TCAesKeySched_t) 0 ||
+        inlen == 0 ||
+        outlen == 0 ||
+        (inlen % TC_AES_BLOCK_SIZE) != 0 ||
+        (outlen % TC_AES_BLOCK_SIZE) != 0 ||
+        outlen != inlen - TC_AES_BLOCK_SIZE) {
         return TC_CRYPTO_FAIL;
     }
 
@@ -101,7 +100,7 @@ int tc_cbc_mode_decrypt(uint8_t *out, unsigned int outlen, const uint8_t *in,
      */
     p = iv;
 
-    for(n = m = 0; n < inlen; ++n) {
+    for (n = m = 0; n < inlen; ++n) {
         if ((n % TC_AES_BLOCK_SIZE) == 0) {
             (void)tc_aes_decrypt(buffer, in, sched);
             in += TC_AES_BLOCK_SIZE;

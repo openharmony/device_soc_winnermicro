@@ -54,8 +54,8 @@ extern u8_t g_mesh_addr_type;
 static int adv_initialized = false;
 
 static os_membuf_t adv_buf_mem[OS_MEMPOOL_SIZE(
-        MYNEWT_VAL(BLE_MESH_ADV_BUF_COUNT),
-        BT_MESH_ADV_DATA_SIZE + BT_MESH_MBUF_HEADER_SIZE)];
+    MYNEWT_VAL(BLE_MESH_ADV_BUF_COUNT),
+    BT_MESH_ADV_DATA_SIZE + BT_MESH_MBUF_HEADER_SIZE)];
 
 struct os_mbuf_pool adv_os_mbuf_pool;
 static struct os_mempool adv_buf_mempool;
@@ -103,11 +103,11 @@ static inline void adv_send(struct os_mbuf *buf)
                   BT_MESH_TRANSMIT_INT(BT_MESH_ADV(buf)->xmit));
 #if MYNEWT_VAL(BLE_CONTROLLER)
     duration = ((BT_MESH_TRANSMIT_COUNT(BT_MESH_ADV(buf)->xmit) + 1) *
-                (adv_int + 10));
+                (adv_int + 10)); // 10:byte alignment
 #else
     duration = (MESH_SCAN_WINDOW_MS +
                 ((BT_MESH_TRANSMIT_COUNT(BT_MESH_ADV(buf)->xmit) + 1) *
-                 (adv_int + 10)));
+                 (adv_int + 10))); // 10:byte alignment
 #endif
     BT_DBG("type %u om_len %u: %s", BT_MESH_ADV(buf)->type,
            buf->om_len, bt_hex(buf->om_data, buf->om_len));
@@ -142,8 +142,7 @@ static inline void adv_send(struct os_mbuf *buf)
     BT_DBG("Advertising stopped");
 }
 
-void
-mesh_adv_thread(void *args)
+void mesh_adv_thread(void *args)
 {
     struct os_mbuf *buf;
 #if (MYNEWT_VAL(BLE_MESH_PROXY))
@@ -151,16 +150,14 @@ mesh_adv_thread(void *args)
 #endif
     BT_DBG("started");
 
-    while(1) {
+    while (1) {
         static struct ble_npl_event *ev;
 #if (MYNEWT_VAL(BLE_MESH_PROXY))
         ev = ble_npl_eventq_get(&adv_queue, 0);
 
-        while(!ev) {
+        while (!ev) {
             timeout = bt_mesh_proxy_adv_start();
             BT_DBG("Proxy Advertising up to %d ms", (int) timeout);
-
-            // FIXME: should we redefine K_SECONDS macro instead in glue?
             if (timeout != K_FOREVER) {
                 timeout = ble_npl_time_ms_to_ticks32(timeout);
             }
@@ -168,17 +165,14 @@ mesh_adv_thread(void *args)
             ev = ble_npl_eventq_get(&adv_queue, timeout);
             bt_mesh_proxy_adv_stop();
         }
-
 #else
         ev = ble_npl_eventq_get(&adv_queue, BLE_NPL_TIME_FOREVER);
 #endif
-
         if (!ev || !ble_npl_event_get_arg(ev)) {
             continue;
         }
 
         buf = ble_npl_event_get_arg(ev);
-
         /* busy == 0 means this was canceled */
         if (BT_MESH_ADV(buf)->busy) {
             BT_MESH_ADV(buf)->busy = 0;
@@ -186,8 +180,6 @@ mesh_adv_thread(void *args)
         } else {
             net_buf_unref(buf);
         }
-
-        /* os_sched(NULL); */
     }
 }
 
@@ -199,9 +191,9 @@ void bt_mesh_adv_update(void)
 }
 
 struct os_mbuf *bt_mesh_adv_create_from_pool(struct os_mbuf_pool *pool,
-        bt_mesh_adv_alloc_t get_id,
-        enum bt_mesh_adv_type type,
-        u8_t xmit, s32_t timeout)
+    bt_mesh_adv_alloc_t get_id,
+    enum bt_mesh_adv_type type,
+    u8_t xmit, s32_t timeout)
 {
     struct bt_mesh_adv *adv;
     struct os_mbuf *buf;
@@ -216,7 +208,6 @@ struct os_mbuf *bt_mesh_adv_create_from_pool(struct os_mbuf_pool *pool,
     if (!buf) {
         return NULL;
     }
-
     adv = get_id(net_buf_id(buf));
     BT_MESH_ADV(buf) = adv;
     memset(adv, 0, sizeof(*adv));
@@ -256,7 +247,7 @@ static void bt_mesh_scan_cb(const bt_addr_le_t *addr, s8_t rssi,
     BT_DBG("len %u: %s", buf->om_len, bt_hex(buf->om_data, buf->om_len));
 #endif
 
-    while(buf->om_len > 1) {
+    while (buf->om_len > 1) {
         struct net_buf_simple_state state;
         u8_t len, type;
         len = net_buf_simple_pull_u8(buf);
@@ -265,7 +256,6 @@ static void bt_mesh_scan_cb(const bt_addr_le_t *addr, s8_t rssi,
         if (len == 0) {
             return;
         }
-
         if (len > buf->om_len) {
             BT_WARN("AD malformed");
             return;
@@ -274,7 +264,7 @@ static void bt_mesh_scan_cb(const bt_addr_le_t *addr, s8_t rssi,
         net_buf_simple_save(buf, &state);
         type = net_buf_simple_pull_u8(buf);
 
-        switch(type) {
+        switch (type) {
             case BLE_HS_ADV_TYPE_MESH_MESSAGE:
                 bt_mesh_net_recv(buf, rssi, BT_MESH_NET_IF_ADV);
                 break;
@@ -331,8 +321,7 @@ void bt_mesh_adv_init(void)
     adv_initialized = true;
 }
 
-int
-ble_adv_gap_mesh_cb(struct ble_gap_event *event, void *arg)
+int ble_adv_gap_mesh_cb(struct ble_gap_event *event, void *arg)
 {
 #if MYNEWT_VAL(BLE_EXT_ADV)
     struct ble_gap_ext_disc_desc *ext_desc;
@@ -343,13 +332,12 @@ ble_adv_gap_mesh_cb(struct ble_gap_event *event, void *arg)
     BT_DBG("event->type %d", event->type);
 #endif
 
-    switch(event->type) {
+    switch (event->type) {
 #if MYNEWT_VAL(BLE_EXT_ADV)
 
         case BLE_GAP_EVENT_EXT_DISC:
             ext_desc = &event->ext_disc;
             buf = os_mbuf_get_pkthdr(&adv_os_mbuf_pool, 0);
-
             if (!buf || os_mbuf_append(buf, ext_desc->data, ext_desc->length_data)) {
                 BT_ERR("Could not append data");
                 goto done;
@@ -363,7 +351,6 @@ ble_adv_gap_mesh_cb(struct ble_gap_event *event, void *arg)
         case BLE_GAP_EVENT_DISC:
             desc = &event->disc;
             buf = os_mbuf_get_pkthdr(&adv_os_mbuf_pool, 0);
-
             if (!buf || os_mbuf_append(buf, desc->data, desc->length_data)) {
                 BT_ERR("Could not append data");
                 goto done;
@@ -375,13 +362,11 @@ ble_adv_gap_mesh_cb(struct ble_gap_event *event, void *arg)
         default:
             break;
     }
-
 done:
 
     if (buf) {
         os_mbuf_free_chain(buf);
     }
-
     return 0;
 }
 
@@ -399,18 +384,16 @@ int bt_mesh_scan_enable(void)
 #else
     struct ble_gap_disc_params scan_param = {
         .passive = 1, .filter_duplicates = 0, .itvl =
-        MESH_SCAN_INTERVAL, .window = MESH_SCAN_WINDOW
+            MESH_SCAN_INTERVAL, .window = MESH_SCAN_WINDOW
     };
     BT_DBG("");
     err =  ble_gap_disc(g_mesh_addr_type, BLE_HS_FOREVER, &scan_param,
                         NULL, NULL);
 #endif
-
     if (err && err != BLE_HS_EALREADY) {
         BT_ERR("starting scan failed (err %d)", err);
         return err;
     }
-
     return 0;
 }
 
@@ -419,7 +402,6 @@ int bt_mesh_scan_disable(void)
     int err;
     BT_DBG("");
     err = ble_gap_disc_cancel();
-
     if (err && err != BLE_HS_EALREADY) {
         BT_ERR("stopping scan failed (err %d)", err);
         return err;

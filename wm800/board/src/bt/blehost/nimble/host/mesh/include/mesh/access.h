@@ -178,7 +178,7 @@ struct bt_mesh_model_op {
                   { BT_MESH_MODEL_OP_END })
 
 /** Helper to define an empty model array */
-#define BT_MESH_MODEL_NONE ((struct bt_mesh_model []){})
+#define BT_MESH_MODEL_NONE ((struct bt_mesh_model []) {})
 
 /** Length of a short Mesh MIC. */
 #define BT_MESH_MIC_SHORT 4
@@ -380,10 +380,10 @@ struct bt_mesh_model_pub {
     u8_t  ttl;          /**< Publish Time to Live. */
     u8_t  retransmit;   /**< Retransmit Count & Interval Steps. */
     u8_t  period;       /**< Publish Period. */
-    u8_t  period_div: 4, /**< Divisor for the Period. */
-          cred: 1,      /**< Friendship Credentials Flag. */
-          fast_period: 1, /**< Use FastPeriodDivisor */
-          count: 3;     /**< Retransmissions left. */
+    u8_t  period_div : 4, /**< Divisor for the Period. */
+          cred : 1,      /**< Friendship Credentials Flag. */
+          fast_period : 1, /**< Use FastPeriodDivisor */
+          count : 3;     /**< Retransmissions left. */
 
     u32_t period_start; /**< Start of the current period. */
 

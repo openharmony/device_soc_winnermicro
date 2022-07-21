@@ -178,7 +178,7 @@ int tc_hmac_prng_generate(uint8_t *out, unsigned int outlen, TCHmacPrng_t prng)
 
     prng->countdown--;
 
-    while(outlen != 0) {
+    while (outlen != 0) {
         /* operate HMAC in OFB mode to create "random" outputs */
         (void)tc_hmac_init(&prng->h);
         (void)tc_hmac_update(&prng->h, prng->v, sizeof(prng->v));
