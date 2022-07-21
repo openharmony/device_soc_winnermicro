@@ -46,8 +46,7 @@ void tls_sys_clk_set(u32 clk)
     u8 wlanDiv, cpuDiv = clk;
     u8 bus2Fac;
 
-    if ((clk < 2) || (clk > 240))
-    {
+    if ((clk < 2) || (clk > 240)) {
         return;
     }
 
@@ -55,13 +54,10 @@ void tls_sys_clk_set(u32 clk)
     wlanDiv = (RegValue>>8)&0xFF;
     RegValue &= 0xFF000000;
     RegValue |= 0x80000000;
-    if (cpuDiv > 12)
-    {
+    if (cpuDiv > 12) {
         bus2Fac = 1;
         wlanDiv = cpuDiv/4;
-    }
-    else  /*wlan can run*/
-    {
+    } else { /* wlan can run */
         wlanDiv=3;
         bus2Fac = (wlanDiv*4/cpuDiv)&0xFF;
     }

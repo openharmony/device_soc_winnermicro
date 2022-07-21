@@ -119,8 +119,7 @@ static int16 pstm_get_bit (hstm_int *a, int16 idx)
     int16 n = idx / DIGIT_BIT;
     int16 m = idx % DIGIT_BIT;
 
-    if (a->used <= 0)
-    {
+    if (a->used <= 0) {
         return 0;
     }
 
@@ -132,10 +131,10 @@ u32 Reflect(u32 ref, u8 ch)
 {
     int i;
     u32 value = 0;
-    for( i = 1; i < ( ch + 1 ); i++ )
+    for(i = 1; i < (ch + 1); i++)
     {
-        if ( ref & 1 )
-            value |= 1 << ( ch - i );
+        if (ref & 1)
+            value |= 1 << (ch - i);
         ref >>= 1;
     }
     return value;
@@ -143,34 +142,29 @@ u32 Reflect(u32 ref, u8 ch)
 #ifndef CONFIG_KERNEL_NONE
 void tls_crypto_sem_lock(void)
 {
-    if (g_crypto_ctx.gpsec_lock == NULL)
-    {
+    if (g_crypto_ctx.gpsec_lock == NULL) {
         return;
     }
     tls_os_sem_acquire(g_crypto_ctx.gpsec_lock, 0);
 }
 void tls_crypto_sem_unlock(void)
 {
-    if (g_crypto_ctx.gpsec_lock == NULL)
-    {
+    if (g_crypto_ctx.gpsec_lock == NULL) {
         return;
     }
     tls_os_sem_release(g_crypto_ctx.gpsec_lock);
 }
 #else
-#define         tls_crypto_sem_lock    
-#define         tls_crypto_sem_unlock    
+#define         tls_crypto_sem_lock
+#define         tls_crypto_sem_unlock
 #endif
 void tls_crypto_set_key(void *key, int keylen)
 {
     uint32_t *key32 = (uint32_t *)key;
     int i = 0;
-    for(i = 0; i < keylen / 4 && i < 6; i++)
-    {
+    for (i = 0; i < keylen / 4 && i < 6; i++) {
         M32(HR_CRYPTO_KEY0 + (4 * i)) = key32[i];
-    }
-    if (keylen == 32)
-    {
+    } if (keylen == 32) {
         M32(HR_CRYPTO_KEY6) = key32[6];
         M32(HR_CRYPTO_KEY7) = key32[7];
     }
@@ -179,13 +173,11 @@ void tls_crypto_set_iv(void *iv, int ivlen)
 {
     uint32_t *IV32 = (uint32_t *)iv;
 
-    if (ivlen >= 8)
-    {
+    if (ivlen >= 8) {
         M32(HR_CRYPTO_IV0) = IV32[0];
         M32(HR_CRYPTO_IV0 + 4) = IV32[1];
     }
-    if (ivlen == 16)
-    {
+    if (ivlen == 16) {
         M32(HR_CRYPTO_IV1) = IV32[2];
         M32(HR_CRYPTO_IV1 + 4) = IV32[3];
     }
@@ -241,7 +233,7 @@ int tls_crypto_random_init(u32 seed, CRYPTO_RNG_SWITCH rng_switch)
     unsigned int sec_cfg;
     unsigned int cpu_sr;
     tls_crypto_sem_lock();
-    tls_open_peripheral_clock(TLS_PERIPHERAL_TYPE_GPSEC);    
+    tls_open_peripheral_clock(TLS_PERIPHERAL_TYPE_GPSEC);
 #if USE_TRNG
     sec_cfg = (1 << TRNG_INT_MASK) | (4 << TRNG_CP) | (1 << TRNG_SEL) | (1 << TRNG_EN);
     sec_cfg &= ~(1 << TRNG_INT_MASK);
@@ -280,11 +272,9 @@ int tls_crypto_random_bytes(unsigned char *out, u32 len)
     val = tls_reg_read32(HR_CRYPTO_SEC_CFG);
     randomBytes = val & (1 << RNG_SWITCH) ? 4 : 2;
 #endif
-    while(inLen > 0)
-    {
+    while (inLen > 0) {
 #if USE_TRNG
-        while (TRUE)
-        {
+        while (TRUE) {
             cpu_sr = tls_os_set_critical();
             if (g_crypto_ctx.gpsec_complete)
                 break;
@@ -294,14 +284,11 @@ int tls_crypto_random_bytes(unsigned char *out, u32 len)
         tls_os_release_critical(cpu_sr);
 #endif
         val = tls_reg_read32(HR_CRYPTO_RNG_RESULT);
-        if (inLen >= randomBytes)
-        {
+        if (inLen >= randomBytes) {
             memcpy(out, (char *)&val, randomBytes);
             out += randomBytes;
             inLen -= randomBytes;
-        }
-        else
-        {
+        } else {
         // printf("val 0x%x, inlen %d\n", val, inLen);
             memcpy(out, (char *)&val, inLen);
             inLen = 0;
@@ -325,11 +312,11 @@ int tls_crypto_trng(unsigned char *out, u32 len)
 {
     unsigned int sec_cfg, val;
     unsigned int cpu_sr;
-    uint32 inLen = len;    
+    uint32 inLen = len;
     int randomBytes = 4;
 
-    tls_crypto_sem_lock();    
-    tls_open_peripheral_clock(TLS_PERIPHERAL_TYPE_GPSEC);    
+    tls_crypto_sem_lock();
+    tls_open_peripheral_clock(TLS_PERIPHERAL_TYPE_GPSEC);
     sec_cfg = (1 << TRNG_INT_MASK) | (4 << TRNG_CP) | (1 << TRNG_SEL) | (1 << TRNG_EN);
     sec_cfg &= ~(1 << TRNG_INT_MASK);
     cpu_sr = tls_os_set_critical();
@@ -337,10 +324,8 @@ int tls_crypto_trng(unsigned char *out, u32 len)
     tls_os_release_critical(cpu_sr);
     tls_reg_write32(HR_CRYPTO_TRNG_CR, sec_cfg);
     delay_cnt(1000);
-    while(inLen > 0)
-    {
-        while (TRUE)
-        {
+    while(inLen > 0) {
+        while (TRUE) {
             cpu_sr = tls_os_set_critical();
             if (g_crypto_ctx.gpsec_complete)
                 break;
@@ -349,14 +334,11 @@ int tls_crypto_trng(unsigned char *out, u32 len)
         g_crypto_ctx.gpsec_complete = 0;
         tls_os_release_critical(cpu_sr);
         val = tls_reg_read32(HR_CRYPTO_RNG_RESULT);
-        if (inLen >= randomBytes)
-        {
+        if (inLen >= randomBytes) {
             memcpy(out, (char *)&val, randomBytes);
             out += randomBytes;
             inLen -= randomBytes;
-        }
-        else
-        {
+        } else {
             memcpy(out, (char *)&val, inLen);
             inLen = 0;
         }
@@ -364,7 +346,7 @@ int tls_crypto_trng(unsigned char *out, u32 len)
 
     tls_reg_write32(HR_CRYPTO_TRNG_CR, 0x40);
     tls_close_peripheral_clock(TLS_PERIPHERAL_TYPE_GPSEC);
-    tls_crypto_sem_unlock();    
+    tls_crypto_sem_unlock();
     return ERR_CRY_OK;
 }
 
@@ -373,7 +355,7 @@ int tls_crypto_random_bytes_range(unsigned char *out, u32 len, u32 range)
     unsigned int val, i;
 
     val = tls_reg_read32(HR_CRYPTO_SEC_CFG);
-    for(i = 0; i< len; i++) {
+    for (i = 0; i< len; i++) {
         val =  tls_reg_read32(HR_CRYPTO_RNG_RESULT);
         out[i] = val % range;
         // printf("rand val:%d, val:%d\r\n", val, out[i]);
@@ -398,8 +380,7 @@ int tls_crypto_random_bytes_range(unsigned char *out, u32 len, u32 range)
  */
 int tls_crypto_rc4_init(psCipherContext_t *ctx, const unsigned char *key, u32 keylen)
 {
-    if (keylen != 16 && keylen != 32)
-    {
+    if (keylen != 16 && keylen != 32) {
         return ERR_FAILURE;
     }
     memcpy(ctx->arc4.state, key, keylen);
@@ -409,13 +390,15 @@ int tls_crypto_rc4_init(psCipherContext_t *ctx, const unsigned char *key, u32 ke
 
 /**
  * @brief              This function encrypts a variable length data stream according to RC4.
- *                The RC4 algorithm it generates a "keystream" which is simply XORed with the plaintext to produce the ciphertext stream.
- *                Decryption is exactly the same as encryption. This function also decrypts a variable length data stream according to RC4.
+ *                The RC4 algorithm it generates a "keystream"
+ *                which is simply XORed with the plaintext to produce the ciphertext stream.
+ *                Decryption is exactly the same as encryption.
+ *                This function also decrypts a variable length data stream according to RC4.
  *
- * @param[in]       ctx         Pointer to the Cipher Context.
- * @param[in]       in         Pointer to the input plaintext data stream(or the encrypted text data stream) of variable length.
- * @param[in]       out         Pointer to the resulting ciphertext data stream.
- * @param[in]        len         Length of the plaintext data stream in octets.
+ * @param[in]  ctx    Pointer to the Cipher Context.
+ * @param[in]  in    Pointer to the input plaintext data stream(or the encrypted text data stream) of variable length.
+ * @param[in]  out    Pointer to the resulting ciphertext data stream.
+ * @param[in]   len    Length of the plaintext data stream in octets.
  *
  * @retval          0          success
  * @retval          other       failed
@@ -433,17 +416,14 @@ int tls_crypto_rc4(psCipherContext_t *ctx, unsigned char *in, unsigned char *out
     tls_reg_write32(HR_CRYPTO_SRC_ADDR, (unsigned int)in);
     tls_reg_write32(HR_CRYPTO_DEST_ADDR, (unsigned int)out);
     sec_cfg = (CRYPTO_METHOD_RC4 << 16) | (1 << SOFT_RESET_RC4) | (len & 0xFFFF);
-    if (keylen == 32)
-    {
+    if (keylen == 32) {
         sec_cfg |= (1 << 31);
     }
     tls_reg_write32(HR_CRYPTO_SEC_CFG, sec_cfg);
     CRYPTO_LOG("[%d]:rc4[%d] start\n", sys_count, len);
     g_crypto_ctx.gpsec_complete = 0;
     tls_reg_write32(HR_CRYPTO_SEC_CTRL, 0x1);// start crypto
-    while (!g_crypto_ctx.gpsec_complete)
-    {
-
+    while (!g_crypto_ctx.gpsec_complete) {
     }
     g_crypto_ctx.gpsec_complete = 0;
     CRYPTO_LOG("[%d]:rc4 end status: %x\n", sys_count, tls_reg_read32(HR_CRYPTO_SEC_STS));
@@ -453,7 +433,8 @@ int tls_crypto_rc4(psCipherContext_t *ctx, unsigned char *in, unsigned char *out
 }
 
 /**
- * @brief              This function initializes a AES encryption algorithm,  i.e. fills the psCipherContext_t structure pointed to by ctx with necessary data.
+ * @brief              This function initializes a AES encryption algorithm,
+ *                     i.e. fills the psCipherContext_t structure pointed to by ctx with necessary data.
  *
  * @param[in]       ctx         Pointer to the Cipher Context.
  * @param[in]       IV         Pointer to the Initialization Vector
@@ -466,7 +447,8 @@ int tls_crypto_rc4(psCipherContext_t *ctx, unsigned char *in, unsigned char *out
  *
  * @note                 None
  */
-int tls_crypto_aes_init(psCipherContext_t *ctx, const unsigned char *IV, const unsigned char *key, u32 keylen, CRYPTO_MODE cbc)
+int tls_crypto_aes_init(psCipherContext_t *ctx, const unsigned char *IV,
+                        const unsigned char *key, u32 keylen, CRYPTO_MODE cbc)
 {
     if (keylen != 16)
         return ERR_FAILURE;
@@ -474,10 +456,8 @@ int tls_crypto_aes_init(psCipherContext_t *ctx, const unsigned char *IV, const u
     memcpy(ctx->aes.key.skey, key, keylen);
     ctx->aes.key.type = cbc;
     ctx->aes.key.rounds = 16;
-    if (IV)
-    {
-        for (int x = 0; x < ctx->aes.key.rounds; x++)
-        {
+    if (IV) {
+        for (int x = 0; x < ctx->aes.key.rounds; x++) {
             ctx->aes.IV[x] = IV[x];
         }
     }
@@ -487,18 +467,19 @@ int tls_crypto_aes_init(psCipherContext_t *ctx, const unsigned char *IV, const u
 /**
  * @brief            This function encrypts or decrypts a variable length data stream according to AES.
  *
- * @param[in]        ctx         Pointer to the Cipher Context.
- * @param[in]        in         Pointer to the input plaintext data stream(or the encrypted text data stream) of variable length.
- * @param[in]        out         Pointer to the resulting ciphertext data stream.
- * @param[in]        len         Length of the plaintext data stream in octets.
- * @param[in]        dec         The cryption way which indicates encryption or decryption.
+ * @param[in]   ctx    Pointer to the Cipher Context.
+ * @param[in]   in    Pointer to the input plaintext data stream(or the encrypted text data stream) of variable length.
+ * @param[in]   out    Pointer to the resulting ciphertext data stream.
+ * @param[in]   len    Length of the plaintext data stream in octets.
+ * @param[in]   dec    The cryption way which indicates encryption or decryption.
  *
  * @retval        0          success
  * @retval        other    failed
  *
  * @note            None
  */
-int tls_crypto_aes_encrypt_decrypt(psCipherContext_t *ctx, unsigned char *in, unsigned char *out, u32 len, CRYPTO_WAY dec)
+int tls_crypto_aes_encrypt_decrypt(psCipherContext_t *ctx, unsigned char *in,
+                                   unsigned char *out, u32 len, CRYPTO_WAY dec)
 {
     unsigned int sec_cfg;
     unsigned int cpu_sr;
@@ -516,13 +497,12 @@ int tls_crypto_aes_encrypt_decrypt(psCipherContext_t *ctx, unsigned char *in, un
     sec_cfg = (CRYPTO_METHOD_AES << 16) | (1 << SOFT_RESET_AES) | (dec << 20) | (cbc << 21) | (len & 0xFFFF);
     tls_reg_write32(HR_CRYPTO_SEC_CFG, sec_cfg);
     CRYPTO_LOG("[%d]:aes[%d] %s %s start\n", sys_count, len, dec == CRYPTO_WAY_ENCRYPT ? "ENCRYPT" : "DECRYPT",
-               cbc == CRYPTO_MODE_ECB ? "ECB" : (cbc == CRYPTO_MODE_CBC ? "CBC" : (cbc == CRYPTO_MODE_CTR ? "CTR" : "MAC")));
+        cbc == CRYPTO_MODE_ECB ? "ECB" : (cbc == CRYPTO_MODE_CBC ? "CBC" : (cbc == CRYPTO_MODE_CTR ? "CTR" : "MAC")));
     cpu_sr = tls_os_set_critical();
     g_crypto_ctx.gpsec_complete = 0;
     tls_os_release_critical(cpu_sr);
     tls_reg_write32(HR_CRYPTO_SEC_CTRL, 0x1);// start crypto
-    while (TRUE)
-    {
+    while (TRUE) {
         cpu_sr = tls_os_set_critical();
         if (g_crypto_ctx.gpsec_complete)
             break;
@@ -537,7 +517,8 @@ int tls_crypto_aes_encrypt_decrypt(psCipherContext_t *ctx, unsigned char *in, un
 }
 
 /**
- * @brief            This function initializes a 3DES encryption algorithm,  i.e. fills the psCipherContext_t structure pointed to by ctx with necessary data.
+ * @brief            This function initializes a 3DES encryption algorithm,
+ *                   i.e. fills the psCipherContext_t structure pointed to by ctx with necessary data.
  *
  * @param[in]        ctx         Pointer to the Cipher Context.
  * @param[in]        IV         Pointer to the Initialization Vector
@@ -550,7 +531,8 @@ int tls_crypto_aes_encrypt_decrypt(psCipherContext_t *ctx, unsigned char *in, un
  *
  * @note            None
  */
-int tls_crypto_3des_init(psCipherContext_t *ctx, const unsigned char *IV, const unsigned char *key, u32 keylen, CRYPTO_MODE cbc)
+int tls_crypto_3des_init(psCipherContext_t *ctx, const unsigned char *IV,
+                         const unsigned char *key, u32 keylen, CRYPTO_MODE cbc)
 {
     if (keylen != DES3_KEY_LEN)
         return ERR_FAILURE;
@@ -558,10 +540,8 @@ int tls_crypto_3des_init(psCipherContext_t *ctx, const unsigned char *IV, const 
     memcpy(ctx->des3.key.ek[0], key, keylen);
     ctx->des3.key.ek[1][0] =  cbc;
     ctx->des3.blocklen = DES3_IV_LEN;
-    if (IV)
-    {
-        for (unsigned int x = 0; x < ctx->des3.blocklen; x++)
-        {
+    if (IV) {
+        for (unsigned int x = 0; x < ctx->des3.blocklen; x++) {
             ctx->des3.IV[x] = IV[x];
         }
     }
@@ -572,18 +552,19 @@ int tls_crypto_3des_init(psCipherContext_t *ctx, const unsigned char *IV, const 
 /**
  * @brief            This function encrypts or decrypts a variable length data stream according to 3DES.
  *
- * @param[in]        ctx         Pointer to the Cipher Context.
- * @param[in]        in         Pointer to the input plaintext data stream(or the encrypted text data stream) of variable length.
- * @param[in]        out         Pointer to the resulting ciphertext data stream.
- * @param[in]        len         Length of the plaintext data stream in octets.
- * @param[in]        dec         The cryption way which indicates encryption or decryption.
+ * @param[in]   ctx    Pointer to the Cipher Context.
+ * @param[in]   in    Pointer to the input plaintext data stream(or the encrypted text data stream) of variable length.
+ * @param[in]   out    Pointer to the resulting ciphertext data stream.
+ * @param[in]   len    Length of the plaintext data stream in octets.
+ * @param[in]   dec    The cryption way which indicates encryption or decryption.
  *
  * @retval        0          success
  * @retval        other    failed
  *
  * @note            None
  */
-int tls_crypto_3des_encrypt_decrypt(psCipherContext_t *ctx, unsigned char *in, unsigned char *out, u32 len, CRYPTO_WAY dec)
+int tls_crypto_3des_encrypt_decrypt(psCipherContext_t *ctx, unsigned char *in,
+                                    unsigned char *out, u32 len, CRYPTO_WAY dec)
 {
     unsigned int sec_cfg;
     u32 keylen = DES3_KEY_LEN;
@@ -602,9 +583,7 @@ int tls_crypto_3des_encrypt_decrypt(psCipherContext_t *ctx, unsigned char *in, u
                cbc == CRYPTO_MODE_ECB ? "ECB" : "CBC");
     g_crypto_ctx.gpsec_complete = 0;
     tls_reg_write32(HR_CRYPTO_SEC_CTRL, 0x1);// start crypto
-    while (!g_crypto_ctx.gpsec_complete)
-    {
-
+    while (!g_crypto_ctx.gpsec_complete) {
     }
     g_crypto_ctx.gpsec_complete = 0;
     CRYPTO_LOG("[%d]:3des end %d\n", sys_count, tls_reg_read32(HR_CRYPTO_SEC_STS) & 0xFFFF);
@@ -614,7 +593,8 @@ int tls_crypto_3des_encrypt_decrypt(psCipherContext_t *ctx, unsigned char *in, u
 }
 
 /**
- * @brief            This function initializes a DES encryption algorithm,  i.e. fills the psCipherContext_t structure pointed to by ctx with necessary data.
+ * @brief            This function initializes a DES encryption algorithm,
+ *                   i.e. fills the psCipherContext_t structure pointed to by ctx with necessary data.
  *
  * @param[in]        ctx         Pointer to the Cipher Context.
  * @param[in]        IV         Pointer to the Initialization Vector
@@ -627,17 +607,16 @@ int tls_crypto_3des_encrypt_decrypt(psCipherContext_t *ctx, unsigned char *in, u
  *
  * @note            None
  */
-int tls_crypto_des_init(psCipherContext_t *ctx, const unsigned char *IV, const unsigned char *key, u32 keylen, CRYPTO_MODE cbc)
+int tls_crypto_des_init(psCipherContext_t *ctx, const unsigned char *IV,
+                        const unsigned char *key, u32 keylen, CRYPTO_MODE cbc)
 {
     if (keylen != DES_KEY_LEN)
         return ERR_FAILURE;
     memcpy(ctx->des3.key.ek[0], key, keylen);
     ctx->des3.key.ek[1][0] =  cbc;
     ctx->des3.blocklen = DES3_IV_LEN;
-    if (IV)
-    {
-        for (unsigned int x = 0; x < ctx->des3.blocklen; x++)
-        {
+    if (IV) {
+        for (unsigned int x = 0; x < ctx->des3.blocklen; x++) {
             ctx->des3.IV[x] = IV[x];
         }
     }
@@ -647,18 +626,19 @@ int tls_crypto_des_init(psCipherContext_t *ctx, const unsigned char *IV, const u
 /**
  * @brief            This function encrypts or decrypts a variable length data stream according to DES.
  *
- * @param[in]        ctx         Pointer to the Cipher Context.
- * @param[in]        in         Pointer to the input plaintext data stream(or the encrypted text data stream) of variable length.
- * @param[in]        out         Pointer to the resulting ciphertext data stream.
- * @param[in]        len         Length of the plaintext data stream in octets.
- * @param[in]        dec         The cryption way which indicates encryption or decryption.
+ * @param[in]   ctx    Pointer to the Cipher Context.
+ * @param[in]   in    Pointer to the input plaintext data stream(or the encrypted text data stream) of variable length.
+ * @param[in]   out    Pointer to the resulting ciphertext data stream.
+ * @param[in]   len    Length of the plaintext data stream in octets.
+ * @param[in]   dec    The cryption way which indicates encryption or decryption.
  *
  * @retval        0          success
  * @retval        other    failed
  *
  * @note            None
  */
-int tls_crypto_des_encrypt_decrypt(psCipherContext_t *ctx, unsigned char *in, unsigned char *out, u32 len, CRYPTO_WAY dec)
+int tls_crypto_des_encrypt_decrypt(psCipherContext_t *ctx, unsigned char *in,
+                                   unsigned char *out, u32 len, CRYPTO_WAY dec)
 {
     unsigned int sec_cfg;
     u32 keylen = DES_KEY_LEN;
@@ -666,7 +646,6 @@ int tls_crypto_des_encrypt_decrypt(psCipherContext_t *ctx, unsigned char *in, un
     unsigned char *IV = ctx->des3.IV;
     CRYPTO_MODE cbc = (CRYPTO_MODE)(ctx->des3.key.ek[1][0] & 0xFF);
     // uint32_t *IV32 = (uint32_t *)IV;
-
     tls_crypto_sem_lock();
     tls_open_peripheral_clock(TLS_PERIPHERAL_TYPE_GPSEC);
     tls_crypto_set_key(key, keylen);
@@ -679,9 +658,7 @@ int tls_crypto_des_encrypt_decrypt(psCipherContext_t *ctx, unsigned char *in, un
                cbc == CRYPTO_MODE_ECB ? "ECB" : "CBC");
     g_crypto_ctx.gpsec_complete = 0;
     tls_reg_write32(HR_CRYPTO_SEC_CTRL, 0x1);// start crypto
-    while (!g_crypto_ctx.gpsec_complete)
-    {
-
+    while (!g_crypto_ctx.gpsec_complete) {
     }
     g_crypto_ctx.gpsec_complete = 0;
     CRYPTO_LOG("[%d]:des end %d\n", sys_count, tls_reg_read32(HR_CRYPTO_SEC_STS) & 0xFFFF);
@@ -692,7 +669,8 @@ int tls_crypto_des_encrypt_decrypt(psCipherContext_t *ctx, unsigned char *in, un
 }
 
 /**
- * @brief            This function initializes a CRC algorithm,  i.e. fills the psCrcContext_t structure pointed to by ctx with necessary data.
+ * @brief            This function initializes a CRC algorithm,
+ *                   i.e. fills the psCrcContext_t structure pointed to by ctx with necessary data.
  *
  * @param[in]        ctx         Pointer to the CRC Context.
  * @param[in]        key         The initialization key.
@@ -736,31 +714,28 @@ int tls_crypto_crc_update(psCrcContext_t *ctx, unsigned char *in, u32 len)
     tls_open_peripheral_clock(TLS_PERIPHERAL_TYPE_GPSEC);
     sec_cfg =  (CRYPTO_METHOD_CRC << 16) | (ctx->type << 21) | (ctx->mode << 23) | (len & 0xFFFF);
     tls_reg_write32(HR_CRYPTO_SEC_CFG, sec_cfg);
-    if (ctx->mode & OUTPUT_REFLECT)
-    {
+    if (ctx->mode & OUTPUT_REFLECT) {
         u8 ch_crc = 16;
         u32 state = 0;
-        switch(ctx->type)
-        {
-        case CRYPTO_CRC_TYPE_8:
-            ch_crc = 8;
-            break;
-        case CRYPTO_CRC_TYPE_16_MODBUS:
-            ch_crc = 16;
-            break;
-        case CRYPTO_CRC_TYPE_16_CCITT:
-            ch_crc = 16;
-            break;
-        case CRYPTO_CRC_TYPE_32:
-            ch_crc = 32;
-            break;
-        default:
-            break;
+        switch (ctx->type) {
+            case CRYPTO_CRC_TYPE_8:
+                ch_crc = 8;
+                break;
+            case CRYPTO_CRC_TYPE_16_MODBUS:
+                ch_crc = 16;
+                break;
+            case CRYPTO_CRC_TYPE_16_CCITT:
+                ch_crc = 16;
+                break;
+            case CRYPTO_CRC_TYPE_32:
+                ch_crc = 32;
+                break;
+            default:
+                break;
         }
         state = Reflect(ctx->state, ch_crc);
         tls_reg_write32(HR_CRYPTO_CRC_KEY, state);
-    }
-    else
+    } else
         tls_reg_write32(HR_CRYPTO_CRC_KEY, ctx->state);
 
     tls_reg_write32(HR_CRYPTO_SRC_ADDR, (unsigned int)in);
@@ -769,8 +744,7 @@ int tls_crypto_crc_update(psCrcContext_t *ctx, unsigned char *in, u32 len)
     g_crypto_ctx.gpsec_complete = 0;
     tls_os_release_critical(cpu_sr);
     tls_reg_write32(HR_CRYPTO_SEC_CTRL, 0x1);// start crypto
-    while (TRUE)
-    {
+    while (TRUE) {
         cpu_sr = tls_os_set_critical();
         if (g_crypto_ctx.gpsec_complete)
             break;
@@ -822,8 +796,7 @@ static void hd_sha1_compress(psDigestContext_t *md)
     g_crypto_ctx.gpsec_complete = 0;
     tls_os_release_critical(cpu_sr);
     tls_reg_write32(HR_CRYPTO_SEC_CTRL, 0x1);// start crypto
-    while (TRUE)
-    {
+    while (TRUE) {
         cpu_sr = tls_os_set_critical();
         if (g_crypto_ctx.gpsec_complete)
             break;
@@ -831,8 +804,7 @@ static void hd_sha1_compress(psDigestContext_t *md)
     }
     g_crypto_ctx.gpsec_complete = 0;
     tls_os_release_critical(cpu_sr);
-    for (int i = 0; i < 5; i++)
-    {
+    for (int i = 0; i < 5; i++) {
         md->u.sha1.state[i] = tls_reg_read32(HR_CRYPTO_SHA1_DIGEST0 + (4 * i));
     }
     tls_close_peripheral_clock(TLS_PERIPHERAL_TYPE_GPSEC);
@@ -840,7 +812,8 @@ static void hd_sha1_compress(psDigestContext_t *md)
 }
 
 /**
- * @brief            This function initializes Message-Diggest context for usage in SHA1 algorithm, starts a new SHA1 operation and writes a new Digest Context.
+ * @brief            This function initializes Message-Diggest context for usage in SHA1 algorithm,
+ *                   starts a new SHA1 operation and writes a new Digest Context.
  *
  * @param[in]        md         Pointer to the SHA1 Digest Context.
  *
@@ -868,7 +841,8 @@ void tls_crypto_sha1_init(psDigestContext_t *md)
 /**
  * @brief            Process a message block using SHA1 algorithm.
  *                This function performs a SHA1 block update operation. It continues an SHA1 message-digest operation,
- *                by processing InputLen-byte length message block pointed to by buf, and by updating the SHA1 context pointed to by md.
+ *                by processing InputLen-byte length message block pointed to by buf,
+ *                and by updating the SHA1 context pointed to by md.
  *                This function may be called as many times as necessary, so the message may be processed in blocks.
  *
  * @param[in]        md        Pointer to the SHA1 Digest Context.
@@ -882,8 +856,7 @@ void tls_crypto_sha1_init(psDigestContext_t *md)
 void tls_crypto_sha1_update(psDigestContext_t *md, const unsigned char *buf, u32 len)
 {
     u32 n;
-    while (len > 0)
-    {
+    while (len > 0) {
         n = min(len, (64 - md->u.sha1.curlen));
         memcpy(md->u.sha1.buf + md->u.sha1.curlen, buf, (size_t)n);
         md->u.sha1.curlen        += n;
@@ -891,15 +864,13 @@ void tls_crypto_sha1_update(psDigestContext_t *md, const unsigned char *buf, u32
         len                    -= n;
 
         /* is 64 bytes full? */
-        if (md->u.sha1.curlen == 64)
-        {
+        if (md->u.sha1.curlen == 64) {
             hd_sha1_compress(md);
 #ifdef HAVE_NATIVE_INT64
             md->u.sha1.length += 512;
 #else
             n = (md->u.sha1.lengthLo + 512) & 0xFFFFFFFFL;
-            if (n < md->u.sha1.lengthLo)
-            {
+            if (n < md->u.sha1.lengthLo) {
                 md->u.sha1.lengthHi++;
             }
             md->u.sha1.lengthLo = n;
@@ -912,7 +883,8 @@ void tls_crypto_sha1_update(psDigestContext_t *md, const unsigned char *buf, u32
 /**
  * @brief            This function ends a SHA1 operation and produces a Message-Digest.
  *                This function finalizes SHA1 algorithm, i.e. ends an SHA1 Message-Digest operation,
- *                writing the Message-Digest in the 20-byte buffer pointed to by hash in according to the information stored in context.
+ *                writing the Message-Digest in the 20-byte buffer pointed to by hash
+ *                in according to the information stored in context.
  *
  * @param[in]        md        Pointer to the SHA1 Digest Context.
  * @param[in]        hash     Pointer to the Message-Digest
@@ -930,8 +902,7 @@ int tls_crypto_sha1_final(psDigestContext_t *md, unsigned char *hash)
 #ifndef HAVE_NATIVE_INT64
     u32    n;
 #endif
-    if (md->u.sha1.curlen >= sizeof(md->u.sha1.buf) || hash == NULL)
-    {
+    if (md->u.sha1.curlen >= sizeof(md->u.sha1.buf) || hash == NULL) {
         return ERR_ARG_FAIL;
     }
 
@@ -942,8 +913,7 @@ int tls_crypto_sha1_final(psDigestContext_t *md, unsigned char *hash)
     md->u.sha1.length += md->u.sha1.curlen << 3;
 #else
     n = (md->u.sha1.lengthLo + (md->u.sha1.curlen << 3)) & 0xFFFFFFFFL;
-    if (n < md->u.sha1.lengthLo)
-    {
+    if (n < md->u.sha1.lengthLo) {
         md->u.sha1.lengthHi++;
     }
     md->u.sha1.lengthHi += (md->u.sha1.curlen >> 29);
@@ -959,10 +929,8 @@ int tls_crypto_sha1_final(psDigestContext_t *md, unsigned char *hash)
         if the length is currently above 56 bytes we append zeros then compress.
         Then we can fall back to padding zeros and length encoding like normal.
      */
-    if (md->u.sha1.curlen > 56)
-    {
-        while (md->u.sha1.curlen < 64)
-        {
+    if (md->u.sha1.curlen > 56) {
+        while (md->u.sha1.curlen < 64) {
             md->u.sha1.buf[md->u.sha1.curlen++] = (unsigned char)0;
         }
         hd_sha1_compress(md);
@@ -972,8 +940,7 @@ int tls_crypto_sha1_final(psDigestContext_t *md, unsigned char *hash)
     /*
         pad upto 56 bytes of zeroes
      */
-    while (md->u.sha1.curlen < 56)
-    {
+    while (md->u.sha1.curlen < 56) {
         md->u.sha1.buf[md->u.sha1.curlen++] = (unsigned char)0;
     }
 
@@ -991,8 +958,7 @@ int tls_crypto_sha1_final(psDigestContext_t *md, unsigned char *hash)
     /*
         copy output
      */
-    for (i = 0; i < 5; i++)
-    {
+    for (i = 0; i < 5; i++) {
         val = tls_reg_read32(HR_CRYPTO_SHA1_DIGEST0 + (4 * i));
         STORE32H(val, hash + (4 * i));
     }
@@ -1015,13 +981,11 @@ static void hd_md5_compress(psDigestContext_t *md)
     tls_reg_write32(HR_CRYPTO_SHA1_DIGEST3, md->u.md5.state[3]);
     g_crypto_ctx.gpsec_complete = 0;
     tls_reg_write32(HR_CRYPTO_SEC_CTRL, 0x1);// start crypto
-    while (!g_crypto_ctx.gpsec_complete)
-    {
+    while (!g_crypto_ctx.gpsec_complete) {
 
     }
     g_crypto_ctx.gpsec_complete = 0;
-    for (unsigned int i = 0; i < 4; i++)
-    {
+    for (unsigned int i = 0; i < 4; i++) {
         unsigned int val = tls_reg_read32(HR_CRYPTO_SHA1_DIGEST0 + (4 * i));
         md->u.md5.state[i] = val;
     }
@@ -1031,10 +995,14 @@ static void hd_md5_compress(psDigestContext_t *md)
 }
 
 /**
- * @brief            This function initializes Message-Diggest context for usage in MD5 algorithm, starts a new MD5 operation and writes a new Digest Context.
- *                This function begins a MD5 Message-Diggest Algorithm, i.e. fills the psDigestContext_t structure pointed to by md with necessary data.
- *                MD5 is the algorithm which takes as input a message of arbitrary length and produces as output a 128-bit "fingerprint" or "message digest" of the input.
- *                It is conjectured that it is computationally infeasible to produce two messages having the same message digest,
+ * @brief            This function initializes Message-Diggest context for usage in MD5 algorithm,
+ *                starts a new MD5 operation and writes a new Digest Context.
+ *                This function begins a MD5 Message-Diggest Algorithm,
+ *                i.e. fills the psDigestContext_t structure pointed to by md with necessary data.
+ *                MD5 is the algorithm which takes as input a message of arbitrary length and produces as output
+ *                a 128-bit "fingerprint" or "message digest" of the input.
+ *                It is conjectured that it is computationally infeasible to produce two messages having
+ *                the same message digest,
  *                or to produce any message having a given prespecified target message digest.
  *
  * @param[in]        md        MD5 Digest Context.
@@ -1061,7 +1029,8 @@ void tls_crypto_md5_init(psDigestContext_t *md)
 /**
  * @brief            Process a message block using MD5 algorithm.
  *                This function performs a MD5 block update operation. It continues an MD5 message-digest operation,
- *                by processing InputLen-byte length message block pointed to by buf, and by updating the MD5 context pointed to by md.
+ *                by processing InputLen-byte length message block pointed to by buf,
+ *                and by updating the MD5 context pointed to by md.
  *                This function may be called as many times as necessary, so the message may be processed in blocks.
  *
  * @param[in]        md        MD5 Digest Context.
@@ -1076,8 +1045,7 @@ void tls_crypto_md5_update(psDigestContext_t *md, const unsigned char *buf, u32 
 {
     u32 n;
 
-    while (len > 0)
-    {
+    while (len > 0) {
         n = min(len, (64 - md->u.md5.curlen));
         memcpy(md->u.md5.buf + md->u.md5.curlen, buf, (size_t)n);
         md->u.md5.curlen    += n;
@@ -1087,15 +1055,13 @@ void tls_crypto_md5_update(psDigestContext_t *md, const unsigned char *buf, u32 
         /*
                 is 64 bytes full?
          */
-        if (md->u.md5.curlen == 64)
-        {
+        if (md->u.md5.curlen == 64) {
             hd_md5_compress(md);
 #ifdef HAVE_NATIVE_INT64
             md->u.md5.length += 512;
 #else
             n = (md->u.md5.lengthLo + 512) & 0xFFFFFFFFL;
-            if (n < md->u.md5.lengthLo)
-            {
+            if (n < md->u.md5.lengthLo) {
                 md->u.md5.lengthHi++;
             }
             md->u.md5.lengthLo = n;
@@ -1108,7 +1074,8 @@ void tls_crypto_md5_update(psDigestContext_t *md, const unsigned char *buf, u32 
 /**
  * @brief            This function ends a MD5 operation and produces a Message-Digest.
  *                This function finalizes MD5 algorithm, i.e. ends an MD5 Message-Digest operation,
- *                writing the Message-Digest in the 16-byte buffer pointed to by hash in according to the information stored in context.
+ *                writing the Message-Digest in the 16-byte buffer pointed to by hash in according
+ *                to the information stored in context.
  *
  * @param[in]        md        MD5 Digest Context.
  * @param[in]        hash     the Message-Digest
@@ -1127,8 +1094,7 @@ s32 tls_crypto_md5_final(psDigestContext_t *md, unsigned char *hash)
 #endif
 
     //    psAssert(md != NULL);
-    if (hash == NULL)
-    {
+    if (hash == NULL) {
         CRYPTO_LOG("NULL hash storage passed to psMd5Final\n");
         return PS_ARG_FAIL;
     }
@@ -1140,8 +1106,7 @@ s32 tls_crypto_md5_final(psDigestContext_t *md, unsigned char *hash)
     md->u.md5.length += md->u.md5.curlen << 3;
 #else
     n = (md->u.md5.lengthLo + (md->u.md5.curlen << 3)) & 0xFFFFFFFFL;
-    if (n < md->u.md5.lengthLo)
-    {
+    if (n < md->u.md5.lengthLo) {
         md->u.md5.lengthHi++;
     }
     md->u.md5.lengthHi += (md->u.md5.curlen >> 29);
@@ -1157,10 +1122,8 @@ s32 tls_crypto_md5_final(psDigestContext_t *md, unsigned char *hash)
         if the length is currently above 56 bytes we append zeros then compress.
         Then we can fall back to padding zeros and length encoding like normal.
      */
-    if (md->u.md5.curlen > 56)
-    {
-        while (md->u.md5.curlen < 64)
-        {
+    if (md->u.md5.curlen > 56) {
+        while (md->u.md5.curlen < 64) {
             md->u.md5.buf[md->u.md5.curlen++] = (unsigned char)0;
         }
         hd_md5_compress(md);
@@ -1170,8 +1133,7 @@ s32 tls_crypto_md5_final(psDigestContext_t *md, unsigned char *hash)
     /*
         pad upto 56 bytes of zeroes
      */
-    while (md->u.md5.curlen < 56)
-    {
+    while (md->u.md5.curlen < 56) {
         md->u.md5.buf[md->u.md5.curlen++] = (unsigned char)0;
     }
     /*
@@ -1188,8 +1150,7 @@ s32 tls_crypto_md5_final(psDigestContext_t *md, unsigned char *hash)
     /*
         copy output
      */
-    for (i = 0; i < 4; i++)
-    {
+    for (i = 0; i < 4; i++) {
         val = tls_reg_read32(HR_CRYPTO_SHA1_DIGEST0 + (4 * i));
         STORE32L(val, hash + (4 * i));
     }
@@ -1207,8 +1168,7 @@ static void rsaMonMulWriteMc(const u32 mc)
     u32 val = 0;
     RSAMC = mc;
     val = RSAMC;
-    if (val == mc)
-    {
+    if (val == mc) {
         return;
     }
 }
@@ -1241,25 +1201,23 @@ static int rsaMulModRead(unsigned char w, hstm_int *a)
     u32 in[64];
     int err = 0;
     memset(in, 0, 64 * sizeof(u32));
-    switch(w)
-    {
-    case 'A':
-        rsaMonMulReadA(in);
-        break;
-    case 'B':
-        rsaMonMulReadB(in);
-        break;
-    case 'D':
-        rsaMonMulReadD(in);
-        break;
+    switch (w) {
+        case 'A':
+            rsaMonMulReadA(in);
+            break;
+        case 'B':
+            rsaMonMulReadB(in);
+            break;
+        case 'D':
+            rsaMonMulReadD(in);
+            break;
     }
     pstm_reverse((unsigned char *)in, RSAN * sizeof(u32));
     /* this a should be initialized outside. */
     // if ((err = pstm_init_for_read_unsigned_bin(NULL, a, RSAN * sizeof(u32) + sizeof(hstm_int))) != ERR_CRY_OK){
     //    return err;
     // }
-    if ((err = pstm_read_unsigned_bin(a, (unsigned char *)in, RSAN * sizeof(u32))) != ERR_CRY_OK)
-    {
+    if ((err = pstm_read_unsigned_bin(a, (unsigned char *)in, RSAN * sizeof(u32))) != ERR_CRY_OK) {
         pstm_clear(a);
         return err;
     }
@@ -1268,17 +1226,16 @@ static int rsaMulModRead(unsigned char w, hstm_int *a)
 static void rsaMulModDump(unsigned char w)
 {
     int addr = 0;
-    switch(w)
-    {
-    case 'A':
-        addr = 0;
-        break;
-    case 'B':
-        addr = 0x100;
-        break;
-    case 'D':
-        addr = 0x300;
-        break;
+    switch(w) {
+        case 'A':
+            addr = 0;
+            break;
+        case 'B':
+            addr = 0x100;
+            break;
+        case 'D':
+            addr = 0x300;
+            break;
     }
     printf("%c", w);
     dumpUint32(" Val:",((volatile u32*) (RSA_BASE_ADDRESS + addr )), RSAN);
@@ -1289,17 +1246,16 @@ static void rsaMulModWrite(unsigned char w, hstm_int *a)
     u32 in[64];
     memset(in, 0, 64 * sizeof(u32));
     pstm_to_unsigned_bin_nr(NULL, a, (unsigned char *)in);
-    switch(w)
-    {
-    case 'A':
-        rsaMonMulWriteA(in);
-        break;
-    case 'B':
-        rsaMonMulWriteB(in);
-        break;
-    case 'M':
-        rsaMonMulWriteM(in);
-        break;
+    switch(w) {
+        case 'A':
+            rsaMonMulWriteA(in);
+            break;
+        case 'B':
+            rsaMonMulWriteB(in);
+            break;
+        case 'M':
+            rsaMonMulWriteM(in);
+            break;
     }
 }
 static void rsaMonMulAA(void)
@@ -1308,8 +1264,7 @@ static void rsaMonMulAA(void)
     g_crypto_ctx.rsa_complete = 0;
     tls_os_release_critical(cpu_sr);
     RSACON = 0x2c;
-    while (TRUE)
-    {
+    while (TRUE) {
         cpu_sr = tls_os_set_critical();
         if (g_crypto_ctx.rsa_complete)
             break;
@@ -1324,8 +1279,7 @@ static void rsaMonMulDD(void)
     g_crypto_ctx.rsa_complete = 0;
     tls_os_release_critical(cpu_sr);
     RSACON = 0x20;
-    while (TRUE)
-    {
+    while (TRUE) {
         cpu_sr = tls_os_set_critical();
         if (g_crypto_ctx.rsa_complete)
             break;
@@ -1340,8 +1294,7 @@ static void rsaMonMulAB(void)
     g_crypto_ctx.rsa_complete = 0;
     tls_os_release_critical(cpu_sr);
     RSACON = 0x24;
-    while (TRUE)
-    {
+    while (TRUE) {
         cpu_sr = tls_os_set_critical();
         if (g_crypto_ctx.rsa_complete)
             break;
@@ -1356,8 +1309,7 @@ static void rsaMonMulBD(void)
     g_crypto_ctx.rsa_complete = 0;
     tls_os_release_critical(cpu_sr);
     RSACON = 0x28;
-    while (TRUE)
-    {
+    while (TRUE) {
         cpu_sr = tls_os_set_critical();
         if (g_crypto_ctx.rsa_complete)
             break;
@@ -1375,12 +1327,10 @@ static void rsaCalMc(u32 *mc, const u32 in)
     u32 i = 31;
     u32 left = 1;
     u32 right = 0;
-    for(i = 31; i != 0; i--)
-    {
+    for (i = 31; i != 0; i--) {
         left <<= 1;                                        /* 2^(i-1) */
         right = (in * y) & left;                        /* (n*y) mod 2^i */
-        if ( right )
-        {
+        if (right) {
             y += left;
         }
     }
@@ -1429,15 +1379,13 @@ int tls_crypto_exptmod(hstm_int *a, hstm_int *e, hstm_int *n, hstm_int *res)
     // pstm_set(&Y, 1);
     pstm_mulmod(NULL, a, &R, n, &X); // X = A * R
     pstm_copy(&R, &Y);
-    if (n->used > 1)
-    {
+    if (n->used > 1) {
 #if (DIGIT_BIT < 32)
         dp0 = 0xFFFFFFFF & ((n->dp[0]) | (u32)(n->dp[1] << DIGIT_BIT));
 #else
         dp0 = (n->dp[0]);
 #endif
-    }
-    else
+    } else
         dp0 = n->dp[0];
     rsaCalMc(&mc, dp0);
     k = pstm_count_bits(n);
@@ -1447,34 +1395,26 @@ int tls_crypto_exptmod(hstm_int *a, hstm_int *e, hstm_int *n, hstm_int *res)
     rsaMulModWrite('B', &X);
     rsaMulModWrite('A', &Y);
     k = pstm_count_bits(e);
-    for(i = k - 1; i >= 0; i--)
-    {
+    for(i = k - 1; i >= 0; i--) {
         // montMulMod(&Y, &Y, n, &Y);
         // if (pstm_get_bit(e, i))
         //    montMulMod(&Y, &X, n, &Y);
-        if (monmulFlag == 0)
-        {
+        if (monmulFlag == 0) {
             rsaMonMulAA();
             monmulFlag = 1;
             // rsaMulModDump('D');
-        }
-        else
-        {
+        } else {
             rsaMonMulDD();
             monmulFlag = 0;
             // rsaMulModDump('A');
         }
 
-        if (pstm_get_bit(e, i))
-        {
-            if (monmulFlag == 0)
-            {
+        if (pstm_get_bit(e, i)) {
+            if (monmulFlag == 0) {
                 rsaMonMulAB();
                 monmulFlag = 1;
                 // rsaMulModDump('D');
-            }
-            else
-            {
+            } else {
                 rsaMonMulBD();
                 monmulFlag = 0;
                 // rsaMulModDump('A');
@@ -1484,13 +1424,10 @@ int tls_crypto_exptmod(hstm_int *a, hstm_int *e, hstm_int *n, hstm_int *res)
     pstm_set(&R, 1);
     rsaMulModWrite('B', &R);
     // montMulMod(&Y, &R, n, res);
-    if (monmulFlag == 0)
-    {
+    if (monmulFlag == 0) {
         rsaMonMulAB();
         rsaMulModRead('D', res);
-    }
-    else
-    {
+    } else {
         rsaMonMulBD();
         rsaMulModRead('A', res);
     }
@@ -1519,13 +1456,11 @@ int tls_crypto_init(void)
 {
 #ifndef CONFIG_KERNEL_NONE
     int err = 0;
-    if (g_crypto_ctx.gpsec_lock != NULL)
-    {
+    if (g_crypto_ctx.gpsec_lock != NULL) {
         return 0;
     }
     err = tls_os_sem_create(&g_crypto_ctx.gpsec_lock, 1);
-    if (err != TLS_OS_SUCCESS)
-    {
+    if (err != TLS_OS_SUCCESS) {
         TLS_DBGPRT_ERR("create semaphore @gpsec_lock fail!\n");
         return -1;
     }

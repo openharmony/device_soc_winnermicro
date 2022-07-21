@@ -62,11 +62,10 @@ static void dma_irq_proc(void *p)
     ch = (unsigned char)(unsigned long)p;
     int_src = tls_reg_read32(HR_DMA_INT_SRC);
 
-    if (ch > 3)
-    {
+    if (ch > 3) {
         for (ch = 4; ch < 8; ch++)
         {
-            if (int_src & (TLS_DMA_IRQ_BOTH_DONE << ch * 2))
+            if (int_src & (TLS_DMA_IRQ_BOTH_DONE << (ch * 2)))
                 break;
         }
 
@@ -74,10 +73,9 @@ static void dma_irq_proc(void *p)
             return;
     }
 
-    if (DMA_CTRL_REG(ch) & 0x01)
-    {
+    if (DMA_CTRL_REG(ch) & 0x01) {
         uint32_t temp = 0, cur_len = 0;
-        static uint32_t len[8] = {0,0,0,0,0,0,0,0};
+        static uint32_t len[8] = {0, 0, 0, 0, 0, 0, 0, 0};
         
         temp = DMA_CTRL_REG(ch);
         if (len[ch] == 0)
@@ -89,7 +87,7 @@ static void dma_irq_proc(void *p)
         {
             cur_len = 0;
             DMA_CHNLCTRL_REG(ch) |= (1 << 1);
-            while(DMA_CHNLCTRL_REG(ch) & (1 << 0));
+            while (DMA_CHNLCTRL_REG(ch) & (1 << 0));
             DMA_CHNLCTRL_REG(ch) |= (1 << 0);
         }
         
@@ -98,23 +96,18 @@ static void dma_irq_proc(void *p)
         DMA_CTRL_REG(ch) = temp;
     }
 
-    if ((int_src & (TLS_DMA_IRQ_BOTH_DONE << ch * 2)) &&
-        (TLS_DMA_IRQ_BOTH_DONE == dma_context[ch].flags))
-    {
+    if ((int_src & (TLS_DMA_IRQ_BOTH_DONE << (ch * 2))) &&
+        (TLS_DMA_IRQ_BOTH_DONE == dma_context[ch].flags)) {
         tls_dma_irq_clr(ch, TLS_DMA_IRQ_BOTH_DONE);
         if (dma_context[ch].burst_done_pf)
             dma_context[ch].burst_done_pf(dma_context[ch].burst_done_priv);
-    }
-    else if ((int_src & (TLS_DMA_IRQ_BURST_DONE << ch * 2)) &&
-             (TLS_DMA_IRQ_BURST_DONE == dma_context[ch].flags))
-    {
+    } else if ((int_src & (TLS_DMA_IRQ_BURST_DONE << ch * 2)) &&
+             (TLS_DMA_IRQ_BURST_DONE == dma_context[ch].flags)) {
         tls_dma_irq_clr(ch, TLS_DMA_IRQ_BOTH_DONE);
         if (dma_context[ch].burst_done_pf)
             dma_context[ch].burst_done_pf(dma_context[ch].burst_done_priv);
-    }
-    else if ((int_src & (TLS_DMA_IRQ_TRANSFER_DONE << ch * 2)) &&
-             (TLS_DMA_IRQ_TRANSFER_DONE == dma_context[ch].flags))
-    {
+    } else if ((int_src & (TLS_DMA_IRQ_TRANSFER_DONE << (ch * 2))) &&
+             (TLS_DMA_IRQ_TRANSFER_DONE == dma_context[ch].flags)) {
         tls_dma_irq_clr(ch, TLS_DMA_IRQ_BOTH_DONE);
         if (dma_context[ch].transfer_done_pf)
             dma_context[ch].transfer_done_pf(dma_context[ch].transfer_done_priv);
@@ -190,18 +183,16 @@ void tls_dma_irq_clr(unsigned char ch, unsigned char flags)
     unsigned int mask;
 
     mask  = tls_reg_read32(HR_DMA_INT_MASK);
-    mask |= TLS_DMA_IRQ_BOTH_DONE << 2 * ch;
-    mask &= ~(flags << 2 * ch);
+    mask |= (TLS_DMA_IRQ_BOTH_DONE << (2 * ch));
+    mask &= ~(flags << (2 * ch));
     tls_reg_write32(HR_DMA_INT_MASK, mask);
 
     dma_context[ch].flags = flags;
-    if (flags & TLS_DMA_IRQ_BURST_DONE)
-    {
+    if (flags & TLS_DMA_IRQ_BURST_DONE) {
         dma_context[ch].burst_done_pf   = callback;
         dma_context[ch].burst_done_priv = arg;
     }
-    if (flags & TLS_DMA_IRQ_TRANSFER_DONE)
-    {
+    if (flags & TLS_DMA_IRQ_TRANSFER_DONE) {
         dma_context[ch].transfer_done_pf   = callback;
         dma_context[ch].transfer_done_priv = arg;
     }
@@ -225,8 +216,7 @@ int tls_dma_wait_complt(unsigned char ch)
 {
     unsigned long timeout = 0;
 
-    while(DMA_CHNLCTRL_REG(ch) & DMA_CHNL_CTRL_CHNL_ON) 
-    {
+    while (DMA_CHNLCTRL_REG(ch) & DMA_CHNL_CTRL_CHNL_ON) {
         tls_os_time_delay(1);
         timeout ++;
         if (timeout > 500)
@@ -303,8 +293,7 @@ unsigned char tls_dma_start(unsigned char ch, struct tls_dma_descriptor *dma_des
 {
     if ((ch > 7) && !dma_desc) return 1;
 
-    if ((dma_used_bit &(1<<ch)) == 0)
-    {
+    if ((dma_used_bit &(1<<ch)) == 0) {
         dma_used_bit |= (1<<ch);
     }
     DMA_SRCADDR_REG(ch) = dma_desc->src_addr;
@@ -329,11 +318,10 @@ unsigned char tls_dma_start(unsigned char ch, struct tls_dma_descriptor *dma_des
 unsigned char tls_dma_stop(unsigned char ch)
 {
     if (ch > 7) return 1;
-    if (DMA_CHNLCTRL_REG(ch) & DMA_CHNL_CTRL_CHNL_ON)
-    {
+    if (DMA_CHNLCTRL_REG(ch) & DMA_CHNL_CTRL_CHNL_ON) {
         DMA_CHNLCTRL_REG(ch) |= DMA_CHNL_CTRL_CHNL_OFF;
 
-        while(DMA_CHNLCTRL_REG(ch) & DMA_CHNL_CTRL_CHNL_ON);
+        while (DMA_CHNLCTRL_REG(ch) & DMA_CHNL_CTRL_CHNL_ON);
     }
 
     return 0;
@@ -356,8 +344,7 @@ unsigned char tls_dma_request(unsigned char ch, unsigned char flags)
     unsigned char freeCh = 0xFF;
 
     /* If channel is valid, try to use specified DMA channel! */
-    if ((ch < 8))
-    {
+    if ((ch < 8)) {
         if (!(channels.channels[ch] & TLS_DMA_FLAGS_CHANNEL_VALID))
         {
             freeCh = ch;
@@ -365,8 +352,7 @@ unsigned char tls_dma_request(unsigned char ch, unsigned char flags)
     }
 
     /* If ch is not valid, or ch has been used, try to select another free channel for the caller */
-    if (freeCh == 0xFF)
-    {
+    if (freeCh == 0xFF) {
         int i = 0;
         for (i = 0; i < 8; i++)
         {
@@ -383,8 +369,7 @@ unsigned char tls_dma_request(unsigned char ch, unsigned char flags)
         }
     }
 
-    if ((freeCh < 8))
-    {
+    if ((freeCh < 8)) {
         if (dma_used_bit == 0)
         {
             tls_open_peripheral_clock(TLS_PERIPHERAL_TYPE_DMA);
@@ -409,8 +394,7 @@ unsigned char tls_dma_request(unsigned char ch, unsigned char flags)
  */
 void tls_dma_free(unsigned char ch)
 {
-    if (ch < 8)
-    {
+    if (ch < 8) {
         tls_dma_stop(ch);
 
         DMA_SRCADDR_REG(ch) = 0;
@@ -421,8 +405,7 @@ void tls_dma_free(unsigned char ch)
 
         channels.channels[ch] = 0x00;
         dma_used_bit &= ~(1<<ch);
-        if (dma_used_bit == 0)
-        {
+        if (dma_used_bit == 0) {
             tls_close_peripheral_clock(TLS_PERIPHERAL_TYPE_DMA);
         }
     }
@@ -441,10 +424,8 @@ void tls_dma_init(void)
 {
     u32 i = 0;
     u32 value = 0;
-    for (i = 0; i < 8; i++)
-    {
-        if (!(dma_used_bit & (1<<i)))
-        {
+    for (i = 0; i < 8; i++) {
+        if (!(dma_used_bit & (1<<i))) {
             value |= 3<<(i*2);
         }
     }

@@ -177,21 +177,21 @@ typedef volatile unsigned int TLS_REG;    /* Hardware register definition */
 #define HR_DMA_CHNL0_CURRENT_DEST_ADDR  (HR_DMA_BASE_ADDR + 0x38)
 
 #define DMA_STARTADDRESS                    HR_DMA_BASE_ADDR
-#define DMA_INTMASK_REG                        (*(volatile unsigned int*)(DMA_STARTADDRESS+0x000))
-#define DMA_INTSRC_REG                        (*(volatile unsigned int*)(DMA_STARTADDRESS+0x004))
-#define DMA_CHANNEL_SEL                        (*(volatile unsigned int*)(DMA_STARTADDRESS+0x008))
-#define DMA_CHNL_REG_BASE                     (DMA_STARTADDRESS+0x010)
-#define DMA_SRCADDR_REG(ch)                    (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /* - 1 */) +0x00))
-#define DMA_DESTADDR_REG(ch)                    (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /* - 1 */) +0x04))
-#define DMA_SRCWRAPADDR_REG(ch)                (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /* - 1 */) +0x08))
-#define DMA_DESTWRAPADDR_REG(ch)            (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /* - 1 */) +0x0C))
-#define DMA_WRAPSIZE_REG(ch)                (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /* - 1 */) +0x10))
-#define DMA_CHNLCTRL_REG(ch)                    (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /* - 1 */) +0x14))
-#define DMA_MODE_REG(ch)                        (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /* - 1 */) +0x18))
-#define DMA_CTRL_REG(ch)                        (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /* - 1 */) +0x1C))
-#define DMA_STATUS_REG(ch)                    (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /* - 1 */) +0x20))
-#define DMA_DESC_ADDR_REG(ch)                  (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /* - 1 */) +0x24))
-#define DMA_CURRDESTADDR_REG(ch)              (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /* - 1 */) +0x28))
+#define DMA_INTMASK_REG                  (*(volatile unsigned int*)(DMA_STARTADDRESS+0x000))
+#define DMA_INTSRC_REG                   (*(volatile unsigned int*)(DMA_STARTADDRESS+0x004))
+#define DMA_CHANNEL_SEL                  (*(volatile unsigned int*)(DMA_STARTADDRESS+0x008))
+#define DMA_CHNL_REG_BASE                (DMA_STARTADDRESS+0x010)
+#define DMA_SRCADDR_REG(ch)              (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /* - 1 */) +0x00))
+#define DMA_DESTADDR_REG(ch)             (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /* - 1 */) +0x04))
+#define DMA_SRCWRAPADDR_REG(ch)          (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /* - 1 */) +0x08))
+#define DMA_DESTWRAPADDR_REG(ch)         (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /* - 1 */) +0x0C))
+#define DMA_WRAPSIZE_REG(ch)             (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /* - 1 */) +0x10))
+#define DMA_CHNLCTRL_REG(ch)             (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /* - 1 */) +0x14))
+#define DMA_MODE_REG(ch)                 (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /* - 1 */) +0x18))
+#define DMA_CTRL_REG(ch)                 (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /* - 1 */) +0x1C))
+#define DMA_STATUS_REG(ch)               (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /* - 1 */) +0x20))
+#define DMA_DESC_ADDR_REG(ch)            (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /* - 1 */) +0x24))
+#define DMA_CURRDESTADDR_REG(ch)         (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /* - 1 */) +0x28))
 
 #define DMA_CHNL_CTRL_CHNL_ON           (1<<0)
 #define DMA_CHNL_CTRL_CHNL_OFF          (1<<1)
@@ -253,7 +253,7 @@ typedef volatile unsigned int TLS_REG;    /* Hardware register definition */
  ***************************************************************/
 #define HR_CLK_BASE_ADDR        (DEVICE_BASE_ADDR + 0xE00)
 #define HR_CLK_GATE_EN           HR_CLK_BASE_ADDR
-#define HR_CLK_SOFT_CLK_MASK    (HR_CLK_BASE_ADDR + 0x04) 
+#define HR_CLK_SOFT_CLK_MASK    (HR_CLK_BASE_ADDR + 0x04)
 #define HR_CLK_BBP_CLT_CTRL     (HR_CLK_BASE_ADDR + 0x08)
 #define HR_CLK_RST_CTL             (HR_CLK_BASE_ADDR + 0x0c)
 #define HR_CLK_DIV_CTL            (HR_CLK_BASE_ADDR + 0x10)
@@ -354,13 +354,13 @@ typedef volatile unsigned int TLS_REG;    /* Hardware register definition */
 
 /* RSA Reg */
 #define RSA_BASE_ADDRESS       0x40000000
-#define  RSAXBUF               (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x0 )))
-#define  RSAYBUF               (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x100 )))
-#define  RSAMBUF               (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x200 )))
-#define  RSADBUF               (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x300 )))
-#define  RSACON                (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x400 )))
-#define  RSAMC                 (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x404 )))
-#define  RSAN                  (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x408 ))) /* Bits Definitions of "CH_CFG" */
+#define  RSAXBUF               (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x0)))
+#define  RSAYBUF               (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x100)))
+#define  RSAMBUF               (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x200)))
+#define  RSADBUF               (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x300)))
+#define  RSACON                (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x400)))
+#define  RSAMC                 (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x404)))
+#define  RSAN                  (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x408))) /* Bits Definitions of "CH_CFG" */
 #define SPI_RX_INVALID_BITS(n)      ((n) << 23)
 #define SPI_CLEAR_FIFOS      (1U << 22)
 #define SPI_CONTINUE_MODE      (1U << 21)
@@ -861,7 +861,7 @@ typedef volatile unsigned int TLS_REG;    /* Hardware register definition */
 #define HR_TC16_COUNT_REG                (HR_TC_REG_BASE+0x0040)
 
 #define HR_TC_INT_EN                     (HR_TC_REG_BASE+0x0044) /* bit 31:16 */
-#define HR_TC_INT_STATUS                 (HR_TC_REG_BASE+0x0044) /* bit 15:0 */ 
+#define HR_TC_INT_STATUS                 (HR_TC_REG_BASE+0x0044) /* bit 15:0 */
 
 /**
  * @defgroup System_APIs System APIs
@@ -931,7 +931,7 @@ static __inline void tls_bitband_write(volatile unsigned int addr, unsigned int 
 
     temp = (M32(addr) & ~(1 << bit)) | (val << bit);
 
-    *((volatile unsigned int * )addr) = temp;
+    *((volatile unsigned int *)addr) = temp;
 }
 
 /**

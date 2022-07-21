@@ -48,7 +48,6 @@ static void uart0Init (int bandrate)
     tls_reg_write32(HR_UART0_DMA_CTRL, 0x00);                     /* Disable DMA */
     tls_reg_write32(HR_UART0_FIFO_CTRL, 0x00);                     /* one byte TX/RX */
 //    tls_reg_write32(HR_UART0_INT_MASK, 0x00);                     /* Disable INT */
-
 }
 #if 0
 static void uart1_io_init(void)
@@ -72,7 +71,6 @@ static void uart1_io_init(void)
     temp = tls_reg_read32(HR_GPIOB_AFS1);
     temp &= ~0xC0;
     tls_reg_write32(HR_GPIOB_AFS1, temp);
-
 }
 static void uart1Init (int bandrate)
 {
@@ -89,12 +87,10 @@ static void uart1Init (int bandrate)
     tls_reg_write32(HR_UART1_DMA_CTRL, 0x00);                     /* Disable DMA */
     tls_reg_write32(HR_UART1_FIFO_CTRL, 0x00);                     /* one byte TX/RX */
     tls_reg_write32(HR_UART1_INT_MASK, 0x00);                     /* Disable INT */
-
 }
 #endif
 void board_init(void)
 {
-
 #if USE_UART0_PRINT
     /* use uart0 as log output io */
     uart0Init(115200);
@@ -103,6 +99,6 @@ void board_init(void)
     uart1_io_init();
     /* use uart1 as log output io */
     uart1Init(115200);
-    set_printf_port(1);    
+    set_printf_port(1);
 #endif
 }

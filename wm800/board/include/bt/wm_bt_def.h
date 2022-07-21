@@ -26,8 +26,7 @@
 #define WM_BT_DEF_H
 
 /** Bluetooth Error Status */
-typedef enum
-{
+typedef enum {
     TLS_BT_STATUS_SUCCESS, /**< success */
     TLS_BT_STATUS_FAIL,
     TLS_BT_STATUS_NOT_READY,
@@ -46,10 +45,10 @@ typedef enum
     TLS_BT_STATUS_HOST_ENABLE_FAILED,
     TLS_BT_STATUS_CTRL_DISABLE_FAILED,
     TLS_BT_STATUS_HOST_DISABLE_FAILED,
+
 } tls_bt_status_t;
 
-typedef enum
-{
+typedef enum {
     TLS_BT_CTRL_IDLE     =              (1<<0),
     TLS_BT_CTRL_ENABLED  =              (1<<1),
     TLS_BT_CTRL_SLEEPING =              (1<<2),
@@ -65,37 +64,33 @@ typedef enum
 } tls_bt_ctrl_status_t;
 
 /** Bluetooth Adapter State */
-typedef enum
-{
+typedef enum {
     WM_BT_STATE_OFF,
     WM_BT_STATE_ON
 } tls_bt_state_t;
 
 /** bluetooth host statck events */
-typedef enum
-{
-    WM_BT_ADAPTER_STATE_CHG_EVT = (0x01<<0),        
-    WM_BT_ADAPTER_PROP_CHG_EVT  = (0x01<<1),   
-    WM_BT_RMT_DEVICE_PROP_EVT   = (0x01<<2),               
-    WM_BT_DEVICE_FOUND_EVT      = (0x01<<3), 
-    WM_BT_DISCOVERY_STATE_CHG_EVT=(0x01<<4),
-    WM_BT_REQUEST_EVT           = (0x01<<5),
-    WM_BT_SSP_REQUEST_EVT       = (0x01<<6),
-    WM_BT_PIN_REQUEST_EVT       = (0x01<<7),
-    WM_BT_BOND_STATE_CHG_EVT    = (0x01<<8),
-    WM_BT_ACL_STATE_CHG_EVT     = (0x01<<9),
-    WM_BT_ENERGY_INFO_EVT       = (0x01<<10),
-    WM_BT_LE_TEST_EVT           = (0x01<<11),
+typedef enum {
+    WM_BT_ADAPTER_STATE_CHG_EVT   = (0x01<<0),        
+    WM_BT_ADAPTER_PROP_CHG_EVT    = (0x01<<1),   
+    WM_BT_RMT_DEVICE_PROP_EVT     = (0x01<<2),               
+    WM_BT_DEVICE_FOUND_EVT        = (0x01<<3), 
+    WM_BT_DISCOVERY_STATE_CHG_EVT = (0x01<<4),
+    WM_BT_REQUEST_EVT             = (0x01<<5),
+    WM_BT_SSP_REQUEST_EVT         = (0x01<<6),
+    WM_BT_PIN_REQUEST_EVT         = (0x01<<7),
+    WM_BT_BOND_STATE_CHG_EVT      = (0x01<<8),
+    WM_BT_ACL_STATE_CHG_EVT       = (0x01<<9),
+    WM_BT_ENERGY_INFO_EVT         = (0x01<<10),
+    WM_BT_LE_TEST_EVT             = (0x01<<11),
 } tls_bt_host_evt_t;
 
-typedef struct
-{
+typedef struct {
     tls_bt_state_t         status; /**< bluetooth adapter state */
 } tls_bt_adapter_state_change_msg_t;
 
 /** Bluetooth Adapter and Remote Device property types */
-typedef enum
-{
+typedef enum {
     /* Properties common to both adapter and remote device */
     /**
      * Description - Bluetooth Device Name
@@ -187,41 +182,37 @@ typedef enum
 } tls_bt_property_type_t;
 
 /** Bluetooth Adapter Property data structure */
-typedef struct
-{
+typedef struct {
     tls_bt_property_type_t type;
     int len;
     void *val;
 } tls_bt_property_t;
 
-typedef struct
-{
-    tls_bt_status_t     status; 
+typedef struct {
+    tls_bt_status_t     status;
     int num_properties;
     tls_bt_property_t *properties; /**< bluetooth adapter property data */
-} tls_bt_adapter_prop_msg_t; 
+} tls_bt_adapter_prop_msg_t;
 
-typedef enum
-{ 
+typedef enum { 
     WM_BLE_SCAN_STOP = 0,
     WM_BLE_SCAN_PASSIVE = 1,
     WM_BLE_SCAN_ACTIVE = 2,
     
 } wm_ble_scan_type_t;
 
-typedef enum
-{
+typedef enum {
     WM_BLE_ADV_DATA = 0,
     WM_BLE_ADV_RSP_DATA,
 } wm_ble_gap_data_t;
 
-typedef enum{
+typedef enum {
     WM_BLE_ADV_STOP = 0,
     WM_BLE_ADV_IND,
-    WM_BLE_ADV_DIRECT_IND_HDC,  /*<high duty cycle, directed advertising>*/
+    WM_BLE_ADV_DIRECT_IND_HDC,  /* <high duty cycle, directed advertising> */
     WM_BLE_ADV_SCAN_IND,
     WM_BLE_ADV_NONCONN_IND,
-    WM_BLE_ADV_DIRECT_IND_LDC,  /*<low duty cycle, directed advertising>*/
+    WM_BLE_ADV_DIRECT_IND_LDC,  /* <low duty cycle, directed advertising> */
 } wm_ble_adv_type_t;
 
 #define WM_BLE_GAP_EVENT_CONNECT               (0x01<<0)
@@ -251,45 +242,38 @@ typedef enum{
 #define WM_BLE_GAP_EVENT_PERIODIC_TRANSFER     (0x01<<24)
 
 /** Bluetooth Address */
-typedef struct
-{
+typedef struct {
     uint8_t address[6];
 } __attribute__((packed))tls_bt_addr_t;
 
-typedef struct
-{
+typedef struct {
     tls_bt_status_t     status;
     tls_bt_addr_t     *address;
     int num_properties;
     tls_bt_property_t *properties; /**< bluetooth adapter property data */
 } tls_bt_remote_dev_prop_msg_t;
 
-typedef struct
-{
+typedef struct {
     int num_properties;
     tls_bt_property_t *properties; /**< bluetooth adapter property data */
 } tls_bt_device_found_msg_t;
 
 /** Bluetooth Adapter Discovery state */
-typedef enum
-{
+typedef enum {
     WM_BT_DISCOVERY_STOPPED,
     WM_BT_DISCOVERY_STARTED
 } tls_bt_discovery_state_t;
 
-typedef struct
-{
+typedef struct {
     tls_bt_discovery_state_t state;
 } tls_bt_discovery_state_chg_msg_t;
 
 /** Bluetooth Device Name */
-typedef struct
-{
+typedef struct {
     uint8_t name[249];
 } __attribute__((packed))tls_bt_bdname_t;
 
-typedef struct
-{
+typedef struct {
     tls_bt_addr_t *remote_bd_addr;
     tls_bt_bdname_t *bd_name;
     uint32_t cod;
@@ -297,8 +281,7 @@ typedef struct
 } tls_bt_pin_request_msg_t;
 
 /** Bluetooth SSP Bonding Variant */
-typedef enum
-{
+typedef enum {
     WM_BT_SSP_VARIANT_PASSKEY_CONFIRMATION,
     WM_BT_SSP_VARIANT_PASSKEY_ENTRY,
     WM_BT_SSP_VARIANT_CONSENT,
@@ -306,13 +289,11 @@ typedef enum
 } tls_bt_ssp_variant_t;
 
 /** Bluetooth PinKey Code */
-typedef struct
-{
+typedef struct {
     uint8_t pin[16];
 } __attribute__((packed))tls_bt_pin_code_t;
 
-typedef struct
-{
+typedef struct {
     tls_bt_addr_t *remote_bd_addr;
     tls_bt_bdname_t *bd_name;
     uint32_t cod;
@@ -321,37 +302,32 @@ typedef struct
 } tls_bt_ssp_request_msg_t;
 
 /** Bluetooth Bond state */
-typedef enum
-{
+typedef enum {
     WM_BT_BOND_STATE_NONE,
     WM_BT_BOND_STATE_BONDING,
     WM_BT_BOND_STATE_BONDED
 } tls_bt_bond_state_t;
 
-typedef struct
-{
+typedef struct {
     tls_bt_status_t status;
     tls_bt_addr_t *remote_bd_addr;
     tls_bt_bond_state_t state;
 } tls_bt_bond_state_chg_msg_t;
 
 /** Bluetooth ACL connection state */
-typedef enum
-{
+typedef enum {
     WM_BT_ACL_STATE_CONNECTED,
     WM_BT_ACL_STATE_DISCONNECTED
 } tls_bt_acl_state_t;
 
-typedef struct
-{
+typedef struct {
     tls_bt_status_t status;
     tls_bt_addr_t *remote_address;
     uint8_t link_type;
     tls_bt_acl_state_t state;
 } tls_bt_acl_state_chg_msg_t;
 
-typedef struct
-{
+typedef struct {
     uint8_t status;
     uint8_t ctrl_state;     /* stack reported state */
     uint64_t tx_time;       /* in ms */
@@ -360,21 +336,18 @@ typedef struct
     uint64_t energy_used;   /* a product of mA, V and ms */
 } __attribute__((packed))tls_bt_activity_energy_info;
 
-typedef struct
-{
+typedef struct {
     tls_bt_activity_energy_info *energy_info;
 } tls_bt_energy_info_msg_t;
 
-typedef struct
-{
+typedef struct {
     uint8_t status;
     uint32_t count;
 } tls_bt_ble_test_msg_t;
 
-typedef union
-{
-    tls_bt_adapter_state_change_msg_t        adapter_state_change;      
-    tls_bt_adapter_prop_msg_t                adapter_prop;      
+typedef union {
+    tls_bt_adapter_state_change_msg_t        adapter_state_change;
+    tls_bt_adapter_prop_msg_t                adapter_prop;
     tls_bt_remote_dev_prop_msg_t             remote_device_prop;
     tls_bt_device_found_msg_t                device_found;
     tls_bt_discovery_state_chg_msg_t         discovery_state;
@@ -389,8 +362,7 @@ typedef union
 /** BT host callback function */
 typedef void (*tls_bt_host_callback_t)(tls_bt_host_evt_t event, tls_bt_host_msg_t *p_data);
 
-typedef enum
-{
+typedef enum {
     TLS_BT_LOG_NONE = 0,
     TLS_BT_LOG_ERROR = 1,
     TLS_BT_LOG_WARNING = 2,
@@ -400,8 +372,7 @@ typedef enum
     TLS_BT_LOG_VERBOSE = 6,
 } tls_bt_log_level_t;
 
-typedef struct
-{
+typedef struct {
     uint8_t  uart_index;  /**< uart port index, 1~4 */
     uint32_t band_rate;   /**< band rate: 115200 ~ 2M */
     uint8_t data_bit;     /**< data bit:5 ~ 8 */
@@ -409,8 +380,7 @@ typedef struct
     uint8_t stop_bit;     /**< 0:1bit; 1:1.5bit; 2:2bits */
 } tls_bt_hci_if_t;
 
-typedef enum
-{
+typedef enum {
     TLS_BLE_PWR_TYPE_CONN_HDL0,
     TLS_BLE_PWR_TYPE_CONN_HDL1,
     TLS_BLE_PWR_TYPE_CONN_HDL2,
@@ -425,14 +395,12 @@ typedef enum
     TLS_BLE_PWR_TYPE_DEFAULT,
 } tls_ble_power_type_t;
 
-typedef enum
-{
+typedef enum {
     WM_AUDIO_OVER_HCI = 0,
     WM_AUDIO_INTERNAL_MODE,
 } tls_sco_data_path_t;
 
-typedef struct
-{
+typedef struct {
     void (*notify_controller_avaiable_hci_buffer)(int cnt);
     void (*notify_host_recv_h4)(uint8_t *ptr, uint16_t length);
 } tls_bt_host_if_t;
@@ -463,7 +431,7 @@ typedef struct
 
 #define WM_BLE_MAX_ATTR_LEN    600/** max client application WM BLE Client can support */
 #ifndef WM_BLE_CLIENT_MAX
-    #define WM_BLE_CLIENT_MAX              3
+#define WM_BLE_CLIENT_MAX              3
 #endif
 
 /** max server application WM BLE Server can support */
@@ -471,7 +439,7 @@ typedef struct
 #define WM_BLE_ATTRIBUTE_MAX           50
 
 #ifndef WM_BLE_SERVER_SECURITY
-    #define WM_BLE_SERVER_SECURITY         BTA_DM_BLE_SEC_NONE
+#define WM_BLE_SERVER_SECURITY         BTA_DM_BLE_SEC_NONE
 #endif
 
 #define WM_BLE_INVALID_IF              0xFF
@@ -484,8 +452,7 @@ typedef struct
 #define WM_BLE_MAX_PDU_LENGTH                              251
 
 /** BLE events */
-typedef enum
-{
+typedef enum {
     /** BLE Client events */
     WM_BLE_CL_REGISTER_EVT,      /**< BLE client is registered. */
     WM_BLE_CL_DEREGISTER_EVT,    /**< BLE client is deregistered. */
@@ -532,23 +499,19 @@ typedef enum
 /* Client callback function events */
 
 /** Bluetooth 128-bit UUID */
-typedef struct
-{
+typedef struct {
     uint8_t uu[16];
 } tls_bt_uuid_t;
 
 /* callback event data for WM_BLE_CL_REGISTER_EVT/ event */
-typedef struct
-{
+typedef struct {
     uint8_t         status; /**< operation status */
     uint8_t         client_if; /**< Client interface ID */
     tls_bt_uuid_t          app_uuid;  /**< Client uuid*/
-
 } tls_ble_cl_register_msg_t;
 
 /** callback event data for WM_BLE_CL_READ_CHAR_EVT /WM_BLE_CL_READ_CHAR_EVTevent */
-typedef struct
-{
+typedef struct {
     uint16_t              conn_id;
     uint8_t         status;
     uint16_t              handle;
@@ -558,38 +521,33 @@ typedef struct
 } tls_ble_cl_read_msg_t;
 
 /** callback event data for WM_BLE_CL_WRITE_CHAR_EVT/WM_BLE_CL_PREP_WRITE_EVT/WM_BLE_CL_WRITE_DESCR_EVT event */
-typedef struct
-{
+typedef struct {
     uint16_t              conn_id;
     uint8_t         status;
     uint16_t            handle;
 } tls_ble_cl_write_msg_t;
 
 /** callback event data for WM_BLE_CL_EXEC_CMPL_EVT event */
-typedef struct
-{
+typedef struct {
     uint16_t              conn_id;
     uint8_t         status;
 } tls_ble_cl_exec_cmpl_msg_t;
 
 /** callback event data for WM_BLE_CL_SEARCH_CMPL_EVT event */
-typedef struct
-{
+typedef struct {
     uint16_t              conn_id;
     uint8_t         status; /**< operation status */
 } tls_ble_cl_search_cmpl_msg_t;
 
 /** callback event data for WM_BLE_CL_SEARCH_RES_EVT event */
-typedef struct
-{
+typedef struct {
     uint16_t              conn_id;
     tls_bt_uuid_t             uuid;
     uint8_t               inst_id;
 } tls_ble_cl_search_res_msg_t;
 
 /** callback event data for WM_BLE_CL_NOTIF_EVT event */
-typedef struct
-{
+typedef struct {
     uint16_t              conn_id;
     uint8_t               *value;
     uint8_t             bda[6];
@@ -599,8 +557,7 @@ typedef struct
 } tls_ble_cl_notify_msg_t;
 
 /** callback event data for WM_BLE_CL_OPEN_EVT event */
-typedef struct
-{
+typedef struct {
     uint16_t              conn_id;
     uint8_t         status; /**< operation status */
     uint8_t         client_if; /**< Client interface ID */
@@ -608,8 +565,7 @@ typedef struct
 } tls_ble_cl_open_msg_t;
 
 /** callback event data for WM_BLE_CL_CLOSE_EVT event */
-typedef struct
-{
+typedef struct {
     uint16_t              conn_id;
     uint8_t         status;
     uint8_t         client_if;
@@ -618,28 +574,24 @@ typedef struct
 } tls_ble_cl_close_msg_t;
 
 /** callback event data for WM_BLE_CL_LISTEN_EVT event */
-typedef struct
-{
+typedef struct {
     uint8_t         status;
     uint8_t        client_if;
 } tls_ble_cl_listen_msg_t;
 
 /** callback event data for WM_BLE_CL_CFG_MTU_EVT event */
-typedef struct
-{
+typedef struct {
     uint16_t conn_id;
     uint8_t         status;
     uint16_t mtu;
 } tls_ble_cl_cfg_mtu_msg_t;
 
-typedef struct
-{
+typedef struct {
     uint16_t              conn_id;
     bool             congested; /**< congestion indicator */
 } tls_ble_cl_congest_msg_t;
 
-typedef enum
-{
+typedef enum {
     WM_BTGATT_DB_PRIMARY_SERVICE,
     WM_BTGATT_DB_SECONDARY_SERVICE,
     WM_BTGATT_DB_INCLUDED_SERVICE,
@@ -647,8 +599,7 @@ typedef enum
     WM_BTGATT_DB_DESCRIPTOR,
 } tls_bt_gatt_db_attribute_type_t;
 
-typedef struct
-{
+typedef struct {
     uint16_t             id;
     tls_bt_uuid_t           uuid;
     tls_bt_gatt_db_attribute_type_t type;
@@ -669,16 +620,14 @@ typedef struct
     uint8_t             properties;
 } tls_btgatt_db_element_t;
 
-typedef struct
-{
+typedef struct {
     uint16_t conn_id;
     tls_btgatt_db_element_t *db;
     int count;
     uint8_t status;
 } tls_ble_cl_gatt_db_msg_t;
 
-typedef struct
-{
+typedef struct {
     uint16_t conn_id;
     uint8_t status;
     bool reg;
@@ -690,16 +639,14 @@ typedef struct
 /* Server callback function events */
 
 /** callback event data for WM_BLE_SE_REGISTER_EVT/WM_BLE_SE_DEREGISTER_EVT event */
-typedef struct
-{
+typedef struct {
     uint8_t         status; /* operation status */
     uint8_t         server_if; /* Server interface ID */
     tls_bt_uuid_t app_uuid;
 } tls_ble_se_register_msg_t;
 
 /** callback event data for WM_BLE_SE_CONNECT_EVT/WM_BLE_SE_DISCONNECT_EVT event */
-typedef struct
-{
+typedef struct {
     uint16_t conn_id;
     uint8_t         server_if; /**< Server interface ID */
     bool connected;
@@ -710,8 +657,7 @@ typedef struct
 typedef tls_ble_se_connect_msg_t tls_ble_se_disconnect_msg_t;
 
 /** callback event data for WM_BLE_SE_CREATE_EVT event */
-typedef struct
-{
+typedef struct {
     uint8_t         status; /**< operation status */
     uint8_t         server_if;
     bool is_primary;
@@ -721,8 +667,7 @@ typedef struct
 } tls_ble_se_create_msg_t;
 
 /** callback event data for WM_BLE_SE_ADD_INCL_SRVC_EVT event */
-typedef struct
-{
+typedef struct {
     uint8_t         status; /**< operation status */
     uint8_t         server_if;
     uint16_t           service_id;
@@ -730,8 +675,7 @@ typedef struct
 } tls_ble_se_add_incl_srvc_msg_t;
 
 /** callback event data for WM_BLE_SE_ADDCHAR_EVT event */
-typedef struct
-{
+typedef struct {
     uint8_t         status; /**< operation status */
     uint8_t         server_if;
     tls_bt_uuid_t uuid;
@@ -740,8 +684,7 @@ typedef struct
 } tls_ble_se_add_char_msg_t;
 
 typedef tls_ble_se_add_char_msg_t tls_ble_se_add_char_descr_msg_t;/** callback event data for WM_BLE_SE_START_EVT event */
-typedef struct
-{
+typedef struct {
     uint8_t         status; /**< operation status */
     uint8_t         server_if;
     uint16_t              service_id;
@@ -751,8 +694,7 @@ typedef tls_ble_se_start_msg_t tls_ble_se_stop_msg_t;
 
 typedef tls_ble_se_start_msg_t tls_ble_se_delete_msg_t;
 
-typedef struct
-{
+typedef struct {
     uint16_t        conn_id;
     uint32_t        trans_id;
     uint8_t       remote_bda[6];
@@ -761,8 +703,7 @@ typedef struct
     bool       is_long;
 } tls_ble_se_read_msg_t;
 
-typedef struct
-{
+typedef struct {
     uint16_t              conn_id;
     uint32_t              trans_id;
     uint8_t             remote_bda[6];
@@ -774,45 +715,36 @@ typedef struct
     uint8_t               *value;  /**< the actual attribute value */
 } tls_ble_se_write_msg_t;
 
-typedef struct
-{
+typedef struct {
     uint16_t              conn_id;
     uint32_t              trans_id;
     uint8_t             remote_bda[6];
     uint8_t exec_write;
 } tls_ble_se_exec_write_msg_t;
 
-typedef struct
-{
-    uint16_t              conn_id;
+typedef struct {
+    uint16_t       conn_id;
     uint8_t         status; /**< operation status */
-
 } tls_ble_se_confirm_msg_t;
 
-typedef struct
-{
-    
+typedef struct {
     uint8_t         status; /* operation status */
     uint16_t        conn_id;
     uint16_t        trans_id;
-
 } tls_ble_se_response_msg_t;
 
-typedef struct
-{
-    uint16_t              conn_id;
+typedef struct {
+    uint16_t           conn_id;
     bool             congested; /**< congestion indicator */
 } tls_ble_se_congest_msg_t;
 
-typedef struct
-{
-    uint16_t              conn_id;
+typedef struct {
+    uint16_t        conn_id;
     uint16_t            mtu;
 } tls_ble_se_mtu_msg_t;
 
 /** Union of data associated with HD callback */
-typedef union
-{
+typedef union {
     tls_ble_cl_register_msg_t    cli_register;      /**< WM_BLE_CL_REGISTER_EVT */
     tls_ble_cl_read_msg_t        cli_read;          /**< WM_BLE_CL_READ_EVT */
     tls_ble_cl_write_msg_t       cli_write;         /**< WM_BLE_CL_WRITE_EVT */
@@ -825,7 +757,7 @@ typedef union
     tls_ble_cl_listen_msg_t      cli_listen;        /**< WM_BLE_CL_LISTEN_EVT */
     tls_ble_cl_cfg_mtu_msg_t     cli_cfg_mtu;       /**< WM_BLE_CL_CFG_MTU_EVT */
     tls_ble_cl_congest_msg_t     cli_congest;       /**< WM_BLE_CL_CONGEST_EVT */
-    tls_ble_cl_gatt_db_msg_t     cli_db;            /* WM_BLE_CL_REPORT_DB_EVT */
+    tls_ble_cl_gatt_db_msg_t     cli_db;            /* WM_BLE_CL_REPORT_DB_EVT*/
     tls_ble_cl_reg_notify_msg_t  cli_reg_notify;
 
     tls_ble_se_register_msg_t    ser_register;     /**< WM_BLE_SE_REGISTER_EVT */
@@ -853,68 +785,59 @@ typedef void (*tls_ble_callback_t)(tls_ble_evt_t event, tls_ble_msg_t *p_data);
 typedef void (*tls_ble_output_func_ptr)(uint8_t *p_data, uint32_t length);
 
 /** BLE dm events */
-typedef enum
-{
-    WM_BLE_DM_SET_ADV_DATA_CMPL_EVT = (0x01<<0),        /**< BLE DM set advertisement data completed*/
-    WM_BLE_DM_TIMER_EXPIRED_EVT     = (0x01<<1),        /**< BLE DM timer expired event. */
-    WM_BLE_DM_TRIGER_EVT            = (0x01<<2),        /**< BLE DM event trigered event, async processing*/
-    WM_BLE_DM_SCAN_RES_EVT          = (0x01<<3),        /**< BLE DM scan result evt*/
-    WM_BLE_DM_SET_SCAN_PARAM_CMPL_EVT=(0x01<<4),
-    WM_BLE_DM_REPORT_RSSI_EVT       = (0x01<<5),
-    WM_BLE_DM_SCAN_RES_CMPL_EVT     = (0x01<<6),
-    WM_BLE_DM_SEC_EVT               = (0x01<<7),
-    WM_BLE_DM_ADV_STARTED_EVT       = (0x01<<8),
-    WM_BLE_DM_ADV_STOPPED_EVT       = (0x01<<9),
+typedef enum {
+    WM_BLE_DM_SET_ADV_DATA_CMPL_EVT   = (0x01<<0),        /**< BLE DM set advertisement data completed*/
+    WM_BLE_DM_TIMER_EXPIRED_EVT       = (0x01<<1),        /**< BLE DM timer expired event. */
+    WM_BLE_DM_TRIGER_EVT              = (0x01<<2),        /**< BLE DM event trigered event, async processing*/
+    WM_BLE_DM_SCAN_RES_EVT            = (0x01<<3),        /**< BLE DM scan result evt*/
+    WM_BLE_DM_SET_SCAN_PARAM_CMPL_EVT = (0x01<<4),
+    WM_BLE_DM_REPORT_RSSI_EVT         = (0x01<<5),
+    WM_BLE_DM_SCAN_RES_CMPL_EVT       = (0x01<<6),
+    WM_BLE_DM_SEC_EVT                 = (0x01<<7),
+    WM_BLE_DM_ADV_STARTED_EVT         = (0x01<<8),
+    WM_BLE_DM_ADV_STOPPED_EVT         = (0x01<<9),
 } tls_ble_dm_evt_t;
 
 /** callback event data for WM_BLE_DM_SET_ADV_DATA */
-typedef struct
-{
+typedef struct {
     uint8_t         status; /**< operation status */
 } tls_ble_dm_set_adv_data_cmpl_msg_t;
 
-typedef struct
-{
+typedef struct {
     uint8_t status;
     uint8_t dm_id; // dummy value; who care this value;
 } tls_ble_dm_set_scan_param_cmpl_msg_t;
 
-typedef struct
-{
+typedef struct {
     uint32_t id;
     int32_t func_ptr;
 } tls_ble_dm_timer_expired_msg_t;
 
 typedef tls_ble_dm_timer_expired_msg_t tls_ble_dm_evt_triger_msg_t;
 
-typedef struct
-{
+typedef struct {
     uint8_t address[6];                    /**< device address */
     int8_t rssi;                        /**< signal strength */
     uint8_t *value; /**< adv /scan resp value */
 } tls_ble_dm_scan_res_msg_t;
 
-typedef struct
-{
+typedef struct {
     uint8_t address[6];
     int8_t rssi;
     uint8_t status;
 } tls_ble_report_rssi_msg_t;
-typedef struct
-{
+typedef struct {
     uint8_t address[6];
     int8_t transport;
-    uint8_t status;    
+    uint8_t status;
 } tls_ble_sec_msg_t;
 
-typedef struct
-{
+typedef struct {
     uint16_t num_responses;
 } tls_ble_dm_scan_res_cmpl_msg_t;
 
 typedef tls_ble_dm_set_adv_data_cmpl_msg_t tls_ble_dm_adv_cmpl_msg_t;
-typedef union
-{
+typedef union {
     tls_ble_dm_set_adv_data_cmpl_msg_t   dm_set_adv_data_cmpl;
     tls_ble_dm_timer_expired_msg_t       dm_timer_expired;
     tls_ble_dm_evt_triger_msg_t          dm_evt_trigered;
@@ -924,10 +847,10 @@ typedef union
     tls_ble_report_rssi_msg_t            dm_report_rssi;
     tls_ble_sec_msg_t                    dm_sec_result;
     tls_ble_dm_adv_cmpl_msg_t            dm_adv_cmpl;
+    
 } tls_ble_dm_msg_t;
 
-typedef struct
-{
+typedef struct {
     bool set_scan_rsp;
     bool include_name;
     bool include_txpower;
@@ -943,15 +866,13 @@ typedef struct
     uint8_t service_uuid[31];
 } __attribute__((packed)) tls_ble_dm_adv_data_t;
 
-typedef struct
-{
+typedef struct {
     uint16_t      adv_int_min;            /* minimum adv interval */
     uint16_t      adv_int_max;            /* maximum adv interval */
     tls_bt_addr_t   *dir_addr;
 } __attribute__((packed)) tls_ble_dm_adv_param_t;
 
-typedef struct
-{
+typedef struct {
     uint16_t      adv_int_min;            /* minimum adv interval */
     uint16_t      adv_int_max;            /* maximum adv interval */
     uint8_t       adv_type;
@@ -975,8 +896,7 @@ typedef void (*tls_ble_scan_res_notify_t)(tls_ble_dm_scan_res_msg_t *msg);
 
 /*********************************************************************************************************/
 /* Bluetooth AV connection states */
-typedef enum
-{
+typedef enum {
     WM_BTAV_CONNECTION_STATE_DISCONNECTED = 0,
     WM_BTAV_CONNECTION_STATE_CONNECTING,
     WM_BTAV_CONNECTION_STATE_CONNECTED,
@@ -984,51 +904,44 @@ typedef enum
 } tls_btav_connection_state_t;
 
 /* Bluetooth AV datapath states */
-typedef enum
-{
+typedef enum {
     WM_BTAV_AUDIO_STATE_REMOTE_SUSPEND = 0,
     WM_BTAV_AUDIO_STATE_STOPPED,
     WM_BTAV_AUDIO_STATE_STARTED,
 } tls_btav_audio_state_t;
 
 /** BR-EDR A2DP sink events */
-typedef enum
-{
+typedef enum {
     WMBT_A2DP_CONNECTION_STATE_EVT,
     WMBT_A2DP_AUDIO_STATE_EVT,
     WMBT_A2DP_AUDIO_CONFIG_EVT,
     WMBT_A2DP_AUDIO_PAYLOAD_EVT,
 } tls_bt_av_evt_t;
 
-typedef struct
-{
+typedef struct {
     tls_btav_connection_state_t stat;
     tls_bt_addr_t *bd_addr;
 } tls_bt_av_connection_state_t;
 
-typedef struct
-{
+typedef struct {
     tls_btav_audio_state_t stat;
     tls_bt_addr_t *bd_addr;
 } tls_bt_av_audio_state_t;
 
-typedef struct
-{
+typedef struct {
     tls_bt_addr_t *bd_addr;
     uint32_t sample_rate;
     uint8_t channel_count;
 } tls_bt_av_audio_config_t;
 
-typedef struct
-{
+typedef struct {
     tls_bt_addr_t *bd_addr;
     uint8_t audio_format;
     uint8_t *payload;
     uint16_t payload_length;
 } tls_bt_av_audio_payload_t;
 
-typedef union
-{
+typedef union {
     tls_bt_av_connection_state_t av_connection_state;
     tls_bt_av_audio_state_t av_audio_state;
     tls_bt_av_audio_config_t av_audio_config;
@@ -1051,8 +964,7 @@ typedef void (*tls_bt_a2dp_src_callback_t)(tls_bt_av_evt_t event, tls_bt_av_msg_
 #define WM_BTRC_MAX_ELEM_ATTR_SIZE     7
 
 typedef uint8_t tls_btrc_uid_t[WM_BTRC_UID_SIZE];
-typedef enum
-{
+typedef enum {
     WM_BTRC_PLAYSTATE_STOPPED = 0x00,    /* Stopped */
     WM_BTRC_PLAYSTATE_PLAYING = 0x01,    /* Playing */
     WM_BTRC_PLAYSTATE_PAUSED = 0x02,    /* Paused  */
@@ -1061,29 +973,25 @@ typedef enum
     WM_BTRC_PLAYSTATE_ERROR = 0xFF,    /* Error   */
 } tls_btrc_play_status_t;
 
-typedef enum
-{
+typedef enum {
     WM_BTRC_FEAT_NONE = 0x00,    /* AVRCP 1.0 */
     WM_BTRC_FEAT_METADATA = 0x01,    /* AVRCP 1.3 */
     WM_BTRC_FEAT_ABSOLUTE_VOLUME = 0x02,    /* Supports TG role and volume sync */
     WM_BTRC_FEAT_BROWSE = 0x04,    /* AVRCP 1.4 and up, with Browsing support */
 } tls_btrc_remote_features_t;
-typedef enum
-{
+typedef enum {
     WM_BTRC_NOTIFICATION_TYPE_INTERIM = 0,
     WM_BTRC_NOTIFICATION_TYPE_CHANGED = 1,
 } tls_btrc_notification_type_t;
 
-typedef enum
-{
+typedef enum {
     WM_BTRC_PLAYER_ATTR_EQUALIZER = 0x01,
     WM_BTRC_PLAYER_ATTR_REPEAT = 0x02,
     WM_BTRC_PLAYER_ATTR_SHUFFLE = 0x03,
     WM_BTRC_PLAYER_ATTR_SCAN = 0x04,
 } tls_btrc_player_attr_t;
 
-typedef enum
-{
+typedef enum {
     WM_BTRC_MEDIA_ATTR_TITLE = 0x01,
     WM_BTRC_MEDIA_ATTR_ARTIST = 0x02,
     WM_BTRC_MEDIA_ATTR_ALBUM = 0x03,
@@ -1093,16 +1001,14 @@ typedef enum
     WM_BTRC_MEDIA_ATTR_PLAYING_TIME = 0x07,
 } tls_btrc_media_attr_t;
 
-typedef enum
-{
+typedef enum {
     WM_BTRC_PLAYER_VAL_OFF_REPEAT = 0x01,
     WM_BTRC_PLAYER_VAL_SINGLE_REPEAT = 0x02,
     WM_BTRC_PLAYER_VAL_ALL_REPEAT = 0x03,
     WM_BTRC_PLAYER_VAL_GROUP_REPEAT = 0x04
 } tls_btrc_player_repeat_val_t;
 
-typedef enum
-{
+typedef enum {
     WM_BTRC_EVT_PLAY_STATUS_CHANGED = 0x01,
     WM_BTRC_EVT_TRACK_CHANGE = 0x02,
     WM_BTRC_EVT_TRACK_REACHED_END = 0x03,
@@ -1111,35 +1017,30 @@ typedef enum
     WM_BTRC_EVT_APP_SETTINGS_CHANGED = 0x08,
 } tls_btrc_event_id_t;
 
-typedef struct
-{
+typedef struct {
     uint8_t num_attr;
     uint8_t attr_ids[WM_BTRC_MAX_APP_SETTINGS];
     uint8_t attr_values[WM_BTRC_MAX_APP_SETTINGS];
 } tls_btrc_player_settings_t;
 
-typedef struct
-{
+typedef struct {
     uint32_t attr_id;
     uint8_t text[WM_BTRC_MAX_ATTR_STR_LEN];
 } tls_btrc_element_attr_val_t;
 
-typedef struct
-{
+typedef struct {
     uint8_t attr_id;
     uint8_t num_val;
     uint8_t attr_val[WM_BTRC_MAX_APP_ATTR_SIZE];
 } tls_btrc_player_app_attr_t;
-typedef struct
-{
+typedef struct {
     uint8_t   val;
     uint16_t  charset_id;
     uint16_t  str_len;
     uint8_t   *p_str;
 } tls_btrc_player_app_ext_attr_val_t;
 
-typedef struct
-{
+typedef struct {
     uint8_t   attr_id;
     uint16_t  charset_id;
     uint16_t  str_len;
@@ -1148,16 +1049,14 @@ typedef struct
     tls_btrc_player_app_ext_attr_val_t ext_attr_val[WM_BTRC_MAX_APP_ATTR_SIZE];
 } tls_btrc_player_app_ext_attr_t;
 
-typedef union
-{
+typedef union {
     tls_btrc_play_status_t play_status;
     tls_btrc_uid_t track; /* queue position in NowPlaying */
     uint32_t song_pos;
     tls_btrc_player_settings_t player_setting;
 } tls_btrc_register_notification_t;
 
-typedef enum
-{
+typedef enum {
     WM_BTRC_PASSTHROUGH_RSP_EVT,
     WM_BTRC_GROUPNAVIGATION_RSP_EVT,
     WM_BTRC_CONNECTION_STATE_EVT,
@@ -1172,39 +1071,33 @@ typedef enum
     WM_BTRC_CTRL_PLAY_STATUS_CHANGED_EVT,
 } tls_btrc_ctrl_evt_t;
 
-typedef struct
-{
+typedef struct {
     int id;
     int key_state;
 } tls_btrc_passthrough_rsp_msg_t;
 
-typedef struct
-{
+typedef struct {
     int id;
     int key_state;
 } tls_btrc_groupnavigation_rsp_msg_t;
 
-typedef struct
-{
+typedef struct {
     uint8_t state;
     tls_bt_addr_t *bd_addr;
 } tls_btrc_connection_state_msg_t;
 
-typedef struct
-{
+typedef struct {
     tls_bt_addr_t *bd_addr;
     int features;
 } tls_btrc_ctrl_getrcfeatures_msg_t;
 
-typedef struct
-{
+typedef struct {
     tls_bt_addr_t *bd_addr;
     uint8_t abs_vol;
     uint8_t label;
 } tls_btrc_ctrl_setabsvol_msg_t;
 
-typedef struct
-{
+typedef struct {
     tls_bt_addr_t *bd_addr;
     uint8_t label;
 } tls_btrc_ctrl_registernotification_abs_vol_msg_t;
@@ -1215,8 +1108,7 @@ typedef struct
     uint8_t accepted;
 } tls_btrc_ctrl_setplayerapplicationsetting_rsp_msg_t;
 
-typedef struct
-{
+typedef struct {
     tls_bt_addr_t *bd_addr;
     uint8_t num_attr;
     tls_btrc_player_app_attr_t *app_attrs;
@@ -1224,35 +1116,30 @@ typedef struct
     tls_btrc_player_app_ext_attr_t *ext_attrs;
 } tls_btrc_ctrl_playerapplicationsetting_msg_t;
 
-typedef struct
-{
+typedef struct {
     tls_bt_addr_t *bd_addr;
     tls_btrc_player_settings_t *p_vals;
 } tls_btrc_ctrl_playerapplicationsetting_changed_msg_t;
 
-typedef struct
-{
+typedef struct {
     tls_bt_addr_t *bd_addr;
     uint8_t num_attr;
     tls_btrc_element_attr_val_t *p_attrs;
 
 } tls_btrc_ctrl_track_changed_msg_t;
 
-typedef struct
-{
+typedef struct {
     tls_bt_addr_t *bd_addr;
     uint32_t song_len;
     uint32_t song_pos;
 } tls_btrc_ctrl_play_position_changed_msg_t;
 
-typedef struct
-{
+typedef struct {
     tls_bt_addr_t *bd_addr;
     tls_btrc_play_status_t play_status;
 } tls_btrc_ctrl_play_status_changed_msg_t;
 
-typedef union
-{
+typedef union {
     tls_btrc_passthrough_rsp_msg_t              passthrough_rsp;
     tls_btrc_groupnavigation_rsp_msg_t          groupnavigation_rsp;
     tls_btrc_connection_state_msg_t             connection_state;
@@ -1270,8 +1157,7 @@ typedef union
 /** WM BT RC CTRL callback function */
 typedef void (*tls_btrc_ctrl_callback_t)(tls_btrc_ctrl_evt_t event, tls_btrc_ctrl_msg_t *p_data);
 
-typedef enum
-{
+typedef enum {
     WM_BTRC_REMOTE_FEATURE_EVT,
     WM_BTRC_GET_PLAY_STATUS_EVT,
     WM_BTRC_LIST_PLAYER_APP_ATTR_EVT,
@@ -1286,77 +1172,64 @@ typedef enum
     WM_BTRC_PASSTHROUGH_CMD_EVT,
 } tls_btrc_evt_t;
 
-typedef struct
-{
+typedef struct {
     tls_bt_addr_t *bd_addr;
     tls_btrc_remote_features_t features;
 } tls_btrc_remote_features_msg_t;
 
-typedef struct
-{
+typedef struct {
     void *reserved;
 } tls_btrc_get_play_status_msg_t;
 
-typedef struct
-{
+typedef struct {
     void *reserved;
 } tls_btrc_list_player_app_attr_msg_t;
 
-typedef struct
-{
+typedef struct {
     tls_btrc_player_attr_t attr_id;
 } tls_btrc_list_player_app_values_msg_t;
 
-typedef struct
-{
+typedef struct {
     uint8_t num_attr;
     tls_btrc_player_attr_t *p_attrs;
 } tls_btrc_get_player_app_value_msg_t;
 
-typedef struct
-{
+typedef struct {
     uint8_t attr_id;
     uint8_t num_val;
     uint8_t *p_vals;
 } tls_btrc_get_player_app_attrs_text_msg_t;
 
-typedef struct
-{
+typedef struct {
     uint8_t num_attr;
     tls_btrc_player_attr_t *p_attrs;
 } tls_btrc_get_player_app_values_text_msg_t;
 
-typedef struct
-{
+typedef struct {
     tls_btrc_player_settings_t *p_vals;
 } tls_btrc_set_player_app_value_msg_t;
 
-typedef struct
-{
+typedef struct {
     uint8_t num_attr;
     tls_btrc_media_attr_t *p_attrs;
 } tls_btrc_get_element_attr_msg_t;
 
-typedef struct
-{
-    tls_btrc_event_id_t event_id; 
+typedef struct {
+    tls_btrc_event_id_t event_id;
     uint32_t param;
 } tls_btrc_register_notification_msg_t;
 
-typedef struct
-{
-    uint8_t volume; 
+typedef struct {
+    uint8_t volume;
     uint8_t ctype;
 } tls_btrc_volume_change_msg_t;
 
-typedef struct
-{
+typedef struct {
     int id;
     int key_state;
 } tls_btrc_passthrough_cmd_msg_t;
 
-typedef union
-{
+typedef union {
     tls_btrc_remote_features_msg_t      remote_features;
     tls_btrc_get_play_status_msg_t      get_play_status;
     tls_btrc_list_player_app_attr_msg_t     list_player_app_attr;
@@ -1375,8 +1248,8 @@ typedef union
 typedef void (*tls_btrc_callback_t)(tls_btrc_evt_t event, tls_btrc_msg_t *p_data);
 
 /*************************************************************************************************************/
-typedef enum
-{
+
+typedef enum {
     WM_BTHF_CLIENT_CONNECTION_STATE_DISCONNECTED = 0,
     WM_BTHF_CLIENT_CONNECTION_STATE_CONNECTING,
     WM_BTHF_CLIENT_CONNECTION_STATE_CONNECTED,
@@ -1384,40 +1257,34 @@ typedef enum
     WM_BTHF_CLIENT_CONNECTION_STATE_DISCONNECTING
 } tls_bthf_client_connection_state_t;
 
-typedef enum
-{
+typedef enum{
     WM_BTHF_CLIENT_AUDIO_STATE_DISCONNECTED = 0,
     WM_BTHF_CLIENT_AUDIO_STATE_CONNECTING,
     WM_BTHF_CLIENT_AUDIO_STATE_CONNECTED,
     WM_BTHF_CLIENT_AUDIO_STATE_CONNECTED_MSBC,
 } tls_bthf_client_audio_state_t;
 
-typedef enum
-{
+typedef enum {
     WM_BTHF_CLIENT_VR_STATE_STOPPED = 0,
     WM_BTHF_CLIENT_VR_STATE_STARTED
 } tls_bthf_client_vr_state_t;
 
-typedef enum
-{
+typedef enum {
     WM_BTHF_CLIENT_VOLUME_TYPE_SPK = 0,
     WM_BTHF_CLIENT_VOLUME_TYPE_MIC
 } tls_bthf_client_volume_type_t;
 
-typedef enum
-{
+typedef enum {
     WM_BTHF_CLIENT_NETWORK_STATE_NOT_AVAILABLE = 0,
     WM_BTHF_CLIENT_NETWORK_STATE_AVAILABLE
 } tls_bthf_client_network_state_t;
 
-typedef enum
-{
+typedef enum {
     WM_BTHF_CLIENT_SERVICE_TYPE_HOME = 0,
     WM_BTHF_CLIENT_SERVICE_TYPE_ROAMING
 } tls_bthf_client_service_type_t;
 
-typedef enum
-{
+typedef enum {
     WM_BTHF_CLIENT_CALL_STATE_ACTIVE = 0,
     WM_BTHF_CLIENT_CALL_STATE_HELD,
     WM_BTHF_CLIENT_CALL_STATE_DIALING,
@@ -1427,48 +1294,41 @@ typedef enum
     WM_BTHF_CLIENT_CALL_STATE_HELD_BY_RESP_HOLD,
 } tls_bthf_client_call_state_t;
 
-typedef enum
-{
+typedef enum {
     WM_BTHF_CLIENT_CALL_NO_CALLS_IN_PROGRESS = 0,
     WM_BTHF_CLIENT_CALL_CALLS_IN_PROGRESS
 } tls_bthf_client_call_t;
 
-typedef enum
-{
+typedef enum {
     WM_BTHF_CLIENT_CALLSETUP_NONE = 0,
     WM_BTHF_CLIENT_CALLSETUP_INCOMING,
     WM_BTHF_CLIENT_CALLSETUP_OUTGOING,
     WM_BTHF_CLIENT_CALLSETUP_ALERTING
 } tls_bthf_client_callsetup_t;
 
-typedef enum
-{
+typedef enum {
     WM_BTHF_CLIENT_CALLHELD_NONE = 0,
     WM_BTHF_CLIENT_CALLHELD_HOLD_AND_ACTIVE,
     WM_BTHF_CLIENT_CALLHELD_HOLD,
 } tls_bthf_client_callheld_t;
 
-typedef enum
-{
+typedef enum {
     WM_BTHF_CLIENT_RESP_AND_HOLD_HELD = 0,
     WM_BTRH_CLIENT_RESP_AND_HOLD_ACCEPT,
     WM_BTRH_CLIENT_RESP_AND_HOLD_REJECT,
 } tls_bthf_client_resp_and_hold_t;
 
-typedef enum
-{
+typedef enum {
     WM_BTHF_CLIENT_CALL_DIRECTION_OUTGOING = 0,
     WM_BTHF_CLIENT_CALL_DIRECTION_INCOMING
 } tls_bthf_client_call_direction_t;
 
-typedef enum
-{
+typedef enum {
     WM_BTHF_CLIENT_CALL_MPTY_TYPE_SINGLE = 0,
     WM_BTHF_CLIENT_CALL_MPTY_TYPE_MULTI
 } tls_bthf_client_call_mpty_type_t;
 
-typedef enum
-{
+typedef enum {
     WM_BTHF_CLIENT_CMD_COMPLETE_OK = 0,
     WM_BTHF_CLIENT_CMD_COMPLETE_ERROR,
     WM_BTHF_CLIENT_CMD_COMPLETE_ERROR_NO_CARRIER,
@@ -1479,8 +1339,7 @@ typedef enum
     WM_BTHF_CLIENT_CMD_COMPLETE_ERROR_CME
 } tls_bthf_client_cmd_complete_t;
 
-typedef enum
-{
+typedef enum {
     WM_BTHF_CLIENT_CALL_ACTION_CHLD_0 = 0,
     WM_BTHF_CLIENT_CALL_ACTION_CHLD_1,
     WM_BTHF_CLIENT_CALL_ACTION_CHLD_2,
@@ -1495,15 +1354,13 @@ typedef enum
     WM_BTHF_CLIENT_CALL_ACTION_BTRH_2,
 } tls_bthf_client_call_action_t;
 
-typedef enum
-{
+typedef enum {
     WM_BTHF_CLIENT_SERVICE_UNKNOWN = 0,
     WM_BTHF_CLIENT_SERVICE_VOICE,
     WM_BTHF_CLIENT_SERVICE_FAX
 } tls_bthf_client_subscriber_service_type_t;
 
-typedef enum
-{
+typedef enum {
     WM_BTHF_CLIENT_IN_BAND_RINGTONE_NOT_PROVIDED = 0,
     WM_BTHF_CLIENT_IN_BAND_RINGTONE_PROVIDED,
 } tls_bthf_client_in_band_ring_state_t;
@@ -1723,19 +1580,20 @@ typedef union
     tls_bthf_client_last_voice_tag_number_msg_t last_voice_tag_number_msg;
     tls_bthf_client_ring_indication_msg_t   ring_indication_msg;
     tls_bthf_audio_payload_msg_t            audio_payload_msg;
+
 } tls_bthf_client_msg_t;
 
 /** WM BT HFP CLIENT callback function */
 
 /******************************************************************************************/
 /* Security Setting Mask */
-#define WM_SPP_SEC_NONE            0x0000    /* No security */
-#define WM_SPP_SEC_AUTHORIZE       0x0001    /* Authorization required (only needed for out going connection ) */
-#define WM_SPP_SEC_AUTHENTICATE    0x0012    /* Authentication required */
-#define WM_SPP_SEC_ENCRYPT         0x0024    /* Encryption required */
-#define WM_SPP_SEC_MODE4_LEVEL4    0x0040    /* Mode 4 level 4 service, i.e. incoming/outgoing MITM and P-256 encryption */
-#define WM_SPP_SEC_MITM            0x3000    /* Man-In-The_Middle protection */
-#define WM_SPP_SEC_IN_16_DIGITS    0x4000    /* Min 16 digit for pin code */
+#define WM_SPP_SEC_NONE          0x0000  /* No security */
+#define WM_SPP_SEC_AUTHORIZE     0x0001  /* Authorization required (only needed for out going connection ) */
+#define WM_SPP_SEC_AUTHENTICATE  0x0012  /* Authentication required */
+#define WM_SPP_SEC_ENCRYPT       0x0024  /* Encryption required */
+#define WM_SPP_SEC_MODE4_LEVEL4  0x0040  /* Mode 4 level 4 service, i.e. incoming/outgoing MITM and P-256 encryption */
+#define WM_SPP_SEC_MITM          0x3000  /* Man-In-The_Middle protection */
+#define WM_SPP_SEC_IN_16_DIGITS  0x4000  /* Min 16 digit for pin code */
 typedef uint16_t wm_spp_sec_t;
 
 #define WM_SPP_MAX_SCN             31
@@ -1759,71 +1617,70 @@ typedef enum {
 } tls_spp_event_t;
 
 typedef struct {
-    uint8_t    status;         
+    uint8_t    status; 
 } tls_spp_init_msg_t ;
 
 typedef struct {
-    uint8_t    status;        
-    uint8_t    scn_num;       
-    uint8_t    scn[WM_SPP_MAX_SCN];   
+    uint8_t    status;
+    uint8_t    scn_num;
+    uint8_t    scn[WM_SPP_MAX_SCN];
 } tls_spp_disc_comp_msg_t;
 
 typedef struct {
-        uint8_t      status;        
-        uint32_t     handle;                   
-        uint8_t     addr[6];        
+        uint8_t      status;
+        uint32_t     handle;
+        uint8_t     addr[6];
 } tls_spp_open_msg_t;
 
 typedef struct {
-        uint8_t    status;        
-        uint32_t   handle;        
-        uint32_t   new_listen_handle;         
-        uint8_t     addr[6];       
+        uint8_t    status;
+        uint32_t   handle;
+        uint32_t   new_listen_handle; 
+        uint8_t     addr[6];
 } tls_spp_srv_open_msg_t;
 
 typedef struct {
-        uint8_t    status;         
-        uint32_t   port_status;    
-        uint32_t   handle;        
-        bool       local;         
+        uint8_t    status; 
+        uint32_t   port_status;
+        uint32_t   handle;
+        bool       local; 
 } tls_spp_close_msg_t; 
 
 typedef struct {
-        uint8_t    status;        
-        uint32_t   handle;         
-        uint8_t    sec_id;         
-        bool       use_co_rfc;        
+        uint8_t    status;
+        uint32_t   handle; 
+        uint8_t    sec_id; 
+        bool       use_co_rfc;
 } tls_spp_start_msg_t; 
 
 typedef struct {
-        uint8_t    status;         
-        uint32_t   handle;         
-        uint8_t    sec_id;        
-        bool       use_co_rfc;         
+        uint8_t    status; 
+        uint32_t   handle; 
+        uint8_t    sec_id;
+        bool       use_co_rfc; 
 } tls_spp_cli_init_msg_t;
 
 typedef struct {
-        uint8_t    status;         
-        uint32_t   handle;         
-        int        length;            
-        bool       congest;          
+        uint8_t    status; 
+        uint32_t   handle; 
+        int        length;
+        bool       congest;
 } tls_spp_write_msg_t;
 
 typedef struct {
-        uint8_t    status;        
-        uint32_t   handle;        
-        uint16_t   length;           
-        uint8_t    *data;         
+        uint8_t    status;
+        uint32_t   handle;
+        uint16_t   length; 
+        uint8_t    *data; 
 } tls_spp_data_ind_msg_t; 
 
 typedef struct {
-        uint8_t    status;        
-        uint32_t   handle;        
-        bool       congest;           
-} tls_spp_cong_msg_t; 
+        uint8_t    status;
+        uint32_t   handle;
+        bool       congest;
+} tls_spp_cong_msg_t;
 
-typedef union
-{
+typedef union {
     tls_spp_init_msg_t              init_msg;
     tls_spp_disc_comp_msg_t         disc_comp_msg;
     tls_spp_open_msg_t              open_msg;
@@ -1839,8 +1696,7 @@ typedef union
 /** WM BT SPP callback function */
 typedef void (*tls_bt_spp_callback_t)(tls_spp_event_t event, tls_spp_msg_t *p_data);
 
-typedef enum
-{
+typedef enum {
     BLE_UART_SERVER_MODE,
     BLE_UART_CLIENT_MODE,
     BLE_UART_UNKNOWN_MODE,
@@ -1850,8 +1706,7 @@ typedef void (*tls_ble_output_func_ptr)(uint8_t *p_data, uint32_t length);
 #define TLS_HAL_CBACK(P_CB, P_CBACK, ...)\
     if (P_CB && P_CB->P_CBACK) {            \
         P_CB->P_CBACK(__VA_ARGS__);         \
-    }                                       \
-    else {                                  \
+    } else {                                  \
         assert(0);  \
     }
 

@@ -19,8 +19,8 @@
 double fmod(double x, double y)
 {
     union {double f; uint64_t i;} ux = {x}, uy = {y};
-    int ex = ux.i>>52 & 0x7ff;
-    int ey = uy.i>>52 & 0x7ff;
+    int ex = (ux.i>>52) & 0x7ff;
+    int ey = (uy.i>>52) & 0x7ff;
     int sx = ux.i>>63;
     uint64_t i;
 
@@ -28,9 +28,9 @@ double fmod(double x, double y)
     /* float load/store to inner loops ruining performance and code size */
     uint64_t uxi = ux.i;
 
-    if (uy.i<<1 == 0 || isnan(y) || ex == 0x7ff)
+    if ((uy.i<<1) == 0 || isnan(y) || ex == 0x7ff)
         return (x*y*1.0)/(x*y);
-    if (uxi<<1 <= uy.i<<1) {
+    if ((uxi<<1) <= (uy.i<<1)) {
         if (uxi<<1 == uy.i<<1)
             return 0*x;
         return x;
@@ -38,14 +38,14 @@ double fmod(double x, double y)
 
     /* normalize x and y */
     if (!ex) {
-        for (i = uxi<<12; i>>63 == 0; ex--, i <<= 1);
+        for (i = (uxi<<12); (i>>63) == 0; ex--, i <<= 1);
         uxi <<= -ex + 1;
     } else {
         uxi &= -1ULL >> 12;
         uxi |= 1ULL << 52;
     }
     if (!ey) {
-        for (i = uy.i<<12; i>>63 == 0; ey--, i <<= 1);
+        for (i = (uy.i<<12); (i>>63) == 0; ey--, i <<= 1);
         uy.i <<= -ey + 1;
     } else {
         uy.i &= -1ULL >> 12;
@@ -55,7 +55,7 @@ double fmod(double x, double y)
     /* x mod y */
     for (; ex > ey; ex--) {
         i = uxi - uy.i;
-        if (i >> 63 == 0) {
+        if ((i >> 63) == 0) {
             if (i == 0)
                 return 0*x;
             uxi = i;
@@ -63,12 +63,12 @@ double fmod(double x, double y)
         uxi <<= 1;
     }
     i = uxi - uy.i;
-    if (i >> 63 == 0) {
+    if ((i >> 63) == 0) {
         if (i == 0)
             return 0*x;
         uxi = i;
     }
-    for (; uxi>>52 == 0; uxi <<= 1, ex--);
+    for (; (uxi>>52) == 0; uxi <<= 1, ex--);
 
     /* scale result */
     if (ex > 0) {
