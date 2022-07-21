@@ -16,7 +16,6 @@
 #include "syscfg/syscfg.h"
 
 #include "mesh/mesh.h"
-//#include "console/console.h"
 #include "light_model.h"
 
 static u8_t gen_onoff_state;

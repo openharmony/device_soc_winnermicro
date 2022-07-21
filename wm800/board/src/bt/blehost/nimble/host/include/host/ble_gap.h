@@ -151,13 +151,13 @@ struct hci_conn_update;
 /** Connection security state */
 struct ble_gap_sec_state {
     /** If connection is encrypted */
-    unsigned encrypted: 1;
+    unsigned encrypted : 1;
 
     /** If connection is authenticated */
-    unsigned authenticated: 1;
+    unsigned authenticated : 1;
 
     /** If connection is bonded (security information is stored)  */
-    unsigned bonded: 1;
+    unsigned bonded : 1;
 
     /** Size of a key used for encryption */
     unsigned key_size: 5;
@@ -189,7 +189,7 @@ struct ble_gap_adv_params {
     uint8_t filter_policy;
 
     /** If do High Duty cycle for Directed Advertising */
-    uint8_t high_duty_cycle: 1;
+    uint8_t high_duty_cycle : 1;
 };
 
 /** @brief Connection descriptor */
@@ -266,7 +266,7 @@ struct ble_gap_ext_disc_params {
     uint16_t window;
 
     /** If passive scan should be used */
-    uint8_t passive: 1;
+    uint8_t passive : 1;
 };
 
 /** @brief Discovery parameters */
@@ -281,13 +281,13 @@ struct ble_gap_disc_params {
     uint8_t filter_policy;
 
     /** If limited discovery procedure should be used */
-    uint8_t limited: 1;
+    uint8_t limited : 1;
 
     /** If passive scan should be used */
-    uint8_t passive: 1;
+    uint8_t passive : 1;
 
     /** If enable duplicates filtering */
-    uint8_t filter_duplicates: 1;
+    uint8_t filter_duplicates : 1;
 };
 
 /** @brief Connection parameters update parameters */
@@ -436,17 +436,17 @@ struct ble_gap_repeat_pairing {
 
     /** Properties of the existing bond. */
     uint8_t cur_key_size;
-    uint8_t cur_authenticated: 1;
-    uint8_t cur_sc: 1;
+    uint8_t cur_authenticated : 1;
+    uint8_t cur_sc : 1;
 
     /**
      * Properties of the imminent secure link if the pairing procedure is
      * allowed to continue.
      */
     uint8_t new_key_size;
-    uint8_t new_authenticated: 1;
-    uint8_t new_sc: 1;
-    uint8_t new_bonding: 1;
+    uint8_t new_authenticated : 1;
+    uint8_t new_sc : 1;
+    uint8_t new_bonding : 1;
 };
 
 /**
@@ -694,7 +694,7 @@ struct ble_gap_event {
              *     o 0: Notification;
              *     o 1: Indication.
              */
-            uint8_t indication: 1;
+            uint8_t indication : 1;
         } notify_rx;
 
         /**
@@ -727,7 +727,7 @@ struct ble_gap_event {
              *     o 0: Notification;
              *     o 1: Indication.
              */
-            uint8_t indication: 1;
+            uint8_t indication : 1;
         } notify_tx;
 
         /**
@@ -755,16 +755,16 @@ struct ble_gap_event {
             uint8_t reason;
 
             /** Whether the peer was previously subscribed to notifications. */
-            uint8_t prev_notify: 1;
+            uint8_t prev_notify : 1;
 
             /** Whether the peer is currently subscribed to notifications. */
-            uint8_t cur_notify: 1;
+            uint8_t cur_notify : 1;
 
             /** Whether the peer was previously subscribed to indications. */
-            uint8_t prev_indicate: 1;
+            uint8_t prev_indicate : 1;
 
             /** Whether the peer is currently subscribed to indications. */
-            uint8_t cur_indicate: 1;
+            uint8_t cur_indicate : 1;
         } subscribe;
 
         /**
@@ -1144,28 +1144,28 @@ int ble_gap_adv_rsp_set_fields(const struct ble_hs_adv_fields *rsp_fields);
 /** @brief Extended advertising parameters  */
 struct ble_gap_ext_adv_params {
     /** If perform connectable advertising */
-    unsigned int connectable: 1;
+    unsigned int connectable : 1;
 
     /** If perform scannable advertising */
-    unsigned int scannable: 1;
+    unsigned int scannable : 1;
 
     /** If perform directed advertising */
-    unsigned int directed: 1;
+    unsigned int directed : 1;
 
     /** If perform high-duty directed advertising */
-    unsigned int high_duty_directed: 1;
+    unsigned int high_duty_directed : 1;
 
     /** If use legacy PDUs for advertising */
-    unsigned int legacy_pdu: 1;
+    unsigned int legacy_pdu : 1;
 
     /** If perform anonymous advertising */
-    unsigned int anonymous: 1;
+    unsigned int anonymous : 1;
 
     /** If include TX power in advertising PDU */
-    unsigned int include_tx_power: 1;
+    unsigned int include_tx_power : 1;
 
     /** If enable scan request notification  */
-    unsigned int scan_req_notif: 1;
+    unsigned int scan_req_notif : 1;
 
     /** Minimum advertising interval in 0.625ms units, if 0 stack use sane
      *  defaults
@@ -1317,7 +1317,7 @@ int ble_gap_ext_adv_clear(void);
 /** @brief Periodic advertising parameters  */
 struct ble_gap_periodic_adv_params {
     /** If include TX power in advertising PDU */
-    unsigned int include_tx_power: 1;
+    unsigned int include_tx_power : 1;
 
     /** Minimum advertising interval in 0.625ms units, if 0 stack use sane
      *  defaults
@@ -1342,7 +1342,7 @@ struct ble_gap_periodic_sync_params {
     uint16_t sync_timeout;
 
     /** If reports should be initially disabled when sync is created */
-    unsigned int reports_disabled: 1;
+    unsigned int reports_disabled : 1;
 };
 
 /**
@@ -1500,8 +1500,7 @@ int ble_gap_periodic_adv_sync_receive(uint16_t conn_handle,
  *
  * @return                   0 on success; nonzero on failure.
  */
-int ble_gap_add_dev_to_periodic_adv_list(const ble_addr_t *peer_addr,
-        uint8_t adv_sid);
+int ble_gap_add_dev_to_periodic_adv_list(const ble_addr_t *peer_addr, uint8_t adv_sid);
 
 /**
  * Remove peer device from periodic synchronization list.
@@ -1511,8 +1510,7 @@ int ble_gap_add_dev_to_periodic_adv_list(const ble_addr_t *peer_addr,
  *
  * @return                   0 on success; nonzero on failure.
  */
-int ble_gap_rem_dev_from_periodic_adv_list(const ble_addr_t *peer_addr,
-        uint8_t adv_sid);
+int ble_gap_rem_dev_from_periodic_adv_list(const ble_addr_t *peer_addr, uint8_t adv_sid);
 
 /**
  * Clear periodic synchrnization list.
@@ -2037,8 +2035,7 @@ int ble_gap_event_listener_unregister(struct ble_gap_event_listener *listener);
  *
  */
 
-void
-ble_gap_init_conn_params(struct ble_gap_conn_params *conn_params);
+void ble_gap_init_conn_params(struct ble_gap_conn_params *conn_params);
 
 #ifdef __cplusplus
 }

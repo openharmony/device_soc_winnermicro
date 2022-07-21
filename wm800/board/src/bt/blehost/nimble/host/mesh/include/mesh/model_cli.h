@@ -23,14 +23,14 @@ extern const struct bt_mesh_model_op gen_onoff_cli_op[];
 extern const struct bt_mesh_model_cb bt_mesh_gen_onoff_cli_cb;
 
 #define BT_MESH_MODEL_GEN_ONOFF_CLI(cli_data, pub)                             \
-    BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_GEN_ONOFF_CLI, gen_onoff_cli_op, pub,\
+    BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_GEN_ONOFF_CLI, gen_onoff_cli_op, pub,    \
              cli_data, &bt_mesh_gen_onoff_cli_cb)
 
 extern const struct bt_mesh_model_op gen_level_cli_op[];
 extern const struct bt_mesh_model_cb bt_mesh_gen_level_cli_cb;
 
 #define BT_MESH_MODEL_GEN_LEVEL_CLI(cli_data, pub)                             \
-    BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_GEN_LEVEL_CLI, gen_level_cli_op, pub,\
+    BT_MESH_MODEL_CB(BT_MESH_MODEL_ID_GEN_LEVEL_CLI, gen_level_cli_op, pub,    \
              cli_data, &bt_mesh_gen_level_cli_cb)
 
 int bt_mesh_gen_onoff_get(u16_t net_idx, u16_t addr, u16_t app_idx,

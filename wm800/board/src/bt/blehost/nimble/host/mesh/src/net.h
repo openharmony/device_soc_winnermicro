@@ -102,13 +102,13 @@ struct bt_mesh_rpl {
 struct bt_mesh_friend {
     u16_t lpn;
     u8_t  recv_delay;
-    u8_t  fsn: 1,
-          send_last: 1,
-          pending_req: 1,
-          sec_update: 1,
-          pending_buf: 1,
-          valid: 1,
-          established: 1;
+    u8_t  fsn : 1,
+          send_last : 1,
+          pending_req : 1,
+          sec_update : 1,
+          pending_buf : 1,
+          valid : 1,
+          established : 1;
     s32_t poll_to;
     u8_t  num_elem;
     u16_t lpn_counter;
@@ -181,12 +181,12 @@ struct bt_mesh_lpn {
 
     s32_t poll_timeout;
 
-    u8_t  groups_changed: 1, /* Friend Subscription List needs updating */
-          pending_poll: 1,  /* Poll to be sent after subscription */
-          disable: 1,       /* Disable LPN after clearing */
-          fsn: 1,           /* Friend Sequence Number */
-          established: 1,   /* Friendship established */
-          clear_success: 1; /* Friend Clear Confirm received */
+    u8_t  groups_changed : 1, /* Friend Subscription List needs updating */
+          pending_poll : 1,  /* Poll to be sent after subscription */
+          disable : 1,       /* Disable LPN after clearing */
+          fsn : 1,           /* Friend Sequence Number */
+          established : 1,   /* Friendship established */
+          clear_success : 1; /* Friend Clear Confirm received */
 
     /* Friend Queue Size */
     u8_t  queue_size;
@@ -288,13 +288,13 @@ struct bt_mesh_net_rx {
     struct bt_mesh_subnet *sub;
     struct bt_mesh_msg_ctx ctx;
     u32_t  seq;            /* Sequence Number */
-    u8_t   old_iv: 1,      /* iv_index - 1 was used */
-           new_key: 1,     /* Data was encrypted with updated key */
-           friend_cred: 1, /* Data was encrypted with friend cred */
-           ctl: 1,         /* Network Control */
-           net_if: 2,      /* Network interface */
-           local_match: 1, /* Matched a local element */
-           friend_match: 1; /* Matched an LPN we're friends for */
+    u8_t   old_iv : 1,      /* iv_index - 1 was used */
+           new_key : 1,     /* Data was encrypted with updated key */
+           friend_cred : 1, /* Data was encrypted with friend cred */
+           ctl : 1,         /* Network Control */
+           net_if : 2,      /* Network interface */
+           local_match : 1, /* Matched a local element */
+           friend_match : 1; /* Matched an LPN we're friends for */
     u16_t  msg_cache_idx;  /* Index of entry in message cache */
 };
 
@@ -304,9 +304,9 @@ struct bt_mesh_net_tx {
     struct bt_mesh_msg_ctx *ctx;
     u16_t src;
     u8_t  xmit;
-    u8_t  friend_cred: 1,
-          aszmic: 1,
-          aid: 6;
+    u8_t  friend_cred : 1,
+          aszmic : 1,
+          aid : 6;
 };
 
 extern struct bt_mesh_net bt_mesh;
@@ -341,8 +341,8 @@ void bt_mesh_net_sec_update(struct bt_mesh_subnet *sub);
 struct bt_mesh_subnet *bt_mesh_subnet_get(u16_t net_idx);
 
 struct bt_mesh_subnet *bt_mesh_subnet_find(const u8_t net_id[8], u8_t flags,
-        u32_t iv_index, const u8_t auth[8],
-        bool *new_key);
+    u32_t iv_index, const u8_t auth[8],
+    bool *new_key);
 
 int bt_mesh_net_encode(struct bt_mesh_net_tx *tx, struct os_mbuf *buf,
                        bool proxy);

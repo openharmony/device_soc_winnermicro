@@ -35,8 +35,8 @@
 #include <tinycrypt/constants.h>
 #include <tinycrypt/utils.h>
 
-/* max number of calls until change the key (2^48).*/
-const static uint64_t MAX_CALLS = ((uint64_t)1 << 48);
+/* max number of calls until change the key (2^48). */
+const static uint64_t MAX_CALLS = ((uint64_t)1 << 48); //48:byte alignment
 
 /*
  *  gf_wrap -- In our implementation, GF(2^128) is represented as a 16 byte
@@ -83,14 +83,14 @@ void gf_double(uint8_t *out, uint8_t *in)
     uint8_t carry = (in[0] >> 7) ? gf_wrap : 0;
     out += (TC_AES_BLOCK_SIZE - 1);
 
-    for(;;) {
+    for (;;) {
         *out-- = (*x << 1) ^ carry;
 
         if (x == in) {
             break;
         }
 
-        carry = *x-- >> 7;
+        carry = *x-- >> 7; // 7:byte alignment
     }
 }
 
@@ -188,7 +188,7 @@ int tc_cmac_update(TCCmacState_t s, const uint8_t *data, size_t data_length)
         data += remaining_space;
         s->leftover_offset = 0;
 
-        for(i = 0; i < TC_AES_BLOCK_SIZE; ++i) {
+        for (i = 0; i < TC_AES_BLOCK_SIZE; ++i) {
             s->iv[i] ^= s->leftover[i];
         }
 
@@ -196,8 +196,8 @@ int tc_cmac_update(TCCmacState_t s, const uint8_t *data, size_t data_length)
     }
 
     /* CBC encrypt each (except the last) of the data blocks */
-    while(data_length > TC_AES_BLOCK_SIZE) {
-        for(i = 0; i < TC_AES_BLOCK_SIZE; ++i) {
+    while (data_length > TC_AES_BLOCK_SIZE) {
+        for (i = 0; i < TC_AES_BLOCK_SIZE; ++i) {
             s->iv[i] ^= data[i];
         }
 
@@ -237,7 +237,7 @@ int tc_cmac_final(uint8_t *tag, TCCmacState_t s)
         k = (uint8_t *) s->K2;
     }
 
-    for(i = 0; i < TC_AES_BLOCK_SIZE; ++i) {
+    for (i = 0; i < TC_AES_BLOCK_SIZE; ++i) {
         s->iv[i] ^= s->leftover[i] ^ k[i];
     }
 

@@ -35,10 +35,10 @@ int bt_mesh_k1(const u8_t *ikm, size_t ikm_len, const u8_t salt[16],
                const char *info, u8_t okm[16]);
 
 #define bt_mesh_k1_str(ikm, ikm_len, salt_str, info, okm) \
-({ \
+( { \
     const u8_t salt[16] = salt_str; \
     bt_mesh_k1(ikm, ikm_len, salt, info, okm); \
-})
+} )
 
 int bt_mesh_k2(const u8_t n[16], const u8_t *p, size_t p_len,
                u8_t net_id[1], u8_t enc_key[16], u8_t priv_key[16]);
@@ -50,7 +50,7 @@ int bt_mesh_k4(const u8_t n[16], u8_t out[1]);
 int bt_mesh_id128(const u8_t n[16], const char *s, u8_t out[16]);
 
 static inline int bt_mesh_id_resolving_key(const u8_t net_key[16],
-        u8_t resolving_key[16])
+    u8_t resolving_key[16])
 {
     return bt_mesh_k1_str(net_key, 16, "smbt", "smbi", resolving_key);
 }
@@ -89,10 +89,9 @@ static inline int bt_mesh_prov_nonce(const u8_t dhkey[32],
 {
     u8_t tmp[16];
     int err;
-    err = bt_mesh_k1(dhkey, 32, prov_salt, "prsn", tmp);
-
+    err = bt_mesh_k1(dhkey, 32, prov_salt, "prsn", tmp); // 32:value of ikm_len
     if (!err) {
-        memcpy(nonce, tmp + 3, 13);
+        memcpy(nonce, tmp + 3, 13); // 3:byte alignment, 13:size
     }
 
     return err;

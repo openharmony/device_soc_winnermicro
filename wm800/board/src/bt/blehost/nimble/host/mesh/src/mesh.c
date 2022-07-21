@@ -58,7 +58,6 @@ int bt_mesh_provision(const u8_t net_key[16], u16_t net_idx,
     }
 
     err = bt_mesh_net_create(net_idx, flags, net_key, iv_index);
-
     if (err) {
         atomic_clear_bit(bt_mesh.flags, BT_MESH_VALID);
 
@@ -71,7 +70,7 @@ int bt_mesh_provision(const u8_t net_key[16], u16_t net_idx,
 
     bt_mesh.seq = 0;
     bt_mesh_comp_provision(addr);
-    memcpy(bt_mesh.dev_key, dev_key, 16);
+    memcpy(bt_mesh.dev_key, dev_key, 16); // 16:size
 
     if (IS_ENABLED(CONFIG_BT_SETTINGS)) {
         BT_DBG("Storing network information persistently");
@@ -162,7 +161,7 @@ int bt_mesh_prov_enable(bt_mesh_prov_bearer_t bearers)
     char uuid_buf[BLE_UUID_STR_LEN];
     const struct bt_mesh_prov *prov = bt_mesh_prov_get();
     ble_uuid_t *uuid = BLE_UUID128_DECLARE();
-    memcpy(BLE_UUID128(uuid)->value, prov->uuid, 16);
+    memcpy(BLE_UUID128(uuid)->value, prov->uuid, 16); // 16:len
     BT_INFO("Device UUID: %s", ble_uuid_to_str(uuid, uuid_buf));
 
     if (IS_ENABLED(CONFIG_BT_MESH_PB_ADV) &&
@@ -233,7 +232,6 @@ int bt_mesh_suspend(void)
     }
 
     err = bt_mesh_scan_disable();
-
     if (err) {
         atomic_clear_bit(bt_mesh.flags, BT_MESH_SUSPENDED);
         BT_WARN("Disabling scanning failed (err %d)", err);
@@ -255,7 +253,6 @@ static void model_resume(struct bt_mesh_model *mod, struct bt_mesh_elem *elem,
 {
     if (mod->pub && mod->pub->update) {
         s32_t period_ms = bt_mesh_model_pub_period_get(mod);
-
         if (period_ms) {
             k_delayed_work_submit(&mod->pub->timer, period_ms);
         }
@@ -275,7 +272,6 @@ int bt_mesh_resume(void)
     }
 
     err = bt_mesh_scan_enable();
-
     if (err) {
         BT_WARN("Re-enabling scanning failed (err %d)", err);
         atomic_set_bit(bt_mesh.flags, BT_MESH_SUSPENDED);
@@ -298,14 +294,12 @@ int bt_mesh_init(uint8_t own_addr_type, const struct bt_mesh_prov *prov,
     /* initialize SM alg ECC subsystem (it is used directly from mesh code) */
     ble_sm_alg_ecc_init();
     err = bt_mesh_comp_register(comp);
-
     if (err) {
         return err;
     }
 
 #if (MYNEWT_VAL(BLE_MESH_PROV))
     err = bt_mesh_prov_init(prov);
-
     if (err) {
         return err;
     }
