@@ -47,7 +47,7 @@ extern void PMU_GPIO_WAKE_IRQHandler(void);
 extern void PMU_RTC_IRQHandler(void);
 
 #define readl(addr) \
-    ({ unsigned int __v = (*(volatile unsigned int *) (addr)); __v; })
+    ({ unsigned int __v = (*(volatile unsigned int *) (addr)); __v;})
 
 #ifndef CONFIG_KERNEL_NONE
 #define  CSI_INTRPT_ENTER() csi_kernel_intrpt_enter()
@@ -67,9 +67,8 @@ int csi_kernel_intrpt_exit(void)
 }
 void HalPreInterruptHandler(uint32_t arg)
 {
-    if ( arg == 57)
-    {
-        readl(0xE000E010);// clear tick irq
+    if (arg == 57) {
+        readl(0xE000E010); // clear tick irq
     }
 }
 
@@ -159,21 +158,18 @@ ATTRIBUTE_ISR void PMU_IRQ_Handler(void)
     CSI_INTRPT_ENTER();
 #ifndef CONFIG_NO_WIFI
 #ifndef WM_WIFI_SIMULATION_PROJECT
-    if (tls_reg_read32(HR_PMU_INTERRUPT_SRC) & BIT(0))
-    {
+    if (tls_reg_read32(HR_PMU_INTERRUPT_SRC) & BIT(0)) {
         PMU_TIMER0_IRQHandler();
     }
-    if (tls_reg_read32(HR_PMU_INTERRUPT_SRC) & BIT(1)) /* timer1 interrupt */
-    {
+    if (tls_reg_read32(HR_PMU_INTERRUPT_SRC) & BIT(1)) { /* timer1 interrupt */
         PMU_TIMER1_IRQHandler();
     }
-    if (tls_reg_read32(HR_PMU_INTERRUPT_SRC) & BIT(2)) /* gpio wake interrupt */
-    {
+    if (tls_reg_read32(HR_PMU_INTERRUPT_SRC) & BIT(2)) { /* gpio wake interrupt */
+
         PMU_GPIO_WAKE_IRQHandler();
     }
 
-    if (tls_reg_read32(HR_PMU_INTERRUPT_SRC) & BIT(4)) /* rtc interrupt */
-    {
+    if (tls_reg_read32(HR_PMU_INTERRUPT_SRC) & BIT(4)) { /* rtc interrupt */
         PMU_RTC_IRQHandler();
     }
 #endif

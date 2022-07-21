@@ -60,40 +60,30 @@ unsigned char get_printf_port(void)
 
 void set_printf_port(unsigned char port)
 {
-    if (port == 0)
-    {
+    if (port == 0) {
         printf_port = 0;
-    }
-    else if (port == 1)
-    {
+    } else if (port == 1) {
         printf_port = 1;
-    }
-    else
-    {
+    } else {
         printf_port = 0xff;
     }
 }
 
 int sendchar(int ch)
 {
-    if (printf_port == 0)
-    {
-        if (ch == '\n')
-        {
+    if (printf_port == 0) {
+        if (ch == '\n') {
             while (tls_reg_read32(HR_UART0_FIFO_STATUS) & 0x3F);
             tls_reg_write32(HR_UART0_TX_WIN, '\r');
         }
-        while(tls_reg_read32(HR_UART0_FIFO_STATUS) & 0x3F);
+        while (tls_reg_read32(HR_UART0_FIFO_STATUS) & 0x3F);
         tls_reg_write32(HR_UART0_TX_WIN, (char)ch);
-    }
-    else if (printf_port == 1)
-    {
-        if (ch == '\n')
-        {
+    } else if (printf_port == 1) {
+        if (ch == '\n') {
             while (tls_reg_read32(HR_UART1_FIFO_STATUS) & 0x3F);
             tls_reg_write32(HR_UART1_TX_WIN, '\r');
         }
-        while(tls_reg_read32(HR_UART1_FIFO_STATUS) & 0x3F);
+        while (tls_reg_read32(HR_UART1_FIFO_STATUS) & 0x3F);
         tls_reg_write32(HR_UART1_TX_WIN, (char)ch);
     }
     return ch;
@@ -123,8 +113,7 @@ int _write_r(void *r, int file, const void *ptr, size_t len)
 
     p = (char*) ptr;
     
-    for (i = 0; i < len; i++) 
-    {
+    for (i = 0; i < len; i++) {
         (void)fputc(*p++, r); /* r: ignore warning */
     }
     return len;
@@ -139,8 +128,7 @@ static int __ip2str(unsigned char v4v6, unsigned int *inuint, char *outtxt)
     unsigned char l;
 
     if (4 == v4v6) {
-        for(unsigned char i = 0; i < 4; i++)
-        {
+        for(unsigned char i = 0; i < 4; i++) {
             unsigned char bit = (*inuint >> (8 * i)) & 0xff;
             h = bit / 100;
             if (h)
@@ -186,7 +174,7 @@ static int __mac2str(unsigned char *inchar, char *outtxt)
     unsigned int i;
     for(i = 0; i < 6; i++) {   /* mac length */
         unsigned char hbit = (*(inchar + i) & 0xf0) >> 4;
-        unsigned char lbit = *(inchar + i ) & 0x0f;
+        unsigned char lbit = *(inchar + i) & 0x0f;
         if (hbit > 9)
             outtxt[3 * i] = 'A' + hbit - 10;
         else 
@@ -205,11 +193,11 @@ static int __mac2str(unsigned char *inchar, char *outtxt)
 
 static inline int digitval(int ch)
 {
-    if ( ch >= '0' && ch <= '9' ) {
+    if (ch >= '0' && ch <= '9') {
         return ch-'0';
-    } else if ( ch >= 'A' && ch <= 'Z' ) {
+    } else if (ch >= 'A' && ch <= 'Z') {
         return ch-'A'+10;
-    } else if ( ch >= 'a' && ch <= 'z' ) {
+    } else if (ch >= 'a' && ch <= 'z') {
         return ch-'a'+10;
     } else {
         return -1;
@@ -222,48 +210,48 @@ uintmax_t strntoumax(const char *nptr, char **endptr, int base, size_t n)
     uintmax_t v = 0;
     int d;
 
-    while ( n && isspace((unsigned char)*nptr) ) {
+    while (n && isspace((unsigned char)*nptr)) {
         nptr++;
         n--;
     }
 
     /* Single optional + or - */
-    if ( n && *nptr == '-' ) {
+    if (n && *nptr == '-') {
         minus = 1;
         nptr++;
         n--;
-    } else if ( n && *nptr == '+' ) {
+    } else if (n && *nptr == '+') {
         nptr++;
     }
 
-    if ( base == 0 ) {
-        if ( n >= 2 && nptr[0] == '0' &&
-            (nptr[1] == 'x' || nptr[1] == 'X') ) {
+    if (base == 0) {
+        if (n >= 2 && nptr[0] == '0' &&
+            (nptr[1] == 'x' || nptr[1] == 'X')) {
                 n -= 2;
                 nptr += 2;
                 base = 16;
-        } else if ( n >= 1 && nptr[0] == '0' ) {
+        } else if (n >= 1 && nptr[0] == '0') {
             n--;
             nptr++;
             base = 8;
         } else {
             base = 10;
         }
-    } else if ( base == 16 ) {
-      if ( n >= 2 && nptr[0] == '0' &&
-          (nptr[1] == 'x' || nptr[1] == 'X') ) {
+    } else if (base == 16) {
+      if (n >= 2 && nptr[0] == '0' &&
+          (nptr[1] == 'x' || nptr[1] == 'X')) {
               n -= 2;
               nptr += 2;
       }
     }
 
-    while ( n && (d = digitval(*nptr)) >= 0 && d < base ) {
+    while (n && (d = digitval(*nptr)) >= 0 && d < base) {
         v = v*base + d;
         n--;
         nptr++;
     }
 
-    if ( endptr )
+    if (endptr)
         *endptr = (char *)nptr;
 
     return minus ? -v : v;
@@ -305,7 +293,7 @@ enum bail {
 static inline const char *
 skipspace(const char *p)
 {
-    while ( isspace((unsigned char)*p) ) p++;
+    while (isspace((unsigned char)*p)) p++;
     return p;
 }
 
@@ -351,24 +339,24 @@ int wm_vsscanf(const char *buffer, const char *format, va_list ap)
     int matchinv = 0;        /* Is match map inverted? */
     unsigned char range_start = 0;
 
-    while ( (ch = *p++) && !bail ) {
-        switch ( state ) {
+    while ((ch = *p++) && !bail) {
+        switch (state) {
             case st_normal:
-            if ( ch == '%' ) {
-                state = st_flags;
-                flags = 0; rank = rank_int; width = UINT_MAX;
-            } else if ( isspace((unsigned char)ch) ) {
-                q = skipspace(q);
-            } else {
-            if ( *q == ch )
-                q++;
-            else
-                bail = bail_err;    /* Match failure */
-            }
-            break;
+                if (ch == '%') {
+                    state = st_flags;
+                    flags = 0; rank = rank_int; width = UINT_MAX;
+                } else if (isspace((unsigned char)ch)) {
+                    q = skipspace(q);
+                } else {
+                if (*q == ch)
+                    q++;
+                else
+                    bail = bail_err;    /* Match failure */
+                }
+                break;
 
             case st_flags:
-                switch ( ch ) {
+                switch (ch) {
                     case '*':
                         flags |= FL_SPLAT;
                     break;
@@ -382,10 +370,10 @@ int wm_vsscanf(const char *buffer, const char *format, va_list ap)
                     p--;            /* Process this character again */
                     break;
                 }
-            break;
+                break;
 
             case st_width:
-                if ( ch >= '0' && ch <= '9' ) {
+                if (ch >= '0' && ch <= '9') {
                     width = width*10+(ch-'0');
                 } else {
                     state = st_modifiers;
@@ -393,231 +381,232 @@ int wm_vsscanf(const char *buffer, const char *format, va_list ap)
                 }
                 break;
             case st_modifiers:
-              switch ( ch ) {
-            /* Length modifiers - nonterminal sequences */
-                  case 'h':
-                      rank--;            /* Shorter rank */
-                      break;
-                        case 'l':
-                      rank++;            /* Longer rank */
-                      break;
-                        case 'j':
-                      rank = INTMAX_RANK;
-                      break;
-                        case 'z':
-                      rank = SIZE_T_RANK;
-                      break;
-                        case 't':
-                      rank = PTRDIFF_T_RANK;
-                      break;
-                        case 'L':
-                        case 'q':
-                      rank = rank_longlong;    /* long double/long long */
-                      break;
-                  default:
-            /* Output modifiers - terminal sequences */
-            state = st_normal;    /* Next state will be normal */
-            if ( rank < MIN_RANK )    /* Canonicalize rank */
-                rank = MIN_RANK;
-            else if ( rank > MAX_RANK )
-                rank = MAX_RANK;
-
-            switch ( ch ) {
-                case 'P':        /* Upper case pointer */
-                case 'p':        /* Pointer */
-                    rank = rank_ptr;
-                    base = 0; sign = 0;
-                    goto scan_int;
-
-                case 'i':        /* Base-independent integer */
-                    base = 0; sign = 1;
-                    goto scan_int;
-
-                case 'd':        /* Decimal integer */
-                    base = 10; sign = 1;
-                    goto scan_int;
-
-                case 'o':        /* Octal integer */
-                    base = 8; sign = 0;
-                    goto scan_int;
-
-                case 'u':        /* Unsigned decimal integer */
-                    base = 10; sign = 0;
-                    goto scan_int;
-                  
-                case 'x':        /* Hexadecimal integer */
-                case 'X':
-                    base = 16; sign = 0;
-                    goto scan_int;
-
-                case 'n':        /* Number of characters consumed */
-                    val = (q-buffer);
-                    goto set_integer;
-
-            scan_int:
-              q = skipspace(q);
-              if ( !*q ) {
-                bail = bail_eof;
-                break;
-              }
-              val = strntoumax(q, (char **)&qq, base, width);
-              if ( qq == q ) {
-                bail = bail_err;
-                break;
-              }
-              q = qq;
-              converted++;
-              /* fall through */
-
-            set_integer:
-              if ( !(flags & FL_SPLAT) ) {
-                  switch(rank) {
-                      case rank_char:
-                          *va_arg(ap, unsigned char *) = (unsigned char)val;
-                          break;
-                      case rank_short:
-                          *va_arg(ap, unsigned short *) = (unsigned short)val;
-                          break;
-                      case rank_int:
-                          *va_arg(ap, unsigned int *) = (unsigned int)val;
-                          break;
-                      case rank_long:
-                          *va_arg(ap, unsigned long *) = (unsigned long)val;
-                          break;
-                      case rank_longlong:
-                          *va_arg(ap, unsigned long long *) = (unsigned long long)val;
-                          break;
-                      case rank_ptr:
-                          *va_arg(ap, void **) = (void *)(uintptr_t)val;
-                          break;
-                  }
-              }
-              break;
-              
-            case 'c':               /* Character */
-                  width = (flags & FL_WIDTH) ? width : 1; /* Default width == 1 */
-                  sarg = va_arg(ap, char *);
-                  while ( width-- ) {
-                      if ( !*q ) {
-                        bail = bail_eof;
+                switch (ch) {
+                /* Length modifiers - nonterminal sequences */
+                    case 'h':
+                        rank--;            /* Shorter rank */
                         break;
-                      }
-                      *sarg++ = *q++;
-                  }
-                  if ( !bail )
-                      converted++;
-                  break;
+                    case 'l':
+                        rank++;            /* Longer rank */
+                        break;
+                    case 'j':
+                        rank = INTMAX_RANK;
+                        break;
+                    case 'z':
+                        rank = SIZE_T_RANK;
+                        break;
+                    case 't':
+                        rank = PTRDIFF_T_RANK;
+                        break;
+                    case 'L':
+                    case 'q':
+                        rank = rank_longlong;    /* long double/long long */
+                        break;
+                    default:
+                        /* Output modifiers - terminal sequences */
+                        state = st_normal;    /* Next state will be normal */
+                        if (rank < MIN_RANK)    /* Canonicalize rank */
+                            rank = MIN_RANK;
+                        else if (rank > MAX_RANK)
+                            rank = MAX_RANK;
 
-              case 's':               /* String */
-              {
-                  char *sp;
-                  sp = sarg = va_arg(ap, char *);
-                  while ( width-- && *q && !isspace((unsigned char)*q) ) {
-                      *sp++ = *q++;
-                  }
-                  if ( sarg != sp ) {
-                      *sp = '\0';    /* Terminate output */
-                      converted++;
-                  } else {
-                      bail = bail_eof;
-                  }
-              }
-              break;
+                        switch (ch) {
+                            case 'P':        /* Upper case pointer */
+                            case 'p':        /* Pointer */
+                                rank = rank_ptr;
+                                base = 0; sign = 0;
+                                goto scan_int;
 
-              case 'f':               /* float */
-              {
-                  float *vp = (float *) va_arg(ap, float *);
-                  const char *vpq = q;
-                  *vp = strtof(vpq, (char **)&q);
-                  if ( vpq != q ) {
-                      converted++;
-                  } else {
-                      bail = bail_err;
-                  }
-              }
-              break;
-              case 'g':               /* double */
-              {
-                  double *vp = (double *) va_arg(ap, double *);
-                  const char *vpq = q;
-                  *vp = strtod(vpq, (char **)&q);
-                  if ( vpq != q ) {
-                      converted++;
-                  } else {
-                      bail = bail_err;
-                  }
-              }
-              break;
-              
-            case '[':        /* Character range */
-                sarg = va_arg(ap, char *);
-                state = st_match_init;
-                matchinv = 0;
-                memset(matchmap, 0, sizeof matchmap);
+                            case 'i':        /* Base-independent integer */
+                                base = 0; sign = 1;
+                                goto scan_int;
+
+                            case 'd':        /* Decimal integer */
+                                base = 10; sign = 1;
+                                goto scan_int;
+
+                            case 'o':        /* Octal integer */
+                                base = 8; sign = 0;
+                                goto scan_int;
+
+                            case 'u':        /* Unsigned decimal integer */
+                                base = 10; sign = 0;
+                                goto scan_int;
+                              
+                            case 'x':        /* Hexadecimal integer */
+                            case 'X':
+                                base = 16; sign = 0;
+                                goto scan_int;
+
+                            case 'n':        /* Number of characters consumed */
+                                val = (q-buffer);
+                                goto set_integer;
+
+                        scan_int:
+                            q = skipspace(q);
+                            if (!*q) {
+                              bail = bail_eof;
+                              break;
+                            }
+                            val = strntoumax(q, (char **)&qq, base, width);
+                            if (qq == q) {
+                              bail = bail_err;
+                              break;
+                            }
+                            q = qq;
+                            converted++;
+                            /* fall through */
+
+                        set_integer:
+                            if (!(flags & FL_SPLAT)) {
+                                switch(rank) {
+                                    case rank_char:
+                                        *va_arg(ap, unsigned char *) = (unsigned char)val;
+                                        break;
+                                    case rank_short:
+                                        *va_arg(ap, unsigned short *) = (unsigned short)val;
+                                        break;
+                                    case rank_int:
+                                        *va_arg(ap, unsigned int *) = (unsigned int)val;
+                                        break;
+                                    case rank_long:
+                                        *va_arg(ap, unsigned long *) = (unsigned long)val;
+                                        break;
+                                    case rank_longlong:
+                                        *va_arg(ap, unsigned long long *) = (unsigned long long)val;
+                                        break;
+                                    case rank_ptr:
+                                        *va_arg(ap, void **) = (void *)(uintptr_t)val;
+                                        break;
+                                }
+                            }
+                            break;
+
+                            case 'c':               /* Character */
+                                    width = (flags & FL_WIDTH) ? width : 1; /* Default width == 1 */
+                                    sarg = va_arg(ap, char *);
+                                    while (width--) {
+                                        if (!*q) {
+                                          bail = bail_eof;
+                                          break;
+                                        }
+                                        *sarg++ = *q++;
+                                    }
+                                    if (!bail)
+                                        converted++;
+                                    break;
+
+                            case 's':               /* String */
+                               {
+                                    char *sp;
+                                    sp = sarg = va_arg(ap, char *);
+                                    while (width-- && *q && !isspace((unsigned char)*q)) {
+                                        *sp++ = *q++;
+                                    }
+                                    if (sarg != sp) {
+                                        *sp = '\0';    /* Terminate output */
+                                        converted++;
+                                    } else {
+                                        bail = bail_eof;
+                                    }
+                                }
+                                break;
+
+                            case 'f':               /* float */
+                                {
+                                    float *vp = (float *) va_arg(ap, float *);
+                                    const char *vpq = q;
+                                    *vp = strtof(vpq, (char **)&q);
+                                    if (vpq != q) {
+                                        converted++;
+                                    } else {
+                                        bail = bail_err;
+                                    }
+                                }
+                                break;
+                            case 'g':               /* double */
+                                {
+                                    double *vp = (double *) va_arg(ap, double *);
+                                    const char *vpq = q;
+                                    *vp = strtod(vpq, (char **)&q);
+                                    if (vpq != q) {
+                                        converted++;
+                                    } else {
+                                        bail = bail_err;
+                                    }
+                                }
+                                break;
+
+                            case '[':        /* Character range */
+                                sarg = va_arg(ap, char *);
+                                state = st_match_init;
+                                matchinv = 0;
+                                memset(matchmap, 0, sizeof matchmap);
+                                break;
+
+                            case '%':        /* %% sequence */
+                                if (*q == '%')
+                                  q++;
+                                else
+                                  bail = bail_err;
+                                break;
+            
+                            default:        /* Anything else */
+                                bail = bail_err;    /* Unknown sequence */
+                                break;
+                            }
+                }
                 break;
-
-            case '%':        /* %% sequence */
-                if ( *q == '%' )
-                  q++;
-                else
-                  bail = bail_err;
-                break;
-
-            default:        /* Anything else */
-                bail = bail_err;    /* Unknown sequence */
-                break;
-            }
-              }
-              break;
             
             case st_match_init:        /* Initial state for %[ match */
-                if ( ch == '^' && !(flags & FL_INV) ) {
-              matchinv = 1;
+                if (ch == '^' && !(flags & FL_INV)) {
+                    matchinv = 1;
                 } else {
-              set_bit(matchmap, (unsigned char)ch);
-              state = st_match;
+                    set_bit(matchmap, (unsigned char)ch);
+                    state = st_match;
                 }
-              break;
+                break;
               
             case st_match:        /* Main state for %[ match */
-                if ( ch == ']' ) {
-              goto match_run;
-                } else if ( ch == '-' ) {
-              range_start = (unsigned char)ch;
-              state = st_match_range;
+                if (ch == ']') {
+                    goto match_run;
+                } else if (ch == '-') {
+                    range_start = (unsigned char)ch;
+                    state = st_match_range;
                 } else {
-              set_bit(matchmap, (unsigned char)ch);
+                    set_bit(matchmap, (unsigned char)ch);
                 }
-              break;
+                break;
               
             case st_match_range:        /* %[ match after - */
-                if ( ch == ']' ) {
-              set_bit(matchmap, (unsigned char)'-'); /* - was last character */
-              goto match_run;
+                if (ch == ']') {
+                    set_bit(matchmap, (unsigned char)'-'); /* - was last character */
+                    goto match_run;
                 } else {
-              int i;
-              for ( i = range_start ; i < (unsigned char)ch ; i++ )
-                set_bit(matchmap, i);
-              state = st_match;
+                    int i;
+                    for (i = range_start ; i < (unsigned char)ch ; i++) {
+                        set_bit(matchmap, i);
+                    }
+                    state = st_match;
                 }
-              break;
+                break;
 
             match_run:            /* Match expression finished */
-              qq = q;
-              while ( width && *q && test_bit(matchmap, (unsigned char)*q)^matchinv ) {
-                  *sarg++ = *q++;
-              }
-              if ( q != qq ) {
-                *sarg = '\0';
-                converted++;
-              } else {
-                  bail = *q ? bail_err : bail_eof;
-              }
-              break;
+                qq = q;
+                while (width && *q && test_bit(matchmap, (unsigned char)*q)^matchinv) {
+                    *sarg++ = *q++;
+                }
+                if (q != qq) {
+                    *sarg = '\0';
+                    converted++;
+                } else {
+                    bail = *q ? bail_err : bail_eof;
+                }
+                break;
         }
     }
 
-  if ( bail == bail_eof && !converted )
+  if (bail == bail_eof && !converted)
     converted = -1;        /* Return EOF (-1) */
 
   return converted;
@@ -700,7 +689,8 @@ static unsigned int _atoi(const char** str)
 }
 
 // output the specified string in reverse, taking care of any zero-padding
-static size_t _out_rev(out_fct_type out, char* buffer, size_t idx, size_t maxlen, const char* buf, size_t len, unsigned int width, unsigned int flags)
+static size_t _out_rev(out_fct_type out, char* buffer, size_t idx, size_t maxlen,
+                       const char* buf, size_t len, unsigned int width, unsigned int flags)
 {
     const size_t start_idx = idx;
 
@@ -727,7 +717,9 @@ static size_t _out_rev(out_fct_type out, char* buffer, size_t idx, size_t maxlen
 }
 
 // internal itoa format
-static size_t _ntoa_format(out_fct_type out, char* buffer, size_t idx, size_t maxlen, char* buf, size_t len, bool negative, unsigned int base, unsigned int prec, unsigned int width, unsigned int flags)
+static size_t _ntoa_format(out_fct_type out, char* buffer, size_t idx, size_t maxlen,
+                           char* buf, size_t len, bool negative, unsigned int base,
+                           unsigned int prec, unsigned int width, unsigned int flags)
 {
   // pad leading zeros
     if (!(flags & FLAGS_LEFT)) {
@@ -752,11 +744,9 @@ static size_t _ntoa_format(out_fct_type out, char* buffer, size_t idx, size_t ma
         }
         if ((base == 16U) && !(flags & FLAGS_UPPERCASE) && (len < PRINTF_NTOA_BUFFER_SIZE)) {
             buf[len++] = 'x';
-        }
-        else if ((base == 16U) && (flags & FLAGS_UPPERCASE) && (len < PRINTF_NTOA_BUFFER_SIZE)) {
+        } else if ((base == 16U) && (flags & FLAGS_UPPERCASE) && (len < PRINTF_NTOA_BUFFER_SIZE)) {
             buf[len++] = 'X';
-        }
-        else if ((base == 2U) && (len < PRINTF_NTOA_BUFFER_SIZE)) {
+        } else if ((base == 2U) && (len < PRINTF_NTOA_BUFFER_SIZE)) {
             buf[len++] = 'b';
         }
         if (len < PRINTF_NTOA_BUFFER_SIZE) {
@@ -767,11 +757,9 @@ static size_t _ntoa_format(out_fct_type out, char* buffer, size_t idx, size_t ma
     if (len < PRINTF_NTOA_BUFFER_SIZE) {
         if (negative) {
             buf[len++] = '-';
-        }
-        else if (flags & FLAGS_PLUS) {
+        } else if (flags & FLAGS_PLUS) {
             buf[len++] = '+';  // ignore the space if the '+' exists
-        }
-        else if (flags & FLAGS_SPACE) {
+        } else if (flags & FLAGS_SPACE) {
             buf[len++] = ' ';
         }
     }
@@ -780,7 +768,9 @@ static size_t _ntoa_format(out_fct_type out, char* buffer, size_t idx, size_t ma
 }
 
 // internal itoa for 'long' type
-static size_t _ntoa_long(out_fct_type out, char* buffer, size_t idx, size_t maxlen, unsigned long value, bool negative, unsigned long base, unsigned int prec, unsigned int width, unsigned int flags)
+static size_t _ntoa_long(out_fct_type out, char* buffer, size_t idx, size_t maxlen, 
+                         unsigned long value, bool negative, unsigned long base,
+                         unsigned int prec, unsigned int width, unsigned int flags)
 {
     char buf[PRINTF_NTOA_BUFFER_SIZE];
     size_t len = 0U;
@@ -804,7 +794,9 @@ static size_t _ntoa_long(out_fct_type out, char* buffer, size_t idx, size_t maxl
 
 // internal itoa for 'long long' type
 #if defined(PRINTF_SUPPORT_LONG_LONG)
-static size_t _ntoa_long_long(out_fct_type out, char* buffer, size_t idx, size_t maxlen, unsigned long long value, bool negative, unsigned long long base, unsigned int prec, unsigned int width, unsigned int flags)
+static size_t _ntoa_long_long(out_fct_type out, char* buffer, size_t idx, size_t maxlen,
+                              unsigned long long value, bool negative, unsigned long long base,
+                              unsigned int prec, unsigned int width, unsigned int flags)
 {
     char buf[PRINTF_NTOA_BUFFER_SIZE];
     size_t len = 0U;
@@ -831,11 +823,13 @@ static size_t _ntoa_long_long(out_fct_type out, char* buffer, size_t idx, size_t
 
 #if defined(PRINTF_SUPPORT_EXPONENTIAL)
 // forward declaration so that _ftoa can switch to exp notation for values > PRINTF_MAX_FLOAT
-static size_t _etoa(out_fct_type out, char* buffer, size_t idx, size_t maxlen, double value, unsigned int prec, unsigned int width, unsigned int flags);
+static size_t _etoa(out_fct_type out, char* buffer, size_t idx, size_t maxlen,
+                    double value, unsigned int prec, unsigned int width, unsigned int flags);
 #endif
 
 // internal ftoa for fixed decimal floating point
-static size_t _ftoa(out_fct_type out, char* buffer, size_t idx, size_t maxlen, double value, unsigned int prec, unsigned int width, unsigned int flags)
+static size_t _ftoa(out_fct_type out, char* buffer, size_t idx, size_t maxlen,
+                    double value, unsigned int prec, unsigned int width, unsigned int flags)
 {
     char buf[PRINTF_FTOA_BUFFER_SIZE];
     size_t len  = 0U;
@@ -850,10 +844,12 @@ static size_t _ftoa(out_fct_type out, char* buffer, size_t idx, size_t maxlen, d
     if (value < -DBL_MAX)
         return _out_rev(out, buffer, idx, maxlen, "fni-", 4, width, flags);
     if (value > DBL_MAX)
-        return _out_rev(out, buffer, idx, maxlen, (flags & FLAGS_PLUS) ? "fni+" : "fni", (flags & FLAGS_PLUS) ? 4U : 3U, width, flags);
+        return _out_rev(out, buffer, idx, maxlen, (flags & FLAGS_PLUS) ? "fni+" : "fni",
+            (flags & FLAGS_PLUS) ? 4U : 3U, width, flags);
 
     // test for very large values
-    // standard printf behavior is to print EVERY whole number digit -- which could be 100s of characters overflowing your buffers == bad
+    // standard printf behavior is to print EVERY whole number digit --
+    // which could be 100s of characters overflowing your buffers == bad
     if ((value > PRINTF_MAX_FLOAT) || (value < -PRINTF_MAX_FLOAT)) {
   #if defined(PRINTF_SUPPORT_EXPONENTIAL)
         return _etoa(out, buffer, idx, maxlen, value, prec, width, flags);
@@ -891,7 +887,6 @@ static size_t _ftoa(out_fct_type out, char* buffer, size_t idx, size_t maxlen, d
           ++whole;
         }
     } else if (diff < 0.5) {
-
     } else if ((frac == 0U) || (frac & 1U)) {
         // if halfway, round up if odd OR if last digit is 0
         ++frac;
@@ -899,13 +894,12 @@ static size_t _ftoa(out_fct_type out, char* buffer, size_t idx, size_t maxlen, d
 
     if (prec == 0U) {
         diff = value - (double)whole;
-        if ((diff > 0.5) && (whole & 1)) {    
+        if ((diff > 0.5) && (whole & 1)) {
             // exactly 0.5 and ODD, then round up
             // 1.5 -> 2, but 2.5 -> 2
             ++whole;
         }
-    }
-    else {
+    } else {
         unsigned int count = prec;
         // now do fractional part, as an unsigned number
         while (len < PRINTF_FTOA_BUFFER_SIZE) {
@@ -993,7 +987,9 @@ static size_t _etoa(out_fct_type out, char* buffer, size_t idx, size_t maxlen, d
     const double z  = expval * 2.302585092994046 - exp2 * 0.6931471805599453;
     const double z2 = z * z;
     conv.U = (uint64_t)(exp2 + 1023) << 52U;
-    // compute exp(z) using continued fractions, see https:// en.wikipedia.org/wiki/Exponential_function#Continued_fractions_for_ex
+    /* compute exp(z) using continued fractions,
+     * see https:// en.wikipedia.org/wiki/Exponential_function#Continued_fractions_for_ex
+     */
     conv.F *= 1 + 2 * z / (2 - z + (z2 / (6 + (z2 / (10 + z2 / 14)))));
     // correct for rounding errors
     if (value < conv.F) {
@@ -1053,7 +1049,8 @@ static size_t _etoa(out_fct_type out, char* buffer, size_t idx, size_t maxlen, d
         // output the exponential symbol
         out((flags & FLAGS_UPPERCASE) ? 'E' : 'e', buffer, idx++, maxlen);
         // output the exponent value
-        idx = _ntoa_long(out, buffer, idx, maxlen, (expval < 0) ? -expval : expval, expval < 0, 10, 0, minwidth-1, FLAGS_ZEROPAD | FLAGS_PLUS);
+        idx = _ntoa_long(out, buffer, idx, maxlen, (expval < 0) ? -expval : expval,
+                         expval < 0, 10, 0, minwidth-1, FLAGS_ZEROPAD | FLAGS_PLUS);
         // might need to right-pad spaces
         if (flags & FLAGS_LEFT) {
             while (idx - start_idx < width) out(' ', buffer, idx++, maxlen);
@@ -1075,16 +1072,14 @@ static int _vsnprintf(out_fct_type out, char* buffer, const size_t maxlen, const
         out = _out_null;
     }
 
-  while (*format)
-  {
+  while (*format) {
     // format specifier?  %[flags][width][.precision][length]
     if (*format != '%') {
         // no
         out(*format, buffer, idx++, maxlen);
         format++;
         continue;
-    }
-    else {
+    } else {
         // yes, evaluate it
         format++;
     }
@@ -1106,14 +1101,12 @@ static int _vsnprintf(out_fct_type out, char* buffer, const size_t maxlen, const
     width = 0U;
     if (_is_digit(*format)) {
         width = _atoi(&format);
-    }
-    else if (*format == '*') {
+    } else if (*format == '*') {
         const int w = va_arg(va, int);
         if (w < 0) {
             flags |= FLAGS_LEFT;    // reverse padding
             width = (unsigned int)-w;
-        }
-        else {
+        } else {
             width = (unsigned int)w;
         }
         format++;
@@ -1126,8 +1119,7 @@ static int _vsnprintf(out_fct_type out, char* buffer, const size_t maxlen, const
         format++;
         if (_is_digit(*format)) {
             precision = _atoi(&format);
-        }
-        else if (*format == '*') {
+        } else if (*format == '*') {
             const int prec = (int)va_arg(va, int);
             precision = prec > 0 ? (unsigned int)prec : 0U;
             format++;
@@ -1179,72 +1171,68 @@ static int _vsnprintf(out_fct_type out, char* buffer, const size_t maxlen, const
         case 'X' :
         case 'o' :
         case 'b' : {
-          // set the base
-          unsigned int base;
-          if (*format == 'x' || *format == 'X') {
-              base = 16U;
-          }
-          else if (*format == 'o') {
-              base =  8U;
-          }
-          else if (*format == 'b') {
-              base =  2U;
-          }
-          else {
-              base = 10U;
-              flags &= ~FLAGS_HASH;   // no hash for dec format
-          }
-          // uppercase
-          if (*format == 'X') {
-              flags |= FLAGS_UPPERCASE;
-          }
-
-          // no plus or space flag for u, x, X, o, b
-          if ((*format != 'i') && (*format != 'd')) {
-              flags &= ~(FLAGS_PLUS | FLAGS_SPACE);
-          }
-
-          // ignore '0' flag when precision is given
-          if (flags & FLAGS_PRECISION) {
-              flags &= ~FLAGS_ZEROPAD;
-          }
-
-          // convert the integer
-          if ((*format == 'i') || (*format == 'd')) {
-            // signed
-            if (flags & FLAGS_LONG_LONG) {
+            // set the base
+            unsigned int base;
+            if (*format == 'x' || *format == 'X') {
+                base = 16U;
+            } else if (*format == 'o') {
+                base =  8U;
+            } else if (*format == 'b') {
+                base =  2U;
+            } else {
+                base = 10U;
+                flags &= ~FLAGS_HASH;   // no hash for dec format
+            }
+            // uppercase
+            if (*format == 'X') {
+                flags |= FLAGS_UPPERCASE;
+            }
+  
+            // no plus or space flag for u, x, X, o, b
+            if ((*format != 'i') && (*format != 'd')) {
+                flags &= ~(FLAGS_PLUS | FLAGS_SPACE);
+            }
+  
+            // ignore '0' flag when precision is given
+            if (flags & FLAGS_PRECISION) {
+                flags &= ~FLAGS_ZEROPAD;
+            }
+  
+            // convert the integer
+            if ((*format == 'i') || (*format == 'd')) {
+              // signed
+                if (flags & FLAGS_LONG_LONG) {
 #if defined(PRINTF_SUPPORT_LONG_LONG)
-              const long long value = va_arg(va, long long);
-              idx = _ntoa_long_long(out, buffer, idx, maxlen, (unsigned long long)(value > 0 ? value : 0 - value), value < 0, base, precision, width, flags);
+                    const long long value = va_arg(va, long long);
+                    idx = _ntoa_long_long(out, buffer, idx, maxlen,
+                                          (unsigned long long)(value > 0 ? value : 0 - value),
+                                          value < 0, base, precision, width, flags);
 #endif
-          }
-          else if (flags & FLAGS_LONG) {
-              const long value = va_arg(va, long);
-              idx = _ntoa_long(out, buffer, idx, maxlen, (unsigned long)(value > 0 ? value : 0 - value), value < 0, base, precision, width, flags);
-          }
-          else {
-            const int value = (flags & FLAGS_CHAR) ? (char)va_arg(va, int) : (flags & FLAGS_SHORT) ? (short int)va_arg(va, int) : va_arg(va, int);
-            idx = _ntoa_long(out, buffer, idx, maxlen, (unsigned int)(value > 0 ? value : 0 - value), value < 0, base, precision, width, flags);
-          }
-        }
-        else {
-          // unsigned
-          if (flags & FLAGS_LONG_LONG) {
+                } else if (flags & FLAGS_LONG) {
+                    const long value = va_arg(va, long);
+                    idx = _ntoa_long(out, buffer, idx, maxlen, (unsigned long)(value > 0 ? value : 0 - value),
+                                     value < 0, base, precision, width, flags);
+                } else {
+                    const int value = (flags & FLAGS_CHAR) ? (char)va_arg(va, int) : (flags & FLAGS_SHORT) ? (short int)va_arg(va, int) : va_arg(va, int);
+                    idx = _ntoa_long(out, buffer, idx, maxlen, (unsigned int)(value > 0 ? value : 0 - value),
+                                     value < 0, base, precision, width, flags);
+                }
+            } else {
+                // unsigned
+                if (flags & FLAGS_LONG_LONG) {
 #if defined(PRINTF_SUPPORT_LONG_LONG)
-              idx = _ntoa_long_long(out, buffer, idx, maxlen, va_arg(va, unsigned long long), false, base, precision, width, flags);
+                idx = _ntoa_long_long(out, buffer, idx, maxlen, va_arg(va, unsigned long long), false, base, precision, width, flags);
 #endif
-          }
-          else if (flags & FLAGS_LONG) {
-              idx = _ntoa_long(out, buffer, idx, maxlen, va_arg(va, unsigned long), false, base, precision, width, flags);
-          }
-          else {
-              const unsigned int value = (flags & FLAGS_CHAR) ? (unsigned char)va_arg(va, unsigned int) : (flags & FLAGS_SHORT) ? (unsigned short int)va_arg(va, unsigned int) : va_arg(va, unsigned int);
-              idx = _ntoa_long(out, buffer, idx, maxlen, value, false, base, precision, width, flags);
-          }
+                } else if (flags & FLAGS_LONG) {
+                    idx = _ntoa_long(out, buffer, idx, maxlen, va_arg(va, unsigned long), false, base, precision, width, flags);
+                } else {
+                    const unsigned int value = (flags & FLAGS_CHAR) ? (unsigned char)va_arg(va, unsigned int) : (flags & FLAGS_SHORT) ? (unsigned short int)va_arg(va, unsigned int) : va_arg(va, unsigned int);
+                    idx = _ntoa_long(out, buffer, idx, maxlen, value, false, base, precision, width, flags);
+                }
+            }
+            format++;
+            break;
         }
-        format++;
-        break;
-      }
 #if defined(PRINTF_SUPPORT_FLOAT)
         case 'f' :
         case 'F' :
@@ -1311,26 +1299,26 @@ static int _vsnprintf(out_fct_type out, char* buffer, const size_t maxlen, const
         }
 
         case 'p' : {
-          width = sizeof(void*) * 2U;
-          flags |= FLAGS_ZEROPAD | FLAGS_UPPERCASE;
+            width = sizeof(void*) * 2U;
+            flags |= FLAGS_ZEROPAD | FLAGS_UPPERCASE;
 #if defined(PRINTF_SUPPORT_LONG_LONG)
-          bool is_ll = false;
-          if (sizeof(uintptr_t) == sizeof(long long))
-          {
-              is_ll = true;
-          }
-          if (is_ll) {
-            idx = _ntoa_long_long(out, buffer, idx, maxlen, (uintptr_t)va_arg(va, void*), false, 16U, precision, width, flags);
-          }
-          else {
+            bool is_ll = false;
+            if (sizeof(uintptr_t) == sizeof(long long)) {
+                is_ll = true;
+            }
+            if (is_ll) {
+                idx = _ntoa_long_long(out, buffer, idx, maxlen, (uintptr_t)va_arg(va, void*),
+                                      false, 16U, precision, width, flags);
+            } else {
 #endif
-          idx = _ntoa_long(out, buffer, idx, maxlen, (unsigned long)((uintptr_t)va_arg(va, void*)), false, 16U, precision, width, flags);
+            idx = _ntoa_long(out, buffer, idx, maxlen, (unsigned long)((uintptr_t)va_arg(va, void*)),
+                             false, 16U, precision, width, flags);
 #if defined(PRINTF_SUPPORT_LONG_LONG)
+            }
+#endif
+            format++;
+            break;
         }
-#endif
-        format++;
-        break;
-      }
 
         case 'M' : {
             const char* p = va_arg(va, char*);
@@ -1359,32 +1347,32 @@ static int _vsnprintf(out_fct_type out, char* buffer, const size_t maxlen, const
             format++;
             break;
         }
-      case 'v' : {
-          uint32_t ipv4 = va_arg(va, uint32_t);
-          char store[40];
-          unsigned int l = __ip2str(4, &ipv4, store);
-          const char* pstr = &store[0];
-          // pre padding
-          if (flags & FLAGS_PRECISION) {
-              l = (l < precision ? l : precision);
-          }
-          if (!(flags & FLAGS_LEFT)) {
-              while (l++ < width) {
-                  out(' ', buffer, idx++, maxlen);
-              }
-          }
-          // string output
-          while ((*pstr != 0) && (!(flags & FLAGS_PRECISION) || precision--)) {
-              out(*(pstr++), buffer, idx++, maxlen);
-          }
-          // post padding
-          if (flags & FLAGS_LEFT) {
-              while (l++ < width) {
-                  out(' ', buffer, idx++, maxlen);
-              }
-          }
-          format++;
-          break;
+        case 'v' : {
+            uint32_t ipv4 = va_arg(va, uint32_t);
+            char store[40];
+            unsigned int l = __ip2str(4, &ipv4, store);
+            const char* pstr = &store[0];
+            // pre padding
+            if (flags & FLAGS_PRECISION) {
+                l = (l < precision ? l : precision);
+            }
+            if (!(flags & FLAGS_LEFT)) {
+                while (l++ < width) {
+                    out(' ', buffer, idx++, maxlen);
+                }
+            }
+            // string output
+            while ((*pstr != 0) && (!(flags & FLAGS_PRECISION) || precision--)) {
+                out(*(pstr++), buffer, idx++, maxlen);
+            }
+            // post padding
+            if (flags & FLAGS_LEFT) {
+                while (l++ < width) {
+                    out(' ', buffer, idx++, maxlen);
+                }
+            }
+            format++;
+            break;
         }
         case 'V' : {
             char *ipv6 = va_arg(va, char*);
@@ -1452,7 +1440,7 @@ int printf(const char *restrict fmt, ...)
 }
 #endif
 
-int wm_printf(const char *fmt,...)
+int wm_printf(const char *fmt, ...)
 {
     va_list args;
     size_t length;
@@ -1479,7 +1467,7 @@ int wm_vprintf(const char *fmt, va_list arg_ptr)
     va_list args;
     int i;
 
-    va_start(args,format);
+    va_start(args, format);
     i = wm_vsscanf(str, format, args);
     va_end(args);
 
@@ -1491,7 +1479,7 @@ __attribute__((__weak__)) int __cskyvscanfsscanf(const char *str, const char *fo
     va_list args;
     int i;
 
-    va_start(args,format);
+    va_start(args, format);
     i = wm_vsscanf(str, format, args);
     va_end(args);
     
@@ -1542,7 +1530,7 @@ __attribute__((__weak__)) void __assert_fail(const char *file,
     wm_printf("assertion \"%s\" failed: file \"%s\", line %d%s%s\r\n",
        failedexpr, file, line,
        func ? ", function: " : "", func ? func : "");
-    while(1);
+    while (1);
 }
 
 /*For CPP type used, you first call this function in main entry*/
@@ -1553,8 +1541,7 @@ typedef void (*func_ptr)(void);
 __attribute__((__weak__)) void cxx_system_init(void)
 {
     func_ptr *p;
-    for (p = (func_ptr *)&__ctor_end__ -1; p >= (func_ptr *)&__ctor_start__; p--)
-    {
+    for (p = (func_ptr *)&__ctor_end__ -1; p >= (func_ptr *)&__ctor_start__; p--) {
         (*p)();
     }
 }

@@ -13,24 +13,24 @@
  * limitations under the License.
  */
 
-/***************************************************************************** 
-* 
-* File Name : tls_param.h 
-* 
-* Description: param manager Module 
-* 
-* Copyright (c) 2014 Winner Micro Electronic Design Co., Ltd. 
-* All rights reserved. 
-* 
+/*****************************************************************************
+*
+* File Name : tls_param.h
+*
+* Description: param manager Module
+*
+* Copyright (c) 2014 Winner Micro Electronic Design Co., Ltd.
+* All rights reserved.
+*
 * Author : dave
-* 
+*
 * Date : 2014-6-12
-*****************************************************************************/ 
+*****************************************************************************/
 #ifndef TLS_PARAM_H
 #define TLS_PARAM_H
 #include "wm_type_def.h"
 
-struct tls_param_quick_connect{
+struct tls_param_quick_connect {
     bool quick_connect_en;
     u8 chanId;
 };
@@ -125,15 +125,6 @@ struct tls_sys_param {
     bt_remote_device_t remote_device3;
     bt_remote_device_t remote_device4;
     bt_remote_device_t remote_device5;
-#if 0    
-    bt_remote_device_t remote_device6;
-    
-    bt_remote_device_t remote_device7;
-    bt_remote_device_t remote_device8;
-    bt_remote_device_t remote_device9;
-    bt_remote_device_t remote_device10;
-    #endif
-
 };
 
 struct tls_param_flash {
