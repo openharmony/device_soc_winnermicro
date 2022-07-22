@@ -73,7 +73,7 @@ static void adc_dma_isr_callbk(void)
     }
 }
 
-void tls_adc_init(u8 ifusedma,u8 dmachannel)
+void tls_adc_init(u8 ifusedma, u8 dmachannel)
 {
     tls_reg_write32(HR_SD_ADC_CTRL, ANALOG_SWITCH_TIME_VAL(0x50)|ANALOG_INIT_TIME_VAL(0x50)|ADC_IRQ_EN_VAL(0x1));
     tls_irq_enable(ADC_IRQn);
@@ -308,7 +308,7 @@ void tls_adc_set_pga(int gain1, int gain2)
     u32 val = 0;
     u8 gain1times = 0;
     u8 gain2times = 0;
-    switch(gain1) {
+    switch (gain1) {
         case 1:
             gain1times = 0;
             break;

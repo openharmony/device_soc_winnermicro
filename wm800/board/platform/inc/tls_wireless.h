@@ -136,7 +136,7 @@ struct iw_bss_info {
     u8      privacy;
     u8      ssid_len;
     u8      rssi;
-    u8      ssid[32]; 
+    u8      ssid[32];
 };
 
 struct iw_scan_results {
@@ -239,7 +239,7 @@ struct wl_event_mic_err {
 struct wl_event_rx_eapol {
     u8 *src_addr;
     u8 *eapol_body;
-    u32 eapol_body_len; 
+    u32 eapol_body_len;
 #if TLS_CONFIG_AP
     u8 mode;
 #endif
@@ -251,7 +251,7 @@ struct wl_event_rx_mgmt {
 };
 
 struct wl_event_rx_from_unknown {
-    u8 addr[ETH_ALEN]; 
+    u8 addr[ETH_ALEN];
 };
 
 struct wl_event_assoc_info {
@@ -310,15 +310,15 @@ struct wl_event_assoc_info {
 };
 
 struct tls_wl_event_ops {
-    int (*ibss_joined)(struct tls_wif *wif, 
+    int (*ibss_joined)(struct tls_wif *wif,
             struct wl_event_join_ibss_info *info);
-    int (*assoc)(struct tls_wif *wif, 
+    int (*assoc)(struct tls_wif *wif,
             struct wl_event_assoc_info *info);
     int (*disassoc)(struct tls_wif *wif);
     int (*scan_completed)(struct tls_wif *wif);
     int (*mic_err)(struct tls_wif *wif,
             struct wl_event_mic_err *info);
-    int (*rx_eapol)(struct tls_wif *wif, 
+    int (*rx_eapol)(struct tls_wif *wif,
             struct wl_event_rx_eapol *eapol);
     int (*rx_mgmt)(struct tls_wif *wif,
             struct wl_event_rx_mgmt *mgmt);
@@ -338,7 +338,7 @@ struct tls_wl_event_ops {
     int (*net_down)(struct tls_wif *wif);
     int (*net_fail)(struct tls_wif *wif);
     int (*net_up)(struct tls_wif *wif);
-    int (*update_stat)(struct tls_wif *wif, void *cur_bss);/* struct ieee80211_bss *cur_bss */
+    int (*update_stat)(struct tls_wif *wif, void *cur_bss); /* struct ieee80211_bss *cur_bss */
 };
 
 /* sk_buff allocated by wlan driver  */
@@ -382,18 +382,18 @@ struct tls_wif {
 void tls_wl_print_stats(struct tls_wif *wif);
 
 int tls_wl_if_scan(struct tls_wif *wif,
-        struct iw_scan_req *scan_req, u16 size);
+    struct iw_scan_req *scan_req, u16 size);
 int tls_wl_if_scan_result2(struct tls_wif *wif,
-        u8 *ssid, u32 ssid_len, u8 *buf, u32 buf_size);
+    u8 *ssid, u32 ssid_len, u8 *buf, u32 buf_size);
 int tls_wl_if_scan_result(struct tls_wif *wif,  u8 *buf, u32 buf_size);
 void tls_wl_if_sta_flush(struct tls_wif *wif, u8 mode);
 int tls_wl_if_sta_deauth(struct tls_wif *wif, u8 *own_addr,
-        const u8 *addr, int reason);
+    const u8 *addr, int reason);
 int tls_wl_if_sta_disassoc(struct tls_wif *wif, u8 *own_addr,
-        const u8 *addr, int reason);
+    const u8 *addr, int reason);
 #if TLS_CONFIG_AP
-int tls_wl_if_set_tx_queue_params(struct tls_wif *wif, int queue, 
-        int aifs, int cw_min, int cw_max, int burst_time);
+int tls_wl_if_set_tx_queue_params(struct tls_wif *wif, int queue,
+    int aifs, int cw_min, int cw_max, int burst_time);
 void tls_wl_if_set_sta_flags(struct tls_wif *wif, u8 *addr, u32 flags);
 int tls_wl_if_send_channel_switch(struct tls_wif *wif, u8 *ownaddr, u8 newch);
 void tls_wl_if_switch_channel_width(struct tls_wif *wif, u8 *ownaddr);
@@ -410,32 +410,32 @@ int tls_wl_if_set_ssid(struct tls_wif *wif, struct iw_ssid_params *params);
 int tls_wl_if_set_auth(struct tls_wif *wif, u16 flag, u32 value, u8 mode);
 int tls_wl_if_set_ps_mode(struct tls_wif *wif, int powersave);
 int tls_wl_if_set_freq(struct tls_wif *wif,
-        int freq);
+    int freq);
 int tls_wl_if_send_eapol(struct tls_wif *wif,
-        u8 *buf, u32 len, bool is_apsta);
+    u8 *buf, u32 len, bool is_apsta);
 int tls_wl_if_xmit(struct tls_wif *wif, void *buf, int len, bool is_apsta, bool not_delay);
 int tls_wl_if_add_key(struct tls_wif *wif,
-        struct iw_key_params *params);
+    struct iw_key_params *params);
 int tls_wl_if_remove_key(struct tls_wif *wif,
-        u32 cipher,
-        u32 key_idx,
-        bool pairwise,
-        u8 *addr);
+                         u32 cipher,
+                         u32 key_idx,
+                         bool pairwise,
+                         u8 *addr);
 int tls_wl_if_send_mlme(struct tls_wif *wif,
-        u8 *buf, u32 len);
+    u8 *buf, u32 len);
 int tls_wl_if_set_rate_mode(struct tls_wif *wif,
-        u32 rate_mode);
+    u32 rate_mode);
 int tls_wl_if_set_beacon(struct tls_wif *wif,
-        struct iw_beacon_parameters *params);
+    struct iw_beacon_parameters *params);
 int tls_wl_if_del_beacon(struct tls_wif *wif);
 int tls_wl_if_sta_add(struct tls_wif *wif,
-        struct iw_sta_add_params *params);
+    struct iw_sta_add_params *params);
 int tls_wl_if_sta_remove(struct tls_wif *wif, u8 *addr);
 int tls_wl_if_get_inact_sec(struct tls_wif *wif, const u8 *addr);
 int tls_wl_if_get_scan_res(struct tls_wif *wif, u8 *buf, u32 buf_size);
 int tls_wl_if_disconnect(struct tls_wif *wif);
 int tls_wl_if_tx(struct tls_wif *wif,
-        u8 *buf, u32 buflen, bool last_packet, bool is_apsta, bool not_delay);
+    u8 *buf, u32 buflen, bool last_packet, bool is_apsta, bool not_delay);
 int tls_wl_if_set_max_rate(struct tls_wif *wif, u8 max_rate_idx);
 int tls_wl_if_get_max_rate(struct tls_wif *wif, u8 *max_rate_idx);
 #if TLS_CONFIG_IBSS

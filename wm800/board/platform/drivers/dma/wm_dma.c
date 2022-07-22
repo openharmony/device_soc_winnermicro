@@ -101,7 +101,7 @@ static void dma_irq_proc(void *p)
         tls_dma_irq_clr(ch, TLS_DMA_IRQ_BOTH_DONE);
         if (dma_context[ch].burst_done_pf)
             dma_context[ch].burst_done_pf(dma_context[ch].burst_done_priv);
-    } else if ((int_src & (TLS_DMA_IRQ_BURST_DONE << ch * 2)) &&
+    } else if ((int_src & (TLS_DMA_IRQ_BURST_DONE << (ch * 2))) &&
              (TLS_DMA_IRQ_BURST_DONE == dma_context[ch].flags)) {
         tls_dma_irq_clr(ch, TLS_DMA_IRQ_BOTH_DONE);
         if (dma_context[ch].burst_done_pf)
@@ -109,8 +109,9 @@ static void dma_irq_proc(void *p)
     } else if ((int_src & (TLS_DMA_IRQ_TRANSFER_DONE << (ch * 2))) &&
              (TLS_DMA_IRQ_TRANSFER_DONE == dma_context[ch].flags)) {
         tls_dma_irq_clr(ch, TLS_DMA_IRQ_BOTH_DONE);
-        if (dma_context[ch].transfer_done_pf)
+        if (dma_context[ch].transfer_done_pf) {
             dma_context[ch].transfer_done_pf(dma_context[ch].transfer_done_priv);
+        }
     }
     return;
 }
@@ -333,7 +334,7 @@ unsigned char tls_dma_stop(unsigned char ch)
  * @param[in]      ch       specified channel when ch is valid and not used.
  * @param[in]      flags    flags setted to selected channel
  *
- * @return         Real DMA Channel No. 
+ * @return         Real DMA Channel No.
  *
  * @note
  * If ch is invalid or valid but used, the function will select a random free channel.

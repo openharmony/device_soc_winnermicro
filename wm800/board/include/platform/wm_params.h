@@ -415,7 +415,6 @@ struct tls_webs_cfg {
 
 /**   Structure of user default parameter    */
 typedef struct tls_user_param {
-
     u8 wireless_protocol;
     u8 auto_mode;
     u8 dhcp_enable;

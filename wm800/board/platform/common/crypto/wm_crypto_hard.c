@@ -50,7 +50,7 @@
 #define DES3_IV_LEN     8
 
 #define SHA1_HASH_SIZE      20
-#define MD5_HASH_SIZE 16 
+#define MD5_HASH_SIZE       16
 
 #define STORE32H(x, y) { \
 (y)[0] = (unsigned char)(((x)>>24)&255); \

@@ -129,7 +129,6 @@ int tls_ft_param_get(unsigned int opnum, void *data, unsigned int rdlen)
             }
             break;
 
-
         case CMD_TX_DC: /* tx_dcoffset */
             *(unsigned int *)data = gftParam.tx_dcoffset;
             break;
@@ -138,7 +137,7 @@ int tls_ft_param_get(unsigned int opnum, void *data, unsigned int rdlen)
             *(unsigned int *)data = gftParam.rx_dcoffset;
             break;
 
-            case CMD_TX_IQ_GAIN:
+        case CMD_TX_IQ_GAIN:
             *(unsigned int *)data = gftParam.tx_iq_gain;
             break;
 
@@ -163,7 +162,7 @@ int tls_ft_param_get(unsigned int opnum, void *data, unsigned int rdlen)
             break;
 
         default:
-        return -1;
+            return -1;
     }
     return 0;
 }

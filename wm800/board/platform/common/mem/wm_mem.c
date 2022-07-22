@@ -20,7 +20,7 @@
 * Description: memory manager Module
 *
 * Copyright (c) 2014 Winner Micro Electronic Design Co., Ltd.
-* All rights reserved. 
+* All rights reserved.
 *
 * Author : dave
 *
@@ -328,7 +328,7 @@ void mem_free_debug(void *p,  char* file, int line)
         printf("Memory tailer corruption due to overflow detected at %p\r\n", mem_ptn_hd);
         printf("Tailer pattern 0(0x%x)\r\n", mem_ptn_tl->pattern0);
         printf("Memory was allocated from %s at line %d with length %d\r\n",
-                mem_blk_hd1->file, mem_blk_hd1->line, mem_blk_hd1->length);
+            mem_blk_hd1->file, mem_blk_hd1->line, mem_blk_hd1->length);
         haserr = 1;
     }
     if (needfree) {
@@ -377,7 +377,7 @@ void tls_mem_alloc_info(void)
         i++;
     }
     tls_os_release_critical(cpu_sr);
-    tls_os_sem_release(mem_sem);  
+    tls_os_sem_release(mem_sem);
 }
 
 int is_safe_addr_debug(void* p, u32 len, char* file, int line)
@@ -432,9 +432,9 @@ void mem_free_debug(void *p)
     }
 }
 
-void * mem_realloc_debug(void *mem_address, u32 size)
+void *mem_realloc_debug(void *mem_address, u32 size)
 {
-    u32 * mem_re_addr = (u32 *)LOS_MemRealloc(OS_SYS_MEM_ADDR, mem_address, size);
+    u32 *mem_re_addr = (u32 *)LOS_MemRealloc(OS_SYS_MEM_ADDR, mem_address, size);
     
     return mem_re_addr;
 }

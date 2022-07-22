@@ -175,7 +175,7 @@ struct ieee802_11_elems {
     u8 *vendor_ht_cap;
     u8 *p2p;
     u8 *link_id;
-    u8 *pwr_constr_elem;    
+    u8 *pwr_constr_elem;
     u8 *interworking;
 
     u8 ssid_len;
@@ -207,36 +207,36 @@ struct ieee802_11_elems {
     u8 vendor_ht_cap_len;
     u8 p2p_len;
     u8 interworking_len;
-    
+
 };
 
 struct ieee80211_hdr {
-     u16 frame_control;
-     u16 duration_id;
-     u8 addr1[6];
-     u8 addr2[6];
-     u8 addr3[6];
-     u16 seq_ctrl;
-     u8 addr4[6];
+    u16 frame_control;
+    u16 duration_id;
+    u8 addr1[6];
+    u8 addr2[6];
+    u8 addr3[6];
+    u16 seq_ctrl;
+    u8 addr4[6];
 }__attribute__((packed));
 
 struct ieee80211_hdr_3addr {
-     u16 frame_control;
-     u16 duration_id;
-     u8 addr1[6];
-     u8 addr2[6];
-     u8 addr3[6];
-     u16 seq_ctrl;
+    u16 frame_control;
+    u16 duration_id;
+    u8 addr1[6];
+    u8 addr2[6];
+    u8 addr3[6];
+    u16 seq_ctrl;
 }__attribute__((packed));
 
 struct ieee80211_qos_hdr {
-     u16 frame_control;
-     u16 duration_id;
-     u8 addr1[6];
-     u8 addr2[6];
-     u8 addr3[6];
-     u16 seq_ctrl;
-     u16 qos_ctrl;
+    u16 frame_control;
+    u16 duration_id;
+    u8 addr1[6];
+    u8 addr2[6];
+    u8 addr3[6];
+    u16 seq_ctrl;
+    u16 qos_ctrl;
 }__attribute__((packed));
 typedef enum _phy_type {
     phy_80211_b,
@@ -610,10 +610,10 @@ static __inline int ieee80211_is_qos_nullfunc(u16 fc)
  * This structure refers to "Quiet information element"
  */
 struct ieee80211_quiet_ie {
-     u8 count;
-     u8 period;
-     u16 duration;
-     u16 offset;
+    u8 count;
+    u8 period;
+    u16 duration;
+    u16 offset;
 }__attribute__((packed));
 
 /**
@@ -622,10 +622,10 @@ struct ieee80211_quiet_ie {
  * This structure refers to "Measurement Request/Report information element"
  */
 struct ieee80211_msrment_ie {
-     u8 token;
-     u8 mode;
-     u8 type;
-     u8 request[1];
+    u8 token;
+    u8 mode;
+    u8 type;
+    u8 request[1];
 }__attribute__((packed));
 
 /**
@@ -634,9 +634,9 @@ struct ieee80211_msrment_ie {
  * This structure refers to "Channel Switch Announcement information element"
  */
 struct ieee80211_channel_sw_ie {
-     u8 mode;
-     u8 new_ch_num;
-     u8 count;
+    u8 mode;
+    u8 new_ch_num;
+    u8 count;
 }__attribute__((packed));
 
 /**
@@ -645,11 +645,11 @@ struct ieee80211_channel_sw_ie {
  * This structure refers to "Traffic Indication Map information element"
  */
 struct ieee80211_tim_ie {
-     u8 dtim_count;
-     u8 dtim_period;
-     u8 bitmap_ctrl;
-     /* variable size: 1 - 251 bytes */
-     u8 virtual_map[1];
+    u8 dtim_count;
+    u8 dtim_period;
+    u8 bitmap_ctrl;
+    /* variable size: 1 - 251 bytes */
+    u8 virtual_map[1];
 }__attribute__((packed));
 
 /**
@@ -658,12 +658,12 @@ struct ieee80211_tim_ie {
  * This structure refers to "Root Announcement information element"
  */
 struct ieee80211_rann_ie {
-     u8 rann_flags;
-     u8 rann_hopcount;
-     u8 rann_ttl;
-     u8 rann_addr[6];
-     u32 rann_seq;
-     u32 rann_metric;
+    u8 rann_flags;
+    u8 rann_hopcount;
+    u8 rann_ttl;
+    u8 rann_addr[6];
+    u32 rann_seq;
+    u32 rann_metric;
 }__attribute__((packed));
 
 #define WLAN_SA_QUERY_TR_ID_LEN 2
@@ -872,7 +872,7 @@ struct ieee80211_bar {
  */
 struct ieee80211_mcs_info {
     u8 rx_mask[IEEE80211_HT_MCS_MASK_LEN];
-    u16 rx_highest;        
+    u16 rx_highest;
     u8 tx_params;
     u8 reserved[3];
 }__attribute__ ((packed)) ;
@@ -989,11 +989,11 @@ enum ieee80211_min_mpdu_spacing {
 /* ELEMENTID = 61, HT Operation element in 11n7.3.5.57
 */
 struct ieee80211_ht_info {
-     u8 control_chan;
-     u8 ht_param;
-     u16 operation_mode;
-     u16 stbc_param;
-     u8 basic_set[16];
+    u8 control_chan;
+    u8 ht_param;
+    u16 operation_mode;
+    u16 stbc_param;
+    u8 basic_set[16];
 }__attribute__((packed));
 
 /* for ht_param */
@@ -1384,14 +1384,14 @@ enum ieee80211_key_len {
 struct ieee80211_country_ie_triplet {
     union {
         struct {
-             u8 first_channel;
-             u8 num_channels;
-             s8 max_power;
+            u8 first_channel;
+            u8 num_channels;
+            s8 max_power;
         }__attribute__((packed))chans;
         struct {
-             u8 reg_extension_id;
-             u8 reg_class;
-             u8 coverage_class;
+            u8 reg_extension_id;
+            u8 reg_class;
+            u8 coverage_class;
         }__attribute__((packed))ext;
     }__attribute__((packed))u;
 }__attribute__((packed));

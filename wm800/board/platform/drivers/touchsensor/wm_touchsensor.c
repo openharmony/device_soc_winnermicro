@@ -18,7 +18,7 @@
  *
  * @brief   touchsensor Driver Module
  *
- * @author  
+ * @author
  *
  * Copyright (c) 2021 Winner Microelectronics Co., Ltd.
  */
@@ -47,58 +47,53 @@ int tls_touchsensor_init_config(u32 sensorno, u8 scan_period, u8 window, u32 ena
     u32 regval = 0;
 
     regval = tls_reg_read32(HR_TC_CONFIG);
-    
+
     /*firstly, disable scan function */
     tls_reg_write32(HR_TC_CONFIG,regval&(~(1<<TOUCH_SENSOR_EN_BIT)));
 
-    if (scan_period >=0x3F)
-    {
+    if (scan_period >=0x3F) {
         regval &= ~(0x3F<<SCAN_PERID_SHIFT_BIT);
         regval |= (scan_period<<SCAN_PERID_SHIFT_BIT);
     }
 
-    if (window)
-    {
+    if (window) {
         regval &= ~(0x3F<<CAPDET_CNT_SHIFT_BIT);
         regval |= (window<<CAPDET_CNT_SHIFT_BIT);
     }
 
-    if (sensorno && (sensorno <= 15))
-    {
+    if (sensorno && (sensorno <= 15)) {
         regval |= (1<<(sensorno-1+TOUCH_SENSOR_SEL_SHIFT_BIT));
 
     }
 
-    if (enable)
-    {
+    if (enable) {
         regval |= (1<<TOUCH_SENSOR_EN_BIT);
     }
-    
-    tls_reg_write32(HR_TC_CONFIG,regval);
+
+    tls_reg_write32(HR_TC_CONFIG, regval);
 
     return 0;
 }
 
 /**
- * @brief          This function is used to deinit touch sensor's selection and disable touch.
+ * @brief        This function is used to deinit touch sensor's selection and disable touch.
  *
- * @param[in]      sensorno    is the touch sensor number from 1-15
+ * @param[in]    sensorno    is the touch sensor number from 1-15
  *
- * @retval         0:success
+ * @retval       0:success
  *
- * @note           if do not use touch sensor, user can deinit by this interface and configure this touch sensor as GPIO.
+ * @note         if do not use touch sensor, user can deinit by this interface and configure this touch sensor as GPIO.
  */
 int tls_touchsensor_deinit(u32 sensorno)
 {
     u32 regval = 0;
 
     regval = tls_reg_read32(HR_TC_CONFIG);
-    if (sensorno && (sensorno <= 15))
-    {
+    if (sensorno && (sensorno <= 15)) {
         regval &= ~(1<<(sensorno-1+TOUCH_SENSOR_SEL_SHIFT_BIT));
     }
     regval &= ~(1<<TOUCH_SENSOR_EN_BIT);
-    tls_reg_write32(HR_TC_CONFIG,regval);
+    tls_reg_write32(HR_TC_CONFIG, regval);
 
     return 0;
 }
@@ -116,13 +111,11 @@ int tls_touchsensor_deinit(u32 sensorno)
 int tls_touchsensor_threshold_config(u32 sensorno, u8 threshold)
 {
     u32 regvalue = 0;
-    if ((sensorno == 0) || (sensorno > 15))
-    {
+    if ((sensorno == 0) || (sensorno > 15)) {
         return -1;
     }
 
-    if (threshold > 0x7F)
-    {
+    if (threshold > 0x7F) {
         return -2;
     }
 
@@ -144,12 +137,11 @@ int tls_touchsensor_threshold_config(u32 sensorno, u8 threshold)
  */
 int tls_touchsensor_countnum_get(u32 sensorno)
 {
-    if ((sensorno == 0) || (sensorno > 15))
-    {
+    if ((sensorno == 0) || (sensorno > 15)) {
         return -1;
     }
 
-    return ((tls_reg_read32(HR_TC_CONFIG+sensorno*4)>>8)&0x3FFF);     
+    return ((tls_reg_read32(HR_TC_CONFIG+sensorno*4)>>8)&0x3FFF);
 }
 
 /**
@@ -164,8 +156,7 @@ int tls_touchsensor_countnum_get(u32 sensorno)
 int tls_touchsensor_irq_enable(u32 sensorno)
 {
     u32 value = 0;
-    if (sensorno && (sensorno <= 15))
-    {
+    if (sensorno && (sensorno <= 15)) {
         value = tls_reg_read32(HR_TC_INT_EN);
         value |= (1<<(sensorno+15));
         tls_reg_write32(HR_TC_INT_EN, value);
@@ -188,13 +179,11 @@ int tls_touchsensor_irq_enable(u32 sensorno)
 int tls_touchsensor_irq_disable(u32 sensorno)
 {
     u32 value = 0;
-    if (sensorno && (sensorno <= 15))
-    {    
+    if (sensorno && (sensorno <= 15)) {
         value = tls_reg_read32(HR_TC_INT_EN);
-        value &= ~(1<<(sensorno+15));    
+        value &= ~(1<<(sensorno+15));
         tls_reg_write32(HR_TC_INT_EN, value);
-        if ((value & 0xFFFF0000) == 0)
-        {
+        if ((value & 0xFFFF0000) == 0) {
             tls_irq_disable(TOUCH_IRQn);
         }
         return 0;
@@ -231,8 +220,7 @@ ATTRIBUTE_ISR void tls_touchsensor_irq_handler(void)
     u32 value = 0;
     csi_kernel_intrpt_enter();
     value = tls_reg_read32(HR_TC_INT_EN);
-    if (tc_callback)
-    {
+    if (tc_callback) {
         tc_callback(value&0xFFFF);
     }
     tls_reg_write32(HR_TC_INT_EN, value);
@@ -252,8 +240,7 @@ int tls_touchsensor_irq_status_get(u32 sensorno)
 {
     u32 value = 0;
 
-    if (sensorno && (sensorno <= 15))
-    {
+    if (sensorno && (sensorno <= 15)) {
         value = tls_reg_read32(HR_TC_INT_EN);
         return (value&(1<<(sensorno-1)))?1:0;
     }
