@@ -31,8 +31,7 @@ const uint8_t ble_hs_pvcy_default_irk[16] = {
     0xbf, 0x5b, 0xdd, 0x34, 0xc0, 0x53, 0x1e, 0xb8,
 };
 
-static int
-ble_hs_pvcy_set_addr_timeout(uint16_t timeout)
+static int ble_hs_pvcy_set_addr_timeout(uint16_t timeout)
 {
     struct ble_hci_le_set_rpa_tmo_cp cmd;
 
@@ -42,47 +41,42 @@ ble_hs_pvcy_set_addr_timeout(uint16_t timeout)
 
     cmd.rpa_timeout = htole16(timeout);
     return ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_LE,
-                                        BLE_HCI_OCF_LE_SET_RPA_TMO),
+                             BLE_HCI_OCF_LE_SET_RPA_TMO),
                              &cmd, sizeof(cmd), NULL, 0);
 }
 
-static int
-ble_hs_pvcy_set_resolve_enabled(int enable)
+static int ble_hs_pvcy_set_resolve_enabled(int enable)
 {
     struct ble_hci_le_set_addr_res_en_cp cmd;
     cmd.enable = enable;
     return ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_LE,
-                                        BLE_HCI_OCF_LE_SET_ADDR_RES_EN),
+                             BLE_HCI_OCF_LE_SET_ADDR_RES_EN),
                              &cmd, sizeof(cmd), NULL, 0);
 }
 
-int
-ble_hs_pvcy_remove_entry(uint8_t addr_type, const uint8_t *addr)
+int ble_hs_pvcy_remove_entry(uint8_t addr_type, const uint8_t *addr)
 {
     struct ble_hci_le_rmv_resolve_list_cp cmd;
 
     if (addr_type > BLE_ADDR_RANDOM) {
-        addr_type = addr_type % 2;
+        addr_type = addr_type % 2; // 2:byte alignment
     }
 
     cmd.peer_addr_type = addr_type;
     memcpy(cmd.peer_id_addr, addr, BLE_DEV_ADDR_LEN);
     return ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_LE,
-                                        BLE_HCI_OCF_LE_RMV_RESOLV_LIST),
+                             BLE_HCI_OCF_LE_RMV_RESOLV_LIST),
                              &cmd, sizeof(cmd), NULL, 0);
 }
 
-static int
-ble_hs_pvcy_clear_entries(void)
+static int ble_hs_pvcy_clear_entries(void)
 {
     return ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_LE,
-                                        BLE_HCI_OCF_LE_CLR_RESOLV_LIST),
+                             BLE_HCI_OCF_LE_CLR_RESOLV_LIST),
                              NULL, 0, NULL, 0);
 }
 
-static int
-ble_hs_pvcy_add_entry_hci(const uint8_t *addr, uint8_t addr_type,
-                          const uint8_t *irk)
+static int ble_hs_pvcy_add_entry_hci(const uint8_t *addr, uint8_t addr_type, const uint8_t *irk)
 {
     struct ble_hci_le_add_resolv_list_cp cmd;
     ble_addr_t peer_addr;
@@ -93,13 +87,12 @@ ble_hs_pvcy_add_entry_hci(const uint8_t *addr, uint8_t addr_type,
     }
 
     cmd.peer_addr_type = addr_type;
-    memcpy(cmd.peer_id_addr, addr, 6);
-    memcpy(cmd.local_irk, ble_hs_pvcy_irk, 16);
-    memcpy(cmd.peer_irk, irk, 16);
+    memcpy(cmd.peer_id_addr, addr, 6); // 6:size
+    memcpy(cmd.local_irk, ble_hs_pvcy_irk, 16); // 16:size
+    memcpy(cmd.peer_irk, irk, 16); // 16:size
     rc = ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_LE,
-                                      BLE_HCI_OCF_LE_ADD_RESOLV_LIST),
+                           BLE_HCI_OCF_LE_ADD_RESOLV_LIST),
                            &cmd, sizeof(cmd), NULL, 0);
-
     if (rc != 0) {
         return rc;
     }
@@ -113,7 +106,6 @@ ble_hs_pvcy_add_entry_hci(const uint8_t *addr, uint8_t addr_type,
     peer_addr.type = addr_type;
     memcpy(peer_addr.val, addr, sizeof peer_addr.val);
     rc = ble_hs_pvcy_set_mode(&peer_addr, BLE_GAP_PRIVATE_MODE_DEVICE);
-
     if (rc != 0) {
         return rc;
     }
@@ -121,9 +113,7 @@ ble_hs_pvcy_add_entry_hci(const uint8_t *addr, uint8_t addr_type,
     return 0;
 }
 
-int
-ble_hs_pvcy_add_entry(const uint8_t *addr, uint8_t addr_type,
-                      const uint8_t *irk)
+int ble_hs_pvcy_add_entry(const uint8_t *addr, uint8_t addr_type, const uint8_t *irk)
 {
     int rc;
     STATS_INC(ble_hs_stats, pvcy_add_entry);
@@ -144,8 +134,7 @@ ble_hs_pvcy_add_entry(const uint8_t *addr, uint8_t addr_type,
     return rc;
 }
 
-int
-ble_hs_pvcy_ensure_started(void)
+int ble_hs_pvcy_ensure_started(void)
 {
     int rc;
 
@@ -155,7 +144,6 @@ ble_hs_pvcy_ensure_started(void)
 
     /* Set up the periodic change of our RPA. */
     rc = ble_hs_pvcy_set_addr_timeout(MYNEWT_VAL(BLE_RPA_TIMEOUT));
-
     if (rc != 0) {
         return rc;
     }
@@ -164,35 +152,31 @@ ble_hs_pvcy_ensure_started(void)
     return 0;
 }
 
-int
-ble_hs_pvcy_set_our_irk(const uint8_t *irk)
+int ble_hs_pvcy_set_our_irk(const uint8_t *irk)
 {
     uint8_t new_irk[16];
 
     if (irk != NULL) {
-        memcpy(new_irk, irk, 16);
+        memcpy(new_irk, irk, 16); // 16:size
     } else {
-        memcpy(new_irk, ble_hs_pvcy_default_irk, 16);
+        memcpy(new_irk, ble_hs_pvcy_default_irk, 16); // 16:size
     }
 
     /* Clear the resolving list if this is a new IRK. */
     /* Note , the bluetooth system will be automatically on/off, here I always set default local irk and enable rpa*/
     if (/*memcmp(ble_hs_pvcy_irk, new_irk, 16) != 0*/1) {
-        memcpy(ble_hs_pvcy_irk, new_irk, 16);
+        memcpy(ble_hs_pvcy_irk, new_irk, 16); // 16:size
         int rc = ble_hs_pvcy_set_resolve_enabled(0);
-
         if (rc != 0) {
             return rc;
         }
 
         rc = ble_hs_pvcy_clear_entries();
-
         if (rc != 0) {
             return rc;
         }
 
         rc = ble_hs_pvcy_set_resolve_enabled(1);
-
         if (rc != 0) {
             return rc;
         }
@@ -205,10 +189,9 @@ ble_hs_pvcy_set_our_irk(const uint8_t *irk)
          * actual peer.
          */
         uint8_t tmp_addr[6]; 
-        memset(tmp_addr, 0, 6);
-        memset(new_irk, 0, 16);
+        memset(tmp_addr, 0, 6); // 16:size
+        memset(new_irk, 0, 16); // 16:size
         rc = ble_hs_pvcy_add_entry(tmp_addr, 0, new_irk);
-
         if (rc != 0) {
             return rc;
         }
@@ -217,16 +200,14 @@ ble_hs_pvcy_set_our_irk(const uint8_t *irk)
     return 0;
 }
 
-int
-ble_hs_pvcy_our_irk(const uint8_t **out_irk)
+int ble_hs_pvcy_our_irk(const uint8_t **out_irk)
 {
     /* XXX: Return error if privacy not supported. */
     *out_irk = ble_hs_pvcy_irk;
     return 0;
 }
 
-int
-ble_hs_pvcy_set_mode(const ble_addr_t *addr, uint8_t priv_mode)
+int ble_hs_pvcy_set_mode(const ble_addr_t *addr, uint8_t priv_mode)
 {
     struct ble_hci_le_set_privacy_mode_cp cmd;
 

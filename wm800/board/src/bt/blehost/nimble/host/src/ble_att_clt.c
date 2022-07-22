@@ -30,13 +30,11 @@
  * $error response                                                           *
  *****************************************************************************/
 
-int
-ble_att_clt_rx_error(uint16_t conn_handle, struct os_mbuf **rxom)
+int ble_att_clt_rx_error(uint16_t conn_handle, struct os_mbuf **rxom)
 {
     struct ble_att_error_rsp *rsp;
     int rc;
     rc = ble_hs_mbuf_pullup_base(rxom, sizeof(*rsp));
-
     if (rc != 0) {
         return rc;
     }
@@ -51,8 +49,7 @@ ble_att_clt_rx_error(uint16_t conn_handle, struct os_mbuf **rxom)
  * $mtu exchange                                                             *
  *****************************************************************************/
 
-int
-ble_att_clt_tx_mtu(uint16_t conn_handle, uint16_t mtu)
+int ble_att_clt_tx_mtu(uint16_t conn_handle, uint16_t mtu)
 {
     struct ble_att_mtu_cmd *req;
     struct ble_l2cap_chan *chan;
@@ -66,7 +63,6 @@ ble_att_clt_tx_mtu(uint16_t conn_handle, uint16_t mtu)
 
     ble_hs_lock();
     rc = ble_att_conn_chan_find(conn_handle, &conn, &chan);
-
     if (rc != 0) {
         rc = BLE_HS_ENOTCONN;
     } else if (chan->flags & BLE_L2CAP_CHAN_F_TXED_MTU) {
@@ -82,21 +78,18 @@ ble_att_clt_tx_mtu(uint16_t conn_handle, uint16_t mtu)
     }
 
     req = ble_att_cmd_get(BLE_ATT_OP_MTU_REQ, sizeof(*req), &txom);
-
     if (req == NULL) {
         return BLE_HS_ENOMEM;
     }
 
     req->bamc_mtu = htole16(mtu);
     rc = ble_att_tx(conn_handle, txom);
-
     if (rc != 0) {
         return rc;
     }
 
     ble_hs_lock();
     rc = ble_att_conn_chan_find(conn_handle, &conn, &chan);
-
     if (rc == 0) {
         chan->flags |= BLE_L2CAP_CHAN_F_TXED_MTU;
     }
@@ -105,8 +98,7 @@ ble_att_clt_tx_mtu(uint16_t conn_handle, uint16_t mtu)
     return rc;
 }
 
-int
-ble_att_clt_rx_mtu(uint16_t conn_handle, struct os_mbuf **rxom)
+int ble_att_clt_rx_mtu(uint16_t conn_handle, struct os_mbuf **rxom)
 {
     struct ble_att_mtu_cmd *cmd;
     struct ble_l2cap_chan *chan;
@@ -114,12 +106,10 @@ ble_att_clt_rx_mtu(uint16_t conn_handle, struct os_mbuf **rxom)
     int rc;
     mtu = 0;
     rc = ble_hs_mbuf_pullup_base(rxom, sizeof(*cmd));
-
     if (rc == 0) {
         cmd = (struct ble_att_mtu_cmd *)(*rxom)->om_data;
         ble_hs_lock();
         rc = ble_att_conn_chan_find(conn_handle, NULL, &chan);
-
         if (rc == 0) {
             ble_att_set_peer_mtu(chan, le16toh(cmd->bamc_mtu));
             mtu = ble_att_chan_mtu(chan);
@@ -140,9 +130,8 @@ ble_att_clt_rx_mtu(uint16_t conn_handle, struct os_mbuf **rxom)
  * $find information                                                         *
  *****************************************************************************/
 
-int
-ble_att_clt_tx_find_info(uint16_t conn_handle, uint16_t start_handle,
-                         uint16_t end_handle)
+int ble_att_clt_tx_find_info(uint16_t conn_handle, uint16_t start_handle,
+                             uint16_t end_handle)
 {
 #if !NIMBLE_BLE_ATT_CLT_FIND_INFO
     return BLE_HS_ENOTSUP;
@@ -155,7 +144,6 @@ ble_att_clt_tx_find_info(uint16_t conn_handle, uint16_t start_handle,
     }
 
     req = ble_att_cmd_get(BLE_ATT_OP_FIND_INFO_REQ, sizeof(*req), &txom);
-
     if (req == NULL) {
         return BLE_HS_ENOMEM;
     }
@@ -165,20 +153,19 @@ ble_att_clt_tx_find_info(uint16_t conn_handle, uint16_t start_handle,
     return ble_att_tx(conn_handle, txom);
 }
 
-static int
-ble_att_clt_parse_find_info_entry(struct os_mbuf **rxom, uint8_t rsp_format,
-                                  struct ble_att_find_info_idata *idata)
+static int ble_att_clt_parse_find_info_entry(struct os_mbuf **rxom, uint8_t rsp_format,
+                                             struct ble_att_find_info_idata *idata)
 {
     int entry_len;
     int rc;
 
-    switch(rsp_format) {
+    switch (rsp_format) {
         case BLE_ATT_FIND_INFO_RSP_FORMAT_16BIT:
-            entry_len = 2 + 2;
+            entry_len = 2 + 2; // 2:byte alignment
             break;
 
         case BLE_ATT_FIND_INFO_RSP_FORMAT_128BIT:
-            entry_len = 2 + 16;
+            entry_len = 2 + 16; // 2:byte alignment, 16:byte alignment
             break;
 
         default:
@@ -186,17 +173,15 @@ ble_att_clt_parse_find_info_entry(struct os_mbuf **rxom, uint8_t rsp_format,
     }
 
     rc = ble_hs_mbuf_pullup_base(rxom, entry_len);
-
     if (rc != 0) {
         return rc;
     }
 
     idata->attr_handle = get_le16((*rxom)->om_data);
 
-    switch(rsp_format) {
+    switch (rsp_format) {
         case BLE_ATT_FIND_INFO_RSP_FORMAT_16BIT:
-            rc = ble_uuid_init_from_att_mbuf(&idata->uuid, *rxom, 2, 2);
-
+            rc = ble_uuid_init_from_att_mbuf(&idata->uuid, *rxom, 2, 2); // 2:off & len
             if (rc != 0) {
                 return BLE_HS_EBADDATA;
             }
@@ -204,8 +189,7 @@ ble_att_clt_parse_find_info_entry(struct os_mbuf **rxom, uint8_t rsp_format,
             break;
 
         case BLE_ATT_FIND_INFO_RSP_FORMAT_128BIT:
-            rc = ble_uuid_init_from_att_mbuf(&idata->uuid, *rxom, 2, 16);
-
+            rc = ble_uuid_init_from_att_mbuf(&idata->uuid, *rxom, 2, 16); // 2:off, 16:len
             if (rc != 0) {
                 return BLE_HS_EBADDATA;
             }
@@ -221,8 +205,7 @@ ble_att_clt_parse_find_info_entry(struct os_mbuf **rxom, uint8_t rsp_format,
     return 0;
 }
 
-int
-ble_att_clt_rx_find_info(uint16_t conn_handle, struct os_mbuf **om)
+int ble_att_clt_rx_find_info(uint16_t conn_handle, struct os_mbuf **om)
 {
 #if !NIMBLE_BLE_ATT_CLT_FIND_INFO
     return BLE_HS_ENOTSUP;
@@ -231,7 +214,6 @@ ble_att_clt_rx_find_info(uint16_t conn_handle, struct os_mbuf **om)
     struct ble_att_find_info_rsp *rsp;
     int rc;
     rc = ble_hs_mbuf_pullup_base(om, sizeof(*rsp));
-
     if (rc != 0) {
         goto done;
     }
@@ -242,7 +224,6 @@ ble_att_clt_rx_find_info(uint16_t conn_handle, struct os_mbuf **om)
 
     while(OS_MBUF_PKTLEN(*om) > 0) {
         rc = ble_att_clt_parse_find_info_entry(om, rsp->bafp_format, &idata);
-
         if (rc != 0) {
             goto done;
         }
@@ -263,11 +244,10 @@ done:
  *****************************************************************************/
 
 /*
- * TODO consider this to accept UUID instead of value, it is used only for this
+ * consider this to accept UUID instead of value, it is used only for this
  * anyway
  */
-int
-ble_att_clt_tx_find_type_value(uint16_t conn_handle, uint16_t start_handle,
+int ble_att_clt_tx_find_type_value(uint16_t conn_handle, uint16_t start_handle,
                                uint16_t end_handle, uint16_t attribute_type,
                                const void *attribute_value, int value_len)
 {
@@ -283,7 +263,6 @@ ble_att_clt_tx_find_type_value(uint16_t conn_handle, uint16_t start_handle,
 
     req = ble_att_cmd_get(BLE_ATT_OP_FIND_TYPE_VALUE_REQ, sizeof(*req) + value_len,
                           &txom);
-
     if (req == NULL) {
         return BLE_HS_ENOMEM;
     }
@@ -295,14 +274,11 @@ ble_att_clt_tx_find_type_value(uint16_t conn_handle, uint16_t start_handle,
     return ble_att_tx(conn_handle, txom);
 }
 
-static int
-ble_att_clt_parse_find_type_value_hinfo(
-                struct os_mbuf **om, struct ble_att_find_type_value_hinfo *dst)
+static int ble_att_clt_parse_find_type_value_hinfo(struct os_mbuf **om, struct ble_att_find_type_value_hinfo *dst)
 {
     struct ble_att_handle_group *group;
     int rc;
     rc = ble_hs_mbuf_pullup_base(om, sizeof(*group));
-
     if (rc != 0) {
         return BLE_HS_EBADDATA;
     }
@@ -314,8 +290,7 @@ ble_att_clt_parse_find_type_value_hinfo(
     return 0;
 }
 
-int
-ble_att_clt_rx_find_type_value(uint16_t conn_handle, struct os_mbuf **rxom)
+int ble_att_clt_rx_find_type_value(uint16_t conn_handle, struct os_mbuf **rxom)
 {
 #if !NIMBLE_BLE_ATT_CLT_FIND_TYPE
     return BLE_HS_ENOTSUP;
@@ -327,7 +302,6 @@ ble_att_clt_rx_find_type_value(uint16_t conn_handle, struct os_mbuf **rxom)
 
     while(OS_MBUF_PKTLEN(*rxom) > 0) {
         rc = ble_att_clt_parse_find_type_value_hinfo(rxom, &hinfo);
-
         if (rc != 0) {
             break;
         }
@@ -344,9 +318,8 @@ ble_att_clt_rx_find_type_value(uint16_t conn_handle, struct os_mbuf **rxom)
  * $read by type                                                             *
  *****************************************************************************/
 
-int
-ble_att_clt_tx_read_type(uint16_t conn_handle, uint16_t start_handle,
-                         uint16_t end_handle, const ble_uuid_t *uuid)
+int ble_att_clt_tx_read_type(uint16_t conn_handle, uint16_t start_handle,
+                             uint16_t end_handle, const ble_uuid_t *uuid)
 {
 #if !NIMBLE_BLE_ATT_CLT_READ_TYPE
     return BLE_HS_ENOTSUP;
@@ -360,7 +333,6 @@ ble_att_clt_tx_read_type(uint16_t conn_handle, uint16_t start_handle,
 
     req = ble_att_cmd_get(BLE_ATT_OP_READ_TYPE_REQ,
                           sizeof(*req) + ble_uuid_length(uuid), &txom);
-
     if (req == NULL) {
         return BLE_HS_ENOMEM;
     }
@@ -371,8 +343,7 @@ ble_att_clt_tx_read_type(uint16_t conn_handle, uint16_t start_handle,
     return ble_att_tx(conn_handle, txom);
 }
 
-int
-ble_att_clt_rx_read_type(uint16_t conn_handle, struct os_mbuf **rxom)
+int ble_att_clt_rx_read_type(uint16_t conn_handle, struct os_mbuf **rxom)
 {
 #if !NIMBLE_BLE_ATT_CLT_READ_TYPE
     return BLE_HS_ENOTSUP;
@@ -383,7 +354,6 @@ ble_att_clt_rx_read_type(uint16_t conn_handle, struct os_mbuf **rxom)
     uint8_t data_len;
     int rc;
     rc = ble_hs_mbuf_pullup_base(rxom, sizeof(*rsp));
-
     if (rc != 0) {
         goto done;
     }
@@ -399,9 +369,8 @@ ble_att_clt_rx_read_type(uint16_t conn_handle, struct os_mbuf **rxom)
     }
 
     /* Parse the Attribute Data List field, passing each entry to the GATT. */
-    while(OS_MBUF_PKTLEN(*rxom) > 0) {
+    while (OS_MBUF_PKTLEN(*rxom) > 0) {
         rc = ble_hs_mbuf_pullup_base(rxom, data_len);
-
         if (rc != 0) {
             break;
         }
@@ -424,8 +393,7 @@ done:
  * $read                                                                     *
  *****************************************************************************/
 
-int
-ble_att_clt_tx_read(uint16_t conn_handle, uint16_t handle)
+int ble_att_clt_tx_read(uint16_t conn_handle, uint16_t handle)
 {
 #if !NIMBLE_BLE_ATT_CLT_READ
     return BLE_HS_ENOTSUP;
@@ -439,14 +407,12 @@ ble_att_clt_tx_read(uint16_t conn_handle, uint16_t handle)
     }
 
     req = ble_att_cmd_get(BLE_ATT_OP_READ_REQ, sizeof(*req), &txom);
-
     if (req == NULL) {
         return BLE_HS_ENOMEM;
     }
 
     req->barq_handle = htole16(handle);
     rc = ble_att_tx(conn_handle, txom);
-
     if (rc != 0) {
         return rc;
     }
@@ -454,8 +420,7 @@ ble_att_clt_tx_read(uint16_t conn_handle, uint16_t handle)
     return 0;
 }
 
-int
-ble_att_clt_rx_read(uint16_t conn_handle, struct os_mbuf **rxom)
+int ble_att_clt_rx_read(uint16_t conn_handle, struct os_mbuf **rxom)
 {
 #if !NIMBLE_BLE_ATT_CLT_READ
     return BLE_HS_ENOTSUP;
@@ -469,8 +434,7 @@ ble_att_clt_rx_read(uint16_t conn_handle, struct os_mbuf **rxom)
  * $read blob                                                                *
  *****************************************************************************/
 
-int
-ble_att_clt_tx_read_blob(uint16_t conn_handle, uint16_t handle, uint16_t offset)
+int ble_att_clt_tx_read_blob(uint16_t conn_handle, uint16_t handle, uint16_t offset)
 {
 #if !NIMBLE_BLE_ATT_CLT_READ_BLOB
     return BLE_HS_ENOTSUP;
@@ -484,7 +448,6 @@ ble_att_clt_tx_read_blob(uint16_t conn_handle, uint16_t handle, uint16_t offset)
     }
 
     req = ble_att_cmd_get(BLE_ATT_OP_READ_BLOB_REQ, sizeof(*req), &txom);
-
     if (req == NULL) {
         return BLE_HS_ENOMEM;
     }
@@ -492,7 +455,6 @@ ble_att_clt_tx_read_blob(uint16_t conn_handle, uint16_t handle, uint16_t offset)
     req->babq_handle = htole16(handle);
     req->babq_offset = htole16(offset);
     rc = ble_att_tx(conn_handle, txom);
-
     if (rc != 0) {
         return rc;
     }
@@ -500,8 +462,7 @@ ble_att_clt_tx_read_blob(uint16_t conn_handle, uint16_t handle, uint16_t offset)
     return 0;
 }
 
-int
-ble_att_clt_rx_read_blob(uint16_t conn_handle, struct os_mbuf **rxom)
+int ble_att_clt_rx_read_blob(uint16_t conn_handle, struct os_mbuf **rxom)
 {
 #if !NIMBLE_BLE_ATT_CLT_READ_BLOB
     return BLE_HS_ENOTSUP;
@@ -514,8 +475,7 @@ ble_att_clt_rx_read_blob(uint16_t conn_handle, struct os_mbuf **rxom)
 /*****************************************************************************
  * $read multiple                                                            *
  *****************************************************************************/
-int
-ble_att_clt_tx_read_mult(uint16_t conn_handle, const uint16_t *handles,
+int ble_att_clt_tx_read_mult(uint16_t conn_handle, const uint16_t *handles,
                          int num_handles)
 {
 #if !NIMBLE_BLE_ATT_CLT_READ_MULT
@@ -532,7 +492,6 @@ ble_att_clt_tx_read_mult(uint16_t conn_handle, const uint16_t *handles,
     req = ble_att_cmd_get(BLE_ATT_OP_READ_MULT_REQ,
                           sizeof(req->handles[0]) * num_handles,
                           &txom);
-
     if (req == NULL) {
         return BLE_HS_ENOMEM;
     }
@@ -544,8 +503,7 @@ ble_att_clt_tx_read_mult(uint16_t conn_handle, const uint16_t *handles,
     return ble_att_tx(conn_handle, txom);
 }
 
-int
-ble_att_clt_rx_read_mult(uint16_t conn_handle, struct os_mbuf **rxom)
+int ble_att_clt_rx_read_mult(uint16_t conn_handle, struct os_mbuf **rxom)
 {
 #if !NIMBLE_BLE_ATT_CLT_READ_MULT
     return BLE_HS_ENOTSUP;
@@ -559,10 +517,9 @@ ble_att_clt_rx_read_mult(uint16_t conn_handle, struct os_mbuf **rxom)
  * $read by group type                                                       *
  *****************************************************************************/
 
-int
-ble_att_clt_tx_read_group_type(uint16_t conn_handle,
-                               uint16_t start_handle, uint16_t end_handle,
-                               const ble_uuid_t *uuid)
+int ble_att_clt_tx_read_group_type(uint16_t conn_handle,
+                                   uint16_t start_handle, uint16_t end_handle,
+                                   const ble_uuid_t *uuid)
 {
 #if !NIMBLE_BLE_ATT_CLT_READ_GROUP_TYPE
     return BLE_HS_ENOTSUP;
@@ -576,7 +533,6 @@ ble_att_clt_tx_read_group_type(uint16_t conn_handle,
 
     req = ble_att_cmd_get(BLE_ATT_OP_READ_GROUP_TYPE_REQ,
                           sizeof(*req) + ble_uuid_length(uuid), &txom);
-
     if (req == NULL) {
         return BLE_HS_ENOMEM;
     }
@@ -587,8 +543,7 @@ ble_att_clt_tx_read_group_type(uint16_t conn_handle,
     return ble_att_tx(conn_handle, txom);
 }
 
-static int
-ble_att_clt_parse_read_group_type_adata(
+static int ble_att_clt_parse_read_group_type_adata(
                 struct os_mbuf **om, int data_len,
                 struct ble_att_read_group_type_adata *adata)
 {
@@ -599,20 +554,18 @@ ble_att_clt_parse_read_group_type_adata(
     }
 
     rc = ble_hs_mbuf_pullup_base(om, data_len);
-
     if (rc != 0) {
         return rc;
     }
 
     adata->att_handle = get_le16((*om)->om_data + 0);
-    adata->end_group_handle = get_le16((*om)->om_data + 2);
+    adata->end_group_handle = get_le16((*om)->om_data + 2); // 2:byte alignment
     adata->value_len = data_len - BLE_ATT_READ_GROUP_TYPE_ADATA_BASE_SZ;
     adata->value = (*om)->om_data + BLE_ATT_READ_GROUP_TYPE_ADATA_BASE_SZ;
     return 0;
 }
 
-int
-ble_att_clt_rx_read_group_type(uint16_t conn_handle, struct os_mbuf **rxom)
+int ble_att_clt_rx_read_group_type(uint16_t conn_handle, struct os_mbuf **rxom)
 {
 #if !NIMBLE_BLE_ATT_CLT_READ_GROUP_TYPE
     return BLE_HS_ENOTSUP;
@@ -622,7 +575,6 @@ ble_att_clt_rx_read_group_type(uint16_t conn_handle, struct os_mbuf **rxom)
     uint8_t len;
     int rc;
     rc = ble_hs_mbuf_pullup_base(rxom, sizeof(*rsp));
-
     if (rc != 0) {
         goto done;
     }
@@ -633,9 +585,8 @@ ble_att_clt_rx_read_group_type(uint16_t conn_handle, struct os_mbuf **rxom)
     os_mbuf_adj(*rxom, sizeof(*rsp));
 
     /* Parse the Attribute Data List field, passing each entry to GATT. */
-    while(OS_MBUF_PKTLEN(*rxom) > 0) {
+    while (OS_MBUF_PKTLEN(*rxom) > 0) {
         rc = ble_att_clt_parse_read_group_type_adata(rxom, len, &adata);
-
         if (rc != 0) {
             goto done;
         }
@@ -654,8 +605,7 @@ done:
  * $write                                                                    *
  *****************************************************************************/
 
-int
-ble_att_clt_tx_write_req(uint16_t conn_handle, uint16_t handle,
+int ble_att_clt_tx_write_req(uint16_t conn_handle, uint16_t handle,
                          struct os_mbuf *txom)
 {
 #if !NIMBLE_BLE_ATT_CLT_WRITE
@@ -664,7 +614,6 @@ ble_att_clt_tx_write_req(uint16_t conn_handle, uint16_t handle,
     struct ble_att_write_req *req;
     struct os_mbuf *txom2;
     req = ble_att_cmd_get(BLE_ATT_OP_WRITE_REQ, sizeof(*req), &txom2);
-
     if (req == NULL) {
         os_mbuf_free_chain(txom);
         return BLE_HS_ENOMEM;
@@ -675,8 +624,7 @@ ble_att_clt_tx_write_req(uint16_t conn_handle, uint16_t handle,
     return ble_att_tx(conn_handle, txom2);
 }
 
-int
-ble_att_clt_tx_write_cmd(uint16_t conn_handle, uint16_t handle,
+int ble_att_clt_tx_write_cmd(uint16_t conn_handle, uint16_t handle,
                          struct os_mbuf *txom)
 {
 #if !NIMBLE_BLE_ATT_CLT_WRITE_NO_RSP
@@ -699,7 +647,6 @@ ble_att_clt_tx_write_cmd(uint16_t conn_handle, uint16_t handle,
     }
 
     cmd = ble_att_cmd_get(BLE_ATT_OP_WRITE_CMD, sizeof(*cmd), &txom2);
-
     if (cmd == NULL) {
         os_mbuf_free_chain(txom);
         return BLE_HS_ENOMEM;
@@ -710,8 +657,7 @@ ble_att_clt_tx_write_cmd(uint16_t conn_handle, uint16_t handle,
     return ble_att_tx(conn_handle, txom2);
 }
 
-int
-ble_att_clt_rx_write(uint16_t conn_handle, struct os_mbuf **rxom)
+int ble_att_clt_rx_write(uint16_t conn_handle, struct os_mbuf **rxom)
 {
 #if !NIMBLE_BLE_ATT_CLT_WRITE
     return BLE_HS_ENOTSUP;
@@ -725,8 +671,7 @@ ble_att_clt_rx_write(uint16_t conn_handle, struct os_mbuf **rxom)
  * $prepare write request                                                    *
  *****************************************************************************/
 
-int
-ble_att_clt_tx_prep_write(uint16_t conn_handle, uint16_t handle,
+int ble_att_clt_tx_prep_write(uint16_t conn_handle, uint16_t handle,
                           uint16_t offset, struct os_mbuf *txom)
 {
 #if !NIMBLE_BLE_ATT_CLT_PREP_WRITE
@@ -753,7 +698,6 @@ ble_att_clt_tx_prep_write(uint16_t conn_handle, uint16_t handle,
     }
 
     req = ble_att_cmd_get(BLE_ATT_OP_PREP_WRITE_REQ, sizeof(*req), &txom2);
-
     if (req == NULL) {
         rc = BLE_HS_ENOMEM;
         goto err;
@@ -768,8 +712,7 @@ err:
     return rc;
 }
 
-int
-ble_att_clt_rx_prep_write(uint16_t conn_handle, struct os_mbuf **rxom)
+int ble_att_clt_rx_prep_write(uint16_t conn_handle, struct os_mbuf **rxom)
 {
 #if !NIMBLE_BLE_ATT_CLT_PREP_WRITE
     return BLE_HS_ENOTSUP;
@@ -781,7 +724,6 @@ ble_att_clt_rx_prep_write(uint16_t conn_handle, struct os_mbuf **rxom)
     handle = 0;
     offset = 0;
     rc = ble_hs_mbuf_pullup_base(rxom, sizeof(*rsp));
-
     if (rc != 0) {
         goto done;
     }
@@ -801,8 +743,7 @@ done:
  * $execute write request                                                    *
  *****************************************************************************/
 
-int
-ble_att_clt_tx_exec_write(uint16_t conn_handle, uint8_t flags)
+int ble_att_clt_tx_exec_write(uint16_t conn_handle, uint8_t flags)
 {
 #if !NIMBLE_BLE_ATT_CLT_EXEC_WRITE
     return BLE_HS_ENOTSUP;
@@ -811,14 +752,12 @@ ble_att_clt_tx_exec_write(uint16_t conn_handle, uint8_t flags)
     struct os_mbuf *txom;
     int rc;
     req = ble_att_cmd_get(BLE_ATT_OP_EXEC_WRITE_REQ, sizeof(*req), &txom);
-
     if (req == NULL) {
         return BLE_HS_ENOMEM;
     }
 
     req->baeq_flags = flags;
     rc = ble_att_tx(conn_handle, txom);
-
     if (rc != 0) {
         return rc;
     }
@@ -826,8 +765,7 @@ ble_att_clt_tx_exec_write(uint16_t conn_handle, uint8_t flags)
     return 0;
 }
 
-int
-ble_att_clt_rx_exec_write(uint16_t conn_handle, struct os_mbuf **rxom)
+int ble_att_clt_rx_exec_write(uint16_t conn_handle, struct os_mbuf **rxom)
 {
 #if !NIMBLE_BLE_ATT_CLT_EXEC_WRITE
     return BLE_HS_ENOTSUP;
@@ -840,9 +778,8 @@ ble_att_clt_rx_exec_write(uint16_t conn_handle, struct os_mbuf **rxom)
  * $handle value notification                                                *
  *****************************************************************************/
 
-int
-ble_att_clt_tx_notify(uint16_t conn_handle, uint16_t handle,
-                      struct os_mbuf *txom)
+int ble_att_clt_tx_notify(uint16_t conn_handle, uint16_t handle,
+                          struct os_mbuf *txom)
 {
 #if !NIMBLE_BLE_ATT_CLT_NOTIFY
     return BLE_HS_ENOTSUP;
@@ -857,7 +794,6 @@ ble_att_clt_tx_notify(uint16_t conn_handle, uint16_t handle,
     }
 
     req = ble_att_cmd_get(BLE_ATT_OP_NOTIFY_REQ, sizeof(*req), &txom2);
-
     if (req == NULL) {
         rc = BLE_HS_ENOMEM;
         goto err;
@@ -875,9 +811,8 @@ err:
  * $handle value indication                                                  *
  *****************************************************************************/
 
-int
-ble_att_clt_tx_indicate(uint16_t conn_handle, uint16_t handle,
-                        struct os_mbuf *txom)
+int ble_att_clt_tx_indicate(uint16_t conn_handle, uint16_t handle,
+                            struct os_mbuf *txom)
 {
 #if !NIMBLE_BLE_ATT_CLT_INDICATE
     return BLE_HS_ENOTSUP;
@@ -892,7 +827,6 @@ ble_att_clt_tx_indicate(uint16_t conn_handle, uint16_t handle,
     }
 
     req = ble_att_cmd_get(BLE_ATT_OP_INDICATE_REQ, sizeof(*req), &txom2);
-
     if (req == NULL) {
         rc = BLE_HS_ENOMEM;
         goto err;
@@ -906,8 +840,7 @@ err:
     return rc;
 }
 
-int
-ble_att_clt_rx_indicate(uint16_t conn_handle, struct os_mbuf **rxom)
+int ble_att_clt_rx_indicate(uint16_t conn_handle, struct os_mbuf **rxom)
 {
 #if !NIMBLE_BLE_ATT_CLT_INDICATE
     return BLE_HS_ENOTSUP;
