@@ -42,8 +42,8 @@ struct ble_svc_dis_data ble_svc_dis_data = {
     (MYNEWT_VAL(BLE_SVC_DIS_SOFTWARE_REVISION_READ_PERM) >= 0) ||   \
     (MYNEWT_VAL(BLE_SVC_DIS_MANUFACTURER_NAME_READ_PERM) >= 0) || \
     (MYNEWT_VAL(BLE_SVC_DIS_SYSTEM_ID_READ_PERM) >= 0)
-static int
-ble_svc_dis_access(uint16_t conn_handle, uint16_t attr_handle,
+
+static int ble_svc_dis_access(uint16_t conn_handle, uint16_t attr_handle,
                    struct ble_gatt_access_ctxt *ctxt, void *arg);
 #endif
 
@@ -131,14 +131,14 @@ static const struct ble_gatt_svc_def ble_svc_dis_defs[] = {
     (MYNEWT_VAL(BLE_SVC_DIS_SOFTWARE_REVISION_READ_PERM) >= 0) ||   \
     (MYNEWT_VAL(BLE_SVC_DIS_MANUFACTURER_NAME_READ_PERM) >= 0) || \
     (MYNEWT_VAL(BLE_SVC_DIS_SYSTEM_ID_READ_PERM) >= 0)
-static int
-ble_svc_dis_access(uint16_t conn_handle, uint16_t attr_handle,
+
+static int ble_svc_dis_access(uint16_t conn_handle, uint16_t attr_handle,
                    struct ble_gatt_access_ctxt *ctxt, void *arg)
 {
     uint16_t uuid    = ble_uuid_u16(ctxt->chr->uuid);
     const char *info = NULL;
 
-    switch(uuid) {
+    switch (uuid) {
 #if (MYNEWT_VAL(BLE_SVC_DIS_MODEL_NUMBER_READ_PERM) >= 0)
 
         case BLE_SVC_DIS_CHR_UUID16_MODEL_NUMBER:
@@ -245,53 +245,45 @@ ble_svc_dis_access(uint16_t conn_handle, uint16_t attr_handle,
 }
 #endif
 
-const char *
-ble_svc_dis_model_number(void)
+const char *ble_svc_dis_model_number(void)
 {
     return ble_svc_dis_data.model_number;
 }
 
-int
-ble_svc_dis_model_number_set(const char *value)
+int ble_svc_dis_model_number_set(const char *value)
 {
     ble_svc_dis_data.model_number = value;
     return 0;
 }
 
-const char *
-ble_svc_dis_serial_number(void)
+const char *ble_svc_dis_serial_number(void)
 {
     return ble_svc_dis_data.serial_number;
 }
 
-int
-ble_svc_dis_serial_number_set(const char *value)
+int ble_svc_dis_serial_number_set(const char *value)
 {
     ble_svc_dis_data.serial_number = value;
     return 0;
 }
 
-const char *
-ble_svc_dis_firmware_revision(void)
+const char *ble_svc_dis_firmware_revision(void)
 {
     return ble_svc_dis_data.firmware_revision;
 }
 
-int
-ble_svc_dis_firmware_revision_set(const char *value)
+int ble_svc_dis_firmware_revision_set(const char *value)
 {
     ble_svc_dis_data.firmware_revision = value;
     return 0;
 }
 
-const char *
-ble_svc_dis_hardware_revision(void)
+const char *ble_svc_dis_hardware_revision(void)
 {
     return ble_svc_dis_data.hardware_revision;
 }
 
-int
-ble_svc_dis_hardware_revision_set(const char *value)
+int ble_svc_dis_hardware_revision_set(const char *value)
 {
     ble_svc_dis_data.hardware_revision = value;
     return 0;
@@ -303,8 +295,7 @@ ble_svc_dis_software_revision(void)
     return ble_svc_dis_data.software_revision;
 }
 
-int
-ble_svc_dis_software_revision_set(const char *value)
+int ble_svc_dis_software_revision_set(const char *value)
 {
     ble_svc_dis_data.software_revision = value;
     return 0;
@@ -316,21 +307,18 @@ ble_svc_dis_manufacturer_name(void)
     return ble_svc_dis_data.manufacturer_name;
 }
 
-int
-ble_svc_dis_manufacturer_name_set(const char *value)
+int ble_svc_dis_manufacturer_name_set(const char *value)
 {
     ble_svc_dis_data.manufacturer_name = value;
     return 0;
 }
 
-const char *
-ble_svc_dis_system_id(void)
+const char *ble_svc_dis_system_id(void)
 {
     return ble_svc_dis_data.system_id;
 }
 
-int
-ble_svc_dis_system_id_set(const char *value)
+int ble_svc_dis_system_id_set(const char *value)
 {
     ble_svc_dis_data.system_id = value;
     return 0;
@@ -339,8 +327,7 @@ ble_svc_dis_system_id_set(const char *value)
 /**
  * Initialize the DIS package.
  */
-void
-ble_svc_dis_init(void)
+void ble_svc_dis_init(void)
 {
     int rc;
     /* Ensure this function only gets called by sysinit. */

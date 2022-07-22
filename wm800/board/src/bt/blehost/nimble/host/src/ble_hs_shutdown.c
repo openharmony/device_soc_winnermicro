@@ -27,16 +27,14 @@ static struct ble_hs_stop_listener ble_hs_shutdown_stop_listener;
 /**
  * Called when the host stop procedure has completed.
  */
-static void
-ble_hs_shutdown_stop_cb(int status, void *arg)
+static void ble_hs_shutdown_stop_cb(int status, void *arg)
 {
     SYSDOWN_ASSERT_ACTIVE();
     /* Indicate to sysdown that the host is fully shut down. */
     sysdown_release();
 }
 
-int
-ble_hs_shutdown(int reason)
+int ble_hs_shutdown(int reason)
 {
     int rc;
     /* Ensure this function only gets called by sysdown. */
@@ -45,7 +43,7 @@ ble_hs_shutdown(int reason)
     rc = ble_hs_stop(&ble_hs_shutdown_stop_listener, ble_hs_shutdown_stop_cb,
                      NULL);
 
-    switch(rc) {
+    switch (rc) {
         case 0:
             /* Stop initiated.  Wait for result to be reported asynchronously. */
             return SYSDOWN_IN_PROGRESS;

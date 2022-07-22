@@ -175,10 +175,9 @@ int ble_att_init(void);
 int ble_att_svr_start(void);
 void ble_att_svr_stop(void);
 
-struct ble_att_svr_entry *
-ble_att_svr_find_by_uuid(struct ble_att_svr_entry *start_at,
-                         const ble_uuid_t *uuid,
-                         uint16_t end_handle);
+struct ble_att_svr_entry *ble_att_svr_find_by_uuid(struct ble_att_svr_entry *start_at,
+                                                   const ble_uuid_t *uuid,
+                                                   uint16_t end_handle);
 uint16_t ble_att_svr_prev_handle(void);
 int ble_att_svr_rx_mtu(uint16_t conn_handle, struct os_mbuf **rxom);
 struct ble_att_svr_entry *ble_att_svr_find_by_handle(uint16_t handle_id);
@@ -240,7 +239,6 @@ struct ble_att_read_type_adata {
     uint16_t att_handle;
     int value_len;
     uint8_t *value;
-
 };
 
 /** An attribute-data entry in a read by group type response. */

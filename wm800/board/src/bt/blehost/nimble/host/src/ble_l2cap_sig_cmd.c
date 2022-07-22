@@ -20,8 +20,7 @@
 #include <string.h>
 #include "ble_hs_priv.h"
 
-int
-ble_l2cap_sig_tx(uint16_t conn_handle, struct os_mbuf *txom)
+int ble_l2cap_sig_tx(uint16_t conn_handle, struct os_mbuf *txom)
 {
     struct ble_l2cap_chan *chan;
     struct ble_hs_conn *conn;
@@ -34,9 +33,8 @@ ble_l2cap_sig_tx(uint16_t conn_handle, struct os_mbuf *txom)
     return rc;
 }
 
-void
-ble_l2cap_sig_hdr_parse(void *payload, uint16_t len,
-                        struct ble_l2cap_sig_hdr *dst)
+void ble_l2cap_sig_hdr_parse(void *payload, uint16_t len,
+                             struct ble_l2cap_sig_hdr *dst)
 {
     struct ble_l2cap_sig_hdr *src = payload;
     BLE_HS_DBG_ASSERT(len >= BLE_L2CAP_SIG_HDR_SZ);
@@ -45,15 +43,13 @@ ble_l2cap_sig_hdr_parse(void *payload, uint16_t len,
     dst->length = le16toh(src->length);
 }
 
-int
-ble_l2cap_sig_reject_tx(uint16_t conn_handle, uint8_t id, uint16_t reason,
-                        void *data, int data_len)
+int ble_l2cap_sig_reject_tx(uint16_t conn_handle, uint8_t id, uint16_t reason,
+                            void *data, int data_len)
 {
     struct ble_l2cap_sig_reject *cmd;
     struct os_mbuf *txom;
     cmd = ble_l2cap_sig_cmd_get(BLE_L2CAP_SIG_OP_REJECT, id,
                                 sizeof(*cmd) + data_len, &txom);
-
     if (!cmd) {
         return BLE_HS_ENOMEM;
     }
@@ -64,9 +60,8 @@ ble_l2cap_sig_reject_tx(uint16_t conn_handle, uint8_t id, uint16_t reason,
     return ble_l2cap_sig_tx(conn_handle, txom);
 }
 
-int
-ble_l2cap_sig_reject_invalid_cid_tx(uint16_t conn_handle, uint8_t id,
-                                    uint16_t src_cid, uint16_t dst_cid)
+int ble_l2cap_sig_reject_invalid_cid_tx(uint16_t conn_handle, uint8_t id,
+                                        uint16_t src_cid, uint16_t dst_cid)
 {
     struct {
         uint16_t local_cid;
@@ -80,13 +75,11 @@ ble_l2cap_sig_reject_invalid_cid_tx(uint16_t conn_handle, uint8_t id,
                                    &data, sizeof data);
 }
 
-void *
-ble_l2cap_sig_cmd_get(uint8_t opcode, uint8_t id, uint16_t len,
-                      struct os_mbuf **txom)
+void *ble_l2cap_sig_cmd_get(uint8_t opcode, uint8_t id, uint16_t len,
+                            struct os_mbuf **txom)
 {
     struct ble_l2cap_sig_hdr *hdr;
     *txom = ble_hs_mbuf_l2cap_pkt();
-
     if (*txom == NULL) {
         return NULL;
     }

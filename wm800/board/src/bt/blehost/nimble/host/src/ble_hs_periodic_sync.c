@@ -31,14 +31,12 @@ static struct os_mempool ble_hs_periodic_sync_pool;
 static os_membuf_t ble_hs_psync_elem_mem[
                  OS_MEMPOOL_SIZE(MYNEWT_VAL(BLE_MAX_PERIODIC_SYNCS),
                                  sizeof(struct ble_hs_periodic_sync))
- ];
+];
 
-struct ble_hs_periodic_sync *
-ble_hs_periodic_sync_alloc(void)
+struct ble_hs_periodic_sync *ble_hs_periodic_sync_alloc(void)
 {
     struct ble_hs_periodic_sync *psync;
     psync = os_memblock_get(&ble_hs_periodic_sync_pool);
-
     if (psync) {
         memset(psync, 0, sizeof(*psync));
     }
@@ -46,8 +44,7 @@ ble_hs_periodic_sync_alloc(void)
     return psync;
 }
 
-void
-ble_hs_periodic_sync_free(struct ble_hs_periodic_sync *psync)
+void ble_hs_periodic_sync_free(struct ble_hs_periodic_sync *psync)
 {
     int rc;
 
@@ -62,25 +59,20 @@ ble_hs_periodic_sync_free(struct ble_hs_periodic_sync *psync)
     BLE_HS_DBG_ASSERT_EVAL(rc == 0);
 }
 
-void
-ble_hs_periodic_sync_insert(struct ble_hs_periodic_sync *psync)
+void ble_hs_periodic_sync_insert(struct ble_hs_periodic_sync *psync)
 {
     BLE_HS_DBG_ASSERT(ble_hs_locked_by_cur_task());
-    BLE_HS_DBG_ASSERT_EVAL(
-                    ble_hs_periodic_sync_find_by_handle(psync->sync_handle) == NULL);
+    BLE_HS_DBG_ASSERT_EVAL(ble_hs_periodic_sync_find_by_handle(psync->sync_handle) == NULL);
     SLIST_INSERT_HEAD(&g_ble_hs_periodic_sync_handles, psync, next);
 }
 
-void
-ble_hs_periodic_sync_remove(struct ble_hs_periodic_sync *psync)
+void ble_hs_periodic_sync_remove(struct ble_hs_periodic_sync *psync)
 {
     BLE_HS_DBG_ASSERT(ble_hs_locked_by_cur_task());
-    SLIST_REMOVE(&g_ble_hs_periodic_sync_handles, psync, ble_hs_periodic_sync,
-                 next);
+    SLIST_REMOVE(&g_ble_hs_periodic_sync_handles, psync, ble_hs_periodic_sync, next);
 }
 
-struct ble_hs_periodic_sync *
-ble_hs_periodic_sync_find_by_handle(uint16_t sync_handle)
+struct ble_hs_periodic_sync *ble_hs_periodic_sync_find_by_handle(uint16_t sync_handle)
 {
     struct ble_hs_periodic_sync *psync;
     BLE_HS_DBG_ASSERT(ble_hs_locked_by_cur_task());
@@ -92,8 +84,7 @@ ble_hs_periodic_sync_find_by_handle(uint16_t sync_handle)
     return NULL;
 }
 
-struct ble_hs_periodic_sync *
-ble_hs_periodic_sync_find(const ble_addr_t *addr, uint8_t sid)
+struct ble_hs_periodic_sync *ble_hs_periodic_sync_find(const ble_addr_t *addr, uint8_t sid)
 {
     struct ble_hs_periodic_sync *psync;
     BLE_HS_DBG_ASSERT(ble_hs_locked_by_cur_task());
@@ -114,8 +105,7 @@ ble_hs_periodic_sync_find(const ble_addr_t *addr, uint8_t sid)
 /**
  * Retrieves the first periodic discovery handle in the list.
  */
-struct ble_hs_periodic_sync *
-ble_hs_periodic_sync_first(void)
+struct ble_hs_periodic_sync *ble_hs_periodic_sync_first(void)
 {
     struct ble_hs_periodic_sync *psync;
     ble_hs_lock();
@@ -124,15 +114,13 @@ ble_hs_periodic_sync_first(void)
     return psync;
 }
 
-int
-ble_hs_periodic_sync_init(void)
+int ble_hs_periodic_sync_init(void)
 {
     int rc;
     rc = os_mempool_init(&ble_hs_periodic_sync_pool,
                          MYNEWT_VAL(BLE_MAX_PERIODIC_SYNCS),
                          sizeof(struct ble_hs_periodic_sync),
                          ble_hs_psync_elem_mem, "ble_hs_periodic_disc_pool");
-
     if (rc != 0) {
         return BLE_HS_EOS;
     }

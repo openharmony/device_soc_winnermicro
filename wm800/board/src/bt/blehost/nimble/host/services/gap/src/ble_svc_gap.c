@@ -41,8 +41,7 @@ static char ble_svc_gap_name[BLE_SVC_GAP_NAME_MAX_LEN + 1] =
                 MYNEWT_VAL(BLE_SVC_GAP_DEVICE_NAME);
 static uint16_t ble_svc_gap_appearance = MYNEWT_VAL(BLE_SVC_GAP_APPEARANCE);
 
-static int
-ble_svc_gap_access(uint16_t conn_handle, uint16_t attr_handle,
+static int ble_svc_gap_access(uint16_t conn_handle, uint16_t attr_handle,
                    struct ble_gatt_access_ctxt *ctxt, void *arg);
 
 static const struct ble_gatt_svc_def ble_svc_gap_defs[] = {
@@ -97,16 +96,14 @@ static const struct ble_gatt_svc_def ble_svc_gap_defs[] = {
     },
 };
 
-static int
-ble_svc_gap_device_name_read_access(struct ble_gatt_access_ctxt *ctxt)
+static int ble_svc_gap_device_name_read_access(struct ble_gatt_access_ctxt *ctxt)
 {
     int rc;
     rc = os_mbuf_append(ctxt->om, ble_svc_gap_name, strlen(ble_svc_gap_name));
     return rc == 0 ? 0 : BLE_ATT_ERR_INSUFFICIENT_RES;
 }
 
-static int
-ble_svc_gap_device_name_write_access(struct ble_gatt_access_ctxt *ctxt)
+static int ble_svc_gap_device_name_write_access(struct ble_gatt_access_ctxt *ctxt)
 {
 #if MYNEWT_VAL(BLE_SVC_GAP_DEVICE_NAME_WRITE_PERM) < 0
     assert(0);
@@ -115,13 +112,11 @@ ble_svc_gap_device_name_write_access(struct ble_gatt_access_ctxt *ctxt)
     uint16_t om_len;
     int rc;
     om_len = OS_MBUF_PKTLEN(ctxt->om);
-
     if (om_len > BLE_SVC_GAP_NAME_MAX_LEN) {
         return BLE_ATT_ERR_INVALID_ATTR_VALUE_LEN;
     }
 
     rc = ble_hs_mbuf_to_flat(ctxt->om, ble_svc_gap_name, om_len, NULL);
-
     if (rc != 0) {
         return BLE_ATT_ERR_UNLIKELY;
     }
@@ -136,8 +131,7 @@ ble_svc_gap_device_name_write_access(struct ble_gatt_access_ctxt *ctxt)
 #endif
 }
 
-static int
-ble_svc_gap_appearance_read_access(struct ble_gatt_access_ctxt *ctxt)
+static int ble_svc_gap_appearance_read_access(struct ble_gatt_access_ctxt *ctxt)
 {
     uint16_t appearance = htole16(ble_svc_gap_appearance);
     int rc;
@@ -145,8 +139,7 @@ ble_svc_gap_appearance_read_access(struct ble_gatt_access_ctxt *ctxt)
     return rc == 0 ? 0 : BLE_ATT_ERR_INSUFFICIENT_RES;
 }
 
-static int
-ble_svc_gap_appearance_write_access(struct ble_gatt_access_ctxt *ctxt)
+static int ble_svc_gap_appearance_write_access(struct ble_gatt_access_ctxt *ctxt)
 {
 #if MYNEWT_VAL(BLE_SVC_GAP_APPEARANCE_WRITE_PERM) < 0
     assert(0);
@@ -155,13 +148,11 @@ ble_svc_gap_appearance_write_access(struct ble_gatt_access_ctxt *ctxt)
     uint16_t om_len;
     int rc;
     om_len = OS_MBUF_PKTLEN(ctxt->om);
-
     if (om_len != sizeof(ble_svc_gap_appearance)) {
         return BLE_ATT_ERR_INVALID_ATTR_VALUE_LEN;
     }
 
     rc = ble_hs_mbuf_to_flat(ctxt->om, &ble_svc_gap_appearance, om_len, NULL);
-
     if (rc != 0) {
         return BLE_ATT_ERR_UNLIKELY;
     }
@@ -176,8 +167,7 @@ ble_svc_gap_appearance_write_access(struct ble_gatt_access_ctxt *ctxt)
 #endif
 }
 
-static int
-ble_svc_gap_access(uint16_t conn_handle, uint16_t attr_handle,
+static int ble_svc_gap_access(uint16_t conn_handle, uint16_t attr_handle,
                    struct ble_gatt_access_ctxt *ctxt, void *arg)
 {
     uint16_t uuid16;
@@ -196,7 +186,7 @@ ble_svc_gap_access(uint16_t conn_handle, uint16_t attr_handle,
     uuid16 = ble_uuid_u16(ctxt->chr->uuid);
     assert(uuid16 != 0);
 
-    switch(uuid16) {
+    switch (uuid16) {
         case BLE_SVC_GAP_CHR_UUID16_DEVICE_NAME:
             if (ctxt->op == BLE_GATT_ACCESS_OP_READ_CHR) {
                 rc = ble_svc_gap_device_name_read_access(ctxt);
@@ -241,18 +231,15 @@ ble_svc_gap_access(uint16_t conn_handle, uint16_t attr_handle,
     }
 }
 
-const char *
-ble_svc_gap_device_name(void)
+const char *ble_svc_gap_device_name(void)
 {
     return ble_svc_gap_name;
 }
 
-int
-ble_svc_gap_device_name_set(const char *name)
+int ble_svc_gap_device_name_set(const char *name)
 {
     int len;
     len = strlen(name);
-
     if (len > BLE_SVC_GAP_NAME_MAX_LEN) {
         return BLE_HS_EINVAL;
     }
@@ -262,27 +249,23 @@ ble_svc_gap_device_name_set(const char *name)
     return 0;
 }
 
-uint16_t
-ble_svc_gap_device_appearance(void)
+uint16_t ble_svc_gap_device_appearance(void)
 {
     return ble_svc_gap_appearance;
 }
 
-int
-ble_svc_gap_device_appearance_set(uint16_t appearance)
+int ble_svc_gap_device_appearance_set(uint16_t appearance)
 {
     ble_svc_gap_appearance = appearance;
     return 0;
 }
 
-void
-ble_svc_gap_set_chr_changed_cb(ble_svc_gap_chr_changed_fn *cb)
+void ble_svc_gap_set_chr_changed_cb(ble_svc_gap_chr_changed_fn *cb)
 {
     ble_svc_gap_chr_changed_cb_fn = cb;
 }
 
-void
-ble_svc_gap_init(void)
+void ble_svc_gap_init(void)
 {
     int rc;
     /* Ensure this function only gets called by sysinit. */

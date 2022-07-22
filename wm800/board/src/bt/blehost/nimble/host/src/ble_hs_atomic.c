@@ -19,13 +19,11 @@
 
 #include "ble_hs_priv.h"
 
-int
-ble_hs_atomic_conn_delete(uint16_t conn_handle)
+int ble_hs_atomic_conn_delete(uint16_t conn_handle)
 {
     struct ble_hs_conn *conn;
     ble_hs_lock();
     conn = ble_hs_conn_find(conn_handle);
-
     if (conn != NULL) {
         ble_hs_conn_remove(conn);
 #if MYNEWT_VAL(BLE_PERIODIC_ADV_SYNC_TRANSFER)
@@ -42,22 +40,19 @@ ble_hs_atomic_conn_delete(uint16_t conn_handle)
     return conn != NULL ? 0 : BLE_HS_ENOTCONN;
 }
 
-void
-ble_hs_atomic_conn_insert(struct ble_hs_conn *conn)
+void ble_hs_atomic_conn_insert(struct ble_hs_conn *conn)
 {
     ble_hs_lock();
     ble_hs_conn_insert(conn);
     ble_hs_unlock();
 }
 
-int
-ble_hs_atomic_conn_flags(uint16_t conn_handle, ble_hs_conn_flags_t *out_flags)
+int ble_hs_atomic_conn_flags(uint16_t conn_handle, ble_hs_conn_flags_t *out_flags)
 {
     struct ble_hs_conn *conn;
     int rc;
     ble_hs_lock();
     conn = ble_hs_conn_find(conn_handle);
-
     if (conn == NULL) {
         rc = BLE_HS_ENOTCONN;
     } else {
@@ -72,15 +67,12 @@ ble_hs_atomic_conn_flags(uint16_t conn_handle, ble_hs_conn_flags_t *out_flags)
     return rc;
 }
 
-int
-ble_hs_atomic_conn_set_flags(uint16_t conn_handle, ble_hs_conn_flags_t flags,
-                             int on)
+int ble_hs_atomic_conn_set_flags(uint16_t conn_handle, ble_hs_conn_flags_t flags, int on)
 {
     struct ble_hs_conn *conn;
     int rc;
     ble_hs_lock();
     conn = ble_hs_conn_find(conn_handle);
-
     if (conn == NULL) {
         rc = BLE_HS_ENOTCONN;
     } else {
@@ -97,14 +89,12 @@ ble_hs_atomic_conn_set_flags(uint16_t conn_handle, ble_hs_conn_flags_t flags,
     return rc;
 }
 
-uint16_t
-ble_hs_atomic_first_conn_handle(void)
+uint16_t ble_hs_atomic_first_conn_handle(void)
 {
     const struct ble_hs_conn *conn;
     uint16_t conn_handle;
     ble_hs_lock();
     conn = ble_hs_conn_first();
-
     if (conn != NULL) {
         conn_handle = conn->bhc_handle;
     } else {
