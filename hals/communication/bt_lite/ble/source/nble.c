@@ -250,7 +250,7 @@ static int ble_server_start_adv(void)
     rc = ble_gap_adv_start(own_addr_type, &peer_addr, g_adv_param.duration?g_adv_param.duration:BLE_HS_FOREVER,
                            &adv_params, gap_event, NULL);
     if (rc) {
-       BLE_IF_PRINTF("Starting advertising failed, rc=%d\r\n", rc);
+        BLE_IF_PRINTF("Starting advertising failed, rc=%d\r\n", rc);
    }
 
     return OHOS_BT_STATUS_SUCCESS;
@@ -263,7 +263,6 @@ static int gap_event(struct ble_gap_event *event, void *arg)
     BdAddr bdaddr;
 
     BLE_IF_DEBUG("%s, event->type=%s(%d)\r\n", __FUNCTION__, tls_bt_gap_evt_2_str(event->type), event->type);
-    // /ble_server_gap_event(event, (void*)gatts_struct_func_ptr_cb);
 
     if (gatts_struct_func_ptr_cb == NULL) return 0;
 
@@ -281,7 +280,6 @@ static int gap_event(struct ble_gap_event *event, void *arg)
                         0 /* Always 0,nimble does not care server if */, &bdaddr);
                 }
                 /* 200 ticks later, perform l2cap level connect param update */
-                // tls_bt_async_proc_func(ble_server_conn_param_update_slave, NULL, 200);
             }
             if (event->connect.status != 0) {
                 /* Connection failed; resume advertising. */
@@ -404,8 +402,6 @@ int EnableBtStack(void)
     nimble_port_init();
 
     /* Application levels code entry */
-    // tls_ble_gap_init();
-    // tls_bt_util_init();
 
     /* Initialize the vuart interface and enable controller */
     ble_hci_vuart_init(0xFF);
@@ -453,9 +449,6 @@ int DisableBtStack(void)
     tls_nimble_stop();
 
     /* Application levels resource cleanup */
-    // tls_ble_gap_deinit();
-    // tls_bt_util_deinit();
-
     while (bt_adapter_state == WM_BT_STATE_ON) {
         tls_os_time_delay(10);
     }
@@ -530,10 +523,9 @@ int BleSetSecurityAuthReq(BleAuthReqMode mode)
     if (mode&OHOS_BLE_AUTH_BOND || mode&OHOS_BLE_AUTH_REQ_SC_BOND || mode&OHOS_BLE_AUTH_REQ_SC_MITM_BOND) {
         ble_hs_cfg.sm_bonding = 1;
     } else {
-        // ble_hs_cfg.sm_bonding = 0;
     }
 
-    if (mode&OHOS_BLE_AUTH_REQ_MITM || mode&OHOS_BLE_AUTH_REQ_SC_MITM || mode&OHOS_BLE_AUTH_REQ_SC_MITM_BOND ) {
+    if (mode&OHOS_BLE_AUTH_REQ_MITM || mode&OHOS_BLE_AUTH_REQ_SC_MITM || mode&OHOS_BLE_AUTH_REQ_SC_MITM_BOND) {
         ble_hs_cfg.sm_mitm = 1;
     } else {
         ble_hs_cfg.sm_mitm = 0;
@@ -543,7 +535,6 @@ int BleSetSecurityAuthReq(BleAuthReqMode mode)
         mode&OHOS_BLE_AUTH_REQ_SC_MITM_BOND) {
         ble_hs_cfg.sm_sc = 1;
     } else {
-        // ble_hs_cfg.sm_sc = 0;
     }
     
     return OHOS_BT_STATUS_SUCCESS;
@@ -671,7 +662,7 @@ int BleGattsSendIndication(int serverId, GattsSendIndParam *param)
     (void)serverId;
     
     BLE_IF_DEBUG("Indicate to app:conn_id[%d],attr_handle[%d],data_length[%d]\r\n", \
-                 param->connectId, param->attrHandle,param->valueLen);
+                 param->connectId, param->attrHandle, param->valueLen);
     if (param->valueLen<=0 || param->value== NULL) {
         return OHOS_BT_STATUS_PARM_INVALID;
     }
@@ -681,7 +672,6 @@ int BleGattsSendIndication(int serverId, GattsSendIndParam *param)
         return OHOS_BT_STATUS_NOMEM;
     }
    
-    // rc = ble_gattc_indicate_custom(param->connectId, param->attrHandle, om);  
     if (param->confirm) {
         rc = ble_gattc_indicate_custom(param->connectId, param->attrHandle, om);
     } else {
@@ -788,7 +778,6 @@ int BleStartAdvEx(int *advId, const StartAdvRawData rawData, BleAdvParams advPar
             break;
         case OHOS_BLE_ADV_DIRECT_IND_HIGH:
                 adv_params.high_duty_cycle = 1;
-                // passthrough;
         case OHOS_BLE_ADV_DIRECT_IND_LOW:
                 adv_params.conn_mode = BLE_GAP_CONN_MODE_DIR;
                 adv_params.disc_mode = BLE_GAP_DISC_MODE_GEN;

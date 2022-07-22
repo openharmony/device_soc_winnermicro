@@ -50,28 +50,21 @@ void hspi_rx_init(struct tls_slave_hspi *hspi)
     hspi->curr_rx_desc = hspi_rx_desc;
 
 /* initialize rx descriptor content */
-    for (i = 0; i < HSPI_RX_DESC_NUM; i++)
-    {
+    for (i = 0; i < HSPI_RX_DESC_NUM; i++) {
     /* initialize tx descriptors */
-        if (i < HSPI_RXBUF_NUM)
-        {
+        if (i < HSPI_RXBUF_NUM) {
             hspi_rx_desc->valid_ctrl = SET_BIT(31);
             hspi_rx_desc->buf_addr = HSPI_RXBUF_BASE_ADDR + i * HSPI_RXBUF_SIZE;
-        }
-        else
-        {
+        } else {
         /* indicate this descriptor is can't use by hspi */
             hspi_rx_desc->valid_ctrl = 0;
         /* point to null */
             hspi_rx_desc->buf_addr = 0x0;
         }
 
-        if (i == (HSPI_RX_DESC_NUM - 1))
-        {
+        if (i == (HSPI_RX_DESC_NUM - 1)) {
             hspi_rx_desc->next_desc_addr = (u32) HSPI_RX_DESC_BASE_ADDR;
-        }
-        else
-        {
+        } else {
             hspi_rx_desc->next_desc_addr = (u32) (hspi_rx_desc + 1);
         }
         hspi_rx_desc++;
@@ -87,8 +80,7 @@ void hspi_tx_init(struct tls_slave_hspi *hspi)
 
     hspi->curr_tx_desc = hspi_tx_desc;
 
-    for (i = 0; i < HSPI_TX_DESC_NUM; i++)
-    {
+    for (i = 0; i < HSPI_TX_DESC_NUM; i++) {
         hspi_tx_desc->valid_ctrl = 0;
         hspi_tx_desc->buf_info = 0;
 #if HSPI_TX_MEM_MALLOC
@@ -99,12 +91,9 @@ void hspi_tx_init(struct tls_slave_hspi *hspi)
 #endif
         hspi_tx_desc->buf_addr[1] = 0;
         hspi_tx_desc->buf_addr[2] = 0;
-        if (i == (HSPI_TX_DESC_NUM - 1))
-        {
+        if (i == (HSPI_TX_DESC_NUM - 1)) {
             hspi_tx_desc->next_desc_addr = (u32) HSPI_TX_DESC_BASE_ADDR;
-        }
-        else
-        {
+        } else {
             hspi_tx_desc->next_desc_addr = (u32) (hspi_tx_desc + 1);
         }
         hspi_tx_desc++;
@@ -118,8 +107,7 @@ static int slave_spi_rx_data(struct tls_slave_hspi *hspi)
 /* get rx descriptor */
     rx_desc = hspi->curr_rx_desc;
 
-    while (!(rx_desc->valid_ctrl & SET_BIT(31)))
-    {
+    while (!(rx_desc->valid_ctrl & SET_BIT(31))) {
         if (hspi->rx_data_callback)
             hspi->rx_data_callback((char *) rx_desc->buf_addr);
         hspi_free_rxdesc(rx_desc);
@@ -149,12 +137,9 @@ void SDIO_TX_IRQHandler(void)
     struct tls_slave_hspi *hspi = (struct tls_slave_hspi *) &g_slave_hspi;
 
 // �û�ģʽ�£�ֱ�Ӹ������ݣ������Ĳ��������⿪�ţ��������������������
-    if (hspi->ifusermode)
-    {
+    if (hspi->ifusermode) {
         slave_spi_rx_data(hspi);
-    }
-    else
-    {
+    } else {
         if (hspi->rx_data_callback)
             hspi->rx_data_callback((char *) hspi->curr_rx_desc->buf_addr);
     }
@@ -170,8 +155,7 @@ void SDIO_RX_CMD_IRQHandler(void)
     if (hspi->rx_cmd_callback)
         hspi->rx_cmd_callback((char *) SDIO_CMD_RXBUF_ADDR);
 
-    if (hspi->ifusermode)       // �û�ģʽ�£����ݸ���ȥ֮�󣬼Ĵ����������Լ�����
-    {
+    if (hspi->ifusermode) {      // �û�ģʽ�£����ݸ���ȥ֮�󣬼Ĵ����������Լ�����
         tls_reg_write32(HR_SDIO_DOWNCMDVALID, 0x1);
     }
 
@@ -188,20 +172,14 @@ ATTRIBUTE_ISR void SDIOA_IRQHandler(void)
 {
     u32 int_src = tls_reg_read32(HR_SDIO_INT_SRC);
     csi_kernel_intrpt_enter();
-    if (int_src & SDIO_WP_INT_SRC_CMD_DOWN)
-    {
+    if (int_src & SDIO_WP_INT_SRC_CMD_DOWN) {
         SDIO_RX_CMD_IRQHandler();
     }
-    else if (int_src & SDIO_WP_INT_SRC_DATA_UP)
-    {
+    else if (int_src & SDIO_WP_INT_SRC_DATA_UP) {
         SDIO_RX_IRQHandler();
-    }
-    else if (int_src & SDIO_WP_INT_SRC_DATA_DOWN)
-    {
+    } else if (int_src & SDIO_WP_INT_SRC_DATA_DOWN) {
         SDIO_TX_IRQHandler();
-    }
-    else if (int_src & SDIO_WP_INT_SRC_CMD_UP)
-    {
+    } else if (int_src & SDIO_WP_INT_SRC_CMD_UP) {
         tls_reg_write32(HR_SDIO_INT_SRC, SDIO_WP_INT_SRC_CMD_UP);
     }
     csi_kernel_intrpt_exit();
@@ -320,12 +298,9 @@ int tls_slave_spi_init(void)
  */
 void tls_set_high_speed_interface_type(int type)
 {
-    if (HSPI_INTERFACE_SPI == type)
-    {
+    if (HSPI_INTERFACE_SPI == type) {
         hspi_regs_cfg();
-    }
-    else if (HSPI_INTERFACE_SDIO == type)
-    {
+    } else if (HSPI_INTERFACE_SDIO == type) {
         hsdio_regs_cfg();
     }
 }
@@ -347,8 +322,7 @@ void tls_set_hspi_user_mode(u8 ifenable)
 
     hspi->ifusermode = ifenable;
 
-    if (ifenable)
-    {
+    if (ifenable) {
         hspi->rx_cmd_callback = NULL;
         hspi->rx_data_callback = NULL;
         hspi->tx_data_callback = NULL;
@@ -413,40 +387,32 @@ int tls_hspi_tx_data(char *txbuf, int len)
     struct tls_hspi_tx_desc *tx_desc;
     int totallen = len;
 
-    if (NULL == txbuf || len <= 0 || len > (HSPI_TXBUF_SIZE * HSPI_TX_DESC_NUM))
-    {
+    if (txbuf || len <= 0 || len > (HSPI_TXBUF_SIZE * HSPI_TX_DESC_NUM) == NULL) {
         printf("\nhspi tx param error\n");
         return 0;
     }
     tx_desc = g_slave_hspi.curr_tx_desc;
-    while (1)
-    {
+    while (1) {
         if ((tx_desc->valid_ctrl & SET_BIT(31)) == 0)
             break;
         tls_os_time_delay(1);
     }
-    while (!(tx_desc->valid_ctrl & SET_BIT(31)))
-    {
+    while (!(tx_desc->valid_ctrl & SET_BIT(31))) {
         int txlen = (totallen > HSPI_TXBUF_SIZE) ? HSPI_TXBUF_SIZE : totallen;
 #if HSPI_TX_MEM_MALLOC
-        if (tx_desc->txbuf_addr != NULL)
-        {
+        if (tx_desc->txbuf_addr != NULL) {
             printf("\nhspi txbuf not null,error %x\n", tx_desc->txbuf_addr);
-            if (tx_desc->txbuf_addr == tx_desc->buf_addr[0])
-            {
+            if (tx_desc->txbuf_addr == tx_desc->buf_addr[0]) {
                 mem_free((void *) tx_desc->txbuf_addr);
                 tx_desc->txbuf_addr = NULL;
-            }
-            else                // ��Ӧ�ó���
-            {
+            } else {               // ��Ӧ�ó���
                 printf("\nhspi tx mem error\n");
                 break;
             }
         }
 
         tx_desc->txbuf_addr = (u32) mem_malloc(txlen + 1);
-        if (NULL == tx_desc->txbuf_addr)
-        {
+        if (tx_desc->txbuf_addr == NULL) {
             printf("\nhspi tx data malloc error\n");
             break;
         }

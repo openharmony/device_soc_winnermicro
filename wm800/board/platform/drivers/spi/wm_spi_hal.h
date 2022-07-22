@@ -13,19 +13,19 @@
  * limitations under the License.
  */
 
-/***************************************************************************** 
-* 
-* File Name : wm_spi_hal.h 
-* 
-* Description: host spi Driver Module 
-* 
-* Copyright (c) 2014 Winner Microelectronics Co., Ltd. 
-* All rights reserved. 
-* 
+/*****************************************************************************
+*
+* File Name : wm_spi_hal.h
+*
+* Description: host spi Driver Module
+*
+* Copyright (c) 2014 Winner Microelectronics Co., Ltd.
+* All rights reserved.
+*
 * Author : dave
-* 
+*
 * Date : 2014-6-6
-*****************************************************************************/ 
+*****************************************************************************/
 #include "wm_regs.h"
 #include "list.h"
 #include "wm_hostspi.h"
@@ -38,7 +38,7 @@ static __inline void spi_set_mode(u8 mode)
     u32 reg_val;
 
     reg_val = tls_reg_read32(HR_SPI_SPICFG_REG);
-    
+
     switch (mode) {
         case TLS_SPI_MODE_0:
             reg_val &= ~(0x03U);
@@ -106,7 +106,7 @@ static __inline void spi_clear_fifo(void)
     u32 reg_val;
 
     reg_val = tls_reg_read32(HR_SPI_CHCFG_REG);
-    
+
     reg_val |= SPI_CLEAR_FIFOS;
 
     tls_reg_write32(HR_SPI_CHCFG_REG, reg_val);
@@ -189,10 +189,10 @@ static __inline void spi_set_sclk(u32 fclk)
     u32 reg_val;
     tls_sys_clk sysclk;
 
-    tls_sys_clk_get(&sysclk);            
+    tls_sys_clk_get(&sysclk);
 
-    reg_val = tls_reg_read32(HR_SPI_CLKCFG_REG);        
-    
+    reg_val = tls_reg_read32(HR_SPI_CLKCFG_REG);
+
     reg_val &= ~(0xffffU);
     reg_val |= sysclk.apbclk*UNIT_MHZ/(fclk*2) - 1;
 
@@ -281,7 +281,7 @@ static __inline void spi_unmask_int(u32 mask)
     reg_val &= ~(mask & SPI_INT_MASK_ALL);
 
     tls_reg_write32(HR_SPI_INT_MASK_REG, reg_val);
-} 
+}
 
 static __inline u32 spi_get_int_status(void)
 {

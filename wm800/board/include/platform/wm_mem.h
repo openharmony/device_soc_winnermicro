@@ -52,7 +52,6 @@ extern u32 alloc_heap_mem_max_size;
 //       be multiple of 16 bytes.
 // 
 typedef struct _MEMORY_BLOCK {
-
     struct dl_list  list;    /**< Pointer to next and previous blocks */
     char  *file;             /**< name of the file which is doing the allocation */
     u32    pad;              /**< pad to make the size of whole structure multiple of 16 bytes */
@@ -80,13 +79,13 @@ int  is_safe_addr_debug(void* p, u32 len, char* file, int line);
 #define MEMCPY memcpy
 #define SMEMCPY MEMCPY
 #else
-#define MEMCPY(dst,src,len)             do { \
-    if (tls_is_safe_addr(dst, len)){ \
-    memcpy(dst,src,len);}}while(0)
+#define MEMCPY(dst, src, len)             do { \
+    if (tls_is_safe_addr(dst, len)) { \
+    memcpy(dst, src, len);}}while (0)
 
-#define SMEMCPY(dst,src,len)            do { \
-    if (tls_is_safe_addr(dst, len)){ \
-    memcpy(dst,src,len);}}while(0)
+#define SMEMCPY(dst, src, len)            do { \
+    if (tls_is_safe_addr(dst, len)) { \
+    memcpy(dst, src, len);}}while (0)
 #endif
 #else /* WM_MEM_DEBUG */
 
@@ -202,8 +201,8 @@ void *mem_calloc_debug(u32 length, u32 size);
 #define tls_mem_free       free
 #define tls_mem_realloc   realloc
 #define tls_mem_calloc    calloc
-#define MEMCPY(dst,src,len)      memcpy(dst,src,len)
-#define SMEMCPY(dst,src,len)    memcpy(dst,src,len)
+#define MEMCPY(dst, src, len)      memcpy(dst, src, len)
+#define SMEMCPY(dst, src, len)    memcpy(dst, src, len)
 #endif /* CONFIG_KERNEL_FREERTOS */
 
 #endif /* TLS_MEM_H */

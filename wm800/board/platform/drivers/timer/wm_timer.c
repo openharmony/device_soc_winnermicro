@@ -31,7 +31,7 @@
 
 #include "tls_common.h"
 
-enum tls_timer_id{
+enum tls_timer_id {
     TLS_TIMER_ID_0 = 0,
     TLS_TIMER_ID_1,
     TLS_TIMER_ID_2,
@@ -46,7 +46,7 @@ struct timer_irq_context {
     void *arg;
 };
 
-static struct timer_irq_context timer_context[TLS_TIMER_ID_MAX] = {{0,0}};
+static struct timer_irq_context timer_context[TLS_TIMER_ID_MAX] = {{0, 0}};
 static u8 wm_timer_bitmap = 0;
 
 static void timer_clear_irq(int timer_id)
@@ -55,8 +55,7 @@ static void timer_clear_irq(int timer_id)
     volatile u32 value;
 
     value = tls_reg_read32(HR_TIMER0_5_CSR);
-    for (i = TLS_TIMER_ID_0; i < TLS_TIMER_ID_MAX; i++)
-    {
+    for (i = TLS_TIMER_ID_0; i < TLS_TIMER_ID_MAX; i++) {
         value &= ~(TLS_TIMER_INT_CLR(i));
     }
 
@@ -83,33 +82,27 @@ void TIMER0_5_IRQHandler(void)
 
     tls_reg_write32(HR_TIMER0_5_CSR, timer_csr);
 
-    if (timer_csr & TLS_TIMER_INT_CLR(0))
-    {
+    if (timer_csr & TLS_TIMER_INT_CLR(0)) {
         timer_irq_callback((void *)TLS_TIMER_ID_0);
     }
 
-    if (timer_csr & TLS_TIMER_INT_CLR(1))
-    {
+    if (timer_csr & TLS_TIMER_INT_CLR(1)) {
         timer_irq_callback((void *)TLS_TIMER_ID_1);
     }
 
-    if (timer_csr & TLS_TIMER_INT_CLR(2))
-    {
+    if (timer_csr & TLS_TIMER_INT_CLR(2)) {
         timer_irq_callback((void *)TLS_TIMER_ID_2);
     }
 
-    if (timer_csr & TLS_TIMER_INT_CLR(3))
-    {
+    if (timer_csr & TLS_TIMER_INT_CLR(3)) {
         timer_irq_callback((void *)TLS_TIMER_ID_3);
     }
 
-    if (timer_csr & TLS_TIMER_INT_CLR(4))
-    {
+    if (timer_csr & TLS_TIMER_INT_CLR(4)) {
         timer_irq_callback((void *)TLS_TIMER_ID_4);
     }
 
-    if (timer_csr & TLS_TIMER_INT_CLR(5))
-    {
+    if (timer_csr & TLS_TIMER_INT_CLR(5)) {
         timer_irq_callback((void *)TLS_TIMER_ID_5);
     }
 }
@@ -133,19 +126,16 @@ u8 tls_timer_create(struct tls_timer_cfg *cfg)
     u8 i;
     int timer_csr;
 
-    for (i = 0; i < TLS_TIMER_ID_MAX; i++)
-    {
+    for (i = 0; i < TLS_TIMER_ID_MAX; i++) {
         if (!(wm_timer_bitmap & BIT(i)))
             break;
     }
 
-    if (TLS_TIMER_ID_MAX == i)
-    {
+    if (TLS_TIMER_ID_MAX == i) {
         return WM_TIMER_ID_INVALID;
     }
 
-    if (wm_timer_bitmap == 0)
-    {
+    if (wm_timer_bitmap == 0) {
         tls_open_peripheral_clock(TLS_PERIPHERAL_TYPE_TIMER);
     }
 
@@ -153,10 +143,10 @@ u8 tls_timer_create(struct tls_timer_cfg *cfg)
     timer_context[i].callback = cfg->callback;
     timer_context[i].arg = cfg->arg;
 
-    tls_sys_clk sysclk;    
+    tls_sys_clk sysclk;
 
     tls_sys_clk_get(&sysclk);
-    tls_reg_write32(HR_TIMER_CFG, sysclk.apbclk-1);        
+    tls_reg_write32(HR_TIMER_CFG, sysclk.apbclk-1);
     
     timer_csr = tls_reg_read32(HR_TIMER0_5_CSR);
     if (!cfg->is_repeat)
@@ -168,7 +158,7 @@ u8 tls_timer_create(struct tls_timer_cfg *cfg)
     else
         timer_csr &= ~(TLS_TIMER_MS_UNIT(i));
     tls_reg_write32(HR_TIMER0_5_CSR, timer_csr | TLS_TIMER_INT_CLR(i));
-    if (cfg->timeout){
+    if (cfg->timeout) {
         tls_reg_write32(HR_TIMER0_PRD + 0x04 * i, cfg->timeout);
     }
 
@@ -191,7 +181,8 @@ void tls_timer_start(u8 timer_id)
     if (!(wm_timer_bitmap & BIT(timer_id)))
         return;
 
-    tls_reg_write32(HR_TIMER0_5_CSR, tls_reg_read32(HR_TIMER0_5_CSR)|TLS_TIMER_INT_EN(timer_id)| TLS_TIMER_EN(timer_id));
+    tls_reg_write32(HR_TIMER0_5_CSR, tls_reg_read32(HR_TIMER0_5_CSR)|TLS_TIMER_INT_EN(timer_id)| \
+                    TLS_TIMER_EN(timer_id));
 
     return;
 }
@@ -253,8 +244,7 @@ u32 tls_timer_read(u8 timer_id)
 {
     u32 value;
     
-    if (!(wm_timer_bitmap & BIT(timer_id)))
-    {
+    if (!(wm_timer_bitmap & BIT(timer_id))) {
         return 0;
     }
 
@@ -284,8 +274,7 @@ void tls_timer_destroy(u8 timer_id)
 
     wm_timer_bitmap &= ~BIT(timer_id);
 
-    if (wm_timer_bitmap == 0)
-    {
+    if (wm_timer_bitmap == 0) {
         tls_close_peripheral_clock(TLS_PERIPHERAL_TYPE_TIMER);
     }
 

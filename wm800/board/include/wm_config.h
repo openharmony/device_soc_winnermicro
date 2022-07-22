@@ -80,7 +80,7 @@ CRYPTO
 #define TLS_CONFIG_USE_MBEDTLS                          CFG_ON
 
 /* MUST configure TLS_CONFIG_HTTP_CLIENT_SECURE CFG_ON */
-#define TLS_CONFIG_SERVER_SIDE_SSL                      (CFG_ON && TLS_CONFIG_HTTP_CLIENT_SECURE && TLS_CONFIG_USE_MBEDTLS)
+#define TLS_CONFIG_SERVER_SIDE_SSL                  (CFG_ON && TLS_CONFIG_HTTP_CLIENT_SECURE && TLS_CONFIG_USE_MBEDTLS)
 
 /**IGMP**/
 #define TLS_CONFIG_IGMP                                 CFG_ON
