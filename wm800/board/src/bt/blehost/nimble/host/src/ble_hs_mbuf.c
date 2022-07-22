@@ -23,12 +23,10 @@
 /**
  * Allocates an mbuf for use by the nimble host.
  */
-static struct os_mbuf *
-ble_hs_mbuf_gen_pkt(uint16_t leading_space)
+static struct os_mbuf *ble_hs_mbuf_gen_pkt(uint16_t leading_space)
 {
     struct os_mbuf *om;
     om = os_msys_get_pkthdr(0, 0);
-
     if (om == NULL) {
         return NULL;
     }
@@ -49,8 +47,7 @@ ble_hs_mbuf_gen_pkt(uint16_t leading_space)
  * @return                  An empty mbuf on success; null on memory
  *                              exhaustion.
  */
-struct os_mbuf *
-ble_hs_mbuf_bare_pkt(void)
+struct os_mbuf *ble_hs_mbuf_bare_pkt(void)
 {
     return ble_hs_mbuf_gen_pkt(0);
 }
@@ -61,8 +58,7 @@ ble_hs_mbuf_bare_pkt(void)
  * @return                  An empty mbuf on success; null on memory
  *                              exhaustion.
  */
-struct os_mbuf *
-ble_hs_mbuf_acl_pkt(void)
+struct os_mbuf *ble_hs_mbuf_acl_pkt(void)
 {
     return ble_hs_mbuf_gen_pkt(BLE_HCI_DATA_HDR_SZ);
 }
@@ -76,14 +72,12 @@ ble_hs_mbuf_acl_pkt(void)
  * @return                  An empty mbuf on success; null on memory
  *                              exhaustion.
  */
-struct os_mbuf *
-ble_hs_mbuf_l2cap_pkt(void)
+struct os_mbuf *ble_hs_mbuf_l2cap_pkt(void)
 {
     return ble_hs_mbuf_gen_pkt(BLE_HCI_DATA_HDR_SZ + BLE_L2CAP_HDR_SZ);
 }
 
-struct os_mbuf *
-ble_hs_mbuf_att_pkt(void)
+struct os_mbuf *ble_hs_mbuf_att_pkt(void)
 {
     /* Prepare write request and response are the larget ATT commands which
      * contain attribute data.
@@ -93,19 +87,16 @@ ble_hs_mbuf_att_pkt(void)
                                BLE_ATT_PREP_WRITE_CMD_BASE_SZ);
 }
 
-struct os_mbuf *
-ble_hs_mbuf_from_flat(const void *buf, uint16_t len)
+struct os_mbuf *ble_hs_mbuf_from_flat(const void *buf, uint16_t len)
 {
     struct os_mbuf *om;
     int rc;
     om = ble_hs_mbuf_att_pkt();
-
     if (om == NULL) {
         return NULL;
     }
 
     rc = os_mbuf_copyinto(om, 0, buf, len);
-
     if (rc != 0) {
         os_mbuf_free_chain(om);
         return NULL;
@@ -114,9 +105,8 @@ ble_hs_mbuf_from_flat(const void *buf, uint16_t len)
     return om;
 }
 
-int
-ble_hs_mbuf_to_flat(const struct os_mbuf *om, void *flat, uint16_t max_len,
-                    uint16_t *out_copy_len)
+int ble_hs_mbuf_to_flat(const struct os_mbuf *om, void *flat, uint16_t max_len,
+                        uint16_t *out_copy_len)
 {
     uint16_t copy_len;
     int rc;
@@ -128,7 +118,6 @@ ble_hs_mbuf_to_flat(const struct os_mbuf *om, void *flat, uint16_t max_len,
     }
 
     rc = os_mbuf_copydata(om, 0, copy_len, flat);
-
     if (rc != 0) {
         return BLE_HS_EUNKNOWN;
     }
@@ -146,15 +135,13 @@ ble_hs_mbuf_to_flat(const struct os_mbuf *om, void *flat, uint16_t max_len,
     return rc;
 }
 
-int
-ble_hs_mbuf_pullup_base(struct os_mbuf **om, int base_len)
+int ble_hs_mbuf_pullup_base(struct os_mbuf **om, int base_len)
 {
     if (OS_MBUF_PKTLEN(*om) < base_len) {
         return BLE_HS_EBADDATA;
     }
 
     *om = os_mbuf_pullup(*om, base_len);
-
     if (*om == NULL) {
         return BLE_HS_ENOMEM;
     }

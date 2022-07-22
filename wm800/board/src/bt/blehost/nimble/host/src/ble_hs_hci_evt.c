@@ -109,7 +109,7 @@ ble_hs_hci_evt_dispatch_find(uint8_t event_code)
 {
     int i;
 
-    for(i = 0; i < BLE_HS_HCI_EVT_DISPATCH_SZ; i++) {
+    for (i = 0; i < BLE_HS_HCI_EVT_DISPATCH_SZ; i++) {
         const struct ble_hs_hci_evt_dispatch_entry *entry = ble_hs_hci_evt_dispatch + i;
 
         if (entry->event_code == event_code) {
@@ -120,8 +120,7 @@ ble_hs_hci_evt_dispatch_find(uint8_t event_code)
     return NULL;
 }
 
-static ble_hs_hci_evt_le_fn *
-ble_hs_hci_evt_le_dispatch_find(uint8_t event_code)
+static ble_hs_hci_evt_le_fn *ble_hs_hci_evt_le_dispatch_find(uint8_t event_code)
 {
     if (event_code >= BLE_HS_HCI_EVT_LE_DISPATCH_SZ) {
         return NULL;
@@ -130,9 +129,7 @@ ble_hs_hci_evt_le_dispatch_find(uint8_t event_code)
     return ble_hs_hci_evt_le_dispatch[event_code];
 }
 
-static int
-ble_hs_hci_evt_disconn_complete(uint8_t event_code, const uint8_t *data,
-                                unsigned int len)
+static int ble_hs_hci_evt_disconn_complete(uint8_t event_code, const uint8_t *data, unsigned int len)
 {
     const struct ble_hci_ev_disconn_cmp *ev = (const struct ble_hci_ev_disconn_cmp *)data;
     const struct ble_hs_conn *conn;
@@ -143,7 +140,6 @@ ble_hs_hci_evt_disconn_complete(uint8_t event_code, const uint8_t *data,
 
     ble_hs_lock();
     conn = ble_hs_conn_find(le16toh(ev->conn_handle));
-
     if (conn != NULL) {
         ble_hs_hci_add_avail_pkts(conn->bhc_outstanding_pkts);
     }
@@ -158,9 +154,7 @@ ble_hs_hci_evt_disconn_complete(uint8_t event_code, const uint8_t *data,
     return 0;
 }
 
-static int
-ble_hs_hci_evt_encrypt_change(uint8_t event_code, const uint8_t *data,
-                              unsigned int len)
+static int ble_hs_hci_evt_encrypt_change(uint8_t event_code, const uint8_t *data, unsigned int len)
 {
     const struct ble_hci_ev_enrypt_chg *ev = (const struct ble_hci_ev_enrypt_chg *)data;
 
@@ -172,8 +166,7 @@ ble_hs_hci_evt_encrypt_change(uint8_t event_code, const uint8_t *data,
     return 0;
 }
 
-static int
-ble_hs_hci_evt_hw_error(uint8_t event_code, const uint8_t *data, unsigned int len)
+static int ble_hs_hci_evt_hw_error(uint8_t event_code, const uint8_t *data, unsigned int len)
 {
     const struct ble_hci_ev_hw_error *ev = (const struct ble_hci_ev_hw_error *)data;
 
@@ -185,9 +178,7 @@ ble_hs_hci_evt_hw_error(uint8_t event_code, const uint8_t *data, unsigned int le
     return 0;
 }
 
-static int
-ble_hs_hci_evt_enc_key_refresh(uint8_t event_code, const uint8_t *data,
-                               unsigned int len)
+static int ble_hs_hci_evt_enc_key_refresh(uint8_t event_code, const uint8_t *data, unsigned int len)
 {
     const struct ble_hci_ev_enc_key_refresh *ev = (const struct ble_hci_ev_enc_key_refresh *)data;
 
@@ -199,9 +190,7 @@ ble_hs_hci_evt_enc_key_refresh(uint8_t event_code, const uint8_t *data,
     return 0;
 }
 
-static int
-ble_hs_hci_evt_num_completed_pkts(uint8_t event_code, const uint8_t *data,
-                                  unsigned int len)
+static int ble_hs_hci_evt_num_completed_pkts(uint8_t event_code, const uint8_t *data, unsigned int len)
 {
     const struct ble_hci_ev_num_comp_pkts *ev = (const struct ble_hci_ev_num_comp_pkts *)data;
     struct ble_hs_conn *conn;
@@ -211,13 +200,12 @@ ble_hs_hci_evt_num_completed_pkts(uint8_t event_code, const uint8_t *data,
         return BLE_HS_ECONTROLLER;
     }
 
-    for(i = 0; i < ev->count; i++) {
+    for (i = 0; i < ev->count; i++) {
         uint16_t num_pkts = le16toh(ev->completed[i].packets);
 
         if (num_pkts > 0) {
             ble_hs_lock();
             conn = ble_hs_conn_find(le16toh(ev->completed[i].handle));
-
             if (conn != NULL) {
                 if (conn->bhc_outstanding_pkts < num_pkts) {
                     ble_hs_sched_reset(BLE_HS_ECONTROLLER);
@@ -237,8 +225,7 @@ ble_hs_hci_evt_num_completed_pkts(uint8_t event_code, const uint8_t *data,
     return 0;
 }
 
-static int
-ble_hs_hci_evt_le_meta(uint8_t event_code, const uint8_t *data, unsigned int len)
+static int ble_hs_hci_evt_le_meta(uint8_t event_code, const uint8_t *data, unsigned int len)
 {
     const struct ble_hci_ev_le_meta *ev = (const struct ble_hci_ev_le_meta *)data;
     ble_hs_hci_evt_le_fn *fn;
@@ -248,7 +235,6 @@ ble_hs_hci_evt_le_meta(uint8_t event_code, const uint8_t *data, unsigned int len
     }
 
     fn = ble_hs_hci_evt_le_dispatch_find(ev->subevent);
-
     if (fn) {
         return fn(ev->subevent, data, len);
     }
@@ -260,11 +246,10 @@ ble_hs_hci_evt_le_meta(uint8_t event_code, const uint8_t *data, unsigned int len
 static struct ble_gap_conn_complete pend_conn_complete;
 #endif
 
-static int
-ble_hs_hci_evt_le_enh_conn_complete(uint8_t subevent, const uint8_t *data,
-                                    unsigned int len)
+static int ble_hs_hci_evt_le_enh_conn_complete(uint8_t subevent, const uint8_t *data, unsigned int len)
 {
-    const struct ble_hci_ev_le_subev_enh_conn_complete *ev = (const struct ble_hci_ev_le_subev_enh_conn_complete *)data;
+    const struct ble_hci_ev_le_subev_enh_conn_complete *ev =
+        (const struct ble_hci_ev_le_subev_enh_conn_complete *)data;
     struct ble_gap_conn_complete evt;
 
     if (len != sizeof(*ev)) {
@@ -304,9 +289,7 @@ ble_hs_hci_evt_le_enh_conn_complete(uint8_t subevent, const uint8_t *data,
     return ble_gap_rx_conn_complete(&evt, 0);
 }
 
-static int
-ble_hs_hci_evt_le_conn_complete(uint8_t subevent, const uint8_t *data,
-                                unsigned int len)
+static int ble_hs_hci_evt_le_conn_complete(uint8_t subevent, const uint8_t *data, unsigned int len)
 {
     const struct ble_hci_ev_le_subev_conn_complete *ev = (const struct ble_hci_ev_le_subev_conn_complete *)data;
     struct ble_gap_conn_complete evt;
@@ -346,8 +329,7 @@ ble_hs_hci_evt_le_conn_complete(uint8_t subevent, const uint8_t *data,
     return ble_gap_rx_conn_complete(&evt, 0);
 }
 
-static int
-ble_hs_hci_evt_le_adv_rpt_first_pass(const uint8_t *data, unsigned int len)
+static int ble_hs_hci_evt_le_adv_rpt_first_pass(const uint8_t *data, unsigned int len)
 {
     const struct ble_hci_ev_le_subev_adv_rpt *ev = (const struct ble_hci_ev_le_subev_adv_rpt *)data;
     const struct adv_report *rpt;
@@ -365,7 +347,7 @@ ble_hs_hci_evt_le_adv_rpt_first_pass(const uint8_t *data, unsigned int len)
         return BLE_HS_EBADDATA;
     }
 
-    for(i = 0; i < ev->num_reports; i++) {
+    for (i = 0; i < ev->num_reports; i++) {
         /* extra byte for RSSI after adv data */
         if (len < sizeof(*rpt) + 1) {
             return BLE_HS_ECONTROLLER;
@@ -391,8 +373,7 @@ ble_hs_hci_evt_le_adv_rpt_first_pass(const uint8_t *data, unsigned int len)
     return 0;
 }
 
-static int
-ble_hs_hci_evt_le_adv_rpt(uint8_t subevent, const uint8_t *data, unsigned int len)
+static int ble_hs_hci_evt_le_adv_rpt(uint8_t subevent, const uint8_t *data, unsigned int len)
 {
     const struct ble_hci_ev_le_subev_adv_rpt *ev = (const struct ble_hci_ev_le_subev_adv_rpt *)data;
     struct ble_gap_disc_desc desc = {0};
@@ -401,7 +382,6 @@ ble_hs_hci_evt_le_adv_rpt(uint8_t subevent, const uint8_t *data, unsigned int le
     int i;
     /* Validate the event is formatted correctly */
     rc = ble_hs_hci_evt_le_adv_rpt_first_pass(data, len);
-
     if (rc != 0) {
         return rc;
     }
@@ -409,7 +389,7 @@ ble_hs_hci_evt_le_adv_rpt(uint8_t subevent, const uint8_t *data, unsigned int le
     data += sizeof(*ev);
     desc.direct_addr = *BLE_ADDR_ANY;
 
-    for(i = 0; i < ev->num_reports; i++) {
+    for (i = 0; i < ev->num_reports; i++) {
         rpt = (const struct adv_report *)data;
         data += sizeof(rpt) + rpt->data_len + 1;
         desc.event_type = rpt->type;
@@ -424,8 +404,7 @@ ble_hs_hci_evt_le_adv_rpt(uint8_t subevent, const uint8_t *data, unsigned int le
     return 0;
 }
 
-static int
-ble_hs_hci_evt_le_dir_adv_rpt(uint8_t subevent, const uint8_t *data, unsigned int len)
+static int ble_hs_hci_evt_le_dir_adv_rpt(uint8_t subevent, const uint8_t *data, unsigned int len)
 {
     const struct ble_hci_ev_le_subev_direct_adv_rpt *ev = (const struct ble_hci_ev_le_subev_direct_adv_rpt *)data;
     struct ble_gap_disc_desc desc = {0};
@@ -439,7 +418,7 @@ ble_hs_hci_evt_le_dir_adv_rpt(uint8_t subevent, const uint8_t *data, unsigned in
     desc.data = NULL;
     desc.length_data = 0;
 
-    for(i = 0; i < ev->num_reports; i++) {
+    for (i = 0; i < ev->num_reports; i++) {
         desc.event_type = ev->reports[i].type;
         desc.addr.type = ev->reports[i].addr_type;
         memcpy(desc.addr.val, ev->reports[i].addr, BLE_DEV_ADDR_LEN);
@@ -452,9 +431,7 @@ ble_hs_hci_evt_le_dir_adv_rpt(uint8_t subevent, const uint8_t *data, unsigned in
     return 0;
 }
 
-static int
-ble_hs_hci_evt_le_rd_rem_used_feat_complete(uint8_t subevent, const uint8_t *data,
-        unsigned int len)
+static int ble_hs_hci_evt_le_rd_rem_used_feat_complete(uint8_t subevent, const uint8_t *data, unsigned int len)
 {
     const struct ble_hci_ev_le_subev_rd_rem_used_feat *ev = (const struct ble_hci_ev_le_subev_rd_rem_used_feat *)data;
 
@@ -467,10 +444,9 @@ ble_hs_hci_evt_le_rd_rem_used_feat_complete(uint8_t subevent, const uint8_t *dat
 }
 
 #if MYNEWT_VAL(BLE_EXT_ADV) && NIMBLE_BLE_SCAN
-static int
-ble_hs_hci_decode_legacy_type(uint16_t evt_type)
+static int ble_hs_hci_decode_legacy_type(uint16_t evt_type)
 {
-    switch(evt_type) {
+    switch (evt_type) {
         case BLE_HCI_LEGACY_ADV_EVTYPE_ADV_IND:
             return BLE_HCI_ADV_RPT_EVTYPE_ADV_IND;
 
@@ -492,9 +468,7 @@ ble_hs_hci_decode_legacy_type(uint16_t evt_type)
 }
 #endif
 
-static int
-ble_hs_hci_evt_le_ext_adv_rpt(uint8_t subevent, const uint8_t *data,
-                              unsigned int len)
+static int ble_hs_hci_evt_le_ext_adv_rpt(uint8_t subevent, const uint8_t *data, unsigned int len)
 {
 #if MYNEWT_VAL(BLE_EXT_ADV) && NIMBLE_BLE_SCAN
     const struct ble_hci_ev_le_subev_ext_adv_rpt *ev = (const struct ble_hci_ev_le_subev_ext_adv_rpt *)data;
@@ -512,16 +486,14 @@ ble_hs_hci_evt_le_ext_adv_rpt(uint8_t subevent, const uint8_t *data,
         return BLE_HS_EBADDATA;
     }
 
-    /* TODO properly validate len of the event */
+    /* properly validate len of the event */
     report = &ev->reports[0];
 
-    for(i = 0; i < ev->num_reports; i++) {
+    for (i = 0; i < ev->num_reports; i++) {
         memset(&desc, 0, sizeof(desc));
         desc.props = (report->evt_type) & 0x1F;
-
         if (desc.props & BLE_HCI_ADV_LEGACY_MASK) {
             legacy_event_type = ble_hs_hci_decode_legacy_type(report->evt_type);
-
             if (legacy_event_type < 0) {
                 report = (const void *) &report->data[report->data_len];
                 continue;
@@ -530,7 +502,7 @@ ble_hs_hci_evt_le_ext_adv_rpt(uint8_t subevent, const uint8_t *data,
             desc.legacy_event_type = legacy_event_type;
             desc.data_status = BLE_GAP_EXT_ADV_DATA_STATUS_COMPLETE;
         } else {
-            switch(report->evt_type & BLE_HCI_ADV_DATA_STATUS_MASK) {
+            switch (report->evt_type & BLE_HCI_ADV_DATA_STATUS_MASK) {
                 case BLE_HCI_ADV_DATA_STATUS_COMPLETE:
                     desc.data_status = BLE_GAP_EXT_ADV_DATA_STATUS_COMPLETE;
                     break;
@@ -549,12 +521,12 @@ ble_hs_hci_evt_le_ext_adv_rpt(uint8_t subevent, const uint8_t *data,
         }
 
         desc.addr.type = report->addr_type;
-        memcpy(desc.addr.val, report->addr, 6);
+        memcpy(desc.addr.val, report->addr, 6); // 6:size
         desc.length_data = report->data_len;
         desc.data = report->data;
         desc.rssi = report->rssi;
         desc.tx_power = report->tx_power;
-        memcpy(desc.direct_addr.val, report->dir_addr, 6);
+        memcpy(desc.direct_addr.val, report->dir_addr, 6); // 6:size
         desc.direct_addr.type = report->dir_addr_type;
         desc.sid = report->sid;
         desc.prim_phy = report->pri_phy;
@@ -568,12 +540,11 @@ ble_hs_hci_evt_le_ext_adv_rpt(uint8_t subevent, const uint8_t *data,
     return 0;
 }
 
-static int
-ble_hs_hci_evt_le_periodic_adv_sync_estab(uint8_t subevent, const uint8_t *data,
-        unsigned int len)
+static int ble_hs_hci_evt_le_periodic_adv_sync_estab(uint8_t subevent, const uint8_t *data, unsigned int len)
 {
 #if MYNEWT_VAL(BLE_PERIODIC_ADV)
-    const struct ble_hci_ev_le_subev_periodic_adv_sync_estab *ev = (const struct ble_hci_ev_le_subev_periodic_adv_sync_estab *)data;
+    const struct ble_hci_ev_le_subev_periodic_adv_sync_estab *ev =
+        (const struct ble_hci_ev_le_subev_periodic_adv_sync_estab *)data;
 
     if (len != sizeof(*ev)) {
         return BLE_HS_ECONTROLLER;
@@ -584,9 +555,7 @@ ble_hs_hci_evt_le_periodic_adv_sync_estab(uint8_t subevent, const uint8_t *data,
     return 0;
 }
 
-static int
-ble_hs_hci_evt_le_periodic_adv_rpt(uint8_t subevent, const uint8_t *data,
-                                   unsigned int len)
+static int ble_hs_hci_evt_le_periodic_adv_rpt(uint8_t subevent, const uint8_t *data, unsigned int len)
 {
 #if MYNEWT_VAL(BLE_PERIODIC_ADV)
     const struct ble_hci_ev_le_subev_periodic_adv_rpt *ev = (const struct ble_hci_ev_le_subev_periodic_adv_rpt *)data;
@@ -600,12 +569,11 @@ ble_hs_hci_evt_le_periodic_adv_rpt(uint8_t subevent, const uint8_t *data,
     return 0;
 }
 
-static int
-ble_hs_hci_evt_le_periodic_adv_sync_lost(uint8_t subevent, const uint8_t *data,
-        unsigned int len)
+static int ble_hs_hci_evt_le_periodic_adv_sync_lost(uint8_t subevent, const uint8_t *data, unsigned int len)
 {
 #if MYNEWT_VAL(BLE_PERIODIC_ADV)
-    const struct ble_hci_ev_le_subev_periodic_adv_sync_lost *ev = (const struct ble_hci_ev_le_subev_periodic_adv_sync_lost *)data;
+    const struct ble_hci_ev_le_subev_periodic_adv_sync_lost *ev =
+        (const struct ble_hci_ev_le_subev_periodic_adv_sync_lost *)data;
 
     if (len != sizeof(*ev)) {
         return BLE_HS_EBADDATA;
@@ -616,12 +584,11 @@ ble_hs_hci_evt_le_periodic_adv_sync_lost(uint8_t subevent, const uint8_t *data,
     return 0;
 }
 
-static int
-ble_hs_hci_evt_le_periodic_adv_sync_transfer(uint8_t subevent, const uint8_t *data,
-        unsigned int len)
+static int ble_hs_hci_evt_le_periodic_adv_sync_transfer(uint8_t subevent, const uint8_t *data, unsigned int len)
 {
 #if MYNEWT_VAL(BLE_PERIODIC_ADV_SYNC_TRANSFER)
-    const struct ble_hci_ev_le_subev_periodic_adv_sync_transfer *ev = (const struct ble_hci_ev_le_subev_periodic_adv_sync_transfer *)data;
+    const struct ble_hci_ev_le_subev_periodic_adv_sync_transfer *ev =
+        (const struct ble_hci_ev_le_subev_periodic_adv_sync_transfer *)data;
 
     if (len != sizeof(*ev)) {
         return BLE_HS_EBADDATA;
@@ -632,9 +599,7 @@ ble_hs_hci_evt_le_periodic_adv_sync_transfer(uint8_t subevent, const uint8_t *da
     return 0;
 }
 
-static int
-ble_hs_hci_evt_le_scan_timeout(uint8_t subevent, const uint8_t *data,
-                               unsigned int len)
+static int ble_hs_hci_evt_le_scan_timeout(uint8_t subevent, const uint8_t *data, unsigned int len)
 {
 #if MYNEWT_VAL(BLE_EXT_ADV) && NIMBLE_BLE_SCAN
     const struct ble_hci_ev_le_subev_scan_timeout *ev = (const struct ble_hci_ev_le_subev_scan_timeout *)data;
@@ -648,12 +613,11 @@ ble_hs_hci_evt_le_scan_timeout(uint8_t subevent, const uint8_t *data,
     return 0;
 }
 
-static int
-ble_hs_hci_evt_le_adv_set_terminated(uint8_t subevent, const uint8_t *data,
-                                     unsigned int len)
+static int ble_hs_hci_evt_le_adv_set_terminated(uint8_t subevent, const uint8_t *data, unsigned int len)
 {
 #if MYNEWT_VAL(BLE_EXT_ADV)
-    const struct ble_hci_ev_le_subev_adv_set_terminated *ev = (const struct ble_hci_ev_le_subev_adv_set_terminated *)data;
+    const struct ble_hci_ev_le_subev_adv_set_terminated *ev =
+        (const struct ble_hci_ev_le_subev_adv_set_terminated *)data;
 
     if (len != sizeof(*ev)) {
         return BLE_HS_ECONTROLLER;
@@ -669,9 +633,7 @@ ble_hs_hci_evt_le_adv_set_terminated(uint8_t subevent, const uint8_t *data,
     return 0;
 }
 
-static int
-ble_hs_hci_evt_le_scan_req_rcvd(uint8_t subevent, const uint8_t *data,
-                                unsigned int len)
+static int ble_hs_hci_evt_le_scan_req_rcvd(uint8_t subevent, const uint8_t *data, unsigned int len)
 {
 #if MYNEWT_VAL(BLE_EXT_ADV)
     const struct ble_hci_ev_le_subev_scan_req_rcvd *ev = (const struct ble_hci_ev_le_subev_scan_req_rcvd *)data;
@@ -685,11 +647,10 @@ ble_hs_hci_evt_le_scan_req_rcvd(uint8_t subevent, const uint8_t *data,
     return 0;
 }
 
-static int
-ble_hs_hci_evt_le_conn_upd_complete(uint8_t subevent, const uint8_t *data,
-                                    unsigned int len)
+static int ble_hs_hci_evt_le_conn_upd_complete(uint8_t subevent, const uint8_t *data, unsigned int len)
 {
-    const struct ble_hci_ev_le_subev_conn_upd_complete *ev = (const struct ble_hci_ev_le_subev_conn_upd_complete *)data;
+    const struct ble_hci_ev_le_subev_conn_upd_complete *ev =
+        (const struct ble_hci_ev_le_subev_conn_upd_complete *)data;
 
     if (len != sizeof(*ev)) {
         return BLE_HS_ECONTROLLER;
@@ -708,8 +669,7 @@ ble_hs_hci_evt_le_conn_upd_complete(uint8_t subevent, const uint8_t *data,
     return 0;
 }
 
-static int
-ble_hs_hci_evt_le_lt_key_req(uint8_t subevent, const uint8_t *data, unsigned int len)
+static int ble_hs_hci_evt_le_lt_key_req(uint8_t subevent, const uint8_t *data, unsigned int len)
 {
     const struct ble_hci_ev_le_subev_lt_key_req *ev = (const struct ble_hci_ev_le_subev_lt_key_req *)data;
 
@@ -721,10 +681,10 @@ ble_hs_hci_evt_le_lt_key_req(uint8_t subevent, const uint8_t *data, unsigned int
     return 0;
 }
 
-static int
-ble_hs_hci_evt_le_conn_parm_req(uint8_t subevent, const uint8_t *data, unsigned int len)
+static int ble_hs_hci_evt_le_conn_parm_req(uint8_t subevent, const uint8_t *data, unsigned int len)
 {
-    const struct ble_hci_ev_le_subev_rem_conn_param_req *ev = (const struct ble_hci_ev_le_subev_rem_conn_param_req *)data;
+    const struct ble_hci_ev_le_subev_rem_conn_param_req *ev =
+        (const struct ble_hci_ev_le_subev_rem_conn_param_req *)data;
 
     if (len != sizeof(*ev)) {
         return BLE_HS_ECONTROLLER;
@@ -740,8 +700,7 @@ ble_hs_hci_evt_le_conn_parm_req(uint8_t subevent, const uint8_t *data, unsigned 
     ble_gap_rx_param_req(ev);
     return 0;
 }
-static int
-ble_hs_hci_evt_le_data_len_changed(uint8_t subevent, const uint8_t *data, unsigned int len)
+static int ble_hs_hci_evt_le_data_len_changed(uint8_t subevent, const uint8_t *data, unsigned int len)
 {
     const struct ble_hci_ev_le_subev_data_len_chg *ev = (const struct ble_hci_ev_le_subev_data_len_chg *)data;
     struct ble_hs_conn *conn;
@@ -754,23 +713,19 @@ ble_hs_hci_evt_le_data_len_changed(uint8_t subevent, const uint8_t *data, unsign
     BLE_HS_DBG_ASSERT(le16toh(ev->max_tx_octets) <= BLE_HCI_SET_DATALEN_TX_OCTETS_MAX);
     BLE_HS_DBG_ASSERT(le16toh(ev->max_rx_octets) >= BLE_HCI_SET_DATALEN_TX_OCTETS_MIN);
     BLE_HS_DBG_ASSERT(le16toh(ev->max_rx_octets) <= BLE_HCI_SET_DATALEN_TX_OCTETS_MAX);
-    // printf("data length changed...%d, %d\r\n",le16toh(ev->max_tx_octets), le16toh(ev->max_rx_octets) );
     conn = ble_hs_conn_find(le16toh(ev->conn_handle));
-
     if (conn == NULL) {
         return BLE_HS_ENOTCONN;
     }
 
     conn->tx_ll_mtu = le16toh(ev->max_tx_octets);
-    // ble_hs_hci_set_tx_buf_sz(le16toh(ev->conn_handle), le16toh(ev->max_tx_octets));
     return 0;
 }
 
-static int
-ble_hs_hci_evt_le_phy_update_complete(uint8_t subevent, const uint8_t *data,
-                                      unsigned int len)
+static int ble_hs_hci_evt_le_phy_update_complete(uint8_t subevent, const uint8_t *data, unsigned int len)
 {
-    const struct ble_hci_ev_le_subev_phy_update_complete *ev = (const struct ble_hci_ev_le_subev_phy_update_complete *)data;
+    const struct ble_hci_ev_le_subev_phy_update_complete *ev =
+        (const struct ble_hci_ev_le_subev_phy_update_complete *)data;
 
     if (len != sizeof(*ev)) {
         return BLE_HS_ECONTROLLER;
@@ -780,15 +735,13 @@ ble_hs_hci_evt_le_phy_update_complete(uint8_t subevent, const uint8_t *data,
     return 0;
 }
 
-int
-ble_hs_hci_evt_process(const struct ble_hci_ev *ev)
+int ble_hs_hci_evt_process(const struct ble_hci_ev *ev)
 {
     const struct ble_hs_hci_evt_dispatch_entry *entry;
     int rc;
     /* Count events received */
     STATS_INC(ble_hs_stats, hci_event);
     entry = ble_hs_hci_evt_dispatch_find(ev->opcode);
-
     if (entry == NULL) {
         STATS_INC(ble_hs_stats, hci_unknown_event);
         rc = BLE_HS_ENOTSUP;
@@ -809,8 +762,7 @@ ble_hs_hci_evt_process(const struct ble_hci_ev *ev)
  *
  * @return                      0 on success; nonzero on failure.
  */
-int
-ble_hs_hci_evt_acl_process(struct os_mbuf *om)
+int ble_hs_hci_evt_acl_process(struct os_mbuf *om)
 {
     struct hci_data_hdr hci_hdr;
     struct ble_hs_conn *conn;
@@ -819,7 +771,6 @@ ble_hs_hci_evt_acl_process(struct os_mbuf *om)
     int reject_cid;
     int rc;
     rc = ble_hs_hci_util_data_hdr_strip(om, &hci_hdr);
-
     if (rc != 0) {
         goto err;
     }
@@ -844,7 +795,6 @@ ble_hs_hci_evt_acl_process(struct os_mbuf *om)
     conn_handle = BLE_HCI_DATA_HANDLE(hci_hdr.hdh_handle_pb_bc);
     ble_hs_lock();
     conn = ble_hs_conn_find(conn_handle);
-
     if (conn == NULL) {
         /* Peer not connected; quietly discard packet. */
         rc = BLE_HS_ENOTCONN;
@@ -857,7 +807,7 @@ ble_hs_hci_evt_acl_process(struct os_mbuf *om)
 
     ble_hs_unlock();
 
-    switch(rc) {
+    switch (rc) {
         case 0:
             /* Final fragment received. */
             BLE_HS_DBG_ASSERT(rx_cb != NULL);
