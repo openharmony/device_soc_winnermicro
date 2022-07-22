@@ -91,7 +91,7 @@ void SystemInit(void)
     __enable_excp_irq();
 #endif
 
-    //csi_coret_config(g_system_clock / CONFIG_SYSTICK_HZ, SYS_TICK_IRQn);    //10ms
-//#ifndef CONFIG_KERNEL_NONE
-//#endif
+// csi_coret_config(g_system_clock / CONFIG_SYSTICK_HZ, SYS_TICK_IRQn);    // 10ms
+// #ifndef CONFIG_KERNEL_NONE
+// #endif
 }

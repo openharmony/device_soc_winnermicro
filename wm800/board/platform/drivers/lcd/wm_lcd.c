@@ -16,8 +16,8 @@
 /**************************************************************************//**
  * @file     wm_lcd.c
  * @author
- * @version  
- * @date  
+ * @version
+ * @date
  * @brief
  *
  * Copyright (c) 2014 Winner Microelectronics Co., Ltd. All rights reserved.
@@ -27,7 +27,7 @@
 #include "wm_io.h"
 #include "wm_pmu.h"
 
-#define RTC_CLK        (32000UL)    
+#define RTC_CLK        (32000UL)
 
 /**
  * @brief   Initialize LCD Frame Counter
@@ -39,13 +39,13 @@ void tls_lcd_fresh_ratio(uint8_t com_num, uint16_t freq)
     {
         freq = 60;
     }
-    
+
     LCD->FRAMECNT = RTC_CLK/freq/com_num;
 }
 
 /**
  * @brief
- *   Turn on or clear a segment 
+ *   Turn on or clear a segment
  *
  * @param[in] com
  *   Which COM line to update
@@ -58,7 +58,7 @@ void tls_lcd_fresh_ratio(uint8_t com_num, uint16_t freq)
  */
 void tls_lcd_seg_set(int com, int bit, int on_off)
 {
-    tls_bitband_write(HR_LCD_COM0_SEG+com*4, bit, on_off);    
+    tls_bitband_write(HR_LCD_COM0_SEG+com*4, bit, on_off);
 }
 
 /**
@@ -67,18 +67,18 @@ void tls_lcd_seg_set(int com, int bit, int on_off)
  *
  */
 void tls_lcd_vlcd_sel(LCD_VlcdDef vlcd)
-{    
+{
     LCD->CTRL &= ~LCD_VLCD_MASK;
-    LCD->CTRL |= vlcd;    
+    LCD->CTRL |= vlcd;
 }
 
 /**
  * @brief
  *   set the duty of LCD module
- *  
+ *
  */
 void tls_lcd_duty_set(LCD_DutyDef duty)
-{    
+{
     LCD->CTRL &= ~LCD_DUTY_MASK;
     LCD->CTRL |= duty;
 }
@@ -86,24 +86,24 @@ void tls_lcd_duty_set(LCD_DutyDef duty)
 /**
  * @brief
  *   set the bias of LCD module
- * 
+ *
  */
 void tls_lcd_bias_set(LCD_BiasDef bias)
 {
     LCD->CTRL &= ~LCD_BIAS_MASK;
-    LCD->CTRL |= bias;        
+    LCD->CTRL |= bias;
 }
 
 /**
  * @brief
  *   initialize the lcd module
- * 
+ *
  */
 void tls_lcd_init(tls_lcd_options_t *opts)
 {
     LCD->CTRL = 0;
     LCD->CTRL = opts->bias | opts->duty | opts->vlcd | (1 << 12);
-    tls_lcd_fresh_ratio(opts->com_number, opts->fresh_rate);    
+    tls_lcd_fresh_ratio(opts->com_number, opts->fresh_rate);
     TLS_LCD_ENABLE(opts->enable);
     TLS_LCD_POWERDOWM(1);
 }
@@ -137,50 +137,45 @@ void lcd_test(void)
     tls_io_cfg_set(WM_IO_PB_24, WM_IO_OPTION6);
     tls_io_cfg_set(WM_IO_PA_07, WM_IO_OPTION6);
     tls_io_cfg_set(WM_IO_PA_08, WM_IO_OPTION6);
-    tls_io_cfg_set(WM_IO_PA_09, WM_IO_OPTION6);    
+    tls_io_cfg_set(WM_IO_PA_09, WM_IO_OPTION6);
     tls_open_peripheral_clock(TLS_PERIPHERAL_TYPE_LCD);
 
-    /*enable output valid*/
+    /* enable output valid */
     tls_reg_write32(HR_LCD_COM_EN, 0xF);
     tls_reg_write32(HR_LCD_SEG_EN, 0x3F);
 
     tls_lcd_init(&lcd_opts);
-    
-    while(1)
-    {
+
+    while (1) {
 #if 1
-        for(i=0; i<4; i++)
-        {
-            for(j=0; j<9; j++)
-            {
+        for (i=0; i<4; i++) {
+            for (j=0; j<9; j++) {
                 tls_lcd_seg_set(i, j, 1);
                 tls_os_time_delay(500);
                 printf("%d %d %d\n", i, j, 1);
             }
         }
-        
-        for(i=0; i<4; i++)
-        {
-            for(j=0; j<9; j++)
-            {
+
+        for (i=0; i<4; i++) {
+            for (j=0; j<9; j++) {
                 tls_lcd_seg_set(i, j, 0);
                 tls_os_time_delay(500);
                 printf("%d %d %d\n", i, j, 0);
             }
         }
 #else
-        
-        for(i=0; i<40; i++)
+
+        for (i=0; i<40; i++)
         {
             lcdDisplaySegment(i, 1);
             tls_os_time_delay(HZ/2);
         }
-        for(i=0; i<40; i++)
+        for (i=0; i<40; i++)
         {
             lcdDisplaySegment(i, 0);
             tls_os_time_delay(HZ/2);
         }
-#endif        
+#endif
     }
 }
 

@@ -37,7 +37,7 @@
 #define DEBUG_7816        1
 
 #if DEBUG_7816
-#define PRINT_DEBUG(fmt, args...)   do{(printf("[DEBUG] "), printf(fmt, ##args));}while (0)
+#define PRINT_DEBUG(fmt, args...)   do {(printf("[DEBUG] "), printf(fmt, ##args));}while (0)
 #else
 #define PRINT_DEBUG(fmt, args...)
 #endif

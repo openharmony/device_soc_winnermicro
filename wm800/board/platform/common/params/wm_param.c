@@ -81,7 +81,7 @@ static int param_flash_verify(u32 data_addr, u8 *data_buffer, u32 len)
 static int param_to_flash(int id, int modify_count, int partition_num)
 {
     int err;
-#if USE_TWO_RAM_FOR_PARAMETER    
+#if USE_TWO_RAM_FOR_PARAMETER
     struct tls_sys_param *src;
     struct tls_sys_param *dest;
 #endif    
@@ -528,7 +528,7 @@ int tls_param_load_user(struct tls_sys_param *param)
 
     offset = TLS_FLASH_PARAM_DEFAULT;
     tls_fls_read(offset, (u8 *)&magic, 4);
-    if (TLS_USER_MAGIC != magic) {
+    if (magic != TLS_USER_MAGIC) {
         TLS_DBGPRT_INFO("no user default param = %x!!!\r\n", magic);
         return TLS_PARAM_STATUS_EINVALID;
     }
@@ -698,7 +698,7 @@ int tls_param_set(int id, void *argv, bool to_flash)
 
     if (updp_mode) {
         param = tls_param_user_param_init();
-        if (NULL == param) {
+        if (param == NULL) {
             return TLS_PARAM_STATUS_EMEM;
         }
     }
@@ -977,7 +977,7 @@ int tls_param_get(int id, void *argv, bool from_flash)
         }
     }
 
-    if (NULL == src) {
+    if (src == NULL) {
         src = &flash_param.parameters;
     }
 #endif
@@ -1237,7 +1237,7 @@ int tls_param_to_flash(int id)
     tls_os_sem_acquire(sys_param_lock, 0);
 #if USE_TWO_RAM_FOR_PARAMETER
     if (TLS_PARAM_ID_ALL == id) {
-        if (0 == memcmp(&sram_param, &flash_param.parameters,sizeof(sram_param))) {
+        if (memcmp(&sram_param, &flash_param.parameters, sizeof(sram_param) == 0)) {
             tls_os_sem_release(sys_param_lock);
             return TLS_FLS_STATUS_OK;
         }
@@ -1252,7 +1252,7 @@ int tls_param_to_flash(int id)
                 TLS_FLASH_PARAM2_ADDR, (u8 *)sram_param, sizeof(struct tls_param_flash))) {
                 /* write anyway!!! */
             } else {    /* if not same, write to flash */
-                if (0 == memcmp(&sram_param->parameters, &flash_param.parameters,sizeof(struct tls_sys_param))) {
+                if (memcmp(&sram_param->parameters, &flash_param.parameters, sizeof(struct tls_sys_param)) == 0) {
                     tls_mem_free(sram_param);
                     tls_os_sem_release(sys_param_lock);
                     return TLS_FLS_STATUS_OK;
@@ -1289,7 +1289,7 @@ int tls_param_to_default(void)
 
 struct tls_sys_param * tls_param_user_param_init(void)
 {
-    if (NULL == user_default_param) {
+    if (user_default_param == NULL) {
         user_default_param = tls_mem_alloc(sizeof(*user_default_param));
         if (user_default_param)
         memset(user_default_param, 0, sizeof(*user_default_param));
@@ -1304,7 +1304,7 @@ struct tls_sys_param * tls_param_user_param_init(void)
 int tls_param_save_user(struct tls_user_param *user_param)
 {
     struct tls_sys_param *param = tls_param_user_param_init();
-    if (NULL == param) {
+    if (param == NULL) {
         return TLS_PARAM_STATUS_EMEM;
     }
 
@@ -1362,7 +1362,7 @@ int tls_param_save_user(struct tls_user_param *user_param)
 int tls_param_save_user_default(void)
 {
     u32 magic, crc32, offset;
-    if (NULL == user_default_param) {
+    if (user_default_param == NULL) {
         return TLS_PARAM_STATUS_EMEM;
     }
 

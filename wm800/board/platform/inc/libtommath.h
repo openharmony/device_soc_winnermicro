@@ -65,11 +65,11 @@ typedef signed short int16;
 /* from tommath.h */
 
 #ifndef MIN
-   #define MIN(x,y) ((x)<(y)?(x):(y))
+   #define MIN(x, y) ((x)<(y)?(x):(y))
 #endif
 
 #ifndef MAX
-   #define MAX(x,y) ((x)>(y)?(x):(y))
+   #define MAX(x, y) ((x)>(y)?(x):(y))
 #endif
 
 #define  OPT_CAST(x)
@@ -109,7 +109,7 @@ typedef int           mp_err;
       #define MP_PREC                 32     /* default digits of precision */
    #else
       #define MP_PREC                 8      /* default digits of precision */
-   #endif   
+   #endif
 #endif
 
 /* size of comba arrays, should be at least 2 * 2**(BITS_PER_WORD - BITS_PER_DIGIT*2) */

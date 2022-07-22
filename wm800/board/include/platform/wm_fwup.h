@@ -82,7 +82,7 @@ enum {
 typedef union {
     struct {
         uint32_t img_type : 4;                /*!< bit:  0.. 3  IMAGE_TYPE_ENUM */
-        uint32_t code_encrypt :1;             /*!< bit:  4      whether the code in flash encrypted */
+        uint32_t code_encrypt : 1;             /*!< bit:  4      whether the code in flash encrypted */
         uint32_t prikey_sel : 3;               /*!< bit:  5.. 7  private key selection */
         /*!< bit:  8      whether signature flag, only indicates if img contains 128bytes signature in the end */
         uint32_t signature : 1;

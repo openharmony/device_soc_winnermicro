@@ -481,7 +481,7 @@ tls_os_status_t tls_os_sem_set(tls_os_sem_t *sem, u16 cnt);
  *
  * @note           None
  */
- tls_os_status_t tls_os_queue_create(tls_os_queue_t **queue, u32 queue_size);
+tls_os_status_t tls_os_queue_create(tls_os_queue_t **queue, u32 queue_size);
 
 /**
  * @brief          This function deletes a message queue and readies all
@@ -510,9 +510,9 @@ tls_os_status_t tls_os_sem_set(tls_os_sem_t *sem, u16 cnt);
  *
  * @note           None
  */
- tls_os_status_t tls_os_queue_send(tls_os_queue_t *queue,
-        void *msg,
-        u32 msg_size);
+tls_os_status_t tls_os_queue_send(tls_os_queue_t *queue,
+    void *msg,
+    u32 msg_size);
 
 /**
  * @brief          This function is used to flush the contents of the message
@@ -604,7 +604,7 @@ tls_os_status_t tls_os_mailbox_delete(tls_os_mailbox_t *mailbox);
  *
  * @note           None
  */
-tls_os_status_t tls_os_mailbox_send(tls_os_mailbox_t *mailbox,void *msg);
+tls_os_status_t tls_os_mailbox_send(tls_os_mailbox_t *mailbox, void *msg);
 
 /**
  * @brief          This function waits for a message to be sent to a mailbox
@@ -737,7 +737,7 @@ tls_os_status_t tls_os_timer_change(tls_os_timer_t *timer, u32 ticks);
  *
  * @note           None
  */
- tls_os_status_t tls_os_timer_stop(tls_os_timer_t *timer);
+tls_os_status_t tls_os_timer_stop(tls_os_timer_t *timer);
 
 /**
  * @brief          This function is called by your application code to delete

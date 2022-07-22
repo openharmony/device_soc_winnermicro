@@ -24,7 +24,7 @@
 #define MACSTR "%02x:%02x:%02x:%02x:%02x:%02x"
 
 #define time_after(a, b)  ((long)(b) - (long)(a) < 0)
-#define time_before(a,b)    time_after(b,a)
+#define time_before(a, b)    time_after(b, a)
 
 /*
  *    These are the defined Ethernet Protocol ID's.
@@ -100,7 +100,7 @@
 #define ETH_P_RRB 0x890D
 #endif /* ETH_P_RRB */
 
-#define PRINTF_FORMAT(a,b) __attribute__ ((format (printf, (a), (b))))
+#define PRINTF_FORMAT(a, b) __attribute__ ((format (printf, (a), (b))))
 #define STRUCT_PACKED __attribute__ ((packed))
 
 #define broadcast_ether_addr (const u8 *) "\xff\xff\xff\xff\xff\xff"
@@ -155,24 +155,24 @@ static __inline unsigned int swap_32(unsigned int v)
 
 static __inline u16 get_unaligned_le16(const u8 *p)
 {
-    return p[0] | p[1] << 8;    
+    return p[0] | p[1] << 8;
 }
 
 static __inline u32 get_unaligned_le32(const u8 *p)
 {
-    return p[0] | p[1] << 8 | p[2] << 16 | p[3] << 24;    
+    return p[0] | p[1] << 8 | p[2] << 16 | p[3] << 24;
 }
 
 static __inline void put_unaligned_le16(u16 val, u8 *p)
 {
     *p++ = val;
-    *p++ = val >> 8; 
+    *p++ = val >> 8;
 }
 
 static __inline void put_unaligned_le32(u32 val, u8 *p)
 {
     put_unaligned_le16(val >> 16, p + 2);
-    put_unaligned_le16(val, p); 
+    put_unaligned_le16(val, p);
 }
 
 static __inline u16 get_unaligned_be16(const u8 *p)
@@ -194,7 +194,7 @@ static __inline void put_unaligned_be16(u16 val, u8 *p)
 static __inline void put_unaligned_be32(u32 val, u8 *p)
 {
     put_unaligned_be16(val >> 16, p);
-    put_unaligned_be16(val, p + 2); 
+    put_unaligned_be16(val, p + 2);
 }
 
 #ifdef __CHECKER__
@@ -255,7 +255,7 @@ static __inline int atomic_add_return(int i, atomic_t *v)
     return val;
 }
 
-#define atomic_set(v,i)                    (((v)->counter) = (i))
+#define atomic_set(v, i)                    (((v)->counter) = (i))
 #define atomic_dec_and_test(v)            (atomic_sub_return(1, v) == 0)
 #define atomic_inc(v)                    (void) atomic_add_return(1, v)
 #define atomic_dec(v)                    (void) atomic_sub_return(1, v)

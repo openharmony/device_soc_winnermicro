@@ -353,14 +353,14 @@ typedef volatile unsigned int TLS_REG;    /* Hardware register definition */
 #define SPIM_RXDATA_REG                   (*(volatile unsigned int*)(SPIM_STARTADDRESS+0x030))
 
 /* RSA Reg */
-#define RSA_BASE_ADDRESS       0x40000000
-#define  RSAXBUF               (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x0)))
-#define  RSAYBUF               (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x100)))
-#define  RSAMBUF               (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x200)))
-#define  RSADBUF               (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x300)))
-#define  RSACON                (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x400)))
-#define  RSAMC                 (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x404)))
-#define  RSAN                  (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x408))) /* Bits Definitions of "CH_CFG" */
+#define RSA_BASE_ADDRESS      0x40000000
+#define  RSAXBUF          (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x0)))
+#define  RSAYBUF          (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x100)))
+#define  RSAMBUF          (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x200)))
+#define  RSADBUF          (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x300)))
+#define  RSACON           (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x400)))
+#define  RSAMC            (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x404)))
+#define  RSAN             (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x408))) /* Bits Definitions of "CH_CFG" */
 #define SPI_RX_INVALID_BITS(n)      ((n) << 23)
 #define SPI_CLEAR_FIFOS      (1U << 22)
 #define SPI_CONTINUE_MODE      (1U << 21)
