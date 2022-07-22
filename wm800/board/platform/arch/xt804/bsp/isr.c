@@ -165,7 +165,6 @@ ATTRIBUTE_ISR void PMU_IRQ_Handler(void)
         PMU_TIMER1_IRQHandler();
     }
     if (tls_reg_read32(HR_PMU_INTERRUPT_SRC) & BIT(2)) { /* gpio wake interrupt */
-
         PMU_GPIO_WAKE_IRQHandler();
     }
 

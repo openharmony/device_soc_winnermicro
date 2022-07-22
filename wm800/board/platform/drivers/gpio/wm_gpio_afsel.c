@@ -36,8 +36,7 @@
 #endif
 void wm_hspi_gpio_config(uint8_t numsel)
 {
-    switch(numsel)
-    {
+    switch (numsel) {
         case 0:
             tls_io_cfg_set(WM_IO_PB_06, WM_IO_OPTION3); /* CK */
             tls_io_cfg_set(WM_IO_PB_07, WM_IO_OPTION3); /* INT */
@@ -52,8 +51,8 @@ void wm_hspi_gpio_config(uint8_t numsel)
             tls_io_cfg_set(WM_IO_PB_14, WM_IO_OPTION1); /* CS */
             tls_io_cfg_set(WM_IO_PB_15, WM_IO_OPTION1); /* DI */
             tls_io_cfg_set(WM_IO_PB_16, WM_IO_OPTION1); /* DO */
-            break;            
-        
+            break;
+
         default:
             TLS_DBGPRT_ERR("highspeed spi gpio config error!");
             break;
@@ -62,8 +61,7 @@ void wm_hspi_gpio_config(uint8_t numsel)
 
 void wm_spi_ck_config(enum tls_io_name io_name)
 {
-    switch(io_name)
-    {
+    switch (io_name) {
         case WM_IO_PB_01:
             tls_io_cfg_set(io_name, WM_IO_OPTION2);
             break;
@@ -89,8 +87,7 @@ void wm_spi_ck_config(enum tls_io_name io_name)
 
 void wm_spi_cs_config(enum tls_io_name io_name)
 {
-    switch(io_name)
-    {
+    switch (io_name) {
         case WM_IO_PA_00:
             tls_io_cfg_set(io_name, WM_IO_OPTION2);
             break;
@@ -105,7 +102,7 @@ void wm_spi_cs_config(enum tls_io_name io_name)
 
         case WM_IO_PB_23: // w801
             tls_io_cfg_set(io_name, WM_IO_OPTION1);
-            break;        
+            break;
 
         default:
             TLS_DBGPRT_ERR("spi cs afsel config error!");
@@ -115,8 +112,7 @@ void wm_spi_cs_config(enum tls_io_name io_name)
 
 void wm_spi_di_config(enum tls_io_name io_name)
 {
-    switch(io_name)
-    {
+    switch (io_name) {
         case WM_IO_PB_00:
             tls_io_cfg_set(io_name, WM_IO_OPTION2);
             break;
@@ -141,8 +137,7 @@ void wm_spi_di_config(enum tls_io_name io_name)
 
 void wm_spi_do_config(enum tls_io_name io_name)
 {
-    switch(io_name)
-    {
+    switch (io_name) {
         case WM_IO_PA_07:
             tls_io_cfg_set(io_name, WM_IO_OPTION2);
             break;
@@ -167,8 +162,7 @@ void wm_spi_do_config(enum tls_io_name io_name)
 
 void wm_sdio_host_config(uint8_t numsel)
 {
-    switch(numsel)
-    {
+    switch (numsel) {
         case 0:
             tls_io_cfg_set(WM_IO_PB_06, WM_IO_OPTION2); /* CK */
             tls_io_cfg_set(WM_IO_PB_07, WM_IO_OPTION2); /* CMD */
@@ -197,8 +191,7 @@ void wm_sdio_host_config(uint8_t numsel)
 
 void wm_sdio_slave_config(uint8_t numsel)
 {
-    switch(numsel)
-    {
+    switch (numsel) {
         case 0:
             tls_io_cfg_set(WM_IO_PB_06, WM_IO_OPTION4); /* CK */
             tls_io_cfg_set(WM_IO_PB_07, WM_IO_OPTION4); /* CMD */
@@ -216,8 +209,7 @@ void wm_sdio_slave_config(uint8_t numsel)
 
 void wm_psram_config(uint8_t numsel)
 {
-    switch(numsel)
-    {
+    switch (numsel) {
         case 0:
             tls_io_cfg_set(WM_IO_PB_00, WM_IO_OPTION4); /* CK */
             tls_io_cfg_set(WM_IO_PB_01, WM_IO_OPTION4); /* CS */
@@ -225,9 +217,9 @@ void wm_psram_config(uint8_t numsel)
             tls_io_cfg_set(WM_IO_PB_03, WM_IO_OPTION4); /* D1 */
             tls_io_cfg_set(WM_IO_PB_04, WM_IO_OPTION4); /* D2 */
             tls_io_cfg_set(WM_IO_PB_05, WM_IO_OPTION4); /* D3 */
-            tls_open_peripheral_clock(TLS_PERIPHERAL_TYPE_PSRAM);            
+            tls_open_peripheral_clock(TLS_PERIPHERAL_TYPE_PSRAM);
             break;
-            
+
         case 1:// w801
             tls_io_cfg_set(WM_IO_PA_15, WM_IO_OPTION1); /* CK */
             tls_io_cfg_set(WM_IO_PB_27, WM_IO_OPTION1); /* CS */
@@ -235,7 +227,7 @@ void wm_psram_config(uint8_t numsel)
             tls_io_cfg_set(WM_IO_PB_03, WM_IO_OPTION4); /* D1 */
             tls_io_cfg_set(WM_IO_PB_04, WM_IO_OPTION4); /* D2 */
             tls_io_cfg_set(WM_IO_PB_05, WM_IO_OPTION4); /* D3 */
-            tls_open_peripheral_clock(TLS_PERIPHERAL_TYPE_PSRAM);            
+            tls_open_peripheral_clock(TLS_PERIPHERAL_TYPE_PSRAM);
             break;
 
         default:
@@ -245,8 +237,7 @@ void wm_psram_config(uint8_t numsel)
 }
 void wm_uart0_tx_config(enum tls_io_name io_name)
 {
-    switch(io_name)
-    {
+    switch (io_name) {
         case WM_IO_PB_19:
             tls_io_cfg_set(io_name, WM_IO_OPTION1);
             break;
@@ -264,8 +255,7 @@ void wm_uart0_tx_config(enum tls_io_name io_name)
 
 void wm_uart0_rx_config(enum tls_io_name io_name)
 {
-    switch(io_name)
-    {
+    switch (io_name) {
         case WM_IO_PB_20:
             tls_io_cfg_set(io_name, WM_IO_OPTION1);
             tls_bitband_write(HR_GPIOB_DATA_PULLEN, 20, 0);
@@ -280,8 +270,7 @@ void wm_uart0_rx_config(enum tls_io_name io_name)
 
 void wm_uart1_tx_config(enum tls_io_name io_name)
 {
-    switch(io_name)
-    {
+    switch (io_name) {
         case WM_IO_PB_06:
             tls_io_cfg_set(io_name, WM_IO_OPTION1);
             break;
@@ -295,8 +284,7 @@ void wm_uart1_tx_config(enum tls_io_name io_name)
 
 void wm_uart1_rx_config(enum tls_io_name io_name)
 {
-    switch(io_name)
-    {
+    switch (io_name) {
         case WM_IO_PB_07:
             tls_io_cfg_set(io_name, WM_IO_OPTION1);
             tls_bitband_write(HR_GPIOB_DATA_PULLEN, 7, 0);
@@ -316,8 +304,7 @@ void wm_uart1_rx_config(enum tls_io_name io_name)
 
 void wm_uart1_rts_config(enum tls_io_name io_name)
 {
-    switch(io_name)
-    {
+    switch (io_name) {
         case WM_IO_PB_19:
             tls_io_cfg_set(io_name, WM_IO_OPTION3);
             break;
@@ -334,14 +321,13 @@ void wm_uart1_rts_config(enum tls_io_name io_name)
 
 void wm_uart1_cts_config(enum tls_io_name io_name)
 {
-    switch(io_name)
-    {
+    switch (io_name) {
         case WM_IO_PB_20:
             tls_io_cfg_set(io_name, WM_IO_OPTION3);
             break;
         case WM_IO_PA_03:
             tls_io_cfg_set(io_name, WM_IO_OPTION1);
-            break;        
+            break;
         default:
             TLS_DBGPRT_ERR("uart1 cts afsel config error!");
             return;
@@ -351,8 +337,7 @@ void wm_uart1_cts_config(enum tls_io_name io_name)
 
 void wm_uart2_tx_scio_config(enum tls_io_name io_name)
 {
-    switch(io_name)
-    {
+    switch (io_name) {
         case WM_IO_PB_02:
             tls_io_cfg_set(io_name, WM_IO_OPTION3);
             break;
@@ -369,15 +354,14 @@ void wm_uart2_tx_scio_config(enum tls_io_name io_name)
 
 void wm_uart2_rx_config(enum tls_io_name io_name)
 {
-    switch(io_name)
-    {
+    switch (io_name) {
         case WM_IO_PB_03:
             tls_io_cfg_set(io_name, WM_IO_OPTION3);
             tls_bitband_write(HR_GPIOB_DATA_PULLEN, 3, 0);
             break;
         case WM_IO_PA_03:
             tls_io_cfg_set(io_name, WM_IO_OPTION2);
-            tls_bitband_write(HR_GPIOA_DATA_PULLEN, 3, 0);        
+            tls_bitband_write(HR_GPIOA_DATA_PULLEN, 3, 0);
             break;
 
         default:
@@ -389,8 +373,7 @@ void wm_uart2_rx_config(enum tls_io_name io_name)
 
 void wm_uart2_rts_scclk_config(enum tls_io_name io_name)
 {
-    switch(io_name)
-    {
+    switch (io_name) {
         case WM_IO_PB_04:
             tls_io_cfg_set(io_name, WM_IO_OPTION2);
             break;
@@ -407,8 +390,7 @@ void wm_uart2_rts_scclk_config(enum tls_io_name io_name)
 
 void wm_uart2_cts_config(enum tls_io_name io_name)
 {
-    switch(io_name)
-    {
+    switch (io_name) {
         case WM_IO_PB_05:
             tls_io_cfg_set(io_name, WM_IO_OPTION2);
             break;
@@ -425,8 +407,7 @@ void wm_uart2_cts_config(enum tls_io_name io_name)
 
 void wm_uart3_tx_config(enum tls_io_name io_name)
 {
-    switch(io_name)
-    {
+    switch (io_name) {
         case WM_IO_PB_00:
             tls_io_cfg_set(io_name, WM_IO_OPTION3);
             break;
@@ -443,15 +424,14 @@ void wm_uart3_tx_config(enum tls_io_name io_name)
 
 void wm_uart3_rx_config(enum tls_io_name io_name)
 {
-    switch(io_name)
-    {
+    switch (io_name) {
         case WM_IO_PB_01:
             tls_io_cfg_set(io_name, WM_IO_OPTION3);
             tls_bitband_write(HR_GPIOB_DATA_PULLEN, 1, 0);
             break;
         case WM_IO_PA_06:
             tls_io_cfg_set(io_name, WM_IO_OPTION1);
-            tls_bitband_write(HR_GPIOA_DATA_PULLEN, 6, 0);        
+            tls_bitband_write(HR_GPIOA_DATA_PULLEN, 6, 0);
             break;
 
         default:
@@ -463,8 +443,7 @@ void wm_uart3_rx_config(enum tls_io_name io_name)
 
 void wm_uart3_rts_config(enum tls_io_name io_name)
 {
-    switch(io_name)
-    {
+    switch (io_name) {
         case WM_IO_PA_02:
             tls_io_cfg_set(io_name, WM_IO_OPTION4);
             break;
@@ -478,11 +457,10 @@ void wm_uart3_rts_config(enum tls_io_name io_name)
 
 void wm_uart3_cts_config(enum tls_io_name io_name)
 {
-    switch(io_name)
-    {
+    switch (io_name) {
         case WM_IO_PA_03:
             tls_io_cfg_set(io_name, WM_IO_OPTION4);
-            break;        
+            break;
         default:
             TLS_DBGPRT_ERR("uart1 cts afsel config error!");
             return;
@@ -492,11 +470,10 @@ void wm_uart3_cts_config(enum tls_io_name io_name)
 
 void wm_uart4_tx_config(enum tls_io_name io_name)
 {
-    switch(io_name)
-    {
+    switch (io_name) {
         case WM_IO_PB_04:
             tls_io_cfg_set(io_name, WM_IO_OPTION3);
-            break;    
+            break;
         case WM_IO_PA_08:
             tls_io_cfg_set(io_name, WM_IO_OPTION2);
             break;
@@ -510,8 +487,7 @@ void wm_uart4_tx_config(enum tls_io_name io_name)
 
 void wm_uart4_rx_config(enum tls_io_name io_name)
 {
-    switch(io_name)
-    {
+    switch (io_name) {
         case WM_IO_PB_05:
             tls_io_cfg_set(io_name, WM_IO_OPTION3);
             tls_bitband_write(HR_GPIOB_DATA_PULLEN, 5, 0);
@@ -530,8 +506,7 @@ void wm_uart4_rx_config(enum tls_io_name io_name)
 
 void wm_uart4_rts_config(enum tls_io_name io_name)
 {
-    switch(io_name)
-    {
+    switch (io_name) {
         case WM_IO_PA_05:
             tls_io_cfg_set(io_name, WM_IO_OPTION4);
             break;
@@ -548,14 +523,13 @@ void wm_uart4_rts_config(enum tls_io_name io_name)
 
 void wm_uart4_cts_config(enum tls_io_name io_name)
 {
-    switch(io_name)
-    {
+    switch (io_name) {
         case WM_IO_PA_06:
             tls_io_cfg_set(io_name, WM_IO_OPTION4);
-            break;    
+            break;
         case WM_IO_PA_11:
             tls_io_cfg_set(io_name, WM_IO_OPTION2);
-            break;        
+            break;
         default:
             TLS_DBGPRT_ERR("uart1 cts afsel config error!");
             return;
@@ -565,11 +539,10 @@ void wm_uart4_cts_config(enum tls_io_name io_name)
 
 void wm_uart5_tx_config(enum tls_io_name io_name)
 {
-    switch(io_name)
-    {
+    switch (io_name) {
         case WM_IO_PA_12:
             tls_io_cfg_set(io_name, WM_IO_OPTION2);
-            break;    
+            break;
         case WM_IO_PA_08:
             tls_io_cfg_set(io_name, WM_IO_OPTION3);
             break;
@@ -586,8 +559,7 @@ void wm_uart5_tx_config(enum tls_io_name io_name)
 
 void wm_uart5_rx_config(enum tls_io_name io_name)
 {
-    switch(io_name)
-    {
+    switch (io_name) {
         case WM_IO_PA_13:
             tls_io_cfg_set(io_name, WM_IO_OPTION2);
             tls_bitband_write(HR_GPIOA_DATA_PULLEN, 13, 0);
@@ -609,8 +581,7 @@ void wm_uart5_rx_config(enum tls_io_name io_name)
 
 void wm_uart5_rts_config(enum tls_io_name io_name)
 {
-    switch(io_name)
-    {
+    switch (io_name) {
         case WM_IO_PB_12:
             tls_io_cfg_set(io_name, WM_IO_OPTION3);
             break;
@@ -627,14 +598,13 @@ void wm_uart5_rts_config(enum tls_io_name io_name)
 
 void wm_uart5_cts_config(enum tls_io_name io_name)
 {
-    switch(io_name)
-    {
+    switch (io_name) {
         case WM_IO_PB_13:
             tls_io_cfg_set(io_name, WM_IO_OPTION3);
-            break;    
+            break;
         case WM_IO_PA_15:
             tls_io_cfg_set(io_name, WM_IO_OPTION2);
-            break;        
+            break;
         default:
             TLS_DBGPRT_ERR("uart1 cts afsel config error!");
             return;
@@ -644,8 +614,7 @@ void wm_uart5_cts_config(enum tls_io_name io_name)
 
 void wm_i2s_ck_config(enum tls_io_name io_name)
 {
-    switch(io_name)
-    {
+    switch (io_name) {
         case WM_IO_PA_04:
             tls_io_cfg_set(io_name, WM_IO_OPTION4);
             break;
@@ -656,8 +625,8 @@ void wm_i2s_ck_config(enum tls_io_name io_name)
 
         case WM_IO_PA_08:
             tls_io_cfg_set(io_name, WM_IO_OPTION4);
-            break;    
-            
+            break;
+
         case WM_IO_PB_12:
             tls_io_cfg_set(io_name, WM_IO_OPTION4);
             break;
@@ -671,8 +640,7 @@ void wm_i2s_ck_config(enum tls_io_name io_name)
 
 void wm_i2s_ws_config(enum tls_io_name io_name)
 {
-    switch(io_name)
-    {
+    switch (io_name) {
         case WM_IO_PA_01:
             tls_io_cfg_set(io_name, WM_IO_OPTION4);
             break;
@@ -697,8 +665,7 @@ void wm_i2s_ws_config(enum tls_io_name io_name)
 
 void wm_i2s_do_config(enum tls_io_name io_name)
 {
-    switch(io_name)
-    {
+    switch (io_name) {
         case WM_IO_PA_00:
             tls_io_cfg_set(io_name, WM_IO_OPTION4);
             break;
@@ -724,8 +691,7 @@ void wm_i2s_do_config(enum tls_io_name io_name)
 
 void wm_i2s_di_config(enum tls_io_name io_name)
 {
-    switch(io_name)
-    {
+    switch (io_name) {
         case WM_IO_PA_07:
             tls_io_cfg_set(io_name, WM_IO_OPTION4);
             break;
@@ -751,8 +717,7 @@ void wm_i2s_di_config(enum tls_io_name io_name)
 
 void wm_i2s_mclk_config(enum tls_io_name io_name)
 {
-    switch(io_name)
-    {
+    switch (io_name) {
         case WM_IO_PA_00:
             tls_io_cfg_set(io_name, WM_IO_OPTION1);
             break;
@@ -774,8 +739,7 @@ void wm_i2s_mclk_config(enum tls_io_name io_name)
 
 void wm_i2s_extclk_config(enum tls_io_name io_name)
 {
-    switch(io_name)
-    {
+    switch (io_name) {
         case WM_IO_PA_07:
             tls_io_cfg_set(io_name, WM_IO_OPTION3);
             break;
@@ -792,8 +756,7 @@ void wm_i2s_extclk_config(enum tls_io_name io_name)
 
 void wm_i2c_scl_config(enum tls_io_name io_name)
 {
-    switch(io_name)
-    {
+    switch (io_name) {
         case WM_IO_PA_01:
             tls_gpio_cfg(io_name, WM_GPIO_DIR_OUTPUT, WM_GPIO_ATTR_PULLHIGH);
             tls_io_cfg_set(io_name, WM_IO_OPTION2);
@@ -813,8 +776,7 @@ void wm_i2c_scl_config(enum tls_io_name io_name)
 
 void wm_i2c_sda_config(enum tls_io_name io_name)
 {
-    switch(io_name)
-    {
+    switch (io_name) {
         case WM_IO_PA_04:
             tls_gpio_cfg(io_name, WM_GPIO_DIR_OUTPUT, WM_GPIO_ATTR_PULLHIGH);
             tls_io_cfg_set(io_name, WM_IO_OPTION2);
@@ -834,8 +796,7 @@ void wm_i2c_sda_config(enum tls_io_name io_name)
 
 void wm_pwm0_config(enum tls_io_name io_name)
 {
-    switch(io_name)
-    {
+    switch (io_name) {
         case WM_IO_PB_00:
             tls_io_cfg_set(io_name, WM_IO_OPTION1);
             break;
@@ -865,8 +826,7 @@ void wm_pwm0_config(enum tls_io_name io_name)
 
 void wm_pwm1_config(enum tls_io_name io_name)
 {
-    switch(io_name)
-    {
+    switch (io_name) {
         case WM_IO_PB_01:
             tls_io_cfg_set(io_name, WM_IO_OPTION1);
             break;
@@ -877,7 +837,7 @@ void wm_pwm1_config(enum tls_io_name io_name)
 
         case WM_IO_PA_03:
             tls_io_cfg_set(io_name, WM_IO_OPTION3);
-            break;        
+            break;
         case WM_IO_PA_11:
             tls_io_cfg_set(io_name, WM_IO_OPTION3);
             break;
@@ -894,8 +854,7 @@ void wm_pwm1_config(enum tls_io_name io_name)
 
 void wm_pwm2_config(enum tls_io_name io_name)
 {
-    switch(io_name)
-    {
+    switch (io_name) {
         case WM_IO_PA_00:
             tls_io_cfg_set(io_name, WM_IO_OPTION3);
             break;
@@ -925,8 +884,7 @@ void wm_pwm2_config(enum tls_io_name io_name)
 
 void wm_pwm3_config(enum tls_io_name io_name)
 {
-    switch(io_name)
-    {
+    switch (io_name) {
         case WM_IO_PA_01:
             tls_io_cfg_set(io_name, WM_IO_OPTION3);
             break;
@@ -956,8 +914,7 @@ void wm_pwm3_config(enum tls_io_name io_name)
 
 void wm_pwm4_config(enum tls_io_name io_name)
 {
-    switch(io_name)
-    {
+    switch (io_name) {
         case WM_IO_PA_04:
             tls_io_cfg_set(io_name, WM_IO_OPTION3);
             break;
@@ -984,8 +941,7 @@ void wm_pwm4_config(enum tls_io_name io_name)
 
 void wm_pwmbrk_config(enum tls_io_name io_name)
 {
-    switch(io_name)
-    {
+    switch (io_name) {
         case WM_IO_PB_08:
             tls_io_cfg_set(io_name, WM_IO_OPTION3);
             break;
@@ -995,11 +951,11 @@ void wm_pwmbrk_config(enum tls_io_name io_name)
         case WM_IO_PA_08:
             tls_io_cfg_set(io_name, WM_IO_OPTION1);
             break;
-            
+
         case WM_IO_PA_15:
             tls_io_cfg_set(io_name, WM_IO_OPTION3);
             break;
-            
+
         case WM_IO_PB_17:
             tls_io_cfg_set(io_name, WM_IO_OPTION2);
             break;
@@ -1013,13 +969,10 @@ void wm_pwmbrk_config(enum tls_io_name io_name)
 
 void wm_swd_config(bool enable)
 {
-    if (enable)
-    {
+    if (enable) {
         tls_io_cfg_set(WM_IO_PA_01, WM_IO_OPTION1);
         tls_io_cfg_set(WM_IO_PA_04, WM_IO_OPTION1);
-    }
-    else
-    {
+    } else {
         tls_io_cfg_set(WM_IO_PA_01, WM_IO_OPTION5);
         tls_io_cfg_set(WM_IO_PA_04, WM_IO_OPTION5);
     }
@@ -1027,8 +980,7 @@ void wm_swd_config(bool enable)
 
 void wm_adc_config(u8 Channel)
 {
-    switch(Channel)
-    {
+    switch (Channel) {
         case 0:
             tls_io_cfg_set(WM_IO_PA_01, WM_IO_OPTION6);
             break;
@@ -1053,20 +1005,19 @@ void wm_adc_config(u8 Channel)
 
 void wm_touch_sensor_config(enum tls_io_name io_name)
 {
-    switch(io_name)
-    {
+    switch (io_name) {
         case WM_IO_PA_07: /* touch sensor 1 */
         case WM_IO_PA_09: /* touch sensor 2 */
         case WM_IO_PA_10: /* touch sensor 3 */
-        case WM_IO_PB_00: /* touch sensor 4 */            
-        case WM_IO_PB_01: /* touch sensor 5 */            
-        case WM_IO_PB_02: /* touch sensor 6 */            
-        case WM_IO_PB_03: /* touch sensor 7 */            
-        case WM_IO_PB_04: /* touch sensor 8 */            
-        case WM_IO_PB_05: /* touch sensor 9 */            
-        case WM_IO_PB_06: /* touch sensor 10 */            
-        case WM_IO_PB_07: /* touch sensor 11 */            
-        case WM_IO_PB_08: /* touch sensor 12 */            
+        case WM_IO_PB_00: /* touch sensor 4 */
+        case WM_IO_PB_01: /* touch sensor 5 */
+        case WM_IO_PB_02: /* touch sensor 6 */
+        case WM_IO_PB_03: /* touch sensor 7 */
+        case WM_IO_PB_04: /* touch sensor 8 */
+        case WM_IO_PB_05: /* touch sensor 9 */
+        case WM_IO_PB_06: /* touch sensor 10 */
+        case WM_IO_PB_07: /* touch sensor 11 */
+        case WM_IO_PB_08: /* touch sensor 12 */
         case WM_IO_PB_09: /* touch sensor 13 */
         case WM_IO_PA_12: /* touch sensor 14 */
         case WM_IO_PA_14: /* touch sensor 15 */

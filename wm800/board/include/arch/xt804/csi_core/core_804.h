@@ -610,7 +610,6 @@ typedef struct {
         __IM uint32_t DERJW;               /* !< Offset: 0x058 (R/ )  Data exchange register CPU read */
         __OM uint32_t DERJR;               /* !< Offset: 0x058 ( /W)  Data exchange register CPU writer */
     };
-
 } DCC_Type;
 
 #define DCC_HCR_JW_Pos                   18U                                       /* !< DCC HCR: jw_int_en Position */
@@ -1047,7 +1046,7 @@ __STATIC_INLINE int32_t csi_had_check_char(void)
     return _FLD2VAL(DCC_EHSR_JW, DCC->EHSR);                              /* no character available */
 }
 
-/*@} end of CSI_core_DebugFunctions */
+/* @} end of CSI_core_DebugFunctions */
 
 /* ##########################  Cache functions  #################################### */
 /**
@@ -1348,7 +1347,7 @@ __STATIC_INLINE uint32_t csi_cache_get_miss_time (void)
     return CACHE->CPFMTR;
 }
 
-/*@} end of CSI_Core_CacheFunctions */
+/* @} end of CSI_Core_CacheFunctions */
 
 /* ##########################  MPU functions  #################################### */
 /**
@@ -1391,7 +1390,7 @@ typedef enum {
 
 typedef struct {
     uint32_t nx : 1;               /* instruction fetched excution */
-    access_permission_e ap : 2;    /* super user and normal user access.*/
+    access_permission_e ap : 2;    /* super user and normal user access. */
     uint32_t s : 1;                /* security */
 } mpu_region_attr_t;
 

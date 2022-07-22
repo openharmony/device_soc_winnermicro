@@ -74,7 +74,7 @@ typedef enum {
     WM_BT_ADAPTER_STATE_CHG_EVT   = (0x01<<0),        
     WM_BT_ADAPTER_PROP_CHG_EVT    = (0x01<<1),   
     WM_BT_RMT_DEVICE_PROP_EVT     = (0x01<<2),               
-    WM_BT_DEVICE_FOUND_EVT        = (0x01<<3), 
+    WM_BT_DEVICE_FOUND_EVT        = (0x01<<3),
     WM_BT_DISCOVERY_STATE_CHG_EVT = (0x01<<4),
     WM_BT_REQUEST_EVT             = (0x01<<5),
     WM_BT_SSP_REQUEST_EVT         = (0x01<<6),
@@ -757,7 +757,7 @@ typedef union {
     tls_ble_cl_listen_msg_t      cli_listen;        /**< WM_BLE_CL_LISTEN_EVT */
     tls_ble_cl_cfg_mtu_msg_t     cli_cfg_mtu;       /**< WM_BLE_CL_CFG_MTU_EVT */
     tls_ble_cl_congest_msg_t     cli_congest;       /**< WM_BLE_CL_CONGEST_EVT */
-    tls_ble_cl_gatt_db_msg_t     cli_db;            /* WM_BLE_CL_REPORT_DB_EVT*/
+    tls_ble_cl_gatt_db_msg_t     cli_db;            /* WM_BLE_CL_REPORT_DB_EVT */
     tls_ble_cl_reg_notify_msg_t  cli_reg_notify;
 
     tls_ble_se_register_msg_t    ser_register;     /**< WM_BLE_SE_REGISTER_EVT */

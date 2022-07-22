@@ -236,7 +236,7 @@ extern "C"
         z=(x)+(y);  zz=(ABS(x)>ABS(y)) ? (((x)-(z))+(y)) : (((y)-(z))+(x));
 
 /* Exact multiplication of two single-length floating point numbers,   */
-/*The macro produces a double-length number (z,zz) that                */
+/* The macro produces a double-length number (z,zz) that                */
 /* satisfies z+zz = x*y exactly. p,hx,tx,hy,ty are temporary           */
 /* storage variables of type double.                                   */
 
@@ -928,7 +928,7 @@ void csky_mat_init_f32(
     float32_t *pData);
 
   /**
-   *@brief Instance structure for the Q15 PID Control.
+   * @brief Instance structure for the Q15 PID Control.
    */
 typedef struct {
     q15_t A0;           /**< The derived gain, A0 = Kp + Ki + Kd . */
@@ -1209,10 +1209,10 @@ void csky_cfft_f32(
     uint8_t ifftFlag,
     uint8_t bitReverseFlag);
 
-  /**
-   * @brief Instance structure for the Q15 RFFT/RIFFT function.
-   */
-  typedef struct
+    /**
+     * @brief Instance structure for the Q15 RFFT/RIFFT function.
+     */
+    typedef struct
 {
     uint32_t fftLenReal;                      /**< length of the real FFT. */
     uint8_t ifftFlagR;           /**< flag that selects forward (ifftFlagR=0) or inverse (ifftFlagR=1) transform. */
@@ -1299,8 +1299,8 @@ typedef struct {
 } csky_rfft_fast_instance_f32 ;
 
 csky_status csky_rfft_fast_init_f32 (
-     csky_rfft_fast_instance_f32 *S,
-     uint16_t fftLen);
+    csky_rfft_fast_instance_f32 *S,
+    uint16_t fftLen);
 
 void csky_rfft_fast_f32(
     csky_rfft_fast_instance_f32 *S,
@@ -3388,13 +3388,13 @@ void csky_q7_to_float(
  * @param[in]  sinVal   sine value of rotation angle theta
  * @param[in]  cosVal   cosine value of rotation angle theta
  */
-  __STATIC_INLINE void csky_inv_park_f32(
-  float32_t Id,
-  float32_t Iq,
-  float32_t *pIalpha,
-  float32_t *pIbeta,
-  float32_t sinVal,
-  float32_t cosVal)
+__STATIC_INLINE void csky_inv_park_f32(
+    float32_t Id,
+    float32_t Iq,
+    float32_t *pIalpha,
+    float32_t *pIbeta,
+    float32_t sinVal,
+    float32_t cosVal)
 {
   /* Calculate pIalpha using the equation, pIalpha = Id * cosVal - Iq * sinVal */
   *pIalpha = Id * cosVal - Iq * sinVal;
@@ -3520,8 +3520,8 @@ void csky_q31_to_float(
  *
  */
 __STATIC_INLINE float32_t csky_linear_interp_f32(
-csky_linear_interp_instance_f32 * S,
-float32_t x)
+    csky_linear_interp_instance_f32 * S,
+    float32_t x)
 {
     float32_t y;
     float32_t x0, x1;                            /* Nearest input values */
@@ -3573,9 +3573,9 @@ float32_t x)
  *
  */
 __STATIC_INLINE q31_t csky_linear_interp_q31(
-q31_t *pYData,
-q31_t x,
-uint32_t nValues)
+    q31_t *pYData,
+    q31_t x,
+    uint32_t nValues)
 {
     q31_t y;                                     /* output */
     q31_t y0, y1;                                /* Nearest output values */
@@ -3634,9 +3634,9 @@ uint32_t nValues)
  *
  */
 __STATIC_INLINE q15_t csky_linear_interp_q15(
-q15_t *pYData,
-q31_t x,
-uint32_t nValues)
+    q15_t *pYData,
+    q31_t x,
+    uint32_t nValues)
 {
     q63_t y;                                     /* output */
     q15_t y0, y1;                                /* Nearest output values */
@@ -3658,19 +3658,19 @@ uint32_t nValues)
         y0 = pYData[index];
         y1 = pYData[index + 1];
 #ifdef CSKY_SIMD
-    /* Calculation of y0 * (1-fract) and y is in 13.35 format */
-    y = mult_32x32_keep64(y0, (0xFFFFF - fract));
-    /* Calculation of (y0 * (1-fract) + y1 * fract) and y is in 13.35 format */
-    y = multAcc_32x32_keep64(y, y1, (fract));
+        /* Calculation of y0 * (1-fract) and y is in 13.35 format */
+        y = mult_32x32_keep64(y0, (0xFFFFF - fract));
+        /* Calculation of (y0 * (1-fract) + y1 * fract) and y is in 13.35 format */
+        y = multAcc_32x32_keep64(y, y1, (fract));
 #else
-    /* Calculation of y0 * (1-fract) and y is in 13.35 format */
-    y = ((q63_t) y0 * (0xFFFFF - fract));
-    /* Calculation of (y0 * (1-fract) + y1 * fract) and y is in 13.35 format */
-    y += ((q63_t) y1 * (fract));
+        /* Calculation of y0 * (1-fract) and y is in 13.35 format */
+        y = ((q63_t) y0 * (0xFFFFF - fract));
+        /* Calculation of (y0 * (1-fract) + y1 * fract) and y is in 13.35 format */
+        y += ((q63_t) y1 * (fract));
 #endif
-    /* convert y to 1.15 format */
-    return (q15_t) (y >> 20);
-  }
+        /* convert y to 1.15 format */
+        return (q15_t) (y >> 20);
+    }
 }
 /**
  * @}
@@ -3694,9 +3694,9 @@ uint32_t nValues)
  * This function can support maximum of table size 2^12.
  */
 __STATIC_INLINE q7_t csky_linear_interp_q7(
-q7_t *pYData,
-q31_t x,
-uint32_t nValues)
+    q7_t *pYData,
+    q31_t x,
+    uint32_t nValues)
 {
     q31_t y;                                     /* output */
     q7_t y0, y1;                                 /* Nearest output values */
@@ -3814,23 +3814,23 @@ typedef struct
 }mp_no;
 
 float64_t csky_pow_f64(
-float64_t x,
-float64_t y);
+    float64_t x,
+    float64_t y);
 
 float64_t csky_log_f64(
-float64_t x);
+    float64_t x);
 
 float64_t csky_exp_f64(
-float64_t x);
+    float64_t x);
 
 float64_t csky_pow2_f64(
-float64_t x);
+    float64_t x);
 
 float64_t csky_log2_f64(
-float64_t x);
+    float64_t x);
 
 float64_t csky_log10_f64(
-float64_t x);
+    float64_t x);
 
 void csky_power_q31(
     q31_t *pSrc,
@@ -4173,9 +4173,9 @@ void csky_q15_to_q7(
 * @return out interpolated value.
 */
 __STATIC_INLINE float32_t csky_bilinear_interp_f32(
-const csky_bilinear_interp_instance_f32 * S,
-float32_t X,
-float32_t Y)
+    const csky_bilinear_interp_instance_f32 * S,
+    float32_t X,
+    float32_t Y)
 {
     float32_t out;
     float32_t f00, f01, f10, f11;
@@ -4231,9 +4231,9 @@ float32_t Y)
 * @return out interpolated value.
 */
 __STATIC_INLINE q31_t csky_bilinear_interp_q31(
-csky_bilinear_interp_instance_q31 *S,
-q31_t X,
-q31_t Y)
+    csky_bilinear_interp_instance_q31 *S,
+    q31_t X,
+    q31_t Y)
 {
     q31_t out;                                   /* Temporary output */
     q31_t acc = 0;                               /* output */
@@ -4313,9 +4313,9 @@ q31_t Y)
 * @return out interpolated value.
 */
 __STATIC_INLINE q15_t csky_bilinear_interp_q15(
-csky_bilinear_interp_instance_q15 * S,
-q31_t X,
-q31_t Y)
+    csky_bilinear_interp_instance_q15 * S,
+    q31_t X,
+    q31_t Y)
 {
     q63_t acc = 0;                               /* output */
     q31_t out;                                   /* Temporary output */
@@ -4399,9 +4399,9 @@ void test(q7_t *pSrc, q7_t *pDst);
 * @return out interpolated value.
 */
 __STATIC_INLINE q7_t csky_bilinear_interp_q7(
-csky_bilinear_interp_instance_q7 * S,
-q31_t X,
-q31_t Y)
+    csky_bilinear_interp_instance_q7 * S,
+    q31_t X,
+    q31_t Y)
 {
     q63_t acc = 0;                               /* output */
     q31_t out;                                   /* Temporary output */

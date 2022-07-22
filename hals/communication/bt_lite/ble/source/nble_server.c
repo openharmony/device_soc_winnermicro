@@ -111,7 +111,6 @@ void ble_server_retrieve_id_by_uuid(ble_uuid_t *uuid, uint16_t *server_id)
     {
         svc_item = dl_list_first(&svr_item->srvc_list.list, service_elem_t, list);
         if (ble_uuid_cmp(uuid, &svc_item->uuid) == 0) {
-            // BLE_IF_DEBUG("got server id:(%d)\r\n", svr_item->server_id);
             *server_id = svr_item->server_id;
         }
     }
@@ -125,7 +124,6 @@ void ble_server_retrieve_id_by_service_id(uint16_t svc_handle, uint16_t *server_
     {
         svc_item = dl_list_first(&svr_item->srvc_list.list, service_elem_t, list);
         if (svc_item->attr_handle == svc_handle) {
-            // BLE_IF_DEBUG("svc_handle=%d, got server id:(%d)\r\n", svc_handle,svr_item->server_id);
             *server_id = svr_item->server_id;
         }
     }
@@ -153,8 +151,6 @@ void ble_server_update_svc_handle(ble_uuid_t *uuid, uint16_t attr_handle)
     {
         svc_item = dl_list_first(&svr_item->srvc_list.list, service_elem_t, list);
         if (ble_uuid_cmp(uuid, &svc_item->uuid) == 0) {
-            // BLE_IF_DEBUG("greate update success:(%d-->%d), addr=0x%08x\r\n", \
-            svc_item->attr_handle, attr_handle, &svc_item->attr_handle);
             svc_item->attr_handle = attr_handle;
         }
     }
@@ -175,7 +171,6 @@ void ble_server_func_by_attr_handle(uint16_t attr_handle, uint8_t op, uint8_t *d
                     case BLE_GATT_ACCESS_OP_WRITE_CHR:
                         if (svc_item->func.write) {
                             #if BLE_IF_DBG
-                            // tls_bt_dump_hexstring("To   Local:", data, *len);
                             #endif
                             svc_item->func.write(data, (int)*len);
                         }
@@ -214,7 +209,6 @@ static int ble_server_gatt_svc_access_func(uint16_t conn_handle, uint16_t attr_h
                     memcpy(cache_buffer+offset, om->om_data, length);
                     offset += length;
                     assert(offset <= sizeof(cache_buffer));
-                    // ble_server_func_by_attr_handle(attr_handle, ctxt->op, om->om_data, &length);
                     om = SLIST_NEXT(om, om_next);
                 }
                 if (offset>0)ble_server_func_by_attr_handle(attr_handle, ctxt->op, cache_buffer, &offset);
@@ -304,14 +298,14 @@ int ble_server_alloc(BleGattService *srvcinfo)
     assert(srvc_counter == 1);
     assert(char_counter >= 1);
 
-    BLE_IF_DEBUG("Adding service srvc=%d, char=%d, dsc=%d\r\n", srvc_counter,char_counter, desc_counter);
+    BLE_IF_DEBUG("Adding service srvc=%d, char=%d, dsc=%d\r\n", srvc_counter, char_counter, desc_counter);
 
     /* alloc service array */
     gatt_svc_array = (struct ble_gatt_svc_def *)tls_mem_alloc(2*sizeof(struct ble_gatt_svc_def));
     assert(gatt_svc_array != NULL);
     memset(gatt_svc_array, 0, 2*sizeof(struct ble_gatt_svc_def));
 
-    /*prealloc charactertistic array*/
+    /* prealloc charactertistic array */
     gatt_chr_array = (struct ble_gatt_chr_def *)tls_mem_alloc((1+char_counter) * sizeof(struct ble_gatt_chr_def));
     assert(gatt_chr_array != NULL);
     memset(gatt_chr_array, 0, (1+char_counter) * sizeof(struct ble_gatt_chr_def));
@@ -326,19 +320,18 @@ int ble_server_alloc(BleGattService *srvcinfo)
     nim_service->svc = gatt_svc_array;
     dl_list_add_tail(&nim_service_list.list, &nim_service->list);
     
-    for(i = 0; i<srvcinfo->attrNum; i++) {
+    for (i = 0; i<srvcinfo->attrNum; i++) {
         if (srvcinfo->attrList[i].attrType == OHOS_BLE_ATTRIB_TYPE_SERVICE) { 
             srvc_elem = (service_elem_t *)tls_mem_alloc(sizeof(service_elem_t));
             assert(srvc_elem != NULL);
             srvc_elem->attr_type = srvcinfo->attrList[i].attrType;
-            ble_server_uuid_init_from_buf(&srvc_elem->uuid,srvcinfo->attrList[i].uuid, srvcinfo->attrList[i].uuidType);
+            ble_server_uuid_init_from_buf(&srvc_elem->uuid, srvcinfo->attrList[i].uuid, srvcinfo->attrList[i].uuidType);
             srvc_elem->attr_handle = 0xFFFF;
             dl_list_add_tail(&serv_elem->srvc_list.list, &srvc_elem->list);
             // first fill with element used for nimble stack;
             gatt_svc_array[0].type = BLE_GATT_SVC_TYPE_PRIMARY;
-            gatt_svc_array[0].uuid =  &srvc_elem->uuid; 
+            gatt_svc_array[0].uuid =  &srvc_elem->uuid;
 
-            // BLE_IF_DEBUG("Adding service\r\n");
         } else if (srvcinfo->attrList[i].attrType == OHOS_BLE_ATTRIB_TYPE_CHAR) {
             srvc_sub_elem = (service_elem_t *)tls_mem_alloc(sizeof(service_elem_t));
             assert(srvc_sub_elem != NULL);
@@ -358,8 +351,6 @@ int ble_server_alloc(BleGattService *srvcinfo)
             gatt_chr_array[serv_elem->srvc_count].val_handle = &srvc_sub_elem->attr_handle;
             gatt_chr_array[serv_elem->srvc_count].arg = (void*)&srvc_elem->attr_handle; \
             // give the service handle as arg, char added callback will handle it;
-            
-            // BLE_IF_DEBUG("Adding char(%d), arg=0x%08x\r\n",serv_elem->srvc_count,&srvc_elem->attr_handle);
             serv_elem->srvc_count++;
         } else if (srvcinfo->attrList[i].attrType == OHOS_BLE_ATTRIB_TYPE_CHAR_USER_DESCR) {
             // stack will handle the cccd
@@ -390,7 +381,6 @@ int ble_server_alloc(BleGattService *srvcinfo)
                
             serv_elem->srvc_count++; // restore it;
            
-            // BLE_IF_DEBUG("Adding desc\r\n");
         }
     }
 

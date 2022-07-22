@@ -73,7 +73,7 @@ void tls_irq_init(void)
     /* clear bt mask */
     tls_reg_write32(0x40002A10,0xFFFFFFFF);
     NVIC_ClearPendingIRQ(BT_IRQn);
-    
+
     csi_vic_set_vector(I2S_IRQn, (uint32_t)i2s_I2S_IRQHandler);
     csi_vic_set_vector(I2C_IRQn, (uint32_t)i2c_I2C_IRQHandler);
     csi_vic_set_vector(GPIOA_IRQn, (uint32_t)GPIOA_IRQHandler);
@@ -128,8 +128,7 @@ void tls_irq_register_handler(u8 vec_no, intr_handler_func handler, void *data)
  */
 void tls_irq_enable(u8 vec_no)
 {
-    if ((irqen_status & (1<<vec_no)) == 0)
-    {
+    if ((irqen_status & (1<<vec_no)) == 0) {
         irqen_status |= 1<<vec_no;
         NVIC_ClearPendingIRQ((IRQn_Type)vec_no);
         NVIC_EnableIRQ((IRQn_Type)vec_no);
@@ -147,8 +146,7 @@ void tls_irq_enable(u8 vec_no)
  */
 void tls_irq_disable(u8 vec_no)
 {
-    if (irqen_status & (1<<vec_no))
-    {
+    if (irqen_status & (1<<vec_no)) {
         irqen_status &= ~(1<<vec_no);
         NVIC_DisableIRQ((IRQn_Type)vec_no);
     }
