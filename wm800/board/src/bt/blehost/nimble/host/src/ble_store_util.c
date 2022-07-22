@@ -27,10 +27,9 @@ struct ble_store_util_peer_set {
     int status;
 };
 
-static int
-ble_store_util_iter_unique_peer(int obj_type,
-                                union ble_store_value *val,
-                                void *arg)
+static int ble_store_util_iter_unique_peer(int obj_type,
+                                           union ble_store_value *val,
+                                           void *arg)
 {
     struct ble_store_util_peer_set *set;
     int i;
@@ -39,7 +38,7 @@ ble_store_util_iter_unique_peer(int obj_type,
     set = arg;
 
     /* Do nothing if this peer is a duplicate. */
-    for(i = 0; i < set->num_peers; i++) {
+    for (i = 0; i < set->num_peers; i++) {
         if (ble_addr_cmp(set->peer_id_addrs + i, &val->sec.peer_addr) == 0) {
             return 0;
         }
@@ -70,9 +69,7 @@ ble_store_util_iter_unique_peer(int obj_type,
  *                                  small;
  *                              Other nonzero on error.
  */
-int
-ble_store_util_bonded_peers(ble_addr_t *out_peer_id_addrs, int *out_num_peers,
-                            int max_peers)
+int ble_store_util_bonded_peers(ble_addr_t *out_peer_id_addrs, int *out_num_peers, int max_peers)
 {
     struct ble_store_util_peer_set set = {
         .peer_id_addrs = out_peer_id_addrs,
@@ -84,7 +81,6 @@ ble_store_util_bonded_peers(ble_addr_t *out_peer_id_addrs, int *out_num_peers,
     rc = ble_store_iterate(BLE_STORE_OBJ_TYPE_OUR_SEC,
                            ble_store_util_iter_unique_peer,
                            &set);
-
     if (rc != 0) {
         return rc;
     }
@@ -106,21 +102,18 @@ ble_store_util_bonded_peers(ble_addr_t *out_peer_id_addrs, int *out_num_peers,
  * @return                      0 on success;
  *                              Other nonzero on error.
  */
-int
-ble_store_util_delete_peer(const ble_addr_t *peer_id_addr)
+int ble_store_util_delete_peer(const ble_addr_t *peer_id_addr)
 {
     union ble_store_key key;
     int rc;
     memset(&key, 0, sizeof key);
     key.sec.peer_addr = *peer_id_addr;
     rc = ble_store_util_delete_all(BLE_STORE_OBJ_TYPE_OUR_SEC, &key);
-
     if (rc != 0) {
         return rc;
     }
 
     rc = ble_store_util_delete_all(BLE_STORE_OBJ_TYPE_PEER_SEC, &key);
-
     if (rc != 0) {
         return rc;
     }
@@ -128,14 +121,12 @@ ble_store_util_delete_peer(const ble_addr_t *peer_id_addr)
     memset(&key, 0, sizeof key);
     key.cccd.peer_addr = *peer_id_addr;
     rc = ble_store_util_delete_all(BLE_STORE_OBJ_TYPE_CCCD, &key);
-
     if (rc != 0) {
         return rc;
     }
 
     rc = ble_store_flush();
-    if (!rc)
-    {
+    if (!rc) {
         return rc;
     }
 
@@ -151,14 +142,13 @@ ble_store_util_delete_peer(const ble_addr_t *peer_id_addr)
  * @return                      0 on success;
  *                              Other nonzero on error.
  */
-int
-ble_store_util_delete_all(int type, const union ble_store_key *key)
+int ble_store_util_delete_all(int type, const union ble_store_key *key)
 {
     int rc;
 
     do {
         rc = ble_store_delete(type, key);
-    } while(rc == 0);
+    } while (rc == 0);
 
     if (rc != BLE_HS_ENOENT) {
         return rc;
@@ -167,10 +157,9 @@ ble_store_util_delete_all(int type, const union ble_store_key *key)
     return 0;
 }
 
-static int
-ble_store_util_iter_count(int obj_type,
-                          union ble_store_value *val,
-                          void *arg)
+static int ble_store_util_iter_count(int obj_type,
+                                     union ble_store_value *val,
+                                     void *arg)
 {
     int *count;
     count = arg;
@@ -178,21 +167,20 @@ ble_store_util_iter_count(int obj_type,
     return 0;
 }
 
-int
-ble_store_util_count(int type, int *out_count)
+int ble_store_util_count(int type, int *out_count)
 {
     int rc;
     *out_count = 0;
     rc = ble_store_iterate(type,
                            ble_store_util_iter_count,
                            out_count);
-
     if (rc != 0) {
         return rc;
     }
 
     return 0;
 }
+
 int ble_store_util_get_peer_by_index(int index, ble_addr_t *peer_id_addr)
 {
     ble_addr_t peer_id_addrs[MYNEWT_VAL(BLE_STORE_MAX_BONDS)];
@@ -201,7 +189,6 @@ int ble_store_util_get_peer_by_index(int index, ble_addr_t *peer_id_addr)
     rc = ble_store_util_bonded_peers(
                          peer_id_addrs, &num_peers,
                          sizeof peer_id_addrs / sizeof peer_id_addrs[0]);
-
     if (rc != 0) {
         return rc;
     }
@@ -214,8 +201,7 @@ int ble_store_util_get_peer_by_index(int index, ble_addr_t *peer_id_addr)
     return rc;
 }
 
-int
-ble_store_util_delete_oldest_peer(ble_addr_t *peer_id_addr)
+int ble_store_util_delete_oldest_peer(ble_addr_t *peer_id_addr)
 {
     ble_addr_t peer_id_addrs[MYNEWT_VAL(BLE_STORE_MAX_BONDS)];
     int num_peers;
@@ -223,7 +209,6 @@ ble_store_util_delete_oldest_peer(ble_addr_t *peer_id_addr)
     rc = ble_store_util_bonded_peers(
                          peer_id_addrs, &num_peers,
                          sizeof peer_id_addrs / sizeof peer_id_addrs[0]);
-
     if (rc != 0) {
         return rc;
     }
@@ -233,7 +218,6 @@ ble_store_util_delete_oldest_peer(ble_addr_t *peer_id_addr)
     }
 
     rc = ble_store_util_delete_peer(&peer_id_addrs[0]);
-
     if (rc != 0) {
         return rc;
     }
@@ -253,10 +237,9 @@ ble_store_util_delete_oldest_peer(ble_addr_t *peer_id_addr)
  * uninteresting peers could cause important bonds to be deleted.  This is
  * useful for demonstrations and sample apps.
  */
-int
-ble_store_util_status_rr(struct ble_store_status_event *event, void *arg)
+int ble_store_util_status_rr(struct ble_store_status_event *event, void *arg)
 {
-    switch(event->event_code) {
+    switch (event->event_code) {
         case BLE_STORE_EVENT_OVERFLOW:
             switch(event->overflow.obj_type) {
                 case BLE_STORE_OBJ_TYPE_OUR_SEC:

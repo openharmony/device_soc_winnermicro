@@ -24,12 +24,10 @@
 #include "host/ble_sm.h"
 #include "ble_hs_priv.h"
 
-void *
-ble_sm_cmd_get(uint8_t opcode, size_t len, struct os_mbuf **txom)
+void *ble_sm_cmd_get(uint8_t opcode, size_t len, struct os_mbuf **txom)
 {
     struct ble_sm_hdr *hdr;
     *txom = ble_hs_mbuf_l2cap_pkt();
-
     if (*txom == NULL) {
         return NULL;
     }
@@ -45,8 +43,7 @@ ble_sm_cmd_get(uint8_t opcode, size_t len, struct os_mbuf **txom)
 }
 
 /* this function consumes tx os_mbuf */
-int
-ble_sm_tx(uint16_t conn_handle, struct os_mbuf *txom)
+int ble_sm_tx(uint16_t conn_handle, struct os_mbuf *txom)
 {
     struct ble_l2cap_chan *chan;
     struct ble_hs_conn *conn;
