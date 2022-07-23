@@ -20,13 +20,12 @@
 #ifndef H_NIMBLE_OPT_
 #define H_NIMBLE_OPT_
 
+#include "nimble/nimble_opt_auto.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /* Include automatically-generated settings. */
-#include "nimble/nimble_opt_auto.h"
-
 #ifdef __cplusplus
 }
 #endif

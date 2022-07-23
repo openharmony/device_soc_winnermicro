@@ -138,8 +138,7 @@ struct os_mempool_info {
  * @return The next memory pool in the list to get information about, or NULL
  *         when at the last memory pool.
  */
-struct os_mempool *os_mempool_info_get_next(struct os_mempool *,
-        struct os_mempool_info *);
+struct os_mempool *os_mempool_info_get_next(struct os_mempool *, struct os_mempool_info *);
 
 /*
  * To calculate size of the memory buffer needed for the pool. NOTE: This size
@@ -147,15 +146,15 @@ struct os_mempool *os_mempool_info_get_next(struct os_mempool *,
  * the memory pool.
  */
 #if (OS_CFG_ALIGNMENT == OS_CFG_ALIGN_4)
-#define OS_MEMPOOL_SIZE(n,blksize)      ((((blksize) + 3) / 4) * (n))
+#define OS_MEMPOOL_SIZE(n, blksize)      ((((blksize) + 3) / 4) * (n))
 typedef uint32_t os_membuf_t;
 #else
-#define OS_MEMPOOL_SIZE(n,blksize)      ((((blksize) + 7) / 8) * (n))
+#define OS_MEMPOOL_SIZE(n, blksize)      ((((blksize) + 7) / 8) * (n))
 typedef uint64_t os_membuf_t;
 #endif
 
 /** Calculates the number of bytes required to initialize a memory pool. */
-#define OS_MEMPOOL_BYTES(n,blksize)     \
+#define OS_MEMPOOL_BYTES(n, blksize)     \
     (sizeof (os_membuf_t) * OS_MEMPOOL_SIZE((n), (blksize)))
 
 /**

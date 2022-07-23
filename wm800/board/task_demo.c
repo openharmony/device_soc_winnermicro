@@ -42,7 +42,7 @@
 VOID TaskSampleEntry2(VOID)
 {
     while (1) {
-        #if 1
+#if 1
         UINT64 cycle = LOS_SysCycleGet();
         UINT64 nowNsec = (cycle / OS_SYS_CLOCK) * OS_SYS_NS_PER_SECOND +
                          (cycle % OS_SYS_CLOCK) * OS_SYS_NS_PER_SECOND / OS_SYS_CLOCK;
@@ -50,8 +50,8 @@ VOID TaskSampleEntry2(VOID)
         UINT32 tv_sec = nowNsec / OS_SYS_NS_PER_SECOND;
         UINT32 tv_nsec = nowNsec % OS_SYS_NS_PER_SECOND;
         printf("TaskSampleEntry2 running... tv_sec %d, tv_nsec %d\n", tv_sec, tv_nsec);
-        (VOID)LOS_TaskDelay(500); /* 2000 millisecond */
-        #endif
+        (VOID)LOS_TaskDelay(500); // 500:2000 millisecond
+#endif
     }
 }
 
@@ -59,7 +59,7 @@ VOID TaskSampleEntry1(VOID)
 {
     while (1) {
         printf("TaskSampleEntry1 running...\n");
-        (VOID)LOS_TaskDelay(400); /* 2000 millisecond */
+        (VOID)LOS_TaskDelay(400); // 400:2000 millisecond
     }
 }
 
@@ -95,7 +95,6 @@ VOID RunTaskSample(VOID)
 {
     UINT32 ret;
     ret = LOS_KernelInit();
-    // FileSystemInit();
     if (ret == LOS_OK) {
         TaskSample();
         (VOID)LOS_Start();

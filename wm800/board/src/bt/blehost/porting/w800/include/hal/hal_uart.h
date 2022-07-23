@@ -27,11 +27,10 @@
 #ifndef H_HAL_UART_H_
 #define H_HAL_UART_H_
 
+#include <stdint.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#include <stdint.h>
 
 /**
  * Function prototype for UART driver to ask for more data to send.

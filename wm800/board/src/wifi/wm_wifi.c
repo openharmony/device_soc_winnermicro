@@ -44,9 +44,9 @@ static void wifi_status_changed(u8 status)
     {
         if (status_event->status_callback != NULL)
         {
-            switch(status)
+            switch (status)
             {
-                case WIFI_JOIN_SUCCESS:             
+                case WIFI_JOIN_SUCCESS:         
                     status_event->status_callback(NETIF_WIFI_JOIN_SUCCESS);
                     break;
                 case WIFI_JOIN_FAILED:
@@ -86,28 +86,24 @@ int tls_wifi_init(void)
 {
     extern u8 tx_gain_group[];
     u8 mac_addr[6] = {0x00, 0x25, 0x08, 0x09, 0x01, 0x0F};
-    if (wifi_inited_ok == 1)
-    {
+    if (wifi_inited_ok == 1) {
         return 0;
     }
 
     tls_get_tx_gain(&tx_gain_group[0]);
-    if (tls_wifi_mem_cfg(WIFI_MEM_START_ADDR, 5, 3)) /*wifi tx&rx mem customized interface*/
-    {
+    if (tls_wifi_mem_cfg(WIFI_MEM_START_ADDR, 5, 3)) { /* wifi tx&rx mem customized interface */ // 5:txcnt, 3:rxcnt
         TLS_DBGPRT_INFO("wl mem initial failured\n");
         return -1;
     }
 
     tls_get_mac_addr(&mac_addr[0]);
-    TLS_DBGPRT_INFO("%02x%02x%02x%02x%02x%02x\n", mac_addr[0], mac_addr[1], mac_addr[2], 
-        mac_addr[3], mac_addr[4], mac_addr[5]);
-    if (tls_wl_init(NULL, &mac_addr[0], NULL) == NULL)
-    {
+    TLS_DBGPRT_INFO("%02x%02x%02x%02x%02x%02x\n", mac_addr[0], mac_addr[1], mac_addr[2], // 2:array element
+        mac_addr[3], mac_addr[4], mac_addr[5]); // 3:array element, 4:array element, 5:array element
+    if (tls_wl_init(NULL, &mac_addr[0], NULL) == NULL) {
         TLS_DBGPRT_INFO("wl driver initial failured\n");
         return -1;
     }
-    if (wpa_supplicant_init(mac_addr))
-    {
+    if (wpa_supplicant_init(mac_addr)) {
         TLS_DBGPRT_INFO("supplicant initial failured\n");
         return -1;
     }
@@ -175,14 +171,12 @@ int tls_wifi_netif_remove_status_event(tls_wifi_netif_status_event_fn event_fn)
         return 0;
     dl_list_for_each(status_event, &wifi_netif_status_event.list, struct tls_wifi_netif_status_event, list)
     {
-        if (status_event->status_callback == event_fn)
-        {
+        if (status_event->status_callback == event_fn) {
             is_exist = TRUE;
             break;
         }
     }
-    if (is_exist)
-    {
+    if (is_exist) {
         cpu_sr = tls_os_set_critical();
         dl_list_del(&status_event->list);
         tls_os_release_critical(cpu_sr);
@@ -190,4 +184,3 @@ int tls_wifi_netif_remove_status_event(tls_wifi_netif_status_event_fn event_fn)
     }
     return 0;
 }
-

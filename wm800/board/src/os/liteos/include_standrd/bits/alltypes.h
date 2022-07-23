@@ -209,7 +209,7 @@ typedef unsigned long wctype_t;
 #endif
 
 #if defined(__NEED_timer_t) && !defined(__DEFINED_timer_t)
-typedef void * timer_t;
+typedef void *timer_t;
 #define __DEFINED_timer_t
 #endif
 
@@ -229,7 +229,12 @@ struct timeval { time_t tv_sec; suseconds_t tv_usec; };
 #endif
 
 #if defined(__NEED_struct_timespec) && !defined(__DEFINED_struct_timespec)
-struct timespec { time_t tv_sec; int :8*(sizeof(time_t)-sizeof(long))*(__BYTE_ORDER==4321); long tv_nsec; int :8*(sizeof(time_t)-sizeof(long))*(__BYTE_ORDER!=4321); };
+struct timespec {
+    time_t tv_sec;
+    int : 8 * (sizeof(time_t) - sizeof(long)) * (__BYTE_ORDER == 4321); // 8:byte alignment, 4321:byte alignment
+    long tv_nsec;
+    int : 8 * (sizeof(time_t) - sizeof(long)) * (__BYTE_ORDER != 4321); // 8:byte alignment, 4321:byte alignment
+};
 #define __DEFINED_struct_timespec
 #endif
 
@@ -271,7 +276,7 @@ typedef unsigned long pthread_t;
 
 #else
 #if defined(__NEED_pthread_t) && !defined(__DEFINED_pthread_t)
-typedef struct __pthread * pthread_t;
+typedef struct __pthread *pthread_t;
 #define __DEFINED_pthread_t
 #endif
 
@@ -337,7 +342,7 @@ typedef struct __mbstate_t { unsigned __opaque1, __opaque2; } mbstate_t;
 #endif
 
 #if defined(__NEED_locale_t) && !defined(__DEFINED_locale_t)
-typedef struct __locale_struct * locale_t;
+typedef struct __locale_struct *locale_t;
 #define __DEFINED_locale_t
 #endif
 
