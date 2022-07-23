@@ -62,14 +62,14 @@ typedef struct _MEMORY_PATTERN {
     u32 pattern0;
 }MEMORY_PATTERN, *PMEMORY_PATTERN;
 void mem_free_debug(void *p, char *file, int line);
-#define tls_mem_free(p)   mem_free_debug( p, __FILE__, __LINE__)
+#define tls_mem_free(p)   mem_free_debug(p, __FILE__, __LINE__)
 void *mem_alloc_debug(u32 size, char *file, int line);
 void mem_free_allocated_blocks(void);
 #define tls_mem_alloc(size)   mem_alloc_debug(size, __FILE__, __LINE__)
-void * mem_realloc_debug(void *mem_address, u32 size, char *file, int line);
+void *mem_realloc_debug(void *mem_address, u32 size, char *file, int line);
 #define tls_mem_realloc(mem_address, size)   mem_realloc_debug(mem_address, size, __FILE__, __LINE__)
 
-void *mem_calloc_debug(u32 n, u32 size, char *file,int line);
+void *mem_calloc_debug(u32 n, u32 size, char *file, int line);
 #define tls_mem_calloc(n, size) mem_calloc_debug(n, size, __FILE__, __LINE__)
 void tls_mem_alloc_info(void);
 int  is_safe_addr_debug(void *p, u32 len, char *file, int line);
@@ -171,7 +171,7 @@ void *mem_calloc_debug(u32 length, u32 size);
  *
  * @note           None
  */
-#define MEMCPY(dst,src,len)      memcpy(dst,src,len)
+#define MEMCPY(dst, src, len)      memcpy(dst, src, len)
 
 /**
  * @brief          This function is used to copy memory content from one address to another address
@@ -184,7 +184,7 @@ void *mem_calloc_debug(u32 length, u32 size);
  *
  * @note           None
  */
-#define SMEMCPY(dst,src,len)    memcpy(dst,src,len)
+#define SMEMCPY(dst, src, len)    memcpy(dst, src, len)
 
 /**
  * @}

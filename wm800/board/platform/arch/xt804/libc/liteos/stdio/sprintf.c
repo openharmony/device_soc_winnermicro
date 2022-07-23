@@ -18,14 +18,6 @@
 
 int sprintf(char *restrict s, const char *restrict fmt, ...)
 {
-#if 0
-    int ret;
-    va_list ap;
-    va_start(ap, fmt);
-    ret = vsprintf(s, fmt, ap);
-    va_end(ap);
-    return ret;
-#else
     va_list ap;
     int i;
 
@@ -34,5 +26,4 @@ int sprintf(char *restrict s, const char *restrict fmt, ...)
     va_end(ap);
 
     return i;
-#endif
 }

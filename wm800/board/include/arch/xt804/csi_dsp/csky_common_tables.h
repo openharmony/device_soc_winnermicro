@@ -316,7 +316,7 @@ static const mynumber
 #define  E4        e4.x
 #define  U03       u03.x
 #define  HALF      0x1.0p-1     /* 1/2 */
-#define  MHALF     -0x1.0p-1    /* -1/2 */
+#define  MHALF     (-0x1.0p-1)    /* -1/2 */
 
 /* coeffient for log2 funtion */
 static const float64_t

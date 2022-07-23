@@ -65,9 +65,6 @@ static volatile u8 g_connectStatus = 0;
 
 u8 g_hasConnected = 0;
 
-/* Store Scanned AP count
- * TODO: Use lock to protect Scan result.
- */
 #define KV_FILE_NAME  "/data"
 #define WIFI_CFG_INFO   "wifi_cfg_info"
 
@@ -113,7 +110,6 @@ WifiErrorCode EnableWifi(void)
     gWifiStaStatus = WIFI_STA_ACTIVE;
 
     if (UnlockWifiGlobalLock() != WIFI_SUCCESS) {
-        /* FIXME: Should reset gWifiStaStatus here? */
         return ERROR_WIFI_UNKNOWN;
     }
     return WIFI_SUCCESS;
@@ -464,7 +460,6 @@ WifiErrorCode AdvanceScan(WifiScanParams *params)
     }
 
     if (params->scanType == WIFI_BAND_SCAN && params->band == 0) {
-        // /FIXME: test case code logic error, but we follow it, need update when test code update.
         printf("[wifi_service] WIFI_BAND_SCAN, but band = %d invalid!\n", params->band);
     }
 

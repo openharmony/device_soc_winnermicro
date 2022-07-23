@@ -313,11 +313,26 @@ static void wm_tool_stdin_to_uart(void);
 #define BASE 65521 /* largest prime smaller than 65536 */
 #define NMAX 5552
 
-#define DO1(buf)  {s1 += *buf++; s2 += s1;}
-#define DO2(buf)  DO1(buf); DO1(buf);
-#define DO4(buf)  DO2(buf); DO2(buf);
-#define DO8(buf)  DO4(buf); DO4(buf);
-#define DO16(buf) DO8(buf); DO8(buf);
+#define DO1(buf)  do {
+    s1 += *buf++; \
+    s2 += s1; \
+}while (0)
+#define DO2(buf)  do {
+    DO1(buf); \
+    DO1(buf); \
+}while (0)
+#define DO4(buf)  do {
+    DO2(buf); \
+    DO2(buf); \
+}while (0)
+#define DO8(buf)  do {
+    DO4(buf); \
+    DO4(buf); \
+}while (0)
+#define DO16(buf) do {
+    DO8(buf); \
+    DO8(buf); \
+}while (0)
 
 #define Z_OK            0
 #define Z_STREAM_END    1
@@ -397,21 +412,21 @@ static void wm_tool_stdin_to_uart(void);
 
 #define MIN_LOOKAHEAD (MAX_MATCH+MIN_MATCH+1)
 
-#define UPDATE_HASH(s, h, c) (h = (((h)<<s->hash_shift) ^ (c)) & s->hash_mask)
+#define UPDATE_HASH(s, h, c) ((h) = (((h)<<(s)->hash_shift) ^ (c)) & (s)->hash_mask)
 
-#define ERR_RETURN(strm,err) return (strm->msg=z_errmsg[1-err], err)
+#define ERR_RETURN(strm,err) return ((strm)->msg=z_errmsg[1-(err)], (err))
 
-#define put_byte(s, c) {s->pending_buf[s->pending++] = (c);}
+#define put_byte(s, c) {(s)->pending_buf[(s)->pending++] = (c);}
 
 #define put_short(s, w) do { \
-    put_byte(s, (uch)((w) & 0xff)); \
-    put_byte(s, (uch)((ush)(w) >> 8)); \
+    put_byte((s), (uch)((w) & 0xff)); \
+    put_byte((s), (uch)((ush)(w) >> 8)); \
 }while (0)
 
 #define INSERT_STRING(s, str, match_head) \
-    (UPDATE_HASH(s, s->ins_h, s->window[(str) + MIN_MATCH-1]), \
-    s->prev[(str) & s->w_mask] = match_head = s->head[s->ins_h], \
-    s->head[s->ins_h] = (str))
+    (UPDATE_HASH((s), (s)->ins_h, (s)->window[(str) + MIN_MATCH-1]), \
+    (s)->prev[(str) & (s)->w_mask] = (match_head) = (s)->head[(s)->ins_h], \
+    (s)->head[(s)->ins_h] = (str))
 
 #define MAX_DIST(s)  ((s)->w_size-MIN_LOOKAHEAD)
 
@@ -421,31 +436,31 @@ static void wm_tool_stdin_to_uart(void);
     ((dist) < 256 ? dist_code[dist] : dist_code[256+((dist)>>7)])
 
 #define FLUSH_BLOCK_ONLY(s, eof) do { \
-    ct_flush_block(s, (s->block_start >= 0L ? \
-                (char*)&s->window[(unsigned)s->block_start] : \
-                (char*)Z_NULL), (long)s->strstart - s->block_start, (eof)); \
-    s->block_start = s->strstart; \
-    flush_pending(s->strm); \
+    ct_flush_block((s), (s->block_start >= 0L ? \
+                (char*)&(s)->window[(unsigned)(s)->block_start] : \
+                (char*)Z_NULL), (long)(s)->strstart - (s)->block_start, (eof)); \
+    (s)->block_start = (s)->strstart; \
+    flush_pending((s)->strm); \
 } while (0)
 
 #define FLUSH_BLOCK(s, eof) do { \
     FLUSH_BLOCK_ONLY(s, eof); \
-    if (s->strm->avail_out == 0) return 1; \
+    if ((s)->strm->avail_out == 0) return 1; \
 } while (0)
 
-#define send_code(s, c, tree) send_bits(s, tree[c].Code, tree[c].Len)
+#define send_code(s, c, tree) send_bits((s), (tree)[c].Code, (tree)[c].Len)
 
-#define MAX(a, b) (a >= b ? a : b)
+#define MAX(a, b) ((a) >= (b) ? (a) : (b))
 
 #define Buf_size (8 * 2*sizeof(char))
 
 #define smaller(tree, n, m, depth) \
-    (tree[n].Freq < tree[m].Freq || \
-    (tree[n].Freq == tree[m].Freq && depth[n] <= depth[m]))
+    ((tree)[n].Freq < (tree)[m].Freq || \
+    ((tree)[n].Freq == (tree)[m].Freq && depth[n] <= (depth)[m]))
 
 #define pqremove(s, tree, top) do { \
-    top = s->heap[SMALLEST]; \
-    s->heap[SMALLEST] = s->heap[s->heap_len--]; \
+    top = (s)->heap[SMALLEST]; \
+    (s)->heap[SMALLEST] = (s)->heap[s->heap_len--]; \
     pqdownheap(s, tree, SMALLEST); \
 } while (0)
 
@@ -919,7 +934,9 @@ local uLong crc32(crc, buf, len)
     Byte *buf;
     uInt len;
 {
-    if (buf == Z_NULL) return 0L;
+    if (buf == Z_NULL) {
+        return 0L;
+    }
     crc = crc ^ 0xffffffffL;
     if (len) {
         do {
@@ -934,7 +951,9 @@ local void zmemcpy(dest, source, len)
     Byte* source;
     uInt  len;
 {
-    if (len == 0) return;
+    if (len == 0) {
+        return;
+    }
     do {
     *dest++ = *source++; /* ??? to be unrolled */
     } while (--len != 0);
@@ -944,7 +963,9 @@ local void zmemzero(dest, len)
     Byte* dest;
     uInt  len;
 {
-    if (len == 0) return;
+    if (len == 0) {
+        return;
+    }
     do {
         *dest++ = 0;  /* ??? to be unrolled */
     } while (--len != 0);
@@ -959,7 +980,9 @@ local uLong adler32(adler, buf, len)
     unsigned long s2 = (adler >> 16) & 0xffff;
     int k;
 
-    if (buf == Z_NULL) return 1L;
+    if (buf == Z_NULL) {
+        return 1L;
+    }
 
     while (len > 0) {
         k = len < NMAX ? len : NMAX;
@@ -986,8 +1009,12 @@ local int read_buf(strm, buf, size)
 {
     unsigned len = strm->avail_in;
 
-    if (len > size) len = size;
-    if (len == 0) return 0;
+    if (len > size) {
+        len = size;
+    }
+    if (len == 0) {
+        return 0;
+    }
 
     strm->avail_in  -= len;
 
@@ -1011,8 +1038,9 @@ z_stream *z;        /* for zfree function */
     register inflate_huft *p, *q;
 
     /* Don't free fixed trees */
-    if (t >= fixed_mem && t <= fixed_mem + FIXEDH)
+    if (t >= fixed_mem && t <= fixed_mem + FIXEDH) {
         return Z_OK;
+    }
 
     /* Go through linked list, freeing from the malloced (t[-1]) address. */
     p = t;
@@ -1055,7 +1083,9 @@ uLong *c;
 local int deflateEnd (strm)
     z_stream *strm;
 {
-    if (strm == Z_NULL || strm->state == Z_NULL) return Z_STREAM_ERROR;
+    if (strm == Z_NULL || strm->state == Z_NULL) {
+        return Z_STREAM_ERROR;
+    }
 
     TRY_FREE(strm, strm->state->window);
     TRY_FREE(strm, strm->state->prev);
@@ -1089,7 +1119,9 @@ local int destroy (s)
 {
     int err = Z_OK;
 
-    if (!s) return Z_STREAM_ERROR;
+    if (!s) return {
+        Z_STREAM_ERROR;
+    }
 
     TRYFREE(s->inbuf);
     TRYFREE(s->outbuf);
@@ -1106,7 +1138,9 @@ local int destroy (s)
     if (s->file != NULL && fclose(s->file)) {
         err = Z_ERRNO;
     }
-    if (s->z_err < 0) err = s->z_err;
+    if (s->z_err < 0) {
+        err = s->z_err;
+    }
     zcfree((voidp)0, (voidp)s);
     return err;
 }
@@ -1171,13 +1205,15 @@ local void gen_codes (tree, max_code, bl_count)
 
     for (n = 0;  n <= max_code; n++) {
         int len = tree[n].Len;
-        if (len == 0) continue;
+        if (len == 0) {
+            continue;
+        }
         /* Now reverse the bits */
         tree[n].Code = bi_reverse(next_code[len]++, len);
     }
 }
 
-local void ct_static_init()
+local void ct_static_init(void)
 {
     int n;        /* iterates over tree elements */
     int bits;     /* bit counter */
@@ -1212,7 +1248,7 @@ local void ct_static_init()
     }
     Assert (dist == 256, "ct_static_init: dist != 256");
     dist >>= 7; /* from now on, all distances are divided by 128 */
-    for ( ; code < D_CODES; code++) {
+    for (; code < D_CODES; code++) {
         base_dist[code] = dist << 7;
         for (n = 0; n < (1<<(extra_dbits[code]-7)); n++) {
             dist_code[256 + dist++] = (uch)code;
@@ -1256,9 +1292,15 @@ local void init_block(s)
     int n; /* iterates over tree elements */
 
     /* Initialize the trees. */
-    for (n = 0; n < L_CODES;  n++) s->dyn_ltree[n].Freq = 0;
-    for (n = 0; n < D_CODES;  n++) s->dyn_dtree[n].Freq = 0;
-    for (n = 0; n < BL_CODES; n++) s->bl_tree[n].Freq = 0;
+    for (n = 0; n < L_CODES;  n++) {
+        s->dyn_ltree[n].Freq = 0;
+    }
+    for (n = 0; n < D_CODES;  n++) {
+        s->dyn_dtree[n].Freq = 0;
+    }
+    for (n = 0; n < BL_CODES; n++) {
+        s->bl_tree[n].Freq = 0;
+    }
 
     s->dyn_ltree[END_BLOCK].Freq = 1;
     s->opt_len = s->static_len = 0L;
@@ -1323,7 +1365,9 @@ local void lm_init (s)
 #endif
 
     s->ins_h = 0;
-    for (j=0; j<MIN_MATCH-1; j++) UPDATE_HASH(s, s->ins_h, s->window[j]);
+    for (j=0; j<MIN_MATCH-1; j++) {
+        UPDATE_HASH(s, s->ins_h, s->window[j]);
+    }
     /* If lookahead < MIN_MATCH, ins_h is garbage, but this is
      * not important since only literal bytes will be emitted.
      */
@@ -1335,7 +1379,9 @@ local int deflateReset (strm)
     deflate_state *s;
 
     if (strm == Z_NULL || strm->state == Z_NULL ||
-        strm->zalloc == Z_NULL || strm->zfree == Z_NULL) return Z_STREAM_ERROR;
+        strm->zalloc == Z_NULL || strm->zfree == Z_NULL) {
+        return Z_STREAM_ERROR;
+    }
 
     strm->total_in = strm->total_out = 0;
     strm->msg = Z_NULL; /* use zfree if we ever allocate msg dynamically */
@@ -1365,15 +1411,21 @@ local int deflateInit2 (strm, level, method, windowBits, memLevel, strategy)
     deflate_state *s;
     int noheader = 0;
 
-    if (strm == Z_NULL) return Z_STREAM_ERROR;
+    if (strm == Z_NULL) {
+        return Z_STREAM_ERROR;
+    }
 
     strm->msg = Z_NULL;
-    if (strm->zalloc == Z_NULL) strm->zalloc = zcalloc;
+    if (strm->zalloc == Z_NULL) {
+        strm->zalloc = zcalloc;
+    }
     if (strm->zfree == Z_NULL) {
         strm->zfree = zcfree;
     }
 
-    if (level == Z_DEFAULT_COMPRESSION) level = 6;
+    if (level == Z_DEFAULT_COMPRESSION) {
+        level = 6;
+    }
 
     if (windowBits < 0) { /* undocumented feature: suppress zlib header */
         noheader = 1;
@@ -1384,7 +1436,9 @@ local int deflateInit2 (strm, level, method, windowBits, memLevel, strategy)
         return Z_STREAM_ERROR;
     }
     s = (deflate_state *) ZALLOC(strm, 1, sizeof(deflate_state));
-    if (s == Z_NULL) return Z_MEM_ERROR;
+    if (s == Z_NULL) {
+        return Z_MEM_ERROR;
+    }
     strm->state = (struct internal_state *)s;
     s->strm = strm;
 
@@ -1431,15 +1485,21 @@ z_stream *z;
 int w;
 {
     /* initialize state */
-    if (z == Z_NULL)
+    if (z == Z_NULL) {
         return Z_STREAM_ERROR;
-    if (z->zalloc == Z_NULL) z->zalloc = zcalloc;
-    if (z->zfree == Z_NULL) z->zfree = zcfree;
+    }
+    if (z->zalloc == Z_NULL) {
+        z->zalloc = zcalloc;
+    }
+    if (z->zfree == Z_NULL) {
+        z->zfree = zcfree;
+    }
     z->total_in = z->total_out = 0;
     z->msg = Z_NULL;
     if ((z->state = (struct internal_state *)
-        ZALLOC(z, 1, sizeof(struct internal_state))) == Z_NULL)
+        ZALLOC(z, 1, sizeof(struct internal_state))) == Z_NULL) {
         return Z_MEM_ERROR;
+    }
     z->state->mode = METHOD;
 
     /* handle undocumented nowrap option (no zlib header or check) */
@@ -1472,8 +1532,12 @@ local void flush_pending(strm)
 {
     unsigned len = strm->state->pending;
 
-    if (len > strm->avail_out) len = strm->avail_out;
-    if (len == 0) return;
+    if (len > strm->avail_out) {
+        len = strm->avail_out;
+    }
+    if (len == 0) {
+        return;
+    }
 
     zmemcpy(strm->next_out, strm->state->pending_out, len);
     strm->next_out  += len;
@@ -1531,7 +1595,9 @@ local void fill_window(s)
             }
             more += s->w_size;
         }
-        if (s->strm->avail_in == 0) return;
+        if (s->strm->avail_in == 0) {
+            return;
+        }
 
         /* If there was no sliding:
          *    strstart <= WSIZE+MAX_DIST-1 && lookahead <= MIN_LOOKAHEAD - 1 &&
@@ -1638,7 +1704,9 @@ local int longest_match(s, cur_match)
         if (match[best_len]   != scan_end  ||
             match[best_len-1] != scan_end1 ||
             *match            != *scan     ||
-            *++match          != scan[1])      continue;
+            *++match          != scan[1]) {
+                continue;
+        }
 
         /* The check at best_len-1 can be removed because it will be made
          * again later. (This heuristic is not always a win.)
@@ -1668,7 +1736,9 @@ local int longest_match(s, cur_match)
         if (len > best_len) {
             s->match_start = cur_match;
             best_len = len;
-            if (len >= s->nice_match) break;
+            if (len >= s->nice_match) {
+                break;
+            }
 #ifdef UNALIGNED_OK
             scan_end = *(ush*)(scan+best_len-1);
 #else
@@ -1716,7 +1786,9 @@ local int ct_tally (s, dist, lc)
         }
         out_length >>= 3;
 
-        if (s->matches < s->last_lit/2 && out_length < in_length/2) return 1;
+        if (s->matches < s->last_lit/2 && out_length < in_length/2) {
+            return 1;
+        }
     }
     return (s->last_lit == s->lit_bufsize-1);
     /* We avoid equality with lit_bufsize because of wraparound at 64K
@@ -1731,9 +1803,15 @@ local void set_data_type(s)
     int n = 0;
     unsigned ascii_freq = 0;
     unsigned bin_freq = 0;
-    while (n < 7)        bin_freq += s->dyn_ltree[n++].Freq;
-    while (n < 128)    ascii_freq += s->dyn_ltree[n++].Freq;
-    while (n < LITERALS) bin_freq += s->dyn_ltree[n++].Freq;
+    while (n < 7) {
+        bin_freq += s->dyn_ltree[n++].Freq;
+    }
+    while (n < 128) {
+        ascii_freq += s->dyn_ltree[n++].Freq;
+    }
+    while (n < LITERALS) {
+        bin_freq += s->dyn_ltree[n++].Freq;
+    }
     s->data_type = (Byte)(bin_freq > (ascii_freq >> 2) ? BINARY : ASCII);
 }
 
@@ -1751,7 +1829,9 @@ local void pqdownheap(s, tree, k)
             j++;
         }
         /* Exit if v is smaller than both sons */
-        if (smaller(tree, v, s->heap[j], s->depth)) break;
+        if (smaller(tree, v, s->heap[j], s->depth)) {
+            break;
+        }
 
         /* Exchange v with the smallest son */
         s->heap[k] = s->heap[j];
@@ -1780,7 +1860,9 @@ local void gen_bitlen(s, desc)
     ush f;              /* frequency */
     int overflow = 0;   /* number of elements with bit length too large */
 
-    for (bits = 0; bits <= MAX_BITS; bits++) s->bl_count[bits] = 0;
+    for (bits = 0; bits <= MAX_BITS; bits++) {
+        s->bl_count[bits] = 0;
+    }
 
     /* In a first pass, compute the optimal bit lengths (which may
      * overflow in the case of the bit length tree).
@@ -1790,11 +1872,15 @@ local void gen_bitlen(s, desc)
     for (h = s->heap_max+1; h < HEAP_SIZE; h++) {
         n = s->heap[h];
         bits = tree[tree[n].Dad].Len + 1;
-        if (bits > max_length) bits = max_length, overflow++;
+        if (bits > max_length) {
+            bits = max_length, overflow++;
+        }
         tree[n].Len = (ush)bits;
         /* We overwrite tree[n].Dad which is no longer needed */
 
-        if (n > max_code) continue; /* not a leaf node */
+        if (n > max_code) {
+            continue; /* not a leaf node */
+        }
 
         s->bl_count[bits]++;
         xbits = 0;
@@ -1807,14 +1893,18 @@ local void gen_bitlen(s, desc)
             s->static_len += (ulg)f * (stree[n].Len + xbits);
         }
     }
-    if (overflow == 0) return;
+    if (overflow == 0) {
+        return;
+    }
 
     /* This happens for example on obj2 and pic of the Calgary corpus */
 
     /* Find the first bit length which could increase: */
     do {
         bits = max_length-1;
-        while (s->bl_count[bits] == 0) bits--;
+        while (s->bl_count[bits] == 0) {
+            bits--;
+        }
         s->bl_count[bits]--;      /* move one leaf down the tree */
         s->bl_count[bits+1] += 2; /* move one overflow item as its brother */
         s->bl_count[max_length]--;
@@ -1833,7 +1923,9 @@ local void gen_bitlen(s, desc)
         n = s->bl_count[bits];
         while (n != 0) {
             m = s->heap[--h];
-            if (m > max_code) continue;
+            if (m > max_code) {
+                continue;
+            }
             if (tree[m].Len != (unsigned) bits) {
                 s->opt_len += ((long)bits - (long)tree[m].Len)
                               *(long)tree[m].Freq;
@@ -1891,7 +1983,9 @@ local void build_tree(s, desc)
     /* The elements heap[heap_len/2+1 .. heap_len] are leaves of the tree,
      * establish sub-heaps of increasing lengths:
      */
-    for (n = s->heap_len/2; n >= 1; n--) pqdownheap(s, tree, n);
+    for (n = s->heap_len/2; n >= 1; n--) {
+        pqdownheap(s, tree, n);
+    }
 
     /* Construct the Huffman tree by repeatedly combining the least two
      * frequent nodes.
@@ -1942,7 +2036,9 @@ local void scan_tree (s, tree, max_code)
     int max_count = 7;         /* max repeat count */
     int min_count = 4;         /* min repeat count */
 
-    if (nextlen == 0) max_count = 138, min_count = 3;
+    if (nextlen == 0) {
+        max_count = 138, min_count = 3;
+    }
     tree[max_code+1].Len = (ush)0xffff; /* guard */
 
     for (n = 0; n <= max_code; n++) {
@@ -1953,7 +2049,9 @@ local void scan_tree (s, tree, max_code)
         } else if (count < min_count) {
             s->bl_tree[curlen].Freq += count;
         } else if (curlen != 0) {
-            if (curlen != prevlen) s->bl_tree[curlen].Freq++;
+            if (curlen != prevlen) {
+                s->bl_tree[curlen].Freq++;
+            }
             s->bl_tree[REP_3_6].Freq++;
         } else if (count <= 10) {
             s->bl_tree[REPZ_3_10].Freq++;
@@ -1992,7 +2090,9 @@ local int build_bl_tree(s)
      * 3 but the actual value used is 4.)
      */
     for (max_blindex = BL_CODES-1; max_blindex >= 3; max_blindex--) {
-        if (s->bl_tree[bl_order[max_blindex]].Len != 0) break;
+        if (s->bl_tree[bl_order[max_blindex]].Len != 0) {
+            break;
+        }
     }
     /* Update opt_len to include the bit length tree and counts */
     s->opt_len += 3*(max_blindex+1) + 5+5+4;
@@ -2120,8 +2220,9 @@ local void send_tree (s, tree, max_code)
     int max_count = 7;         /* max repeat count */
     int min_count = 4;         /* min repeat count */
 
-    /* tree[max_code+1].Len = -1; */  /* guard already set */
-    if (nextlen == 0) max_count = 138, min_count = 3;
+    if (nextlen == 0) {
+        max_count = 138, min_count = 3;
+    }
 
     for (n = 0; n <= max_code; n++) {
         curlen = nextlen;
@@ -2190,7 +2291,9 @@ ulg ct_flush_block(s, buf, stored_len, eof)
     int max_blindex;  /* index of last bit length code of non zero freq */
 
      /* Check if the file is ascii or binary */
-    if (s->data_type == UNKNOWN) set_data_type(s);
+    if (s->data_type == UNKNOWN) {
+        set_data_type(s);
+    }
 
     /* Construct the literal and distance trees */
     build_tree(s, (tree_desc *)(&(s->l_desc)));
@@ -2210,7 +2313,9 @@ ulg ct_flush_block(s, buf, stored_len, eof)
     opt_lenb = (s->opt_len+3+7)>>3;
     static_lenb = (s->static_len+3+7)>>3;
 
-    if (static_lenb <= opt_lenb) opt_lenb = static_lenb;
+    if (static_lenb <= opt_lenb) {
+        opt_lenb = static_lenb;
+    }
 
     /* If compression failed and this is the first and last block,
      * and if the .zip file can be seeked (to rewrite the local header),
@@ -2268,9 +2373,13 @@ local int deflate_fast(s, flush)
          */
         if (s->lookahead < MIN_LOOKAHEAD) {
             fill_window(s);
-            if (s->lookahead < MIN_LOOKAHEAD && flush == Z_NO_FLUSH) return 1;
+            if (s->lookahead < MIN_LOOKAHEAD && flush == Z_NO_FLUSH) {
+                return 1;
+            }
 
-            if (s->lookahead == 0) break; /* flush the current block */
+            if (s->lookahead == 0) {
+                break; /* flush the current block */
+            }
         }
 
         /* Insert the string window[strstart .. strstart+2] in the
@@ -2291,7 +2400,9 @@ local int deflate_fast(s, flush)
             }
             /* longest_match() sets match_start */
 
-            if (s->match_length > s->lookahead) s->match_length = s->lookahead;
+            if (s->match_length > s->lookahead) {
+                s->match_length = s->lookahead;
+            }
         }
         if (s->match_length >= MIN_MATCH) {
             check_match(s, s->strstart, s->match_start, s->match_length);
@@ -2355,9 +2466,13 @@ local int deflate_slow(s, flush)
          */
         if (s->lookahead < MIN_LOOKAHEAD) {
             fill_window(s);
-            if (s->lookahead < MIN_LOOKAHEAD && flush == Z_NO_FLUSH) return 1;
+            if (s->lookahead < MIN_LOOKAHEAD && flush == Z_NO_FLUSH) {
+                return 1;
+            }
 
-            if (s->lookahead == 0) break; /* flush the current block */
+            if (s->lookahead == 0) {
+                break; /* flush the current block */
+            }
         }
 
         /* Insert the string window[strstart .. strstart+2] in the
@@ -2380,7 +2495,9 @@ local int deflate_slow(s, flush)
             s->match_length = longest_match (s, hash_head);
             }
             /* longest_match() sets match_start */
-            if (s->match_length > s->lookahead) s->match_length = s->lookahead;
+            if (s->match_length > s->lookahead) {
+                s->match_length = s->lookahead;
+            }
 
             if (s->match_length <= 5 && (s->strategy == Z_FILTERED ||
                  (s->match_length == MIN_MATCH &&
@@ -2431,7 +2548,9 @@ local int deflate_slow(s, flush)
             }
             s->strstart++;
             s->lookahead--;
-            if (s->strm->avail_out == 0) return 1;
+            if (s->strm->avail_out == 0) {
+                return 1;
+            }
         } else {
             /* There is no previous match to compare with, wait for
              * the next step to decide.
@@ -2441,7 +2560,9 @@ local int deflate_slow(s, flush)
             s->lookahead--;
         }
     }
-    if (s->match_available) ct_tally (s, 0, s->window[s->strstart-1]);
+    if (s->match_available) {
+        ct_tally (s, 0, s->window[s->strstart-1]);
+    }
 
     FLUSH_BLOCK(s, flush == Z_FINISH);
     return 0;
@@ -2451,12 +2572,16 @@ local int deflate (strm, flush)
     z_stream *strm;
     int flush;
 {
-    if (strm == Z_NULL || strm->state == Z_NULL) return Z_STREAM_ERROR;
+    if (strm == Z_NULL || strm->state == Z_NULL) {
+        return Z_STREAM_ERROR;
+    }
 
     if (strm->next_out == Z_NULL || strm->next_in == Z_NULL) {
         ERR_RETURN(strm, Z_STREAM_ERROR);
     }
-    if (strm->avail_out == 0) ERR_RETURN(strm, Z_BUF_ERROR);
+    if (strm->avail_out == 0) {
+        ERR_RETURN(strm, Z_BUF_ERROR);
+    }
 
     strm->state->strm = strm; /* just in case */
 
@@ -2478,7 +2603,9 @@ local int deflate (strm, flush)
     /* Flush as much pending output as possible */
     if (strm->state->pending != 0) {
         flush_pending(strm);
-        if (strm->avail_out == 0) return Z_OK;
+        if (strm->avail_out == 0) {
+            return Z_OK;
+        }
     }
 
     /* User must not provide more input after the first FINISH: */
@@ -2494,15 +2621,23 @@ local int deflate (strm, flush)
             strm->state->status = FINISH_STATE;
         }
         if (strm->state->level <= 3) {
-            if (deflate_fast(strm->state, flush)) return Z_OK;
+            if (deflate_fast(strm->state, flush)) {
+                return Z_OK;
+            }
         } else {
-            if (deflate_slow(strm->state, flush)) return Z_OK;
+            if (deflate_slow(strm->state, flush)) {
+                return Z_OK;
+            }
         }
     }
     Assert(strm->avail_out > 0, "bug2");
 
-    if (flush != Z_FINISH) return Z_OK;
-    if (strm->state->noheader) return Z_STREAM_END;
+    if (flush != Z_FINISH) {
+        return Z_OK;
+    }
+    if (strm->state->noheader) {
+        return Z_STREAM_END;
+    }
 
     /* Write the zlib trailer (adler32) */
     putShortMSB(strm->state, (uInt)(strm->state->adler >> 16));
@@ -2523,7 +2658,9 @@ local int gzflush (file, flush)
     int done = 0;
     gz_stream *s = (gz_stream*)file;
 
-    if (s == NULL || s->mode != 'w') return Z_STREAM_ERROR;
+    if (s == NULL || s->mode != 'w') {
+        return Z_STREAM_ERROR;
+    }
 
     s->stream.avail_in = 0; /* should be zero already anyway */
 
@@ -2538,7 +2675,9 @@ local int gzflush (file, flush)
             s->stream.next_out = s->outbuf;
             s->stream.avail_out = Z_BUFSIZE;
         }
-        if (done) break;
+        if (done) {
+            break;
+        }
         s->z_err = deflate(&(s->stream), flush);
 
         /* deflate has finished flushing only when it hasn't used up
@@ -2546,7 +2685,9 @@ local int gzflush (file, flush)
          */
         done = (s->stream.avail_out != 0 || s->z_err == Z_STREAM_END);
 
-        if (s->z_err != Z_OK && s->z_err != Z_STREAM_END) break;
+        if (s->z_err != Z_OK && s->z_err != Z_STREAM_END) {
+            break;
+        }
     }
     return  s->z_err == Z_STREAM_END ? Z_OK : s->z_err;
 }
@@ -2560,7 +2701,9 @@ local gzFile gz_open (path, mode, fd)
     char *p = mode;
     gz_stream *s = (gz_stream *)ALLOC(sizeof(gz_stream));
 
-    if (!s) return Z_NULL;
+    if (!s) {
+        return Z_NULL;
+    }
 
     s->stream.zalloc = (alloc_func)0;
     s->stream.zfree = (free_func)0;
@@ -2582,10 +2725,16 @@ local gzFile gz_open (path, mode, fd)
 
     s->mode = '\0';
     do {
-        if (*p == 'r') s->mode = 'r';
-        if (*p == 'w') s->mode = 'w';
+        if (*p == 'r') {
+            s->mode = 'r';
+        }
+        if (*p == 'w') {
+            s->mode = 'w';
+        }
     } while (*p++);
-    if (s->mode == '\0') return destroy(s), (gzFile)Z_NULL;
+    if (s->mode == '\0') {
+        return destroy(s), (gzFile)Z_NULL;
+    }
 
     if (s->mode == 'w') {
         err = deflateInit2(&(s->stream), Z_BEST_COMPRESSION,
@@ -2649,10 +2798,12 @@ local gzFile gz_open (path, mode, fd)
             fseek(s->file, len, SEEK_CUR);
         }
         if ((flags & ORIG_NAME) != 0) { /* skip the original file name */
-            while ((c = getc(s->file)) != 0 && c != EOF) ;
+            while ((c = getc(s->file)) != 0 && c != EOF) {
+            }
         }
         if ((flags & COMMENT) != 0) {   /* skip the .gz file comment */
-            while ((c = getc(s->file)) != 0 && c != EOF) ;
+            while ((c = getc(s->file)) != 0 && c != EOF) {
+            }
         }
         if ((flags & HEAD_CRC) != 0) {  /* skip the header crc */
             err = fscanf(s->file, "%c%c", &c1, &c2);
@@ -2678,7 +2829,9 @@ local int gzwrite (file, buf, len)
 {
     gz_stream *s = (gz_stream*)file;
 
-    if (s == NULL || s->mode != 'w') return Z_STREAM_ERROR;
+    if (s == NULL || s->mode != 'w') {
+        return Z_STREAM_ERROR;
+    }
 
     s->stream.next_in = buf;
     s->stream.avail_in = len;
@@ -2694,7 +2847,9 @@ local int gzwrite (file, buf, len)
         }
         s->z_err = deflate(&(s->stream), Z_NO_FLUSH);
 
-        if (s->z_err != Z_OK) break;
+        if (s->z_err != Z_OK) {
+            break;
+        }
     }
     s->crc = crc32(s->crc, buf, len);
 
@@ -2708,11 +2863,15 @@ local int gzclose (file)
     int err;
     gz_stream *s = (gz_stream*)file;
 
-    if (s == NULL) return Z_STREAM_ERROR;
+    if (s == NULL) {
+        return Z_STREAM_ERROR;
+    }
 
     if (s->mode == 'w') {
         err = gzflush (file, Z_FINISH);
-        if (err != Z_OK) return destroy((gz_stream *)file);
+        if (err != Z_OK) {
+            return destroy((gz_stream *)file);
+        }
 
         putLong (s->file, s->crc);
         putLong (s->file, s->stream.total_in);
@@ -2761,8 +2920,9 @@ static unsigned long long wm_tool_crc32_reflect(unsigned long long ref, unsigned
     unsigned long long value = 0;
 
     for (i = 1; i < (ch + 1); i++) {
-        if (ref & 1)
-                value |= 1 << (ch - i);
+        if (ref & 1) {
+            value |= 1 << (ch - i);
+        }
         ref >>= 1;
     }
 
@@ -2866,14 +3026,20 @@ static char *wm_tool_strcasestr(const char *str1, const char *str2)
     char *cp = (char *) str1;
     char *s1, *s2;
 
-    if (!*str2) return (char *) str1;
+    if (!*str2) {
+        return (char *) str1;
+    }
 
     while (*cp) {
         s1 = cp;
         s2 = (char *) str2;
 
-        while (*s1 && *s2 && !(tolower((int)*s1) - tolower((int)*s2))) s1++, s2++;
-        if (!*s2) return cp;
+        while (*s1 && *s2 && !(tolower((int)*s1) - tolower((int)*s2))) {
+            s1++, s2++;
+        }
+        if (!*s2) {
+            return cp;
+        }
         cp++;
     }
 
@@ -2883,7 +3049,9 @@ static char *wm_tool_strcasestr(const char *str1, const char *str2)
 static int wm_tool_get_file_size(const char* filename)
 {
     FILE *fp = fopen(filename, "r");
-    if (!fp) return -1;
+    if (!fp) {
+        return -1;
+    }
     fseek(fp, 0L, SEEK_END);
     int size = ftell(fp);
     fclose(fp);
@@ -2979,8 +3147,8 @@ static void wm_tool_print_usage(const char *name)
                    "  -sl display_format    , display the log information output from the serial port\r\n"
                    "                          <0 | 1> or <str | hex>\r\n"
                    "                           str - string mode display\r\n"
-                   "                           hex - hexadecimal format\r\n"
-                   , wm_tool_get_name(name));
+                   "                           hex - hexadecimal format\r\n",
+                   wm_tool_get_name(name));
 
     return;
 }
@@ -3022,7 +3190,7 @@ static int wm_tool_parse_arv(int argc, char *argv[])
         {0,    0,                 NULL, 0}
     };
 
-    while ( (opt = getopt_long_only(argc, argv, opt_string, long_options, &option_index)) != -1) {
+    while ((opt = getopt_long_only(argc, argv, opt_string, long_options, &option_index)) != -1) {
         WM_TOOL_DBG_PRINT("%c-%s\r\n", opt, optarg);
 
         switch (opt) {
@@ -3096,8 +3264,9 @@ static int wm_tool_parse_arv(int argc, char *argv[])
             case 'd':
                 {
                     wm_tool_download_image = strdup(optarg);
-                    if (wm_tool_strcasestr(wm_tool_download_image, ".fls"))
+                    if (wm_tool_strcasestr(wm_tool_download_image, ".fls")) {
                         wm_tool_dl_type = WM_TOOL_DL_TYPE_FLS;
+                    }
                     break;
                 }
             case 'o':
@@ -3116,7 +3285,7 @@ static int wm_tool_parse_arv(int argc, char *argv[])
                     break;
                 }
             case 'i':
-            {
+                {
                     {
                         if (isdigit((int)optarg[0])) {
                             wm_tool_image_type = atoi(optarg); // optarg[0] - 0x30;
@@ -3578,8 +3747,9 @@ static int wm_tool_pack_firmware(void)
     char *dbgimg;
     char *fls;
 
-    if (!wm_tool_input_binary)
+    if (!wm_tool_input_binary) {
         return 1;
+    }
 
     if (!wm_tool_output_image) {
         char *r = wm_tool_input_binary;
@@ -3592,8 +3762,9 @@ static int wm_tool_pack_firmware(void)
             }
         } while (r);
         wm_tool_output_image = malloc(t - wm_tool_input_binary + 1);
-        if (!wm_tool_output_image)
+        if (!wm_tool_output_image) {
             return -1;
+        }
         memcpy(wm_tool_output_image, wm_tool_input_binary, t - wm_tool_input_binary);
         wm_tool_output_image[t - wm_tool_input_binary] = '\0';
     }
@@ -3615,13 +3786,15 @@ static int wm_tool_pack_firmware(void)
     path = strdup(wm_tool_output_image);
 
     image = malloc(strlen(path) + strlen(name) + strlen(".img") + 1);
-    if (!image)
+    if (!image) {
         return -1;
+    }
     sprintf(image, "%s%s.img", path, name);
     if (WM_TOOL_ZIP_TYPE_UNCOMPRESS == wm_tool_zip_type) {
         ret = wm_tool_pack_image(image);
-        if (ret)
+        if (ret) {
             return ret;
+        }
     }
 
     if (WM_TOOL_ZIP_TYPE_COMPRESS == wm_tool_zip_type) {
@@ -3649,14 +3822,16 @@ static int wm_tool_pack_firmware(void)
 
     if (wm_tool_is_debug) {
         dbgimg = malloc(strlen(path) + strlen(name) + strlen("_dbg.img") + 1);
-        if (!dbgimg)
+        if (!dbgimg) {
             return -1;
+        }
         sprintf(dbgimg, "%s%s_dbg.img", path, name);
 
         ret = wm_tool_pack_dbg_image(image, dbgimg);
         free(dbgimg);
-        if (ret)
+        if (ret) {
             return ret;
+        }
     }
 
     if (wm_tool_secboot_image) {
@@ -3945,10 +4120,11 @@ static int wm_tool_uart_set_rts(int boolflag)
         WM_TOOL_DBG_PRINT("~TIOCM_RTS!, %d!\r\n", boolflag);
     }
 
-    if (boolflag)
+    if (boolflag) {
         controlbits |= TIOCM_RTS;
-    else
+    } else {
         controlbits &= ~TIOCM_RTS;
+    }
 
     ret = ioctl(wm_tool_uart_fd, TIOCMSET, &controlbits);
     if (ret < 0) {
@@ -3978,18 +4154,20 @@ static int wm_tool_uart_set_dtr(int boolflag)
         WM_TOOL_DBG_PRINT("~TIOCM_DTR, %d!\r\n", boolflag);
     }
 
-    if (boolflag)
+    if (boolflag) {
         controlbits |= TIOCM_DTR;
-    else
+    } else {
         controlbits &= ~TIOCM_DTR;
+    }
 
     ret = ioctl(wm_tool_uart_fd, TIOCMSET, &controlbits);
     if (ret < 0) {
         WM_TOOL_DBG_PRINT("TIOCMSET failed!\r\n");
     }
 
-    if (ret >= 0)
+    if (ret >= 0) {
         ret = 0;
+    }
 
     return ret;
 }
@@ -4000,10 +4178,11 @@ static void wm_tool_uart_set_block(int bolck)
 
     comopt = fcntl(wm_tool_uart_fd, F_GETFL, 0);
 
-    if (bolck)
+    if (bolck) {
         fcntl(wm_tool_uart_fd, F_SETFL, comopt & ~O_NDELAY);
-    else
+    } else {
         fcntl(wm_tool_uart_fd, F_SETFL, comopt | O_NDELAY);
+    }
 
     return;
 }
@@ -4262,8 +4441,9 @@ static int wm_tool_erase_image(wm_tool_dl_erase_e type)
         wm_tool_printf("erase flash...\r\n");
         ret = wm_tool_uart_write(rom_cmd, sizeof(rom_cmd));
     }
-    if (ret <= 0)
+    if (ret <= 0) {
         return -1;
+    }
 
     wm_tool_uart_clear();
 
@@ -4436,8 +4616,9 @@ static int wm_tool_xmodem_download(const char *image)
                         frame_data[1] = (char)pack_counter;
                         frame_data[2] = (char)(255 - frame_data[1]);
 
-                        for (i = 0; i < read_number; i++)
+                        for (i = 0; i < read_number; i++) {
                             frame_data[i + 3] = packet_data[i];
+                        }
 
                         crc_value = wm_tool_get_crc16(&frame_data[3], XMODEM_DATA_SIZE);
 
@@ -4445,8 +4626,9 @@ static int wm_tool_xmodem_download(const char *image)
                         frame_data[XMODEM_DATA_SIZE + 4]=(unsigned char)(crc_value);
 
                         write_number = wm_tool_uart_write(frame_data, XMODEM_DATA_SIZE + 5);
-                        if (write_number <= 0)
+                        if (write_number <= 0){
                             wm_tool_printf("write serial error, errno = %d.\r\n", errno);
+                        }
 
                         WM_TOOL_DBG_PRINT("waiting for ack, %d, %d ...\r\n", pack_counter, write_number);
 
@@ -4477,10 +4659,12 @@ static int wm_tool_xmodem_download(const char *image)
                             ack_id = XMODEM_EOT;
 
                             write_number = wm_tool_uart_write(&ack_id, 1);
-                            if (write_number <= 0)
+                            if (write_number <= 0) {
                                 wm_tool_printf("write serial error, errno = %d.\r\n", errno);
+                            }
 
-                            while ((wm_tool_uart_read(&ack_id, 1)) <= 0);
+                            while ((wm_tool_uart_read(&ack_id, 1)) <= 0) {
+                            }
                         }
 
                         if (sndlen >= total_size) {
@@ -4502,18 +4686,20 @@ static int wm_tool_xmodem_download(const char *image)
                 }
             case XMODEM_NAK:
                 {
-                    if ( retry_num++ > 100) {
+                    if (retry_num++ > 100) {
                         WM_TOOL_DBG_PRINT("retry too many times, quit!\r\n");
                         wm_tool_printf("download firmware timeout.\r\n");
 
                         complete = 1;
                     } else {
                         write_number = wm_tool_uart_write(frame_data, XMODEM_DATA_SIZE + 5);
-                        if (write_number <= 0)
+                        if (write_number <= 0) {
                             wm_tool_printf("write serial error, errno = %d.\r\n", errno);
+                        }
 
                         WM_TOOL_DBG_PRINT("retry for ack, %d, %d ...\r\n", pack_counter, write_number);
-                        while ((wm_tool_uart_read(&ack_id, 1)) <= 0);
+                        while ((wm_tool_uart_read(&ack_id, 1)) <= 0) {
+                        }
 
                         if (ack_id == XMODEM_ACK) {
                             WM_TOOL_DBG_PRINT("ok\r\n");

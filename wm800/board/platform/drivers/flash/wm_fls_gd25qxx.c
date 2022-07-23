@@ -28,13 +28,13 @@
 #include "wm_type_def.h"
 #include "wm_flash.h"
 #include "wm_hostspi.h"
-#include "wm_fls_gd25qxx.h"
 #include "wm_debug.h"
 #include "wm_gpio.h"
+#include "wm_fls_gd25qxx.h"
 
-static int tls_spifls_drv_read(u32 addr, u8 * buf, u32 len);
-static int tls_spifls_drv_fast_read(u32 addr, u8 * buf, u32 len);
-static int tls_spifls_drv_page_write(u32 page, u8 * buf);
+static int tls_spifls_drv_read(u32 addr, u8 *buf, u32 len);
+static int tls_spifls_drv_fast_read(u32 addr, u8 *buf, u32 len);
+static int tls_spifls_drv_page_write(u32 page, u8 *buf);
 static int tls_spifls_drv_erase(u32 sector);
 static int tls_spifls_drv_chip_erase(void);
 static int tls_spifls_drv_probe(u32 id);
@@ -160,7 +160,7 @@ static int tls_spifls_drv_page_write(u32 page, u8 * buf)
     cmd |= EXSPIFLASH_PAGE_PROGRAM;
     cmd |= swap32(page * exspifls_drv->page_size) & 0xffffff00;
     err = tls_spi_write_with_cmd((const u8 *) &cmd, 4, (const u8 *) buf,
-                               exspifls_drv->page_size);
+                                 exspifls_drv->page_size);
     if (err != TLS_SPI_STATUS_OK) {
         return TLS_FLS_STATUS_EIO;
     }

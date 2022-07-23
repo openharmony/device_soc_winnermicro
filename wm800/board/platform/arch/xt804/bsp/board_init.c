@@ -49,46 +49,7 @@ static void uart0Init (int bandrate)
     tls_reg_write32(HR_UART0_FIFO_CTRL, 0x00);                     /* one byte TX/RX */
 //    tls_reg_write32(HR_UART0_INT_MASK, 0x00);                     /* Disable INT */
 }
-#if 0
-static void uart1_io_init(void)
-{
-    uint32_t temp;
 
-    /* PB6.7 AF Close */
-    temp = tls_reg_read32(HR_GPIOB_AFSEL);
-    temp &= ~0xC0;
-    tls_reg_write32(HR_GPIOB_AFSEL, temp);
-
-    /* PB6.7 AF Open opt1 */
-    temp = tls_reg_read32(HR_GPIOB_AFSEL);
-    temp |= 0xC0;
-    tls_reg_write32(HR_GPIOB_AFSEL, temp);
-
-    temp = tls_reg_read32(HR_GPIOB_AFS0);
-    temp &= ~0xC0;
-    tls_reg_write32(HR_GPIOB_AFS0, temp);
-
-    temp = tls_reg_read32(HR_GPIOB_AFS1);
-    temp &= ~0xC0;
-    tls_reg_write32(HR_GPIOB_AFS1, temp);
-}
-static void uart1Init (int bandrate)
-{
-    unsigned int bd;
-
-    NVIC_DisableIRQ(UART1_IRQn);
-    NVIC_ClearPendingIRQ(UART1_IRQn);
-
-    bd = (APB_CLK/(16*bandrate) - 1)|(((APB_CLK%(bandrate*16))*16/(bandrate*16))<<16);
-    tls_reg_write32(HR_UART1_BAUD_RATE_CTRL, bd);
-
-    tls_reg_write32(HR_UART1_LINE_CTRL, UART_BITSTOP_VAL | UART_TXEN_BIT | UART_RXEN_BIT);
-    tls_reg_write32(HR_UART1_FLOW_CTRL, 0x00);               /* Disable afc */
-    tls_reg_write32(HR_UART1_DMA_CTRL, 0x00);                     /* Disable DMA */
-    tls_reg_write32(HR_UART1_FIFO_CTRL, 0x00);                     /* one byte TX/RX */
-    tls_reg_write32(HR_UART1_INT_MASK, 0x00);                     /* Disable INT */
-}
-#endif
 void board_init(void)
 {
 #if USE_UART0_PRINT

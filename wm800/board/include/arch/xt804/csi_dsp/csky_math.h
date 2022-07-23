@@ -221,7 +221,7 @@ extern "C"
   /**
    * @brief Macro for log , pow and related fast functions.
    */
-#define ABS(x) (((x) > 0)   ? (x) : (-x))
+#define ABS(x) (((x) > 0)   ? (x) : (-(x)))
 #define max(x) (((y) > (x)) ? (y) : (x))
 #define min(x) (((y) < (x)) ? (y) : (x))
 #define CN                     124217729.0
@@ -233,7 +233,8 @@ extern "C"
 /* z+zz = x+y exactly.                                                 */
 
 #define  EADD(x, y, z, zz) do {                           \
-        z=(x)+(y);  zz=(ABS(x)>ABS(y)) ? (((x)-(z))+(y)) : (((y)-(z))+(x));
+        (z)=(x)+(y); \
+        (zz)=(ABS(x)>ABS(y)) ? (((x)-(z))+(y)) : (((y)-(z))+(x)); \
 } while (0)
 
 /* Exact multiplication of two single-length floating point numbers,   */
@@ -242,9 +243,10 @@ extern "C"
 /* storage variables of type double.                                   */
 
 # define  EMULV(x, y, z, zz, p, hx, tx, hy, ty) do {           \
-        p=CN*(x);  hx=((x)-p)+p;  tx=(x)-hx;       \
-        p=CN*(y);  hy=((y)-p)+p;  ty=(y)-hy;       \
-        z=(x)*(y); zz=(((hx*hy-z)+hx*ty)+tx*hy)+tx*ty;
+        (p)=CN*(x);  (hx)=((x)-(p))+(p);  (tx)=(x)-(hx);       \
+        (p)=CN*(y);  (hy)=((y)-(p))+(p);  (ty)=(y)-(hy);       \
+        (z)=(x)*(y); \
+        (zz)=((((hx)*(hy)-(z))+(hx)*(ty))+(tx)*(hy))+(tx)*(ty); \
 } while (0)
 /* Exact multiplication of two single-length floating point numbers.         */
 /* The macro produces a nearly double-length number (z,zz) (see Dekker)      */
@@ -252,9 +254,11 @@ extern "C"
 /* storage variables of type double.                                         */
 
 # define  MUL12(x, y, z, zz, p, hx, tx, hy, ty, q) do {         \
-        p=CN*(x);  hx=((x)-p)+p;  tx=(x)-hx;       \
-        p=CN*(y);  hy=((y)-p)+p;  ty=(y)-hy;       \
-        p=hx*hy;  q=hx*ty+tx*hy; z=p+q;  zz=((p-z)+q)+tx*ty;
+        (p)=CN*(x);  (hx)=((x)-(p))+(p);  (tx)=(x)-(hx);       \
+        (p)=CN*(y);  (hy)=((y)-(p))+(p);  (ty)=(y)-(hy);       \
+        (p)=(hx)*(hy); \
+        (q)=(hx)*(ty)+(tx)*(hy); (z)=(p)+(q);  \
+        (zz)=(((p)-(z))+(q))+(tx)*(ty); \
 } while (0)
 
 /* Double-length addition, Dekker. The macro produces a double-length   */
@@ -264,10 +268,11 @@ extern "C"
 /* storage variables of type double.                                    */
 
 #define  ADD2(x, xx, y, yy, z, zz, r, s) do {                 \
-        r=(x)+(y);  s=(ABS(x)>ABS(y)) ?            \
-                (((((x)-r)+(y))+(yy))+(xx)) :      \
-                (((((y)-r)+(x))+(xx))+(yy));       \
-        z=r+s;  zz=(r-z)+s;
+        (r)=(x)+(y);  (s)=(ABS(x)>ABS(y)) ?            \
+                (((((x)-(r))+(y))+(yy))+(xx)) :      \
+                (((((y)-(r))+(x))+(xx))+(yy));       \
+        (z)=(r)+(s); \
+        (zz)=((r)-(z))+(s); \
 } while (0)
 
 /* Double-length subtraction, Dekker. The macro produces a double-length  */
@@ -277,10 +282,11 @@ extern "C"
 /* storage variables of type double.                                      */
 
 #define  SUB2(x, xx, y, yy, z, zz, r, s) do {      \
-        r=(x)-(y);  s=(ABS(x)>ABS(y)) ?            \
-                (((((x)-r)-(y))-(yy))+(xx)) :      \
+        (r)=(x)-(y);  (s)=(ABS(x)>ABS(y)) ?            \
+                (((((x)-(r))-(y))-(yy))+(xx)) :      \
                 ((((x)-((y)+r))+(xx))-(yy));       \
-        z=r+s;  zz=(r-z)+s;
+        (z)=(r)+(s); \
+        (zz)=((r)-(z))+(s); \
 } while (0)
 
 /* Double-length multiplication, Dekker. The macro produces a double-length  */
@@ -290,9 +296,11 @@ extern "C"
 /* temporary storage variables of type double.                               */
 
 #define  MUL2(x, xx, y, yy, z, zz, p, hx, tx, hy, ty, q, c, cc) do { \
-        MUL12(x, y, c, cc, p, hx, tx, hy, ty, q)            \
-        cc=((x)*(yy)+(xx)*(y))+cc;   z=c+cc;   zz=(c-z)+cc;
-    } while (0)
+        MUL12((x), (y), (c), (cc), (p), (hx), (tx), (hy), (ty), (q))            \
+        (cc)=((x)*(yy)+(xx)*(y))+(cc); \
+        (z)=(c)+(cc); \
+        (zz)=((c)-(z))+(cc); \
+} while (0)
 
 __STATIC_INLINE int32_t __SSAT_31(int32_t x)
 {
@@ -4289,14 +4297,14 @@ __STATIC_INLINE q31_t csky_bilinear_interp_q31(
     out = ((q31_t) (((q63_t) x1  * (0x7FFFFFFF - xfract)) >> 32));
     acc = ((q31_t) (((q63_t) out * (0x7FFFFFFF - yfract)) >> 32));
     /* x2 * (xfract) * (1-yfract)  in 3.29(q29) and adding to acc */
-    out = ((q31_t) ((q63_t) x2 * (0x7FFFFFFF - yfract) >> 32));
-    acc += ((q31_t) ((q63_t) out * (xfract) >> 32));
+    out = ((q31_t) (((q63_t) x2 * (0x7FFFFFFF - yfract)) >> 32));
+    acc += ((q31_t) (((q63_t) out * (xfract)) >> 32));
     /* y1 * (1 - xfract) * (yfract)  in 3.29(q29) and adding to acc */
-    out = ((q31_t) ((q63_t) y1 * (0x7FFFFFFF - xfract) >> 32));
-    acc += ((q31_t) ((q63_t) out * (yfract) >> 32));
+    out = ((q31_t) (((q63_t) y1 * (0x7FFFFFFF - xfract)) >> 32));
+    acc += ((q31_t) (((q63_t) out * (yfract)) >> 32));
     /* y2 * (xfract) * (yfract)  in 3.29(q29) and adding to acc */
-    out = ((q31_t) ((q63_t) y2 * (xfract) >> 32));
-    acc += ((q31_t) ((q63_t) out * (yfract) >> 32));
+    out = ((q31_t) (((q63_t) y2 * (xfract)) >> 32));
+    acc += ((q31_t) (((q63_t) out * (yfract)) >> 32));
 #endif
     /* Convert acc to 1.31(q31) format */
     return ((q31_t)(acc << 2));

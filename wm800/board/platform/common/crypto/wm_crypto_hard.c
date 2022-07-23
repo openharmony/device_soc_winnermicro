@@ -22,13 +22,13 @@
 #include "wm_irq.h"
 #include "wm_regs.h"
 #include "wm_debug.h"
-#include "wm_crypto_hard.h"
 #include "wm_internal_flash.h"
 #include "wm_pmu.h"
+#include "wm_crypto_hard.h"
 
 // #define TEST_ALL_CRYPTO
 #undef    DIGIT_BIT
-#define DIGIT_BIT            28// 32
+#define DIGIT_BIT            28 // 32
 
 #define SOFT_RESET_RC4        25
 #define SOFT_RESET_AES        26
@@ -67,7 +67,7 @@ unsigned long __t = (x); memcpy(y, &__t, 4); \
 // extern volatile uint32_t sys_count;
 #define sys_count tls_os_get_time()
 
-struct wm_crypto_ctx  g_crypto_ctx = {0,0
+struct wm_crypto_ctx  g_crypto_ctx = {0, 0
 #ifndef CONFIG_KERNEL_NONE
     ,NULL
 #endif
@@ -76,22 +76,22 @@ struct wm_crypto_ctx  g_crypto_ctx = {0,0
 #if 1
 typedef s32 psPool_t;
 #include "libtommath.h"
-#define pstm_set(a, b) mp_set((mp_int *)a, b)
-#define pstm_init(pool, a) wpa_mp_init((mp_int *)a)
-#define pstm_count_bits(a) mp_count_bits((mp_int *)a)
-#define pstm_init_for_read_unsigned_bin(pool, a, len) mp_init_for_read_unsigned_bin((mp_int *)a, len)
-#define pstm_read_unsigned_bin(a, b, c) mp_read_unsigned_bin((mp_int *)a, b, c)
-#define pstm_copy(a, b) mp_copy((mp_int *)a, (mp_int *)b)
-#define pstm_clear(a) mp_clear((mp_int *)a)
-#define pstm_clamp(a) mp_clamp((mp_int *)a)
-#define pstm_mulmod(pool, a, b, c, d) mp_mulmod((mp_int *)a, (mp_int *)b, (mp_int *)c, (mp_int *)d)
-#define pstm_exptmod(pool, G, X, P, Y) mp_exptmod((mp_int *)G, (mp_int *)X, (mp_int *)P, (mp_int *)Y)
+#define pstm_set(a, b) mp_set((mp_int *)(a), (b))
+#define pstm_init(pool, a) wpa_mp_init((mp_int *)(a))
+#define pstm_count_bits(a) mp_count_bits((mp_int *)(a))
+#define pstm_init_for_read_unsigned_bin(pool, a, len) mp_init_for_read_unsigned_bin((mp_int *)(a), (len))
+#define pstm_read_unsigned_bin(a, b, c) mp_read_unsigned_bin((mp_int *)(a), (b), (c))
+#define pstm_copy(a, b) mp_copy((mp_int *)(a), (mp_int *)(b))
+#define pstm_clear(a) mp_clear((mp_int *)(a))
+#define pstm_clamp(a) mp_clamp((mp_int *)(a))
+#define pstm_mulmod(pool, a, b, c, d) mp_mulmod((mp_int *)(a), (mp_int *)(b), (mp_int *)(c), (mp_int *)(d))
+#define pstm_exptmod(pool, G, X, P, Y) mp_exptmod((mp_int *)(G), (mp_int *)(X), (mp_int *)(P), (mp_int *)(Y))
 #define pstm_reverse mp_reverse
 #define pstm_cmp mp_cmp
-#define pstm_to_unsigned_bin_nr(pool, a, b) mp_to_unsigned_bin_nr((mp_int *)a, (unsigned char *)b)
+#define pstm_to_unsigned_bin_nr(pool, a, b) mp_to_unsigned_bin_nr((mp_int *)(a), (unsigned char *)(b))
 
-#define pstm_2expt(a, b) mp_2expt((mp_int *)a, b)
-#define pstm_mod(pool, a, b, c) mp_mod((mp_int *)a, (mp_int *)b, (mp_int *)c)
+#define pstm_2expt(a, b) mp_2expt((mp_int *)(a), (b))
+#define pstm_mod(pool, a, b, c) mp_mod((mp_int *)(a), (mp_int *)(b), (mp_int *)(c))
 
 #endif
 
@@ -131,7 +131,7 @@ u32 Reflect(u32 ref, u8 ch)
 {
     int i;
     u32 value = 0;
-    for(i = 1; i < (ch + 1); i++)
+    for (i = 1; i < (ch + 1); i++)
     {
         if (ref & 1)
             value |= 1 << (ch - i);
@@ -289,7 +289,6 @@ int tls_crypto_random_bytes(unsigned char *out, u32 len)
             out += randomBytes;
             inLen -= randomBytes;
         } else {
-        // printf("val 0x%x, inlen %d\n", val, inLen);
             memcpy(out, (char *)&val, inLen);
             inLen = 0;
         }
@@ -324,7 +323,7 @@ int tls_crypto_trng(unsigned char *out, u32 len)
     tls_os_release_critical(cpu_sr);
     tls_reg_write32(HR_CRYPTO_TRNG_CR, sec_cfg);
     delay_cnt(1000);
-    while(inLen > 0) {
+    while (inLen > 0) {
         while (TRUE) {
             cpu_sr = tls_os_set_critical();
             if (g_crypto_ctx.gpsec_complete)
@@ -358,7 +357,6 @@ int tls_crypto_random_bytes_range(unsigned char *out, u32 len, u32 range)
     for (i = 0; i< len; i++) {
         val =  tls_reg_read32(HR_CRYPTO_RNG_RESULT);
         out[i] = val % range;
-        // printf("rand val:%d, val:%d\r\n", val, out[i]);
     }
     return ERR_CRY_OK;
 }
@@ -422,7 +420,7 @@ int tls_crypto_rc4(psCipherContext_t *ctx, unsigned char *in, unsigned char *out
     tls_reg_write32(HR_CRYPTO_SEC_CFG, sec_cfg);
     CRYPTO_LOG("[%d]:rc4[%d] start\n", sys_count, len);
     g_crypto_ctx.gpsec_complete = 0;
-    tls_reg_write32(HR_CRYPTO_SEC_CTRL, 0x1);// start crypto
+    tls_reg_write32(HR_CRYPTO_SEC_CTRL, 0x1); // start crypto
     while (!g_crypto_ctx.gpsec_complete) {
     }
     g_crypto_ctx.gpsec_complete = 0;
@@ -501,7 +499,7 @@ int tls_crypto_aes_encrypt_decrypt(psCipherContext_t *ctx, unsigned char *in,
     cpu_sr = tls_os_set_critical();
     g_crypto_ctx.gpsec_complete = 0;
     tls_os_release_critical(cpu_sr);
-    tls_reg_write32(HR_CRYPTO_SEC_CTRL, 0x1);// start crypto
+    tls_reg_write32(HR_CRYPTO_SEC_CTRL, 0x1); // start crypto
     while (TRUE) {
         cpu_sr = tls_os_set_critical();
         if (g_crypto_ctx.gpsec_complete)
@@ -582,7 +580,7 @@ int tls_crypto_3des_encrypt_decrypt(psCipherContext_t *ctx, unsigned char *in,
     CRYPTO_LOG("[%d]:3des[%d] %s %s start\n", sys_count, len, dec == CRYPTO_WAY_ENCRYPT ? "ENCRYPT" : "DECRYPT",
                cbc == CRYPTO_MODE_ECB ? "ECB" : "CBC");
     g_crypto_ctx.gpsec_complete = 0;
-    tls_reg_write32(HR_CRYPTO_SEC_CTRL, 0x1);// start crypto
+    tls_reg_write32(HR_CRYPTO_SEC_CTRL, 0x1); // start crypto
     while (!g_crypto_ctx.gpsec_complete) {
     }
     g_crypto_ctx.gpsec_complete = 0;
@@ -645,7 +643,6 @@ int tls_crypto_des_encrypt_decrypt(psCipherContext_t *ctx, unsigned char *in,
     unsigned char *key = (unsigned char *)ctx->des3.key.ek[0];
     unsigned char *IV = ctx->des3.IV;
     CRYPTO_MODE cbc = (CRYPTO_MODE)(ctx->des3.key.ek[1][0] & 0xFF);
-    // uint32_t *IV32 = (uint32_t *)IV;
     tls_crypto_sem_lock();
     tls_open_peripheral_clock(TLS_PERIPHERAL_TYPE_GPSEC);
     tls_crypto_set_key(key, keylen);
@@ -657,7 +654,7 @@ int tls_crypto_des_encrypt_decrypt(psCipherContext_t *ctx, unsigned char *in,
     CRYPTO_LOG("[%d]:des[%d] %s %s start\n", sys_count, len, dec == CRYPTO_WAY_ENCRYPT ? "ENCRYPT" : "DECRYPT",
                cbc == CRYPTO_MODE_ECB ? "ECB" : "CBC");
     g_crypto_ctx.gpsec_complete = 0;
-    tls_reg_write32(HR_CRYPTO_SEC_CTRL, 0x1);// start crypto
+    tls_reg_write32(HR_CRYPTO_SEC_CTRL, 0x1); // start crypto
     while (!g_crypto_ctx.gpsec_complete) {
     }
     g_crypto_ctx.gpsec_complete = 0;
@@ -743,7 +740,7 @@ int tls_crypto_crc_update(psCrcContext_t *ctx, unsigned char *in, u32 len)
     cpu_sr = tls_os_set_critical();
     g_crypto_ctx.gpsec_complete = 0;
     tls_os_release_critical(cpu_sr);
-    tls_reg_write32(HR_CRYPTO_SEC_CTRL, 0x1);// start crypto
+    tls_reg_write32(HR_CRYPTO_SEC_CTRL, 0x1); // start crypto
     while (TRUE) {
         cpu_sr = tls_os_set_critical();
         if (g_crypto_ctx.gpsec_complete)
@@ -754,7 +751,7 @@ int tls_crypto_crc_update(psCrcContext_t *ctx, unsigned char *in, u32 len)
     tls_os_release_critical(cpu_sr);
     CRYPTO_LOG("[%d]:crc update end %d\n", sys_count, tls_reg_read32(HR_CRYPTO_SEC_STS) & 0xFFFF);
     ctx->state = tls_reg_read32(HR_CRYPTO_CRC_RESULT);
-    tls_reg_write32(HR_CRYPTO_SEC_CTRL, 0x4);// clear crc fifo
+    tls_reg_write32(HR_CRYPTO_SEC_CTRL, 0x4); // clear crc fifo
     tls_close_peripheral_clock(TLS_PERIPHERAL_TYPE_GPSEC);
     tls_crypto_sem_unlock();
     return ERR_CRY_OK;
@@ -795,7 +792,7 @@ static void hd_sha1_compress(psDigestContext_t *md)
     cpu_sr = tls_os_set_critical();
     g_crypto_ctx.gpsec_complete = 0;
     tls_os_release_critical(cpu_sr);
-    tls_reg_write32(HR_CRYPTO_SEC_CTRL, 0x1);// start crypto
+    tls_reg_write32(HR_CRYPTO_SEC_CTRL, 0x1); // start crypto
     while (TRUE) {
         cpu_sr = tls_os_set_critical();
         if (g_crypto_ctx.gpsec_complete)
@@ -980,7 +977,7 @@ static void hd_md5_compress(psDigestContext_t *md)
     tls_reg_write32(HR_CRYPTO_SHA1_DIGEST2, md->u.md5.state[2]);
     tls_reg_write32(HR_CRYPTO_SHA1_DIGEST3, md->u.md5.state[3]);
     g_crypto_ctx.gpsec_complete = 0;
-    tls_reg_write32(HR_CRYPTO_SEC_CTRL, 0x1);// start crypto
+    tls_reg_write32(HR_CRYPTO_SEC_CTRL, 0x1); // start crypto
     while (!g_crypto_ctx.gpsec_complete) {
 
     }
@@ -1093,7 +1090,6 @@ s32 tls_crypto_md5_final(psDigestContext_t *md, unsigned char *hash)
     u32    n;
 #endif
 
-    //    psAssert(md != NULL);
     if (hash == NULL) {
         CRYPTO_LOG("NULL hash storage passed to psMd5Final\n");
         return PS_ARG_FAIL;
@@ -1211,12 +1207,11 @@ static int rsaMulModRead(unsigned char w, hstm_int *a)
         case 'D':
             rsaMonMulReadD(in);
             break;
+        default:
+            break;
     }
     pstm_reverse((unsigned char *)in, RSAN * sizeof(u32));
     /* this a should be initialized outside. */
-    // if ((err = pstm_init_for_read_unsigned_bin(NULL, a, RSAN * sizeof(u32) + sizeof(hstm_int))) != ERR_CRY_OK){
-    //    return err;
-    // }
     if ((err = pstm_read_unsigned_bin(a, (unsigned char *)in, RSAN * sizeof(u32))) != ERR_CRY_OK) {
         pstm_clear(a);
         return err;
@@ -1226,7 +1221,7 @@ static int rsaMulModRead(unsigned char w, hstm_int *a)
 static void rsaMulModDump(unsigned char w)
 {
     int addr = 0;
-    switch(w) {
+    switch (w) {
         case 'A':
             addr = 0;
             break;
@@ -1235,6 +1230,8 @@ static void rsaMulModDump(unsigned char w)
             break;
         case 'D':
             addr = 0x300;
+            break;
+        default:
             break;
     }
     printf("%c", w);
@@ -1246,7 +1243,7 @@ static void rsaMulModWrite(unsigned char w, hstm_int *a)
     u32 in[64];
     memset(in, 0, 64 * sizeof(u32));
     pstm_to_unsigned_bin_nr(NULL, a, (unsigned char *)in);
-    switch(w) {
+    switch (w) {
         case 'A':
             rsaMonMulWriteA(in);
             break;
@@ -1255,6 +1252,8 @@ static void rsaMulModWrite(unsigned char w, hstm_int *a)
             break;
         case 'M':
             rsaMonMulWriteM(in);
+            break;
+        default:
             break;
     }
 }
@@ -1366,17 +1365,12 @@ int tls_crypto_exptmod(hstm_int *a, hstm_int *e, hstm_int *n, hstm_int *res)
     pstm_init(NULL, &X);
     pstm_init(NULL, &Y);
     pstm_init(NULL, &R);
-    k = pstm_count_bits(n);// n->used * DIGIT_BIT;// pstm_count_bits(n);
+    k = pstm_count_bits(n); // n->used * DIGIT_BIT; // pstm_count_bits(n);
     k = ((k / 32) + (k % 32 > 0 ? 1 : 0)) * 32;
-#if 0
-    pstm_set(&Y, k);
-    pstm_set(&X, 2);
-    pstm_exptmod(NULL, &X, &Y, n, &R); // R = 2^k % n
-#else
+
     pstm_2expt(&X, (int16)k); // X = 2^k
     pstm_mod(NULL, &X, n, &R); // R = 2^k % n
-#endif
-    // pstm_set(&Y, 1);
+
     pstm_mulmod(NULL, a, &R, n, &X); // X = A * R
     pstm_copy(&R, &Y);
     if (n->used > 1) {
@@ -1396,34 +1390,26 @@ int tls_crypto_exptmod(hstm_int *a, hstm_int *e, hstm_int *n, hstm_int *res)
     rsaMulModWrite('A', &Y);
     k = pstm_count_bits(e);
     for(i = k - 1; i >= 0; i--) {
-        // montMulMod(&Y, &Y, n, &Y);
-        // if (pstm_get_bit(e, i))
-        //    montMulMod(&Y, &X, n, &Y);
         if (monmulFlag == 0) {
             rsaMonMulAA();
             monmulFlag = 1;
-            // rsaMulModDump('D');
         } else {
             rsaMonMulDD();
             monmulFlag = 0;
-            // rsaMulModDump('A');
         }
 
         if (pstm_get_bit(e, i)) {
             if (monmulFlag == 0) {
                 rsaMonMulAB();
                 monmulFlag = 1;
-                // rsaMulModDump('D');
             } else {
                 rsaMonMulBD();
                 monmulFlag = 0;
-                // rsaMulModDump('A');
             }
         }
     }
     pstm_set(&R, 1);
     rsaMulModWrite('B', &R);
-    // montMulMod(&Y, &R, n, res);
     if (monmulFlag == 0) {
         rsaMonMulAB();
         rsaMulModRead('D', res);

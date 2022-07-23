@@ -128,11 +128,11 @@ int tls_dma_wait_complt(unsigned char ch);
 /**
  * @brief          This function is used to Start the DMA controller by Wrap
  *
- * @param[in]     	 autoReload 	Does restart when current transfer complete?	
+ * @param[in]     	 autoReload 	Does restart when current transfer complete?
  * @param[in]     	 ch            	Channel no.[0~7]
  * @param[in]     	 pDmaDesc    	Pointer to DMA channel descriptor structure.
  *
- * @retval         	Always STATUS_SUCCESS.	
+ * @retval         	Always STATUS_SUCCESS.
  *
  * @note
  * DMA Descriptor:  +--------------------------------------------------------------+
@@ -154,7 +154,7 @@ unsigned char tls_dma_start_by_wrap(unsigned char ch, struct tls_dma_descriptor 
 /**
  * @brief          This function is used to Wait until DMA operation completes
  *
- * @param[in]     	 autoReload 	Does restart when current transfer complete?	
+ * @param[in]     	 autoReload 	Does restart when current transfer complete?
  * @param[in]     	 ch            	Channel no.[0~7]
  * @param[in]     	 pDmaDesc    	Pointer to DMA channel descriptor structure.
  *
