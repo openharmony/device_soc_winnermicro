@@ -243,7 +243,7 @@ int tls_fls_init(void);
  *
  * @note           None
  */
-int tls_fls_read(u32 addr, u8 * buf, u32 len);
+int tls_fls_read(u32 addr, u8 *buf, u32 len);
 
 /**
  * @brief          This function is used to write data into the flash.
@@ -260,7 +260,7 @@ int tls_fls_read(u32 addr, u8 * buf, u32 len);
  *
  * @note           None
  */
-int tls_fls_write(u32 addr, u8 * buf, u32 len);
+int tls_fls_write(u32 addr, u8 *buf, u32 len);
 
 /**
  * @brief          This function is used to write data into the flash without erase.

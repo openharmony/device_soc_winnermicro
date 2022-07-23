@@ -62,7 +62,7 @@
  */
 
 tls_bt_status_t tls_bt_pin_reply(const tls_bt_addr_t *bd_addr, uint8_t accept,
-                     uint8_t pin_len, tls_bt_pin_code_t *pin_code);
+                                 uint8_t pin_len, tls_bt_pin_code_t *pin_code);
 
 /**
  * @brief          reply the ssp request
@@ -78,7 +78,7 @@ tls_bt_status_t tls_bt_pin_reply(const tls_bt_addr_t *bd_addr, uint8_t accept,
  */
 
 tls_bt_status_t tls_bt_ssp_reply(const tls_bt_addr_t *bd_addr, tls_bt_ssp_variant_t variant,
-                     uint8_t accept, uint32_t passkey);
+                                 uint8_t accept, uint32_t passkey);
 
 /**
  * @brief          set the adapter property
@@ -192,7 +192,7 @@ tls_bt_status_t tls_bt_enable(tls_bt_host_callback_t callback, tls_bt_hci_if_t *
  *
  * @note           None
  */
-tls_bt_status_t tls_bt_disable();
+tls_bt_status_t tls_bt_disable(void);
 
 /**
  * @}
@@ -334,7 +334,7 @@ tls_bt_status_t tls_bt_ctrl_if_register(const tls_bt_host_if_t *p_host_if);
  *
  * @note           None
  */
-tls_bt_status_t tls_bt_ctrl_if_unregister();
+tls_bt_status_t tls_bt_ctrl_if_unregister(void);
 
 /**
  * @brief          this function configure the controller enter into sleep mode when controller
@@ -382,7 +382,7 @@ tls_bt_status_t tls_bt_ctrl_wakeup(void);
  * @note           None
  */
 
-bool tls_bt_vuart_host_check_send_available();
+bool tls_bt_vuart_host_check_send_available(void);
 
 /**
  * @brief          this function exit bluetooth test mode
@@ -393,7 +393,7 @@ bool tls_bt_vuart_host_check_send_available();
  *
  * @note           None
  */
-tls_bt_status_t exit_bt_test_mode();
+tls_bt_status_t exit_bt_test_mode(void);
 
 /**
  * @brief          this function enable bluetooth test mode

@@ -32,7 +32,7 @@
 #define SYS_ARCH_TIMEOUT 0xffffffffUL
 
 /** pointer to the mailbox */
-typedef tls_os_queue_t * tls_mbox_t;
+typedef tls_os_queue_t *tls_mbox_t;
 
 /**
  * @brief          Create a malibox

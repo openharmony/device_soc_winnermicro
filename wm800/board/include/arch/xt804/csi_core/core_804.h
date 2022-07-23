@@ -160,7 +160,7 @@ typedef union {
         uint32_t MM : 1;                      /* !< bit:      9  Unsymmetrical masking bit */
         uint32_t _reserved1 : 6;              /* !< bit: 10..15  Reserved */
         uint32_t VEC : 8;                     /* !< bit: 16..23  Abnormal event vector value */
-        uint32_t _reserved2: 1;              /* !< bit:     24  Reserved */
+        uint32_t _reserved2 : 1;              /* !< bit:     24  Reserved */
         uint32_t SV : 1;                      /* !< bit:     25  Stacked valid */
         uint32_t SD : 1;                      /* !< bit:     26  Stacked dirty */
         uint32_t SC : 1;                      /* !< bit:     27  Secure call bit */
@@ -203,7 +203,7 @@ typedef union {
 typedef union {
     struct {
         uint32_t MP : 1;                      /*! < bit:  0.. 1  memory protection settings */
-        uint32_t _reserved0: 6;               /*! < bit:  2.. 6  Reserved */
+        uint32_t _reserved0 : 6;               /*! < bit:  2.. 6  Reserved */
         uint32_t BE : 1;                      /*! < bit:      7  Endian mode */
         uint32_t SCK : 3;                     /*! < bit:  8..10  the clock ratio of the system and the processor */
         uint32_t _reserved1 : 2;              /*! < bit: 11..12  Reserved */
@@ -404,7 +404,7 @@ typedef union {
 #define CHR_SRST_VAL_Pos                   16U                                           /*!< CHR: SRST_VAL Position */
 #define CHR_SRST_VAL_Mask                  (0xFFFFUL << CHR_SRST_VAL_Pos)                /*!< CHR: SRST_VAL Mask */
 
-/*@} end of group CSI_CORE */
+/* @} end of group CSI_CORE */
 
 /**
   \ingroup    CSI_core_register
@@ -639,7 +639,7 @@ typedef struct {
   \param[in] value  Value of the bit field.
   \return           Masked and shifted value.
 */
-#define _VAL2FLD(field, value)    ((value << field ## _Pos) & field ## _Msk)
+#define _VAL2FLD(field, value)    (((value) << field ## _Pos) & field ## _Msk)
 
 /**
   \brief     Mask and shift a register value to extract a bit filed value.
@@ -647,7 +647,7 @@ typedef struct {
   \param[in] value  Value of register.
   \return           Masked and shifted bit field value.
 */
-#define _FLD2VAL(field, value)    ((value & field ## _Msk) >> field ## _Pos)
+#define _FLD2VAL(field, value)    (((value) & field ## _Msk) >> field ## _Pos)
 
 /* @} end of group CSI_core_bitfield */
 
@@ -699,7 +699,7 @@ typedef struct {
 extern uint32_t __Vectors[];
 extern uint32_t irq_vectors[];
 
-/* Forward declaration*/
+/* Forward declaration */
 __STATIC_INLINE void csi_icache_invalid (void);
 
 /**

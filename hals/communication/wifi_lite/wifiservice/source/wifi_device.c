@@ -45,10 +45,10 @@
 #endif
 
 #include "wifi_error_code.h"
-#include "wifi_device.h"
 #include "wifi_event.h"
 #include "wifi_linked_info.h"
 #include "securec.h"
+#include "wifi_device.h"
 
 #include <stdio.h>
 
@@ -60,7 +60,8 @@ static int gWifiStaStatus = WIFI_STA_NOT_ACTIVE;
 static WifiEvent* gWifiEvents[WIFI_MAX_EVENT_SIZE] = {0};
 static u8 gWifiScanDone = FALSE;
 
-static volatile u8 g_connectStatus = 0; // 0x1: NETIF_WIFI_JOIN_SUCCESS, 0x2: NETIF_WIFI_JOIN_FAILED, 0x3: NETIF_WIFI_DISCONNECTED
+// 0x1: NETIF_WIFI_JOIN_SUCCESS, 0x2: NETIF_WIFI_JOIN_FAILED, 0x3: NETIF_WIFI_DISCONNECTED
+static volatile u8 g_connectStatus = 0;
 
 u8 g_hasConnected = 0;
 
@@ -90,7 +91,7 @@ static u8 keyold  = 0;
         if (DEBUG) {                    \
             printf(fmt, ##__VA_ARGS__); \
         }                               \
-    } while(0)
+    } while (0)
 /*
  * w800 doesn't support enable/disable wifi sta function
  * always return success.
@@ -225,7 +226,7 @@ static void WifiScanHandler(void)
 
     if (gScannedBuffer == NULL) {
         printf("[wifi_device]: scan buffer is NULL!\n");
-        
+
         gWifiScanDone = TRUE;
         return;
     }
@@ -305,7 +306,7 @@ WifiErrorCode Scan(void)
         return ERROR_WIFI_UNKNOWN;
     }
 
-    while(gWifiScanDone == FALSE) {
+    while (gWifiScanDone == FALSE) {
         osDelay(50); /* 500 ms */
     }
     gWifiScanDone = FALSE; /* Reset scan flag */
@@ -315,7 +316,7 @@ WifiErrorCode Scan(void)
 
 static void WifiEventCallback(u8 status)
 {
-    switch(status) {
+    switch (status) {
         case NETIF_WIFI_JOIN_SUCCESS:
             debug_wifi("WifiEventCallback status = WIFI_JOIN_SUCCESS\n");
             WifiLinkedInfo info = {0};
@@ -621,7 +622,7 @@ WifiErrorCode AddDeviceConfig(const WifiDeviceConfig* config, int* result)
 
     sprintf(keystring, WIFI_CFG_INFO"_%d", netId);
     ret = UtilsSetValue(keystring, kvstring);
-    if (ret < 0 )  {
+    if (ret < 0) {
         return ERROR_WIFI_BUSY;
     }
 
@@ -661,18 +662,16 @@ WifiErrorCode GetDeviceConfigs(WifiDeviceConfig* result, unsigned int* size)
     }
 
     UtilsSetEnv(KV_FILE_NAME);
-    for (i = 0; i < WIFI_MAX_CONFIG_SIZE; i++)
-    {
+    for (i = 0; i < WIFI_MAX_CONFIG_SIZE; i++) {
         memset(keystring, 0, MAX_WIFI_KV_NAME_LEN);
         sprintf(keystring, WIFI_CFG_INFO"_%d", i);
         int ret = UtilsGetValue(keystring, &gWifiConfigs[i], sizeof(WifiDeviceConfig));
-        if (ret == 0)
-        {
+        if (ret == 0) {
             validflag = 1;
         }
     }
 
-    if (validflag < 0 ) {
+    if (validflag < 0) {
         printf("\r\n read wifi cfg info fail");
         if (UnlockWifiGlobalLock() != WIFI_SUCCESS) {
             printf("[wifi_device] Unlock wifi global lock failed in get device config.\n");
@@ -741,11 +740,11 @@ WifiErrorCode RemoveDevice(int networkId)
         return ERROR_WIFI_UNKNOWN;
     }
     if (memset_s(&gWifiConfigs[networkId], sizeof(WifiDeviceConfig),
-       0, sizeof(WifiDeviceConfig)) != EOK) {
+        0, sizeof(WifiDeviceConfig)) != EOK) {
         printf("[wifi_service]:removeDevice memset failed\n");
     }
     gWifiConfigs[networkId].netId = WIFI_CONFIG_INVALID;
-    
+
     gWifiStaStatus = WIFI_STA_NOT_ACTIVE;
     g_connectStatus = 0;
     g_hasConnected = 0;
@@ -755,7 +754,7 @@ WifiErrorCode RemoveDevice(int networkId)
     memset(keystring, 0, MAX_WIFI_KV_NAME_LEN);
     sprintf(keystring, WIFI_CFG_INFO"_%d", networkId);
     int ret = UtilsDeleteValue(keystring);
-    if (ret < 0 )  {
+    if (ret < 0) {
         printf("\r\n clear wifi cfg info fail");
     } else {
     }
@@ -805,7 +804,7 @@ WifiErrorCode GetLinkedInfo(WifiLinkedInfo* result)
         return ERROR_WIFI_UNKNOWN;
     }
 
-    switch(wifi_states) {
+    switch (wifi_states) {
         case WM_WIFI_DISCONNECTED:
             result->connState = WIFI_DISCONNECTED;
             break;
@@ -886,7 +885,8 @@ WifiErrorCode ConnectTo(int networkId)
     if (gWifiConfigs[networkId].preSharedKey[0] == '\0') {
         debug_wifi("[wifi_device]: Connectto PSK is empty, auth mode is OPEN.\n");
     }
-    printf("wifi device connect to SSID:%s, KEY:%s\r\n",gWifiConfigs[networkId].ssid, gWifiConfigs[networkId].preSharedKey);
+    printf("wifi device connect to SSID:%s, KEY:%s\r\n", gWifiConfigs[networkId].ssid,
+           gWifiConfigs[networkId].preSharedKey);
 
     if (gWifiConfigs[networkId].wapiPskType == WIFI_PSK_TYPE_HEX) {
         debug_wifi("[wifi_device]: psk type is HEX type.\n");

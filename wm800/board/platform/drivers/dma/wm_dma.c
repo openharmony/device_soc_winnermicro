@@ -76,7 +76,7 @@ static void dma_irq_proc(void *p)
     if (DMA_CTRL_REG(ch) & 0x01) {
         uint32_t temp = 0, cur_len = 0;
         static uint32_t len[8] = {0, 0, 0, 0, 0, 0, 0, 0};
-        
+
         temp = DMA_CTRL_REG(ch);
         if (len[ch] == 0)
         {
@@ -90,7 +90,7 @@ static void dma_irq_proc(void *p)
             while (DMA_CHNLCTRL_REG(ch) & (1 << 0));
             DMA_CHNLCTRL_REG(ch) |= (1 << 0);
         }
-        
+
         temp &= ~(0xFFFF << 8);
         temp |= ((cur_len + len[ch]) << 8);
         DMA_CTRL_REG(ch) = temp;
@@ -251,7 +251,7 @@ int tls_dma_wait_complt(unsigned char ch)
  *                     |                       Next_Desc_Add[31:0]                    |
  *                     +--------------------------------------------------------------+
  */
-unsigned char tls_dma_start_by_wrap(unsigned char ch, struct tls_dma_descriptor *dma_desc, 
+unsigned char tls_dma_start_by_wrap(unsigned char ch, struct tls_dma_descriptor *dma_desc,
                                     unsigned char auto_reload,
                                     unsigned short src_zize,
                                     unsigned short dest_zize)
@@ -376,7 +376,7 @@ unsigned char tls_dma_request(unsigned char ch, unsigned char flags)
             tls_open_peripheral_clock(TLS_PERIPHERAL_TYPE_DMA);
         }
         dma_used_bit |= (1<<freeCh);
-        
+
         channels.channels[freeCh] = flags | TLS_DMA_FLAGS_CHANNEL_VALID;
         DMA_MODE_REG(freeCh) = flags;
     }

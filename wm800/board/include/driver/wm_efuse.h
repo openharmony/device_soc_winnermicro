@@ -47,7 +47,6 @@ enum {
 #define CAL_FLAG_ADDR  (FT_MAGICNUM_ADDR + sizeof(FT_PARAM_ST)+4)
 #define CAL_FLAG_LEN    (4)
 
-// #define TX_GAIN_NEW_ADDR (VCG_ADDR+VCG_LEN)
 #define TX_GAIN_LEN   (28*3)
 
 /**

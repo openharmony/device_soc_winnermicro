@@ -124,7 +124,7 @@ static void fwup_scheduler(void *data)
     u8 *buffer = NULL;
     int err;
     u32 msg;
-    u32 len;    
+    u32 len;
     u32 image_checksum = 0;
     struct tls_fwup_request *request;
     struct tls_fwup_request *temp;
@@ -152,7 +152,7 @@ static void fwup_scheduler(void *data)
                         }
                         else if (fwup->current_state & TLS_FWUP_STATE_ERROR_SIGNATURE) {
                             request->status = TLS_FWUP_REQ_STATUS_FSIGNATURE;
-                        } else if (fwup->current_state & TLS_FWUP_STATE_ERROR_MEM) {    
+                        } else if (fwup->current_state & TLS_FWUP_STATE_ERROR_MEM) {
                             request->status = TLS_FWUP_REQ_STATUS_FMEM;
                         } else if (fwup->current_state & TLS_FWUP_STATE_ERROR_CRC) {
                             request->status = TLS_FWUP_REQ_STATUS_FCRC;
@@ -183,7 +183,7 @@ static void fwup_scheduler(void *data)
                                     fwup->current_state |= TLS_FWUP_STATE_ERROR_IO;
                                     goto request_finish;
                                 }
-                            
+
                                 fwup->program_base = booter.upgrade_img_addr | FLASH_BASE_ADDR;
                                 fwup->program_offset = 0;
                                 fwup->total_len = booter.img_len + sizeof(IMAGE_HEADER_PARAM_ST);
@@ -326,11 +326,11 @@ u32 tls_fwup_enter(enum tls_fwup_image_src image_src)
     }
 
     cpu_sr = tls_os_set_critical();
-    
+
     do {
         session_id = rand();
     } while(session_id == 0);
-    
+
     fwup->current_state = 0;
     fwup->current_image_src = image_src;
 
@@ -340,14 +340,14 @@ u32 tls_fwup_enter(enum tls_fwup_image_src image_src)
     fwup->program_base = 0;
     fwup->program_offset = 0;
     fwup->received_number = -1;
-        
+
     fwup->current_session_id = session_id;
     fwup->busy = TRUE;
     oneshotback = tls_wifi_get_oneshot_flag();
     if (oneshotback != 0) {
         tls_wifi_set_oneshot_flag(0);    // �˳�һ������
     }
-    tls_param_get(TLS_PARAM_ID_PSM, &enable, TRUE);    
+    tls_param_get(TLS_PARAM_ID_PSM, &enable, TRUE);
     if (TRUE == enable) {
         tls_wifi_set_psflag(FALSE, 0);
     }
@@ -360,7 +360,7 @@ int tls_fwup_exit(u32 session_id)
 {
     u32 cpu_sr;
     bool enable = FALSE;
-    
+
     if ((fwup == NULL) || (fwup->busy == FALSE)) {
         return TLS_FWUP_STATUS_EPERM;
     }
@@ -387,7 +387,7 @@ int tls_fwup_exit(u32 session_id)
     if (oneshotback != 0) {
         tls_wifi_set_oneshot_flag(oneshotback); // �ָ�һ������
     }
-    tls_param_get(TLS_PARAM_ID_PSM, &enable, TRUE);    
+    tls_param_get(TLS_PARAM_ID_PSM, &enable, TRUE);
     tls_wifi_set_psflag(enable, 0);
     tls_os_release_critical(cpu_sr);
     return TLS_FWUP_STATUS_OK;
@@ -436,7 +436,7 @@ int tls_fwup_set_crc_error(u32 session_id)
 static int tls_fwup_request_async(u32 session_id, struct tls_fwup_request *request)
 {
     u8 need_sched;
-    
+
     if (fwup == NULL) {
         return TLS_FWUP_STATUS_EPERM;
     }
@@ -538,7 +538,7 @@ u16 tls_fwup_current_state(u32 session_id)
 int tls_fwup_reset(u32 session_id)
 {
     u32 cpu_sr;
-    
+
     if ((fwup == NULL) || (fwup->busy == FALSE)) {return TLS_FWUP_STATUS_EPERM;}
     if (session_id != fwup->current_session_id) {return TLS_FWUP_STATUS_ESESSIONID;}
     if (fwup->current_state & TLS_FWUP_STATE_BUSY) {return TLS_FWUP_STATUS_EBUSY;}
@@ -552,16 +552,16 @@ int tls_fwup_reset(u32 session_id)
     fwup->updated_len = 0;
     fwup->program_base = 0;
     fwup->program_offset = 0;
-    
+
     tls_os_release_critical(cpu_sr);
-    
+
     return TLS_FWUP_STATUS_OK;
 }
 
 int tls_fwup_clear_error(u32 session_id)
 {
     u32 cpu_sr;
-    
+
     if ((fwup == NULL) || (fwup->busy == FALSE)) {return TLS_FWUP_STATUS_EPERM;}
     if (session_id != fwup->current_session_id) {return TLS_FWUP_STATUS_ESESSIONID;}
     if (fwup->current_state & TLS_FWUP_STATE_BUSY) {return TLS_FWUP_STATUS_EBUSY;}
@@ -569,7 +569,7 @@ int tls_fwup_clear_error(u32 session_id)
     cpu_sr = tls_os_set_critical();
 
     fwup->current_state &= ~TLS_FWUP_STATE_ERROR;
-    
+
     tls_os_release_critical(cpu_sr);
 
     return TLS_FWUP_STATUS_OK;
@@ -590,7 +590,7 @@ int tls_fwup_init(void)
         return TLS_FWUP_STATUS_EMEM;
     }
     memset(fwup, 0, sizeof(*fwup));
-    
+
     err = tls_os_sem_create(&fwup->list_lock, 1);
     if (err != TLS_OS_SUCCESS) {
         TLS_DBGPRT_ERR("create semaphore @fwup->list_lock fail!\n");

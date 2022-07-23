@@ -63,7 +63,7 @@
  * This will download image which includes secboot
  * & user application image into flash by ROM using xmodem-protocol for factory burning.
  * @code
- * Pulling down the bootmode pin(PA0) and reset the device. Then UART0 will output: 
+ * Pulling down the bootmode pin(PA0) and reset the device. Then UART0 will output:
  * CCC...
  * For details,please refer to the sdk manual.
  * @endcode

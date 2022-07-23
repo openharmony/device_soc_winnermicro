@@ -56,29 +56,29 @@ struct tls_sys_param {
     struct tls_param_wps wps;
 
     struct tls_param_ip ipcfg;
-    
+
     u8 local_dnsname[32];
     u8 local_device_name[32];
-    
+
     struct tls_param_oray_client oray_client_setting;
 
     u8 upnp_enable;
-    
+
     u8 always_online;
-    
+
     u8 user_port_mode;
 
     u8 res_2;
-    
+
     struct tls_param_uart uart_cfg;
-    
+
     u8 auto_mode;
     u8 res_3;
     u16 transparent_trigger_length;
     u16 transparent_trigger_period;
-    
+
     struct tls_param_socket remote_socket_cfg;
-    
+
     u32 debug_mode;
     u32 res_4[2];  /* reserv and mark the end */
 
@@ -118,7 +118,7 @@ struct tls_sys_param {
     char sntp_service2[32];
     char sntp_service3[32];
     struct tls_param_tem_offset params_tem;
-    
+
     bt_adapter_t adapter_t;
     bt_remote_device_t remote_device1;
     bt_remote_device_t remote_device2;

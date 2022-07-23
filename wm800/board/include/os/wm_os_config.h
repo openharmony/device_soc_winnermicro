@@ -22,7 +22,7 @@
  *
  * Copyright (c) 2015 Winner Microelectronics Co., Ltd.
  */
- 
+
 #ifndef __WM_OS_CONFIG_H__
 #define __WM_OS_CONFIG_H__
 #define OS_CFG_ON  1

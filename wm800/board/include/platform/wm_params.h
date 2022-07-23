@@ -437,7 +437,7 @@ typedef struct tls_user_param {
 typedef struct {
     u32 valid_tag;  /* 0xdeadbeaf means valid */
     u32 valid_bit;
-    u8 bd_addr[6];      /* Local Address */ 
+    u8 bd_addr[6];      /* Local Address */
     uint8_t name_len;
     u8 name[16];        /* Local Name */
     u32 class_of_device; /* Class of Device */

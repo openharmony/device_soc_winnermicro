@@ -72,7 +72,7 @@ void tls_pwm_isr_register(void (*callback)(void))
 int tls_pwm_duty_config(u8 channel, u8 duty)
 {
     u32 temp = 0;
-    
+
     if (channel > (PWM_CHANNEL_MAX_NUM - 1)) {
         TLS_DBGPRT_ERR("duty param err\n");
         return WM_FAILED;
@@ -111,7 +111,7 @@ int tls_pwm_duty_config(u8 channel, u8 duty)
 int tls_pwm_freq_config(u8 channel, u16 clkdiv, u8 period)
 {
     u32 temp = 0;
-    
+
     if (channel > (PWM_CHANNEL_MAX_NUM - 1)) {
         TLS_DBGPRT_ERR("freq param err\n");
         return WM_FAILED;
@@ -321,7 +321,7 @@ int tls_pwm_out_inverse_cmd(u8 channel, bool en)
 int tls_pwm_stoptime_by_period_config(u8 channel, u8 pnum)
 {
     u32 temp = 0;
-    
+
     if (channel > (PWM_CHANNEL_MAX_NUM - 1))
         return WM_FAILED;
 
@@ -384,7 +384,7 @@ int tls_pwm_output_en_cmd(u8 channel, bool en)
 int tls_pwm_deadzone_config(u8 channel, bool dten, u8 dtclkdiv, u8 dtcnt)
 {
     u32 temp = 0;
-    
+
     if ((channel !=0 && channel != 2) || dtclkdiv > 3)
         return WM_FAILED;
 
@@ -743,7 +743,7 @@ void tls_pwm_freq_set(u8 channel, u32 freq)
 {
     u16 clkdiv = 0;
     tls_sys_clk sysclk;
-    
+
     if (channel > (PWM_CHANNEL_MAX_NUM - 1))
         return;
 
@@ -795,7 +795,7 @@ int tls_pwm_init(u8 channel,u32 freq, u8 duty, u8 pnum)
     pwm_init_param pwm_param;
     int ret;
     tls_sys_clk sysclk;
-    
+
     tls_sys_clk_get(&sysclk);
 
     memset(&pwm_param, 0, sizeof(pwm_init_param));
