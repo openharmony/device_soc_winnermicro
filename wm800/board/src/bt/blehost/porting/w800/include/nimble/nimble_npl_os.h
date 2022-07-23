@@ -25,6 +25,7 @@
 #include <string.h>
 
 #include "wm_osal.h"
+#include "os/npl_freertos.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -68,251 +69,211 @@ struct ble_npl_sem {
  * file instead and static inline wrapper just calls proper implementation.
  * We need declarations of these functions and they are defined in header below.
  */
-#include "os/npl_freertos.h"
 
-static inline bool
-ble_npl_os_started(void)
+static inline bool ble_npl_os_started(void)
 {
     return tls_os_task_schedule_state() != 0;
 }
 
-static inline void *
-ble_npl_get_current_task_id(void)
+static inline void *ble_npl_get_current_task_id(void)
 {
     return (void *)tls_os_task_id();
 }
 
-static inline void
-ble_npl_eventq_init(struct ble_npl_eventq *evq)
+static inline void ble_npl_eventq_init(struct ble_npl_eventq *evq)
 {
-    tls_os_queue_create(&evq->q, 32);
+    tls_os_queue_create(&evq->q, 32); // 32:queue size
 
     if (evq->q == NULL) {
         assert(0);
     }
 }
-static inline void
-ble_npl_eventq_deinit(struct ble_npl_eventq *evq)
+
+static inline void ble_npl_eventq_deinit(struct ble_npl_eventq *evq)
 {
     if (evq && evq->q) {
         tls_os_queue_delete(evq->q);
     }
 }
 
-static inline struct ble_npl_event *
-ble_npl_eventq_get(struct ble_npl_eventq *evq, ble_npl_time_t tmo)
+static inline struct ble_npl_event *ble_npl_eventq_get(struct ble_npl_eventq *evq, ble_npl_time_t tmo)
 {
     return npl_freertos_eventq_get(evq, tmo);
 }
 
-static inline void
-ble_npl_eventq_put(struct ble_npl_eventq *evq, struct ble_npl_event *ev)
+static inline void ble_npl_eventq_put(struct ble_npl_eventq *evq, struct ble_npl_event *ev)
 {
     npl_freertos_eventq_put(evq, ev);
 }
 
-static inline void
-ble_npl_eventq_remove(struct ble_npl_eventq *evq, struct ble_npl_event *ev)
+static inline void ble_npl_eventq_remove(struct ble_npl_eventq *evq, struct ble_npl_event *ev)
 {
     npl_freertos_eventq_remove(evq, ev);
 }
 
-static inline void
-ble_npl_event_run(struct ble_npl_event *ev)
+static inline void ble_npl_event_run(struct ble_npl_event *ev)
 {
     ev->fn(ev);
 }
 
-static inline bool
-ble_npl_eventq_is_empty(struct ble_npl_eventq *evq)
+static inline bool ble_npl_eventq_is_empty(struct ble_npl_eventq *evq)
 {
     return tls_os_queue_is_empty(evq->q);
 }
 
-static inline void
-ble_npl_event_init(struct ble_npl_event *ev, ble_npl_event_fn *fn,
-                   void *arg)
+static inline void ble_npl_event_init(struct ble_npl_event *ev, ble_npl_event_fn *fn, void *arg)
 {
     memset(ev, 0, sizeof(*ev));
     ev->fn = fn;
     ev->arg = arg;
 }
 
-static inline bool
-ble_npl_event_is_queued(struct ble_npl_event *ev)
+static inline bool ble_npl_event_is_queued(struct ble_npl_event *ev)
 {
     return ev->queued;
 }
 
-static inline void *
-ble_npl_event_get_arg(struct ble_npl_event *ev)
+static inline void *ble_npl_event_get_arg(struct ble_npl_event *ev)
 {
     return ev->arg;
 }
 
-static inline void
-ble_npl_event_set_arg(struct ble_npl_event *ev, void *arg)
+static inline void ble_npl_event_set_arg(struct ble_npl_event *ev, void *arg)
 {
     ev->arg = arg;
 }
 
-static inline ble_npl_error_t
-ble_npl_mutex_init(struct ble_npl_mutex *mu)
+static inline ble_npl_error_t ble_npl_mutex_init(struct ble_npl_mutex *mu)
 {
     return npl_freertos_mutex_init(mu);
 }
 
-static inline ble_npl_error_t
-ble_npl_mutex_deinit(struct ble_npl_mutex *mu)
+static inline ble_npl_error_t ble_npl_mutex_deinit(struct ble_npl_mutex *mu)
 {
     return npl_freertos_mutex_deinit(mu);
 }
 
-static inline ble_npl_error_t
-ble_npl_mutex_pend(struct ble_npl_mutex *mu, ble_npl_time_t timeout)
+static inline ble_npl_error_t ble_npl_mutex_pend(struct ble_npl_mutex *mu, ble_npl_time_t timeout)
 {
     return npl_freertos_mutex_pend(mu, timeout);
 }
 
-static inline ble_npl_error_t
-ble_npl_mutex_release(struct ble_npl_mutex *mu)
+static inline ble_npl_error_t ble_npl_mutex_release(struct ble_npl_mutex *mu)
 {
     return npl_freertos_mutex_release(mu);
 }
 
-static inline ble_npl_error_t
-ble_npl_sem_init(struct ble_npl_sem *sem, uint16_t tokens)
+static inline ble_npl_error_t ble_npl_sem_init(struct ble_npl_sem *sem, uint16_t tokens)
 {
     return npl_freertos_sem_init(sem, tokens);
 }
-static inline ble_npl_error_t
-ble_npl_sem_deinit(struct ble_npl_sem *sem)
+static inline ble_npl_error_t ble_npl_sem_deinit(struct ble_npl_sem *sem)
 {
     return npl_freertos_sem_deinit(sem);
 }
 
-static inline ble_npl_error_t
-ble_npl_sem_pend(struct ble_npl_sem *sem, ble_npl_time_t timeout)
+static inline ble_npl_error_t ble_npl_sem_pend(struct ble_npl_sem *sem, ble_npl_time_t timeout)
 {
     return npl_freertos_sem_pend(sem, timeout);
 }
 
-static inline ble_npl_error_t
-ble_npl_sem_release(struct ble_npl_sem *sem)
+static inline ble_npl_error_t ble_npl_sem_release(struct ble_npl_sem *sem)
 {
     return npl_freertos_sem_release(sem);
 }
 
-static inline uint16_t
-ble_npl_sem_get_count(struct ble_npl_sem *sem)
+static inline uint16_t ble_npl_sem_get_count(struct ble_npl_sem *sem)
 {
     return npl_freertos_get_sem_count(sem);
 }
 
-static inline void
-ble_npl_callout_init(struct ble_npl_callout *co, struct ble_npl_eventq *evq,
-                     ble_npl_event_fn *ev_cb, void *ev_arg)
+static inline void ble_npl_callout_init(struct ble_npl_callout *co, struct ble_npl_eventq *evq,
+                                        ble_npl_event_fn *ev_cb, void *ev_arg)
 {
     npl_freertos_callout_init(co, evq, ev_cb, ev_arg);
 }
-static inline void
-ble_npl_callout_deinit(struct ble_npl_callout *co)
+
+static inline void ble_npl_callout_deinit(struct ble_npl_callout *co)
 {
     if (co && co->handle) {
         tls_os_timer_delete(co->handle);
     }
 }
 
-static inline ble_npl_error_t
-ble_npl_callout_reset(struct ble_npl_callout *co, ble_npl_time_t ticks)
+static inline ble_npl_error_t ble_npl_callout_reset(struct ble_npl_callout *co, ble_npl_time_t ticks)
 {
     return npl_freertos_callout_reset(co, ticks);
 }
 
-static inline void
-ble_npl_callout_stop(struct ble_npl_callout *co)
+static inline void ble_npl_callout_stop(struct ble_npl_callout *co)
 {
     tls_os_timer_stop(co->handle);
 }
 
-static inline bool
-ble_npl_callout_is_active(struct ble_npl_callout *co)
+static inline bool ble_npl_callout_is_active(struct ble_npl_callout *co)
 {
     return tls_os_timer_active(co->handle) == 1;
 }
 
-static inline ble_npl_time_t
-ble_npl_callout_get_ticks(struct ble_npl_callout *co)
+static inline ble_npl_time_t ble_npl_callout_get_ticks(struct ble_npl_callout *co)
 {
     return tls_os_timer_expirytime(co->handle);
 }
 
-static inline uint32_t
-ble_npl_callout_remaining_ticks(struct ble_npl_callout *co,
-                                ble_npl_time_t time)
+static inline uint32_t ble_npl_callout_remaining_ticks(struct ble_npl_callout *co, ble_npl_time_t time)
 {
     return npl_freertos_callout_remaining_ticks(co, time);
 }
 
-static inline void
-ble_npl_callout_set_arg(struct ble_npl_callout *co, void *arg)
+static inline void ble_npl_callout_set_arg(struct ble_npl_callout *co, void *arg)
 {
     co->ev.arg = arg;
 }
 
-static inline uint32_t
-ble_npl_time_get(void)
+static inline uint32_t ble_npl_time_get(void)
 {
     return tls_os_get_time();
 }
 
-static inline ble_npl_error_t
-ble_npl_time_ms_to_ticks(uint32_t ms, ble_npl_time_t *out_ticks)
+static inline ble_npl_error_t ble_npl_time_ms_to_ticks(uint32_t ms, ble_npl_time_t *out_ticks)
 {
     return npl_freertos_time_ms_to_ticks(ms, out_ticks);
 }
 
-static inline ble_npl_error_t
-ble_npl_time_ticks_to_ms(ble_npl_time_t ticks, uint32_t *out_ms)
+static inline ble_npl_error_t ble_npl_time_ticks_to_ms(ble_npl_time_t ticks, uint32_t *out_ms)
 {
     return ble_npl_time_ticks_to_ms(ticks, out_ms);
 }
 
-static inline ble_npl_time_t
-ble_npl_time_ms_to_ticks32(uint32_t ms)
+static inline ble_npl_time_t ble_npl_time_ms_to_ticks32(uint32_t ms)
 {
-    return ms * /*configTICK_RATE_HZ*/HZ / 1000;
+    return ms * HZ / 1000; // 1000; BYTE ALIGNMENT
 }
 
-static inline uint32_t
-ble_npl_time_ticks_to_ms32(ble_npl_time_t ticks)
+static inline uint32_t ble_npl_time_ticks_to_ms32(ble_npl_time_t ticks)
 {
-    return ticks * 1000 / /*configTICK_RATE_HZ*/HZ;
+    return ticks * 1000 / HZ; // 1000; BYTE ALIGNMENT
 }
 
-static inline void
-ble_npl_time_delay(ble_npl_time_t ticks)
+static inline void ble_npl_time_delay(ble_npl_time_t ticks)
 {
     tls_os_time_delay(ticks);
 }
 
 #if NIMBLE_CFG_CONTROLLER
-static inline void
-ble_npl_hw_set_isr(int irqn, void (*addr)(void))
+static inline void ble_npl_hw_set_isr(int irqn, void (*addr)(void))
 {
     npl_freertos_hw_set_isr(irqn, addr);
 }
 #endif
 
-static inline uint32_t
-ble_npl_hw_enter_critical(void)
+static inline uint32_t ble_npl_hw_enter_critical(void)
 {
     vPortEnterCritical();
     return 0;
 }
 
-static inline void
-ble_npl_hw_exit_critical(uint32_t ctx)
+static inline void ble_npl_hw_exit_critical(uint32_t ctx)
 {
     vPortExitCritical();
 }

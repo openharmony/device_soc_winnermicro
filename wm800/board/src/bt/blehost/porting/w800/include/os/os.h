@@ -21,6 +21,12 @@
 #define _OS_H
 
 #include <assert.h>
+/* Mynewt components (not abstracted in NPL) */
+#include "os/endian.h"
+#include "os/queue.h"
+#include "os/os_error.h"
+#include "os/os_mbuf.h"
+#include "os/os_mempool.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -48,13 +54,6 @@ typedef uint32_t os_sr_t;
 #define OS_ENTER_CRITICAL(_sr) (_sr = ble_npl_hw_enter_critical())
 #define OS_EXIT_CRITICAL(_sr) (ble_npl_hw_exit_critical(_sr))
 #define OS_ASSERT_CRITICAL() assert(ble_npl_hw_is_in_critical())
-
-/* Mynewt components (not abstracted in NPL) */
-#include "os/endian.h"
-#include "os/queue.h"
-#include "os/os_error.h"
-#include "os/os_mbuf.h"
-#include "os/os_mempool.h"
 
 #ifdef __cplusplus
 }

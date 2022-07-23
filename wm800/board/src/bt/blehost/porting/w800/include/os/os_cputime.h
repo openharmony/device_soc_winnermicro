@@ -27,13 +27,13 @@
 #ifndef H_OS_CPUTIME_
 #define H_OS_CPUTIME_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include "syscfg/syscfg.h"
 #include "hal/hal_timer.h"
 #include "os/os.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /*
  * NOTE: these definitions allow one to override the cputime frequency used.

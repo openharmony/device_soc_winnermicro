@@ -52,22 +52,19 @@ extern "C" {
 #define STATS_NAME_END(__name)
 #define STATS_NAME_INIT_PARMS(__name)   NULL, 0
 
-static inline int
-stats_init(void *a, uint8_t b, uint8_t c, void *d, uint8_t e)
+static inline int stats_init(void *a, uint8_t b, uint8_t c, void *d, uint8_t e)
 {
     /* dummy */
     return 0;
 }
 
-static inline int
-stats_register(void *a, void *b)
+static inline int stats_register(void *a, void *b)
 {
     /* dummy */
     return 0;
 }
 
-static inline int
-stats_init_and_reg(void *a, uint8_t b, uint8_t c, void *d, uint8_t e, void *f)
+static inline int stats_init_and_reg(void *a, uint8_t b, uint8_t c, void *d, uint8_t e, void *f)
 {
     /* dummy */
     return 0;

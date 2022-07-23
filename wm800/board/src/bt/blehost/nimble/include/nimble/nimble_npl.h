@@ -23,6 +23,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+#include "nimble/nimble_npl_os.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -50,7 +51,6 @@ enum ble_npl_error {
 typedef enum ble_npl_error ble_npl_error_t;
 
 /* Include OS-specific definitions */
-#include "nimble/nimble_npl_os.h"
 
 /*
  * Generic
@@ -66,8 +66,7 @@ void *ble_npl_get_current_task_id(void);
 
 void ble_npl_eventq_init(struct ble_npl_eventq *evq);
 
-struct ble_npl_event *ble_npl_eventq_get(struct ble_npl_eventq *evq,
-        ble_npl_time_t tmo);
+struct ble_npl_event *ble_npl_eventq_get(struct ble_npl_eventq *evq, ble_npl_time_t tmo);
 
 void ble_npl_eventq_put(struct ble_npl_eventq *evq, struct ble_npl_event *ev);
 
@@ -128,11 +127,9 @@ bool ble_npl_callout_is_active(struct ble_npl_callout *co);
 
 ble_npl_time_t ble_npl_callout_get_ticks(struct ble_npl_callout *co);
 
-ble_npl_time_t ble_npl_callout_remaining_ticks(struct ble_npl_callout *co,
-        ble_npl_time_t time);
+ble_npl_time_t ble_npl_callout_remaining_ticks(struct ble_npl_callout *co, ble_npl_time_t time);
 
-void ble_npl_callout_set_arg(struct ble_npl_callout *co,
-                             void *arg);
+void ble_npl_callout_set_arg(struct ble_npl_callout *co, void *arg);
 /*
  * Time functions
  */
