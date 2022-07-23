@@ -69,7 +69,7 @@ typedef enum {
     NV_REMOTE_MAX_TAG
 } nv_tag_t;
 
-/*Adapter valid bit mask*/
+/* Adapter valid bit mask */
 #define NV_LOCAL_TAG            0
 #define NV_REMOTE_TAG           1
 
@@ -87,7 +87,7 @@ typedef enum {
 #define ADAPTER_BLE_DHK_VALID_BIT             (1<<11)
 #define ADAPTER_BLE_ER_VALID_BIT              (1<<12)
 
-/*BT device valid bit mask*/
+/* BT device valid bit mask */
 #define DEVICE_BD_ADDRESS_VALID_BIT             (1<<0)
 #define DEVICE_NAME_VALID_BIT                   (1<<1)
 #define DEVICE_CLASS_VALID_BIT                  (1<<2)
@@ -141,10 +141,9 @@ extern int btif_config_delete_cccd(int idx);
 extern int btif_config_get_sec_index(void *addr, uint8_t *found);
 extern int btif_config_store_our_sec(int idx, void *addr, uint8_t *payload, int length);
 extern uint32_t btif_config_get_sec_cccd_item(int idx, void *addr, void *our_sec, int our_sec_size,
-        void *peer_sec, int peer_sec_size, void *cccd_info, int cccd_info_size);
+    void *peer_sec, int peer_sec_size, void *cccd_info, int cccd_info_size);
 extern int btif_config_store_key_map(const uint8_t *map_info, int length, bool force_flush);
 extern int btif_config_load_key_map(uint8_t *map_info, int length);
 extern int btif_config_delete_all();
 
 #endif
-

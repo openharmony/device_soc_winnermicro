@@ -1110,7 +1110,7 @@
 #endif
 
 #ifndef MYNEWT_VAL_BLE_MESH_DEV_UUID
-#define MYNEWT_VAL_BLE_MESH_DEV_UUID (((uint8_t[16]){0x11, 0x22, 0}))
+#define MYNEWT_VAL_BLE_MESH_DEV_UUID (((uint8_t[16]) {0x11, 0x22, 0}))
 #endif
 
 #ifndef MYNEWT_VAL_BLE_MESH_FRIEND
@@ -1310,4 +1310,4 @@
 
 /*******************************************************/
 
-#endif  /*H_MYNEWT_SYSCFG_*/
+#endif  /* H_MYNEWT_SYSCFG_ */
