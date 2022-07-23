@@ -170,17 +170,17 @@ void ble_server_func_by_attr_handle(uint16_t attr_handle, uint8_t op, uint8_t *d
                 switch (op) {
                     case BLE_GATT_ACCESS_OP_WRITE_CHR:
                         if (svc_item->func.write) {
-                            #if BLE_IF_DBG
-                            #endif
+#if BLE_IF_DBG
+#endif
                             svc_item->func.write(data, (int)*len);
                         }
                         break;
                     case BLE_GATT_ACCESS_OP_READ_CHR:
                         if (svc_item->func.read) {
                             svc_item->func.read(data, len);
-                            #if BLE_IF_DBG
-                            tls_bt_dump_hexstring("To  Remote:", data, *len);
-                            #endif
+#if BLE_IF_DBG
+    tls_bt_dump_hexstring("To  Remote:", data, *len);
+#endif
                         }
                         break;
                     default:
@@ -290,7 +290,6 @@ int ble_server_alloc(BleGattService *srvcinfo)
             char_counter++;
             BLE_IF_DEBUG("CHAR PROP=0x%02x, PERM=0x%02x\r\n", srvcinfo->attrList[i].properties, \
                          srvcinfo->attrList[i].permission);
-
         } else if (srvcinfo->attrList[i].attrType == OHOS_BLE_ATTRIB_TYPE_CHAR_USER_DESCR) {
             desc_counter++;
             BLE_IF_DEBUG("DESC PROP=0x%02x, PERM=0x%02x\r\n", srvcinfo->attrList[i].properties, \
@@ -333,7 +332,6 @@ int ble_server_alloc(BleGattService *srvcinfo)
             // first fill with element used for nimble stack;
             gatt_svc_array[0].type = BLE_GATT_SVC_TYPE_PRIMARY;
             gatt_svc_array[0].uuid =  &srvc_elem->uuid;
-
         } else if (srvcinfo->attrList[i].attrType == OHOS_BLE_ATTRIB_TYPE_CHAR) {
             srvc_sub_elem = (service_elem_t *)tls_mem_alloc(sizeof(service_elem_t));
             assert(srvc_sub_elem != NULL);
@@ -382,7 +380,6 @@ int ble_server_alloc(BleGattService *srvcinfo)
             }
 
             serv_elem->srvc_count++; // restore it;
-
         }
     }
 

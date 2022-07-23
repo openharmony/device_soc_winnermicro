@@ -167,7 +167,7 @@ void tls_i2c_stop(void)
  */
 int tls_i2c_wait_ack(void)
 {
-    u16 errtime=0;
+    u16 errtime = 0;
     u32 value;
 
     while (tls_reg_read32(HR_I2C_CR_SR) & I2C_SR_TIP);

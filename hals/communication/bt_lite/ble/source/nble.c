@@ -78,22 +78,19 @@ static void app_adapter_state_changed_callback(tls_bt_state_t status)
 
     bt_adapter_state = status;
 
-    #if (TLS_CONFIG_BLE == CFG_ON)
+#if (TLS_CONFIG_BLE == CFG_ON)
 
     if (status == WM_BT_STATE_ON) {
         BLE_IF_PRINTF("init base application\r\n");
         ble_server_init();
-
     } else {
         BLE_IF_PRINTF("deinit base application\r\n");
-
     }
-    #endif
+#endif
 }
 
 static void on_sync(void)
 {
-    // int rc;
     /* Make sure we have proper identity address set (public preferred) */
 
     app_adapter_state_changed_callback(WM_BT_STATE_ON);
@@ -251,7 +248,7 @@ static int ble_server_start_adv(void)
                            &adv_params, gap_event, NULL);
     if (rc) {
         BLE_IF_PRINTF("Starting advertising failed, rc=%d\r\n", rc);
-   }
+    }
 
     return OHOS_BT_STATUS_SUCCESS;
 }
@@ -455,7 +452,6 @@ int DisableBtStack(void)
 
     bt_system_action = WM_BT_SYSTEM_ACTION_IDLE;
 
-    // ble_system_state_on = false;
     BLE_IF_DEBUG("\r\n DisableBtStack exit\r\n");
 
     return OHOS_BT_STATUS_SUCCESS;
@@ -544,7 +540,7 @@ int BleGattSecurityRsp(BdAddr bdAddr, bool accept)
 {
     (void)bdAddr;
 
-    BLE_IF_DEBUG("BleGattSecurityRsp, accept=%d\r\n", accept);
+    BLE_IF_DEBUG("BleGattSecurityRsp, accept=%hhu\r\n", accept);
     return OHOS_BT_STATUS_SUCCESS;
 }
 
