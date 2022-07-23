@@ -23,10 +23,10 @@
 #define HR_SASC_FLASH_BASE      (DEVICE_BASE_ADDR + 0xB100)
 #define HR_SASC_B2_BASE         (DEVICE_BASE_ADDR + 0xB200)
 
-#define _R1_Pos(val, rgn)    ((val&0x1) << (rgn))
+#define _R1_Pos(val, rgn)    (((val)&0x1) << (rgn))
 #define _R1_Msk(rgn)         (0x1 << (rgn))
-#define _R2_Pos(val, rgn)    ((val&0x3) << (2*rgn))
-#define _R2_Msk(rgn)         (0x3 << (2*rgn))
+#define _R2_Pos(val, rgn)    (((val)&0x3) << (2*(rgn)))
+#define _R2_Msk(rgn)         (0x3 << (2*(rgn)))
 
 typedef enum {
     SASC_UN_SE_USER  =  0,

@@ -112,7 +112,7 @@ int _write_r(void *r, int file, const void *ptr, size_t len)
     char *p;
 
     p = (char*) ptr;
-    
+
     for (i = 0; i < len; i++) {
         (void)fputc(*p++, r); /* r: ignore warning */
     }
@@ -152,7 +152,7 @@ static int __ip2str(unsigned char v4v6, unsigned int *inuint, char *outtxt)
                 l = m & 0xf;
                 if (h > 9)
                     outtxt[j++] = 'A' + h - 10;
-                else 
+                else
                     outtxt[j++]= '0' + h;
                 if (l > 9)
                     outtxt[j++] = 'A' + l - 10;
@@ -177,7 +177,7 @@ static int __mac2str(unsigned char *inchar, char *outtxt)
         unsigned char lbit = *(inchar + i) & 0x0f;
         if (hbit > 9)
             outtxt[3 * i] = 'A' + hbit - 10;
-        else 
+        else
             outtxt[3 * i]= '0' + hbit;
         if (lbit > 9)
             outtxt[3 * i + 1] = 'A' + lbit - 10;
@@ -432,7 +432,7 @@ int wm_vsscanf(const char *buffer, const char *format, va_list ap)
                             case 'u':        /* Unsigned decimal integer */
                                 base = 10; sign = 0;
                                 goto scan_int;
-                              
+
                             case 'x':        /* Hexadecimal integer */
                             case 'X':
                                 base = 16; sign = 0;
@@ -550,14 +550,14 @@ int wm_vsscanf(const char *buffer, const char *format, va_list ap)
                                 else
                                   bail = bail_err;
                                 break;
-            
+
                             default:        /* Anything else */
                                 bail = bail_err;    /* Unknown sequence */
                                 break;
                             }
                 }
                 break;
-            
+
             case st_match_init:        /* Initial state for %[ match */
                 if (ch == '^' && !(flags & FL_INV)) {
                     matchinv = 1;
@@ -566,7 +566,7 @@ int wm_vsscanf(const char *buffer, const char *format, va_list ap)
                     state = st_match;
                 }
                 break;
-              
+
             case st_match:        /* Main state for %[ match */
                 if (ch == ']') {
                     goto match_run;
@@ -577,7 +577,7 @@ int wm_vsscanf(const char *buffer, const char *format, va_list ap)
                     set_bit(matchmap, (unsigned char)ch);
                 }
                 break;
-              
+
             case st_match_range:        /* %[ match after - */
                 if (ch == ']') {
                     set_bit(matchmap, (unsigned char)'-'); /* - was last character */
@@ -1083,7 +1083,7 @@ static int _vsnprintf(out_fct_type out, char* buffer, const size_t maxlen, const
             // yes, evaluate it
             format++;
         }
-    
+
         // evaluate flags
         flags = 0U;
         do {
@@ -1096,7 +1096,7 @@ static int _vsnprintf(out_fct_type out, char* buffer, const size_t maxlen, const
                 default :                                   n = 0U; break;
             }
         } while (n);
-    
+
         // evaluate width field
         width = 0U;
         if (_is_digit(*format)) {
@@ -1111,7 +1111,7 @@ static int _vsnprintf(out_fct_type out, char* buffer, const size_t maxlen, const
             }
             format++;
         }
-    
+
         // evaluate precision field
         precision = 0U;
         if (*format == '.') {
@@ -1125,7 +1125,7 @@ static int _vsnprintf(out_fct_type out, char* buffer, const size_t maxlen, const
                 format++;
             }
         }
-    
+
         // evaluate length field
         switch (*format) {
             case 'l' :
@@ -1161,7 +1161,7 @@ static int _vsnprintf(out_fct_type out, char* buffer, const size_t maxlen, const
             default :
                 break;
         }
-    
+
         // evaluate specifier
         switch (*format) {
             case 'd' :
@@ -1187,17 +1187,17 @@ static int _vsnprintf(out_fct_type out, char* buffer, const size_t maxlen, const
                 if (*format == 'X') {
                     flags |= FLAGS_UPPERCASE;
                 }
-      
+
                 // no plus or space flag for u, x, X, o, b
                 if ((*format != 'i') && (*format != 'd')) {
                     flags &= ~(FLAGS_PLUS | FLAGS_SPACE);
                 }
-      
+
                 // ignore '0' flag when precision is given
                 if (flags & FLAGS_PRECISION) {
                     flags &= ~FLAGS_ZEROPAD;
                 }
-      
+
                 // convert the integer
                 if ((*format == 'i') || (*format == 'd')) {
                   // signed
@@ -1272,7 +1272,7 @@ static int _vsnprintf(out_fct_type out, char* buffer, const size_t maxlen, const
                 format++;
                 break;
             }
-    
+
             case 's' : {
                 const char* p = va_arg(va, char*);
                 unsigned int l = _strnlen_s(p, precision ? precision : (size_t)-1);
@@ -1298,7 +1298,7 @@ static int _vsnprintf(out_fct_type out, char* buffer, const size_t maxlen, const
                 format++;
                 break;
             }
-    
+
             case 'p' : {
                 width = sizeof(void*) * 2U;
                 flags |= FLAGS_ZEROPAD | FLAGS_UPPERCASE;
@@ -1320,7 +1320,7 @@ static int _vsnprintf(out_fct_type out, char* buffer, const size_t maxlen, const
                 format++;
                 break;
             }
-    
+
             case 'M' : {
                 const char* p = va_arg(va, char*);
                 char store[40];
@@ -1402,12 +1402,12 @@ static int _vsnprintf(out_fct_type out, char* buffer, const size_t maxlen, const
                 format++;
                 break;
             }
-    
+
             case '%' :
                 out('%', buffer, idx++, maxlen);
                 format++;
                 break;
-    
+
             default :
                 out(*format, buffer, idx++, maxlen);
                 format++;
@@ -1483,7 +1483,7 @@ __attribute__((__weak__)) int __cskyvscanfsscanf(const char *str, const char *fo
     va_start(args, format);
     i = wm_vsscanf(str, format, args);
     va_end(args);
-    
+
     return i;
 }
 

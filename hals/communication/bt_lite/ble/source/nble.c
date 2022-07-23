@@ -77,7 +77,7 @@ static void app_adapter_state_changed_callback(tls_bt_state_t status)
     BLE_IF_DEBUG("adapter status = %s\r\n", status==WM_BT_STATE_ON?"bt_state_on":"bt_state_off");
 
     bt_adapter_state = status;
-    
+
     #if (TLS_CONFIG_BLE == CFG_ON)
 
     if (status == WM_BT_STATE_ON) {
@@ -110,7 +110,7 @@ static void on_svr_register_cb(struct ble_gatt_register_ctxt *ctxt, void *arg)
     char buf[BLE_UUID_STR_LEN];
     uint16_t server_if;
     uint16_t service_handle;
-    
+
     switch (ctxt->op) {
         case BLE_GATT_REGISTER_OP_SVC:
             ble_server_retrieve_id_by_uuid(ctxt->svc.svc_def->uuid, &server_if);
@@ -121,7 +121,7 @@ static void on_svr_register_cb(struct ble_gatt_register_ctxt *ctxt, void *arg)
                 btuuid.uuidLen = ctxt->svc.svc_def->uuid->type;
                 ble_uuid_flat(ctxt->svc.svc_def->uuid, buf);
                 btuuid.uuid = buf;
-                
+
                 if (gatts_struct_func_ptr_cb->serviceAddCb) {
                     gatts_struct_func_ptr_cb->serviceAddCb(0 /* Always success */, server_if /* */, \
                         &btuuid, ctxt->svc.handle);
@@ -138,7 +138,7 @@ static void on_svr_register_cb(struct ble_gatt_register_ctxt *ctxt, void *arg)
                 (int)ctxt->chr.chr_def->arg,
                 ctxt->chr.def_handle, ctxt->chr.def_handle,
                 ctxt->chr.val_handle, ctxt->chr.val_handle, service_handle, server_if, (int)ctxt->chr.chr_def->arg);
-            
+
             if (gatts_struct_func_ptr_cb) {
                 btuuid.uuidLen = ctxt->chr.chr_def->uuid->type;
                 ble_uuid_flat(ctxt->chr.chr_def->uuid, buf);
@@ -177,11 +177,11 @@ static void conn_param_update_cb(uint16_t conn_handle, int status, void *arg)
     BLE_IF_DEBUG("conn param update complete; conn_handle=%d status=%d\n", conn_handle, status);
 }
 
-static void ble_server_conn_param_update_slave()
+static void ble_server_conn_param_update_slave(void)
 {
     int rc;
     struct ble_l2cap_sig_update_params params;
-    
+
     params.itvl_min = 26;
     params.itvl_max = 42;
     params.slave_latency = 0;
@@ -217,7 +217,7 @@ static int ble_server_start_adv(void)
     adv_params.itvl_min = g_adv_param.minInterval;
     adv_params.channel_map = g_adv_param.channelMap;
     adv_params.filter_policy = g_adv_param.advFilterPolicy;
-    
+
     switch (g_adv_param.advType) {
         case OHOS_BLE_ADV_IND:
                 adv_params.conn_mode = BLE_GAP_CONN_MODE_UND;
@@ -243,7 +243,7 @@ static int ble_server_start_adv(void)
     memcpy(&peer_addr.val[0], &g_adv_param.peerAddr.addr[0], 6);
 
     BLE_IF_DEBUG("Starting advertising\r\n");
-    
+
     /* As own address type we use hard-coded value, because we generate
           NRPA and by definition it's random */
     /* NOTE: own_addr_type, we actually used, not specified by param->ownaddType */
@@ -295,7 +295,7 @@ static int gap_event(struct ble_gap_event *event, void *arg)
                 gatts_struct_func_ptr_cb->disconnectServerCb(event->disconnect.conn.conn_handle, \
                     0 /* Always 0, nimble does not care server if */, &bdaddr);
             }
-            
+
             if (event->disconnect.reason == 534) {
                 // hci error code:  0x16 + 0x200 = 534; // local host terminate the connection;
             } else {
@@ -335,9 +335,9 @@ static int gap_event(struct ble_gap_event *event, void *arg)
             rc = ble_gap_conn_find(event->repeat_pairing.conn_handle, &desc);
             assert(rc == 0);
             ble_store_util_delete_peer(&desc.peer_id_addr);
-            
+
             return BLE_GAP_REPEAT_PAIRING_RETRY;
-        
+
         case BLE_GAP_EVENT_PASSKEY_ACTION:
             return 0;
         case BLE_GAP_EVENT_ADV_COMPLETE:
@@ -372,11 +372,11 @@ int InitBtStack(void)
 int EnableBtStack(void)
 {
     BLE_IF_DEBUG("\r\n EnableBtStack enter: caller addr=0x%x\r\n", __builtin_return_address(0));
-    
+
     if (bt_adapter_state == WM_BT_STATE_ON) {
         return OHOS_BT_STATUS_SUCCESS;
     }
-    
+
     if (bt_system_action != WM_BT_SYSTEM_ACTION_IDLE) return OHOS_BT_STATUS_BUSY;
     bt_system_action = WM_BT_SYSTEM_ACTION_ENABLING;
 
@@ -397,7 +397,7 @@ int EnableBtStack(void)
     ble_hs_cfg.shutdown_cb = on_reset; /* same callback as on_reset */
     ble_hs_cfg.gatts_register_cb = on_svr_register_cb;
     ble_hs_cfg.store_status_cb = ble_store_util_status_rr;
-    
+
     /* Initialize all packages. */
     nimble_port_init();
 
@@ -405,7 +405,7 @@ int EnableBtStack(void)
 
     /* Initialize the vuart interface and enable controller */
     ble_hci_vuart_init(0xFF);
-    
+
     /* As the last thing, process events from default event queue. */
     tls_nimble_start();
 
@@ -437,14 +437,14 @@ int DisableBtStack(void)
     /* Stop hs system */
     rc = nimble_port_stop();
     assert(rc == 0);
-    
+
     /* Stop controller and free vuart resource */
     rc = ble_hci_vuart_deinit();
     assert(rc == 0);
 
     /* Free hs system resource */
     nimble_port_deinit();
-    
+
     /* Free task stack ptr and free hs task */
     tls_nimble_stop();
 
@@ -454,17 +454,17 @@ int DisableBtStack(void)
     }
 
     bt_system_action = WM_BT_SYSTEM_ACTION_IDLE;
-    
+
     // ble_system_state_on = false;
     BLE_IF_DEBUG("\r\n DisableBtStack exit\r\n");
-  
+
     return OHOS_BT_STATUS_SUCCESS;
 }
 
 int SetDeviceName(const char *name, unsigned int len)
 {
     int rc;
-    
+
     rc = ble_svc_gap_device_name_set(name);
     if (rc == 0) {
         return OHOS_BT_STATUS_SUCCESS;
@@ -489,14 +489,14 @@ int BleStopAdv(int advId)
 
         return OHOS_BT_STATUS_FAIL;
     }
-    
+
     return OHOS_BT_STATUS_SUCCESS;
 }
 
 int BleGattcRegister(BtUuid appUuid)
 {
     (void)appUuid;
-    
+
     return OHOS_BT_STATUS_UNSUPPORTED;
 }
 
@@ -512,7 +512,7 @@ int BleSetSecurityIoCap(BleIoCapMode mode)
     BLE_IF_DEBUG("BleSetSecurityIoCap, BleIoCapMode=%d\r\n", mode);
 
     ble_hs_cfg.sm_io_cap = mode;
-    
+
     return OHOS_BT_STATUS_SUCCESS;
 }
 
@@ -536,14 +536,14 @@ int BleSetSecurityAuthReq(BleAuthReqMode mode)
         ble_hs_cfg.sm_sc = 1;
     } else {
     }
-    
+
     return OHOS_BT_STATUS_SUCCESS;
 }
 
 int BleGattSecurityRsp(BdAddr bdAddr, bool accept)
 {
     (void)bdAddr;
-    
+
     BLE_IF_DEBUG("BleGattSecurityRsp, accept=%d\r\n", accept);
     return OHOS_BT_STATUS_SUCCESS;
 }
@@ -553,7 +553,7 @@ int BleGattsDisconnect(int serverId, BdAddr bdAddr, int connId)
     int rc;
     (void)serverId;
     (void)bdAddr;
-    
+
     rc = ble_gap_terminate(connId, BLE_ERR_REM_USER_CONN_TERM);
     if (!rc) {
         return OHOS_BT_STATUS_SUCCESS;
@@ -580,14 +580,14 @@ int BleGattsSetEncryption(BdAddr bdAddr, BleSecAct secAct)
 int BleGattsRegister(BtUuid appUuid)
 {
     (void)appUuid;
-    
+
     return OHOS_BT_STATUS_UNSUPPORTED;
 }
 
 int BleGattsUnRegister(int serverId)
 {
     (void)serverId;
-    
+
     return OHOS_BT_STATUS_UNSUPPORTED;
 }
 
@@ -617,7 +617,7 @@ int BleGattsAddCharacteristic(int serverId, int srvcHandle, BtUuid characUuid,
     (void)characUuid;
     (void)permissions;
     (void)properties;
-    
+
     return OHOS_BT_STATUS_UNSUPPORTED;
 }
 
@@ -651,7 +651,7 @@ int BleGattsSendResponse(int serverId, GattsSendRspParam *param)
 {
     (void)serverId;
     (void)param;
-    
+
     return OHOS_BT_STATUS_UNSUPPORTED;
 }
 
@@ -660,18 +660,18 @@ int BleGattsSendIndication(int serverId, GattsSendIndParam *param)
     int rc;
     struct os_mbuf *om;
     (void)serverId;
-    
+
     BLE_IF_DEBUG("Indicate to app:conn_id[%d],attr_handle[%d],data_length[%d]\r\n", \
                  param->connectId, param->attrHandle, param->valueLen);
     if (param->valueLen<=0 || param->value== NULL) {
         return OHOS_BT_STATUS_PARM_INVALID;
     }
-    
+
     om = ble_hs_mbuf_from_flat(param->value, param->valueLen);
     if (!om) {
         return OHOS_BT_STATUS_NOMEM;
     }
-   
+
     if (param->confirm) {
         rc = ble_gattc_indicate_custom(param->connectId, param->attrHandle, om);
     } else {
@@ -683,7 +683,7 @@ int BleGattsSendIndication(int serverId, GattsSendIndParam *param)
     } else {
         rc = OHOS_BT_STATUS_UNHANDLED;
     }
-    
+
     return rc;
 }
 
@@ -692,7 +692,7 @@ int ReadBtMacAddr(unsigned char *mac, unsigned int len)
     if (len != 6) {
         return OHOS_BT_STATUS_PARM_INVALID;
     }
-    
+
     tls_get_bt_mac_addr(mac);
 
     return OHOS_BT_STATUS_SUCCESS;
@@ -707,14 +707,14 @@ int BleGattcRegisterCallbacks(BtGattClientCallbacks *func)
 int BleGattsRegisterCallbacks(BtGattServerCallbacks *func)
 {
     gatts_struct_func_ptr_cb = func;
-    
+
     return OHOS_BT_STATUS_SUCCESS;
 }
 
 int BleGattRegisterCallbacks(BtGattCallbacks *func)
 {
     gap_func_ptr_cb = func;
-    
+
     return OHOS_BT_STATUS_SUCCESS;
 }
 
@@ -736,9 +736,9 @@ int BleStartAdvEx(int *advId, const StartAdvRawData rawData, BleAdvParams advPar
     // first back up the adv information;
     g_adv_raw_data = rawData;
     g_adv_param = advParam;
-   
+
     struct ble_gap_adv_params adv_params;
-    
+
     if (rawData.advDataLen) {
         rc = ble_gap_adv_set_data(rawData.advData, rawData.advDataLen);
         assert(rc == 0);
@@ -747,8 +747,8 @@ int BleStartAdvEx(int *advId, const StartAdvRawData rawData, BleAdvParams advPar
     if (rawData.rspDataLen) {
         rc = ble_gap_adv_rsp_set_data(rawData.rspData, rawData.rspDataLen);
         assert(rc == 0);
-    } 
-    
+    }
+
     /* Figure out address to use while advertising (no privacy for now) */
     rc = ble_hs_id_infer_auto(0, &own_addr_type);
     if (rc != 0) {
@@ -762,7 +762,7 @@ int BleStartAdvEx(int *advId, const StartAdvRawData rawData, BleAdvParams advPar
     adv_params.itvl_min = advParam.minInterval;
     adv_params.channel_map = advParam.channelMap;
     adv_params.filter_policy = advParam.advFilterPolicy;
-    
+
     switch (advParam.advType) {
         case OHOS_BLE_ADV_IND:
                 adv_params.conn_mode = BLE_GAP_CONN_MODE_UND;
@@ -782,20 +782,20 @@ int BleStartAdvEx(int *advId, const StartAdvRawData rawData, BleAdvParams advPar
                 adv_params.conn_mode = BLE_GAP_CONN_MODE_DIR;
                 adv_params.disc_mode = BLE_GAP_DISC_MODE_GEN;
             break;
-    } 
+    }
 
     peer_addr.type = advParam.peerAddrType;
     memcpy(&peer_addr.val[0], &advParam.peerAddr.addr[0], 6);
 
     BLE_IF_DEBUG("Starting advertising\r\n");
-    
+
     /* As own address type we use hard-coded value, because we generate
           NRPA and by definition it's random */
     /* NOTE: own_addr_type, we actually used, not specified by param->ownaddType */
     rc = ble_gap_adv_start(own_addr_type, &peer_addr, advParam.duration?advParam.duration:BLE_HS_FOREVER,
                            &adv_params, gap_event, NULL);
     if (rc) {
-        BLE_IF_PRINTF("Starting advertising failed, rc=%d\r\n", rc); 
+        BLE_IF_PRINTF("Starting advertising failed, rc=%d\r\n", rc);
     }
 
     return OHOS_BT_STATUS_SUCCESS;
@@ -810,28 +810,28 @@ int BleGattsStartServiceEx(int *srvcHandle, BleGattService *srvcInfo)
 
     if (bt_adapter_state == WM_BT_STATE_OFF || bt_system_action != WM_BT_SYSTEM_ACTION_IDLE) \
     return OHOS_BT_STATUS_NOT_READY;
-    
+
     BLE_IF_DEBUG("BleGattsStartServiceEx\r\n");
     adv_active = ble_gap_adv_active();
     if (adv_active) {
         rc = ble_gap_adv_stop();
     }
-    
+
     rc = ble_gatts_reset();
     if (rc != 0) {
         BLE_IF_PRINTF("!!!BleGattsStartServiceEx failed!!! rc=%d\r\n", rc);
         return rc;
     }
-    
+
     server_if = ble_server_alloc(srvcInfo);
     *srvcHandle  = server_if;
-    
+
     ble_server_start_service();
 
     if (adv_active) {
         ble_server_start_adv();
     }
-    
+
     // report servcie startcb
     if (gatts_struct_func_ptr_cb) {
         if (gatts_struct_func_ptr_cb->serviceStartCb) {
@@ -852,7 +852,7 @@ int BleGattsStopServiceEx(int srvcHandle)
         return OHOS_BT_STATUS_NOT_READY;
 
     ble_gap_adv_stop();
-    
+
     ble_server_free(srvcHandle);
 
     if (gatts_struct_func_ptr_cb) {

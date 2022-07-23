@@ -152,7 +152,7 @@ struct ieee802_11_elems {
     u8 *cf_params;
     u8 *tim;
     u8 *ibss_params;
-    u8 *country_elem;    
+    u8 *country_elem;
     u8 *challenge;
     u8 *erp_info;
     u8 *ext_supp_rates;
@@ -169,7 +169,7 @@ struct ieee802_11_elems {
     u8 *mdie;
     u8 *ftie;
     u8 *timeout_int;
-    u8 *ch_switch_elem;    
+    u8 *ch_switch_elem;
     u8 *ht_capabilities;
     u8 *ht_operation;
     u8 *vendor_ht_cap;
@@ -188,7 +188,7 @@ struct ieee802_11_elems {
     u8 challenge_len;
     u8 erp_info_len;
     u8 ext_supp_rates_len;
-    u8 ch_switch_elem_len;    
+    u8 ch_switch_elem_len;
     u8 wpa_ie_len;
     u8 rsn_ie_len;
     u8 wmm_len; /* 7 = WMM Information; 24 = WMM Parameter */
@@ -201,13 +201,12 @@ struct ieee802_11_elems {
     u8 ftie_len;
     u8 timeout_int_len;
     u8 ht_capabilities_len;
-    u8 pwr_constr_elem_len;    
-    u8 country_elem_len;    
+    u8 pwr_constr_elem_len;
+    u8 country_elem_len;
     u8 ht_operation_len;
     u8 vendor_ht_cap_len;
     u8 p2p_len;
     u8 interworking_len;
-
 };
 
 struct ieee80211_hdr {
@@ -911,8 +910,8 @@ struct ieee80211_ht_cap {
     /* 16 bytes MCS information */
     struct ieee80211_mcs_info mcs;
 
-    u16 extended_ht_cap_info;    
-    u32 tx_BF_cap_info;        
+    u16 extended_ht_cap_info;
+    u32 tx_BF_cap_info;
     u8 antenna_selection_info;
 }__attribute__ ((packed)) ;
 
@@ -1137,7 +1136,7 @@ enum ieee80211_statuscode {
     WLAN_STATUS_NO_DIRECT_LINK = 48,
     WLAN_STATUS_STA_NOT_PRESENT = 49,
     WLAN_STATUS_STA_NOT_QSTA = 50,
-    WLAN_STATUS_ASSOC_DENIED_LISTEN_INT_TOO_LARGE = 51,    
+    WLAN_STATUS_ASSOC_DENIED_LISTEN_INT_TOO_LARGE = 51,
 };
 
 /* Reason codes */
@@ -1286,7 +1285,6 @@ enum ieee80211_eid {
     WLAN_EID_ADV_PROTO = 108,
     WLAN_EID_ROAMING_CONSORTIUM = 111,
     WLAN_EID_EXT_CAPAB = 127,
-
 };
 
 /* Action category code */
@@ -1453,10 +1451,11 @@ enum ieee80211_sa_query_action {
  */
 static __inline u8 *ieee80211_get_qos_ctl(struct ieee80211_hdr *hdr)
 {
-    if (ieee80211_has_a4(hdr->frame_control))
+    if (ieee80211_has_a4(hdr->frame_control)) {
         return (u8 *)hdr + 30;
-    else
+    } else {
         return (u8 *)hdr + 24;
+    }
 }
 
 /**
@@ -1471,10 +1470,12 @@ static __inline u8 *ieee80211_get_qos_ctl(struct ieee80211_hdr *hdr)
  */
 static __inline u8 *ieee80211_get_SA(struct ieee80211_hdr *hdr)
 {
-    if (ieee80211_has_a4(hdr->frame_control))
+    if (ieee80211_has_a4(hdr->frame_control)) {
         return hdr->addr4;
-    if (ieee80211_has_fromds(hdr->frame_control))
+    }
+    if (ieee80211_has_fromds(hdr->frame_control)) {
         return hdr->addr3;
+    }
     return hdr->addr2;
 }
 
@@ -1490,10 +1491,11 @@ static __inline u8 *ieee80211_get_SA(struct ieee80211_hdr *hdr)
  */
 static __inline u8 *ieee80211_get_DA(struct ieee80211_hdr *hdr)
 {
-    if (ieee80211_has_tods(hdr->frame_control))
+    if (ieee80211_has_tods(hdr->frame_control)) {
         return hdr->addr3;
-    else
+    } else {
         return hdr->addr1;
+    }
 }
 
 /**
@@ -1503,8 +1505,9 @@ static __inline u8 *ieee80211_get_DA(struct ieee80211_hdr *hdr)
 static __inline bool ieee80211_is_robust_mgmt_frame(struct ieee80211_hdr *hdr)
 {
     if (ieee80211_is_disassoc(hdr->frame_control) ||
-        ieee80211_is_deauth(hdr->frame_control))
+        ieee80211_is_deauth(hdr->frame_control)) {
         return TRUE;
+    }
 
     if (ieee80211_is_action(hdr->frame_control)) {
         u8 *category;
@@ -1516,8 +1519,9 @@ static __inline bool ieee80211_is_robust_mgmt_frame(struct ieee80211_hdr *hdr)
          * the frame has already been found to be a Robust Management
          * Frame (by the other end).
          */
-        if (ieee80211_has_protected(hdr->frame_control))
+        if (ieee80211_has_protected(hdr->frame_control)) {
             return TRUE;
+        }
         category = ((u8 *) hdr) + 24;
         return *category != WLAN_CATEGORY_PUBLIC &&
             *category != WLAN_CATEGORY_HT &&
@@ -1536,10 +1540,11 @@ static __inline bool ieee80211_is_robust_mgmt_frame(struct ieee80211_hdr *hdr)
  */
 static __inline int ieee80211_fhss_chan_to_freq(int channel)
 {
-    if ((channel > 1) && (channel < 96))
+    if ((channel > 1) && (channel < 96)) {
         return channel + 2400;
-    else
+    } else {
         return -1;
+    }
 }
 
 /**
@@ -1551,10 +1556,11 @@ static __inline int ieee80211_fhss_chan_to_freq(int channel)
  */
 static __inline int ieee80211_freq_to_fhss_chan(int freq)
 {
-    if ((freq > 2401) && (freq < 2496))
+    if ((freq > 2401) && (freq < 2496)) {
         return freq - 2400;
-    else
+    } else {
         return -1;
+    }
 }
 
 /**
@@ -1566,12 +1572,13 @@ static __inline int ieee80211_freq_to_fhss_chan(int freq)
  */
 static __inline int ieee80211_dsss_chan_to_freq(int channel)
 {
-    if ((channel > 0) && (channel < 14))
+    if ((channel > 0) && (channel < 14)) {
         return 2407 + (channel * 5);
-    else if (channel == 14)
+    } else if (channel == 14) {
         return 2484;
-    else
+    } else {
         return -1;
+    }
 }
 
 /**
@@ -1585,12 +1592,13 @@ static __inline int ieee80211_dsss_chan_to_freq(int channel)
  */
 static __inline int ieee80211_freq_to_dsss_chan(int freq)
 {
-    if ((freq >= 2410) && (freq < 2475))
+    if ((freq >= 2410) && (freq < 2475)) {
         return (freq - 2405) / 5;
-    else if ((freq >= 2482) && (freq < 2487))
+    } else if ((freq >= 2482) && (freq < 2487)) {
         return 14;
-    else
+    } else {
         return -1;
+    }
 }
 
 /* Convert IEEE802.11 HR DSSS channel to frequency (MHz) and back
@@ -1618,10 +1626,11 @@ static __inline int ieee80211_freq_to_dsss_chan(int freq)
 static __inline int ieee80211_ofdm_chan_to_freq(int s_freq, int channel)
 {
     if ((channel > 0) && (channel <= 200) &&
-        (s_freq >= 4000))
+        (s_freq >= 4000)) {
         return s_freq + (channel * 5);
-    else
+    } else {
         return -1;
+    }
 }
 
 /**
@@ -1637,10 +1646,11 @@ static __inline int ieee80211_ofdm_chan_to_freq(int s_freq, int channel)
 static __inline int ieee80211_freq_to_ofdm_chan(int s_freq, int freq)
 {
     if ((freq > (s_freq + 2)) && (freq <= (s_freq + 1202)) &&
-        (s_freq >= 4000))
+        (s_freq >= 4000)) {
         return (freq + 2 - s_freq) / 5;
-    else
+    } else {
         return -1;
+    }
 }
 
 /**
@@ -1659,7 +1669,7 @@ static __inline unsigned long ieee80211_tu_to_usec(unsigned long tu)
  * @aid: the AID to look for
  */
 static __inline bool ieee80211_check_tim(struct ieee80211_tim_ie *tim,
-                       u8 tim_len, u16 aid)
+                                         u8 tim_len, u16 aid)
 {
     u8 mask;
     u8 index, indexn1, indexn2;

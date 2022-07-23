@@ -104,7 +104,8 @@ tls_bt_status_t tls_ble_client_app_unregister(uint8_t client_if);
  *
  * @note           None
  */
-tls_bt_status_t tls_ble_client_connect(uint8_t client_if, const tls_bt_addr_t *bd_addr, uint8_t is_direct, int transport);
+tls_bt_status_t tls_ble_client_connect(uint8_t client_if, const tls_bt_addr_t *bd_addr,
+                                       uint8_t is_direct, int transport);
 
 /**
  * @brief          this function is called to disconnect with gatt server connection
@@ -169,7 +170,8 @@ tls_bt_status_t tls_ble_client_search_service(uint16_t conn_id, tls_bt_uuid_t *f
  *
  * @note           None
  */
-tls_bt_status_t tls_ble_client_write_characteristic(uint16_t conn_id, uint16_t handle, int write_type, int len, int auth_req, char *p_value);
+tls_bt_status_t tls_ble_client_write_characteristic(uint16_t conn_id, uint16_t handle,
+                                                    int write_type, int len, int auth_req, char *p_value);
 
 /**
  * @brief          read a characteristic on a remote device
@@ -211,7 +213,8 @@ tls_bt_status_t tls_ble_client_read_descriptor(uint16_t conn_id, uint16_t handle
  *
  * @note           None
  */
-tls_bt_status_t tls_ble_client_write_descriptor(uint16_t conn_id, uint16_t handle, int write_type, int len, int auth_req, char *p_value);
+tls_bt_status_t tls_ble_client_write_descriptor(uint16_t conn_id, uint16_t handle,
+                                                int write_type, int len, int auth_req, char *p_value);
 
 /**
  * @brief          execute a prepared write operation
@@ -232,13 +235,14 @@ tls_bt_status_t tls_ble_client_execute_write(uint16_t conn_id, int execute);
  * @param[in]      client_if        gatt client access interface
  * @param[in]      *bd_addr         the target server address
  * @param[in]      handle           the attribute handle of characteristic
- * @param[in]     conn_id          the connection id 
+ * @param[in]     conn_id          the connection id
  *
  * @retval         @ref tls_bt_status_t
  *
  * @note           None
  */
-tls_bt_status_t tls_ble_client_register_for_notification(int client_if, const tls_bt_addr_t *bd_addr, uint16_t handle, uint16_t conn_id);
+tls_bt_status_t tls_ble_client_register_for_notification(int client_if, const tls_bt_addr_t *bd_addr,
+                                                         uint16_t handle, uint16_t conn_id);
 
 /**
  * @brief          deregister a previous request for notifications/indications
@@ -251,7 +255,8 @@ tls_bt_status_t tls_ble_client_register_for_notification(int client_if, const tl
  *
  * @note           None
  */
-tls_bt_status_t tls_ble_client_deregister_for_notification(int client_if, const tls_bt_addr_t *bd_addr, uint16_t handle,uint16_t conn_id);
+tls_bt_status_t tls_ble_client_deregister_for_notification(int client_if, const tls_bt_addr_t *bd_addr,
+                                                           uint16_t handle, uint16_t conn_id);
 
 /**
  * @brief          configure the MTU for a given connection
@@ -311,9 +316,9 @@ tls_bt_status_t tls_ble_server_app_init(tls_ble_callback_t callback);
  **
  ** Returns          TLS_BT_STATUS_SUCCESS
  **                  TLS_BT_STATUS_DONE
- **       
+ **
  *******************************************************************************/
-tls_bt_status_t tls_ble_server_app_deinit();
+tls_bt_status_t tls_ble_server_app_deinit(void);
 
 /**
  * @brief          this function is called to register server application
@@ -350,7 +355,8 @@ tls_bt_status_t tls_ble_server_app_unregister(uint8_t server_if);
  *
  * @note           None
  */
-tls_bt_status_t tls_ble_server_add_service(uint8_t server_if, int inst_id, int primay, tls_bt_uuid_t *uuid, int num_handles);
+tls_bt_status_t tls_ble_server_add_service(uint8_t server_if, int inst_id, int primay,
+                                           tls_bt_uuid_t *uuid, int num_handles);
 
 /**
  * @brief          add a characteristic to a service
@@ -365,7 +371,8 @@ tls_bt_status_t tls_ble_server_add_service(uint8_t server_if, int inst_id, int p
  *
  * @note           None
  */
-tls_bt_status_t tls_ble_server_add_characteristic(uint8_t server_if, uint16_t service_handle, tls_bt_uuid_t *uuid, int properties, int permission);
+tls_bt_status_t tls_ble_server_add_characteristic(uint8_t server_if, uint16_t service_handle,
+                                                  tls_bt_uuid_t *uuid, int properties, int permission);
 
 /**
  * @brief          add a descriptor to a given service
@@ -379,7 +386,8 @@ tls_bt_status_t tls_ble_server_add_characteristic(uint8_t server_if, uint16_t se
  *
  * @note           None
  */
-tls_bt_status_t tls_ble_server_add_descriptor(uint8_t server_if, uint16_t service_handle, tls_bt_uuid_t *uuid, int permissions);
+tls_bt_status_t tls_ble_server_add_descriptor(uint8_t server_if, uint16_t service_handle,
+                                              tls_bt_uuid_t *uuid, int permissions);
 
 /**
  * @brief          starts a local service
@@ -430,7 +438,8 @@ tls_bt_status_t tls_ble_server_delete_service(uint8_t server_if, uint16_t servic
  *
  * @note           None
  */
-tls_bt_status_t tls_ble_server_connect(uint8_t server_if, const tls_bt_addr_t *bd_addr, uint8_t is_direct, int transport);
+tls_bt_status_t tls_ble_server_connect(uint8_t server_if, const tls_bt_addr_t *bd_addr,
+                                       uint8_t is_direct, int transport);
 
 /**
  * @brief          disconnect an established connection or cancel a pending one
@@ -453,7 +462,7 @@ tls_bt_status_t tls_ble_server_disconnect(uint8_t server_if, const tls_bt_addr_t
  * @param[in]      conn_id              connection id create when connection established
  * @param[in]      len                  the length of value to be sent
  * @param[in]      confirm              need the remote device acked after receive the message , normally
- *                                      Whether a confirmation is required. FALSE sends a GATT notification, 
+ *                                      Whether a confirmation is required. FALSE sends a GATT notification,
  *                                      TRUE sends a GATT indication
  * @param[in]      *p_value             the value to be written
  *
@@ -461,14 +470,16 @@ tls_bt_status_t tls_ble_server_disconnect(uint8_t server_if, const tls_bt_addr_t
  *
  * @note           None
  */
-tls_bt_status_t tls_ble_server_send_indication(uint8_t server_if, uint16_t attribute_handle, uint16_t conn_id, int len, int confirm, char *p_value);
+tls_bt_status_t tls_ble_server_send_indication(uint8_t server_if, uint16_t attribute_handle,
+                                               uint16_t conn_id, int len, int confirm,
+                                               char *p_value);
 
 /**
  * @brief          send a response to a read/write operation
  *
  * @param[in]      conn_id          connection id create when connection established
  * @param[in]      trans_id         the transation identifier
- * @param[in]      status           
+ * @param[in]      status
  * @param[in]      offset           the offset the fragmented value
  * @param[in]      attr_handle      the attribute handle
  * @param[in]      auth_req         access properties
@@ -479,7 +490,9 @@ tls_bt_status_t tls_ble_server_send_indication(uint8_t server_if, uint16_t attri
  *
  * @note           None
  */
-tls_bt_status_t tls_ble_server_send_response(uint16_t conn_id, uint32_t trans_id, uint8_t status, int offset, uint16_t attr_handle, int auth_req, uint8_t *p_value, int len);
+tls_bt_status_t tls_ble_server_send_response(uint16_t conn_id, uint32_t trans_id, uint8_t status,
+                                             int offset, uint16_t attr_handle, int auth_req,
+                                             uint8_t *p_value, int len);
 
 /**
  * @}

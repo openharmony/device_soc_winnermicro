@@ -220,7 +220,7 @@ int tls_spi_setup(u8 mode, u8 cs_active, u32 fclk);
  *
  * @note           None
  */
-int tls_spi_write(const u8 * buf, u32 len);
+int tls_spi_write(const u8 *buf, u32 len);
 
 /**
  * @brief          This function is used to synchronously read data from SPI.
@@ -235,7 +235,7 @@ int tls_spi_write(const u8 * buf, u32 len);
  *
  * @note           None
  */
-int tls_spi_read(u8 * buf, u32 len);
+int tls_spi_read(u8 *buf, u32 len);
 
 /**
  * @brief          This function is used to synchronously write command and then read data from SPI.
@@ -252,7 +252,7 @@ int tls_spi_read(u8 * buf, u32 len);
  *
  * @note           None
  */
-int tls_spi_read_with_cmd(const u8 * txbuf, u32 n_tx, u8 * rxbuf, u32 n_rx);
+int tls_spi_read_with_cmd(const u8 *txbuf, u32 n_tx, u8 *rxbuf, u32 n_rx);
 
 /**
  * @brief          This function is used to synchronous write 32bit command then write data from SPI.
@@ -269,7 +269,7 @@ int tls_spi_read_with_cmd(const u8 * txbuf, u32 n_tx, u8 * rxbuf, u32 n_rx);
  *
  * @note           None
  */
-int tls_spi_write_with_cmd(const u8 * cmd, u32 n_cmd, const u8 * txbuf, u32 n_tx);
+int tls_spi_write_with_cmd(const u8 *cmd, u32 n_cmd, const u8 *txbuf, u32 n_tx);
 
 /**
  * @brief          This function is used to set SPI transfer mode.

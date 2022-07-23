@@ -147,7 +147,7 @@ u8 tls_timer_create(struct tls_timer_cfg *cfg)
 
     tls_sys_clk_get(&sysclk);
     tls_reg_write32(HR_TIMER_CFG, sysclk.apbclk-1);
-    
+
     timer_csr = tls_reg_read32(HR_TIMER0_5_CSR);
     if (!cfg->is_repeat)
         timer_csr |=  TLS_TIMER_ONE_TIME(i);
@@ -203,7 +203,7 @@ void tls_timer_stop(u8 timer_id)
 
     tls_reg_write32(HR_TIMER0_5_CSR, tls_reg_read32(HR_TIMER0_5_CSR)|TLS_TIMER_INT_CLR(timer_id));
     tls_reg_write32(HR_TIMER0_5_CSR, tls_reg_read32(HR_TIMER0_5_CSR) &~ TLS_TIMER_EN(timer_id));
-    
+
     return;
 }
 
@@ -243,7 +243,7 @@ void tls_timer_change(u8 timer_id, u32 newtime)
 u32 tls_timer_read(u8 timer_id)
 {
     u32 value;
-    
+
     if (!(wm_timer_bitmap & BIT(timer_id))) {
         return 0;
     }

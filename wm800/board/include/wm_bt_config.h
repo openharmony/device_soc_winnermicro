@@ -74,7 +74,7 @@
     #define WM_BLE_MAX_CONNECTION       7
     #endif
 #else
-    #define WM_BLE_MAX_CONNECTION       1 
+    #define WM_BLE_MAX_CONNECTION       1
 #endif
 
 #endif /* __WM_WIFI_CONFIG_H__ */

@@ -242,7 +242,7 @@ static int tls_spifls_drv_probe(u32 id)
     } else {
         exspi_fls.total_size = FLASH_TOTAL_SIZE; /* 1MByte */
     }
-    
+
     exspi_fls.page_size = PAGE_SIZE;
     exspi_fls.program_size = PROGRAM_SIZE;
     exspi_fls.sector_size = SECTOR_SIZE;

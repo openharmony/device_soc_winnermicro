@@ -30,7 +30,7 @@
 #include "wm_osal.h"
 
 #ifndef min
-    #define min(a,b)    (((a) < (b)) ? (a) : (b))
+    #define min(a, b)    (((a) < (b)) ? (a) : (b))
 #endif /* min */
 
 /** The base address of the registers of encryption/decryption module. */
@@ -123,7 +123,7 @@
 #define INPUT_REFLECT   2
 
 typedef enum __CRYPTO_METHOD {
-    CRYPTO_METHOD_RSV=0,
+    CRYPTO_METHOD_RSV = 0,
     CRYPTO_METHOD_RC4,
     CRYPTO_METHOD_SHA1,
     CRYPTO_METHOD_AES,
@@ -137,7 +137,7 @@ typedef enum __CRYPTO_METHOD {
  * The enum of the encryption/decryption way.
  */
 typedef enum __CRYPTO_WAY {
-    CRYPTO_WAY_ENCRYPT=0, // /< Encryption
+    CRYPTO_WAY_ENCRYPT = 0, // /< Encryption
     CRYPTO_WAY_DECRYPT // /< Decryption
 }CRYPTO_WAY;
 
@@ -150,7 +150,7 @@ typedef enum __CRYPTO_RNG_SWITCH {
  * The enum of the encryption/decryption mode, only for (aes des 3des).
  */
 typedef enum __CRYPTO_MODE {
-    CRYPTO_MODE_ECB=0, // /< ECB
+    CRYPTO_MODE_ECB = 0, // /< ECB
     CRYPTO_MODE_CBC,  // /< CBC
     CRYPTO_MODE_CTR, // /< CTR, only for AES
     CRYPTO_MODE_CMAC // /< MAC, only for AES
@@ -159,7 +159,7 @@ typedef enum __CRYPTO_MODE {
  * The enum of the CRC type.
  */
 typedef enum __CRYPTO_CRC_TYPE {
-    CRYPTO_CRC_TYPE_8=0, // /< 8 bits CRC
+    CRYPTO_CRC_TYPE_8 = 0, // /< 8 bits CRC
     CRYPTO_CRC_TYPE_16_MODBUS, // /< 16 bits Modbus CRC
     CRYPTO_CRC_TYPE_16_CCITT, // /< 16 bits CCITT CRC
     CRYPTO_CRC_TYPE_32 // /< 32 bits CRC
@@ -349,7 +349,7 @@ int tls_crypto_trng(unsigned char *out, u32 len);
  * @note                 The first parameter ctx must be a structure which is allocated externally.
  *                  And all of Context parameters in the initializing methods should be allocated externally too.
  */
-int tls_crypto_rc4_init(psCipherContext_t * ctx, const unsigned char *key, u32 keylen);
+int tls_crypto_rc4_init(psCipherContext_t *ctx, const unsigned char *key, u32 keylen);
 
 /**
  * @brief              This function encrypts a variable length data stream according to RC4.
@@ -368,7 +368,7 @@ int tls_crypto_rc4_init(psCipherContext_t * ctx, const unsigned char *key, u32 k
  *
  * @note                 None
  */
-int tls_crypto_rc4(psCipherContext_t * ctx, unsigned char *in, unsigned char *out, u32 len);
+int tls_crypto_rc4(psCipherContext_t *ctx, unsigned char *in, unsigned char *out, u32 len);
 
 /**
  * @brief              This function initializes a AES encryption algorithm,
@@ -385,7 +385,7 @@ int tls_crypto_rc4(psCipherContext_t * ctx, unsigned char *in, unsigned char *ou
  *
  * @note                 None
  */
-int tls_crypto_aes_init(psCipherContext_t * ctx, const unsigned char *IV,
+int tls_crypto_aes_init(psCipherContext_t *ctx, const unsigned char *IV,
                         const unsigned char *key, u32 keylen, CRYPTO_MODE cbc);
 
 /**
@@ -402,11 +402,12 @@ int tls_crypto_aes_init(psCipherContext_t * ctx, const unsigned char *IV,
  *
  * @note            None
  */
-int tls_crypto_aes_encrypt_decrypt(psCipherContext_t * ctx, unsigned char *in,
+int tls_crypto_aes_encrypt_decrypt(psCipherContext_t *ctx, unsigned char *in,
                                    unsigned char *out, u32 len, CRYPTO_WAY dec);
 
 /**
- * @brief            This function initializes a 3DES encryption algorithm,  i.e. fills the psCipherContext_t structure pointed to by ctx with necessary data.
+ * @brief            This function initializes a 3DES encryption algorithm,
+ *                   i.e. fills the psCipherContext_t structure pointed to by ctx with necessary data.
  *
  * @param[in]        ctx         Pointer to the Cipher Context.
  * @param[in]        IV         Pointer to the Initialization Vector
@@ -419,7 +420,7 @@ int tls_crypto_aes_encrypt_decrypt(psCipherContext_t * ctx, unsigned char *in,
  *
  * @note            None
  */
-int tls_crypto_3des_init(psCipherContext_t * ctx, const unsigned char *IV,
+int tls_crypto_3des_init(psCipherContext_t *ctx, const unsigned char *IV,
                          const unsigned char *key, u32 keylen, CRYPTO_MODE cbc);
 
 /**
@@ -436,7 +437,7 @@ int tls_crypto_3des_init(psCipherContext_t * ctx, const unsigned char *IV,
  *
  * @note            None
  */
-int tls_crypto_3des_encrypt_decrypt(psCipherContext_t * ctx, unsigned char *in,
+int tls_crypto_3des_encrypt_decrypt(psCipherContext_t *ctx, unsigned char *in,
                                     unsigned char *out, u32 len, CRYPTO_WAY dec);
 
 /**
@@ -454,7 +455,8 @@ int tls_crypto_3des_encrypt_decrypt(psCipherContext_t * ctx, unsigned char *in,
  *
  * @note            None
  */
-int tls_crypto_des_init(psCipherContext_t * ctx, const unsigned char *IV, const unsigned char *key, u32 keylen, CRYPTO_MODE cbc);
+int tls_crypto_des_init(psCipherContext_t *ctx, const unsigned char *IV,
+                        const unsigned char *key, u32 keylen, CRYPTO_MODE cbc);
 
 /**
  * @brief            This function encrypts or decrypts a variable length data stream according to DES.
@@ -470,7 +472,7 @@ int tls_crypto_des_init(psCipherContext_t * ctx, const unsigned char *IV, const 
  *
  * @note            None
  */
-int tls_crypto_des_encrypt_decrypt(psCipherContext_t * ctx, unsigned char *in,
+int tls_crypto_des_encrypt_decrypt(psCipherContext_t *ctx, unsigned char *in,
                                    unsigned char *out, u32 len, CRYPTO_WAY dec);
 
 /**
@@ -490,7 +492,7 @@ int tls_crypto_des_encrypt_decrypt(psCipherContext_t * ctx, unsigned char *in,
  *
  * @note            None
  */
-int tls_crypto_crc_init(psCrcContext_t * ctx, u32 key, CRYPTO_CRC_TYPE crc_type, u8 mode);
+int tls_crypto_crc_init(psCrcContext_t *ctx, u32 key, CRYPTO_CRC_TYPE crc_type, u8 mode);
 
 /**
  * @brief            This function updates the CRC value with a variable length bytes.
@@ -505,7 +507,7 @@ int tls_crypto_crc_init(psCrcContext_t * ctx, u32 key, CRYPTO_CRC_TYPE crc_type,
  *
  * @note            None
  */
-int tls_crypto_crc_update(psCrcContext_t * ctx, unsigned char *in, u32 len);
+int tls_crypto_crc_update(psCrcContext_t *ctx, unsigned char *in, u32 len);
 
 /**
  * @brief            This function ends a CRC operation and produces a CRC value.
@@ -518,10 +520,10 @@ int tls_crypto_crc_update(psCrcContext_t * ctx, unsigned char *in, u32 len);
  *
  * @note            None
  */
-int tls_crypto_crc_final(psCrcContext_t * ctx, u32 *crc_val);
+int tls_crypto_crc_final(psCrcContext_t *ctx, u32 *crc_val);
 
 /**
- * @brief            This function initializes Message-Diggest context for usage in SHA1 algorithm,
+ *@brief            This function initializes Message-Diggest context for usage in SHA1 algorithm,
  *                   starts a new SHA1 operation and writes a new Digest Context.
  *
  * @param[in]        md         Pointer to the SHA1 Digest Context.
@@ -531,7 +533,7 @@ int tls_crypto_crc_final(psCrcContext_t * ctx, u32 *crc_val);
  *
  * @note            None
  */
-void tls_crypto_sha1_init(psDigestContext_t * md);
+void tls_crypto_sha1_init(psDigestContext_t *md);
 
 /**
  * @brief            Process a message block using SHA1 algorithm.
@@ -548,7 +550,7 @@ void tls_crypto_sha1_init(psDigestContext_t * md);
  *
  * @note            None
  */
-void tls_crypto_sha1_update(psDigestContext_t * md, const unsigned char *buf, u32 len);
+void tls_crypto_sha1_update(psDigestContext_t *md, const unsigned char *buf, u32 len);
 
 /**
  * @brief            This function ends a SHA1 operation and produces a Message-Digest.
@@ -565,7 +567,7 @@ void tls_crypto_sha1_update(psDigestContext_t * md, const unsigned char *buf, u3
  *
  * @note            None
  */
-int tls_crypto_sha1_final(psDigestContext_t * md, unsigned char *hash);
+int tls_crypto_sha1_final(psDigestContext_t *md, unsigned char *hash);
 
 /**
  * @brief This function initializes Message-Diggest context for usage in MD5 algorithm,
@@ -583,7 +585,7 @@ int tls_crypto_sha1_final(psDigestContext_t * md, unsigned char *hash);
  *
  * @note            None
  */
-void tls_crypto_md5_init(psDigestContext_t * md);
+void tls_crypto_md5_init(psDigestContext_t *md);
 
 /**
  * @brief            Process a message block using MD5 algorithm.
@@ -600,7 +602,7 @@ void tls_crypto_md5_init(psDigestContext_t * md);
  *
  * @note            None
  */
-void tls_crypto_md5_update(psDigestContext_t * md, const unsigned char *buf, u32 len);
+void tls_crypto_md5_update(psDigestContext_t *md, const unsigned char *buf, u32 len);
 
 /**
  * @brief            This function ends a MD5 operation and produces a Message-Digest.
@@ -616,7 +618,7 @@ void tls_crypto_md5_update(psDigestContext_t * md, const unsigned char *buf, u32
  *
  * @note            None
  */
-int tls_crypto_md5_final(psDigestContext_t * md, unsigned char *hash);
+int tls_crypto_md5_final(psDigestContext_t *md, unsigned char *hash);
 
 /**
  * @brief            This function implements the large module power multiplication algorithm.

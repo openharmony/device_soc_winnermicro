@@ -54,7 +54,7 @@
 #define UART_BAUDRATE_B1500000      1500000
 #define UART_BAUDRATE_B2000000      2000000
 
-#define UART_RX_INT_FLAG (UIS_RX_FIFO | UIS_RX_FIFO_TIMEOUT | UIS_BREAK |\
+#define UART_RX_INT_FLAG (UIS_RX_FIFO | UIS_RX_FIFO_TIMEOUT | UIS_BREAK | \
         UIS_OVERRUN | UIS_FRM_ERR | UIS_PARITY_ERR)
 #define UART_RX_ERR_INT_FLAG (UIS_BREAK | UIS_FRM_ERR | \
         UIS_PARITY_ERR)
@@ -292,8 +292,8 @@ typedef struct tls_uart_port {
 
     s16(*rx_callback) (u16 len, void* priv_data);
 
-    s16(*tx_callback) (struct tls_uart_port * port);
-    s16(*tx_sent_callback) (struct tls_uart_port * port);
+    s16(*tx_callback) (struct tls_uart_port *port);
+    s16(*tx_sent_callback) (struct tls_uart_port *port);
 
     bool tx_dma_on;
     bool rx_dma_on;
@@ -348,7 +348,7 @@ typedef struct tls_uart_tx_msg {
  *
  * @note When the system is initialized, the function has been called, so users can not call the function.
  */
-int tls_uart_port_init(u16 uart_no, tls_uart_options_t * opts, u8 modeChoose);
+int tls_uart_port_init(u16 uart_no, tls_uart_options_t *opts, u8 modeChoose);
 
 /**
  * @brief          This function is used to register uart rx interrupt.
@@ -385,7 +385,7 @@ void tls_uart_tx_callback_register(u16 uart_no, s16(*tx_callback) (struct tls_ua
  *
  * @note           None
  */
-int tls_uart_read(u16 uart_no, u8 * buf, u16 readsize);
+int tls_uart_read(u16 uart_no, u8 *buf, u16 readsize);
 
 /**
  * @brief          This function is used to check the available data in the cache buffer.

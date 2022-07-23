@@ -22,6 +22,9 @@
  *
  * Copyright (c) 2021 Winner Microelectronics Co., Ltd.
  */
+#ifndef DRIVER_WM_TOUCHSENSOR_H
+#define DRIVER_WM_TOUCHSENSOR_H
+
 #include "wm_type_def.h"
 
 /**
@@ -116,3 +119,4 @@ void tls_touchsensor_irq_register(void (*callback)(u32 status));
  */
 int tls_touchsensor_irq_status_get(u32 sensorno);
 
+#endif

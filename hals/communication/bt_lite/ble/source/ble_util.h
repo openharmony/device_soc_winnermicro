@@ -41,7 +41,7 @@
 #endif
 
 #ifndef MIN
-#define MIN(a,b) (((a) < (b)) ? (a) : (b))
+#define MIN(a, b) (((a) < (b)) ? (a) : (b))
 #endif
 extern const char *tls_bt_gap_evt_2_str(uint32_t event);
 extern void tls_bt_dump_hexstring(const char *info, uint8_t *p, int length);

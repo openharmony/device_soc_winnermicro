@@ -30,8 +30,9 @@
 extern "C" {
 #endif
 
-#include "wm_regs.h"
 #include <stdbool.h>
+#include "wm_regs.h"
+
 
 /**
  * @brief LCD Register Declaration
@@ -80,8 +81,7 @@ typedef enum {
     VLCD33        = LCD_VLCD_33,
 } LCD_VlcdDef;
 
-typedef enum
-{
+typedef enum {
     /** Static (segments can be multiplexed with LCD_COM[0]) */
     DUTY_STATIC        = LCD_DUTY_STATIC,
     /**  1/2 Duty cycle (segments can be multiplexed with LCD_COM[0:1]) */
@@ -227,7 +227,7 @@ void tls_lcd_bias_set(LCD_BiasDef bias);
 #define TLS_LCD_POWERDOWM(enable) \
         do { \
             tls_bitband_write(HR_LCD_CR, LCD_CR_PD_Pos, enable); \
-        } while (0)        
+        } while (0)
 
 /**
  * @}

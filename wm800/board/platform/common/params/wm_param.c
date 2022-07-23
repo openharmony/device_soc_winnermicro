@@ -84,7 +84,7 @@ static int param_to_flash(int id, int modify_count, int partition_num)
 #if USE_TWO_RAM_FOR_PARAMETER
     struct tls_sys_param *src;
     struct tls_sys_param *dest;
-#endif    
+#endif
 
     if ((id < TLS_PARAM_ID_ALL) || (id >= TLS_PARAM_ID_MAX)) {return TLS_PARAM_STATUS_EINVALID;}
 
@@ -383,7 +383,7 @@ int tls_param_init(void)
     u32 crckey = 0xFFFFFFFF;
     psCrcContext_t ctx;
     u32 crcvalue = 0;
-    
+
     struct tls_param_flash *flash;
 
     if (flash_param.magic == TLS_PARAM_MAGIC) {
@@ -961,7 +961,7 @@ int tls_param_get(int id, void *argv, bool from_flash)
     if ((id < TLS_PARAM_ID_ALL) || (id >= TLS_PARAM_ID_MAX)) {return TLS_PARAM_STATUS_EINVALID;}
 
     err = TLS_PARAM_STATUS_OK;
-#if USE_TWO_RAM_FOR_PARAMETER    
+#if USE_TWO_RAM_FOR_PARAMETER
     if (from_flash) {
         src = &flash_param.parameters;
     } else {src = &sram_param;}
@@ -1185,7 +1185,7 @@ int tls_param_get(int id, void *argv, bool from_flash)
         case TLS_PARAM_ID_TEM_OFFSET:
             MEMCPY(argv, &src->params_tem, sizeof(struct tls_param_tem_offset));
             break;
-            
+
         case TLS_PARAM_ID_BT_ADAPTER:
             MEMCPY(argv, &src->adapter_t,   sizeof(bt_adapter_t));
             break;

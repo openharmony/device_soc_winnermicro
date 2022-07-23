@@ -45,7 +45,6 @@ typedef enum {
     TLS_BT_STATUS_HOST_ENABLE_FAILED,
     TLS_BT_STATUS_CTRL_DISABLE_FAILED,
     TLS_BT_STATUS_HOST_DISABLE_FAILED,
-
 } tls_bt_status_t;
 
 typedef enum {
@@ -71,9 +70,9 @@ typedef enum {
 
 /** bluetooth host statck events */
 typedef enum {
-    WM_BT_ADAPTER_STATE_CHG_EVT   = (0x01<<0),        
-    WM_BT_ADAPTER_PROP_CHG_EVT    = (0x01<<1),   
-    WM_BT_RMT_DEVICE_PROP_EVT     = (0x01<<2),               
+    WM_BT_ADAPTER_STATE_CHG_EVT   = (0x01<<0),
+    WM_BT_ADAPTER_PROP_CHG_EVT    = (0x01<<1),
+    WM_BT_RMT_DEVICE_PROP_EVT     = (0x01<<2),
     WM_BT_DEVICE_FOUND_EVT        = (0x01<<3),
     WM_BT_DISCOVERY_STATE_CHG_EVT = (0x01<<4),
     WM_BT_REQUEST_EVT             = (0x01<<5),
@@ -194,11 +193,10 @@ typedef struct {
     tls_bt_property_t *properties; /**< bluetooth adapter property data */
 } tls_bt_adapter_prop_msg_t;
 
-typedef enum { 
+typedef enum {
     WM_BLE_SCAN_STOP = 0,
     WM_BLE_SCAN_PASSIVE = 1,
     WM_BLE_SCAN_ACTIVE = 2,
-    
 } wm_ble_scan_type_t;
 
 typedef enum {
@@ -632,7 +630,6 @@ typedef struct {
     uint8_t status;
     bool reg;
     uint16_t handle;
-    
 } tls_ble_cl_reg_notify_msg_t;
 
 /* WM BLE Server Host callback events */
@@ -683,7 +680,8 @@ typedef struct {
     uint16_t              attr_id;
 } tls_ble_se_add_char_msg_t;
 
-typedef tls_ble_se_add_char_msg_t tls_ble_se_add_char_descr_msg_t;/** callback event data for WM_BLE_SE_START_EVT event */
+/** callback event data for WM_BLE_SE_START_EVT event */
+typedef tls_ble_se_add_char_msg_t tls_ble_se_add_char_descr_msg_t;
 typedef struct {
     uint8_t         status; /**< operation status */
     uint8_t         server_if;
@@ -847,7 +845,6 @@ typedef union {
     tls_ble_report_rssi_msg_t            dm_report_rssi;
     tls_ble_sec_msg_t                    dm_sec_result;
     tls_ble_dm_adv_cmpl_msg_t            dm_adv_cmpl;
-    
 } tls_ble_dm_msg_t;
 
 typedef struct {
@@ -1102,8 +1099,7 @@ typedef struct {
     uint8_t label;
 } tls_btrc_ctrl_registernotification_abs_vol_msg_t;
 
-typedef struct
-{
+typedef struct {
     tls_bt_addr_t *bd_addr;
     uint8_t accepted;
 } tls_btrc_ctrl_setplayerapplicationsetting_rsp_msg_t;
@@ -1125,7 +1121,6 @@ typedef struct {
     tls_bt_addr_t *bd_addr;
     uint8_t num_attr;
     tls_btrc_element_attr_val_t *p_attrs;
-
 } tls_btrc_ctrl_track_changed_msg_t;
 
 typedef struct {
@@ -1257,7 +1252,7 @@ typedef enum {
     WM_BTHF_CLIENT_CONNECTION_STATE_DISCONNECTING
 } tls_bthf_client_connection_state_t;
 
-typedef enum{
+typedef enum {
     WM_BTHF_CLIENT_AUDIO_STATE_DISCONNECTED = 0,
     WM_BTHF_CLIENT_AUDIO_STATE_CONNECTING,
     WM_BTHF_CLIENT_AUDIO_STATE_CONNECTED,
@@ -1599,25 +1594,25 @@ typedef uint16_t wm_spp_sec_t;
 #define WM_SPP_MAX_SCN             31
 
 typedef enum {
-    WM_SPP_ROLE_CLIENT     = 0,          
+    WM_SPP_ROLE_CLIENT     = 0,
     WM_SPP_ROLE_SERVER      = 1,
 } tls_spp_role_t;
 
 typedef enum {
-    WM_SPP_INIT_EVT                    = 0,               
-    WM_SPP_DISCOVERY_COMP_EVT          = 8,               
-    WM_SPP_OPEN_EVT                    = 26,              
-    WM_SPP_CLOSE_EVT                   = 27,              
-    WM_SPP_START_EVT                   = 28,               
-    WM_SPP_CL_INIT_EVT                 = 29,              
-    WM_SPP_DATA_IND_EVT                = 30,              
-    WM_SPP_CONG_EVT                    = 31,               
-    WM_SPP_WRITE_EVT                   = 33,              
-    WM_SPP_SRV_OPEN_EVT                = 34,              
+    WM_SPP_INIT_EVT                    = 0,
+    WM_SPP_DISCOVERY_COMP_EVT          = 8,
+    WM_SPP_OPEN_EVT                    = 26,
+    WM_SPP_CLOSE_EVT                   = 27,
+    WM_SPP_START_EVT                   = 28,
+    WM_SPP_CL_INIT_EVT                 = 29,
+    WM_SPP_DATA_IND_EVT                = 30,
+    WM_SPP_CONG_EVT                    = 31,
+    WM_SPP_WRITE_EVT                   = 33,
+    WM_SPP_SRV_OPEN_EVT                = 34,
 } tls_spp_event_t;
 
 typedef struct {
-    uint8_t    status; 
+    uint8_t    status;
 } tls_spp_init_msg_t ;
 
 typedef struct {
@@ -1635,34 +1630,34 @@ typedef struct {
 typedef struct {
         uint8_t    status;
         uint32_t   handle;
-        uint32_t   new_listen_handle; 
+        uint32_t   new_listen_handle;
         uint8_t     addr[6];
 } tls_spp_srv_open_msg_t;
 
 typedef struct {
-        uint8_t    status; 
+        uint8_t    status;
         uint32_t   port_status;
         uint32_t   handle;
-        bool       local; 
-} tls_spp_close_msg_t; 
+        bool       local;
+} tls_spp_close_msg_t;
 
 typedef struct {
         uint8_t    status;
-        uint32_t   handle; 
-        uint8_t    sec_id; 
+        uint32_t   handle;
+        uint8_t    sec_id;
         bool       use_co_rfc;
-} tls_spp_start_msg_t; 
+} tls_spp_start_msg_t;
 
 typedef struct {
-        uint8_t    status; 
-        uint32_t   handle; 
+        uint8_t    status;
+        uint32_t   handle;
         uint8_t    sec_id;
-        bool       use_co_rfc; 
+        bool       use_co_rfc;
 } tls_spp_cli_init_msg_t;
 
 typedef struct {
-        uint8_t    status; 
-        uint32_t   handle; 
+        uint8_t    status;
+        uint32_t   handle;
         int        length;
         bool       congest;
 } tls_spp_write_msg_t;
@@ -1670,9 +1665,9 @@ typedef struct {
 typedef struct {
         uint8_t    status;
         uint32_t   handle;
-        uint16_t   length; 
-        uint8_t    *data; 
-} tls_spp_data_ind_msg_t; 
+        uint16_t   length;
+        uint8_t    *data;
+} tls_spp_data_ind_msg_t;
 
 typedef struct {
         uint8_t    status;
