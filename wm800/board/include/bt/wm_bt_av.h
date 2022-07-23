@@ -175,7 +175,7 @@ tls_bt_status_t tls_btrc_deinit(void);
  * @note           This method is called in response to GetPlayStatus request.
  */
 tls_bt_status_t tls_btrc_get_play_status_rsp(tls_btrc_play_status_t play_status, uint32_t song_len,
-                                       uint32_t song_pos);
+                                             uint32_t song_pos);
 
 /**
  * @brief          Returns the current songs' element attributes in text
@@ -201,7 +201,7 @@ tls_bt_status_t tls_btrc_get_element_attr_rsp(uint8_t num_attr, tls_btrc_element
  * @note           None
  */
 tls_bt_status_t tls_btrc_register_notification_rsp(tls_btrc_event_id_t event_id,
-        tls_btrc_notification_type_t type, tls_btrc_register_notification_t *p_param);
+    tls_btrc_notification_type_t type, tls_btrc_register_notification_t *p_param);
 
 /**
  * @brief          Send current volume setting to remote side

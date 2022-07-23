@@ -232,27 +232,30 @@ extern "C"
 /* The macro produces a double-length number (z,zz) that satisfies     */
 /* z+zz = x+y exactly.                                                 */
 
-#define  EADD(x, y, z, zz)                            \
+#define  EADD(x, y, z, zz) do {                           \
         z=(x)+(y);  zz=(ABS(x)>ABS(y)) ? (((x)-(z))+(y)) : (((y)-(z))+(x));
+} while (0)
 
 /* Exact multiplication of two single-length floating point numbers,   */
 /* The macro produces a double-length number (z,zz) that                */
 /* satisfies z+zz = x*y exactly. p,hx,tx,hy,ty are temporary           */
 /* storage variables of type double.                                   */
 
-# define  EMULV(x, y, z, zz, p, hx, tx, hy, ty)            \
+# define  EMULV(x, y, z, zz, p, hx, tx, hy, ty) do {           \
         p=CN*(x);  hx=((x)-p)+p;  tx=(x)-hx;       \
         p=CN*(y);  hy=((y)-p)+p;  ty=(y)-hy;       \
         z=(x)*(y); zz=(((hx*hy-z)+hx*ty)+tx*hy)+tx*ty;
+} while (0)
 /* Exact multiplication of two single-length floating point numbers.         */
 /* The macro produces a nearly double-length number (z,zz) (see Dekker)      */
 /* that satisfies z+zz = x*y exactly. p,hx,tx,hy,ty,q are temporary          */
 /* storage variables of type double.                                         */
 
-# define  MUL12(x, y, z, zz, p, hx, tx, hy, ty, q)          \
+# define  MUL12(x, y, z, zz, p, hx, tx, hy, ty, q) do {         \
         p=CN*(x);  hx=((x)-p)+p;  tx=(x)-hx;       \
         p=CN*(y);  hy=((y)-p)+p;  ty=(y)-hy;       \
         p=hx*hy;  q=hx*ty+tx*hy; z=p+q;  zz=((p-z)+q)+tx*ty;
+} while (0)
 
 /* Double-length addition, Dekker. The macro produces a double-length   */
 /* number (z,zz) which satisfies approximately   z+zz = x+xx + y+yy.    */
@@ -260,11 +263,12 @@ extern "C"
 /* are assumed to be double-length numbers. r,s are temporary           */
 /* storage variables of type double.                                    */
 
-#define  ADD2(x, xx, y, yy, z, zz, r, s)                  \
+#define  ADD2(x, xx, y, yy, z, zz, r, s) do {                 \
         r=(x)+(y);  s=(ABS(x)>ABS(y)) ?            \
                 (((((x)-r)+(y))+(yy))+(xx)) :      \
                 (((((y)-r)+(x))+(xx))+(yy));       \
         z=r+s;  zz=(r-z)+s;
+} while (0)
 
 /* Double-length subtraction, Dekker. The macro produces a double-length  */
 /* number (z,zz) which satisfies approximately   z+zz = x+xx - (y+yy).    */
@@ -272,11 +276,12 @@ extern "C"
 /* are assumed to be double-length numbers. r,s are temporary             */
 /* storage variables of type double.                                      */
 
-#define  SUB2(x, xx, y, yy, z, zz, r, s)                  \
+#define  SUB2(x, xx, y, yy, z, zz, r, s) do {      \
         r=(x)-(y);  s=(ABS(x)>ABS(y)) ?            \
                 (((((x)-r)-(y))-(yy))+(xx)) :      \
                 ((((x)-((y)+r))+(xx))-(yy));       \
         z=r+s;  zz=(r-z)+s;
+} while (0)
 
 /* Double-length multiplication, Dekker. The macro produces a double-length  */
 /* number (z,zz) which satisfies approximately   z+zz = (x+xx)*(y+yy).       */
@@ -284,9 +289,10 @@ extern "C"
 /* are assumed to be double-length numbers. p,hx,tx,hy,ty,q,c,cc are         */
 /* temporary storage variables of type double.                               */
 
-#define  MUL2(x, xx, y, yy, z, zz, p, hx, tx, hy, ty, q, c, cc) \
+#define  MUL2(x, xx, y, yy, z, zz, p, hx, tx, hy, ty, q, c, cc) do { \
         MUL12(x, y, c, cc, p, hx, tx, hy, ty, q)            \
         cc=((x)*(yy)+(xx)*(y))+cc;   z=c+cc;   zz=(c-z)+cc;
+    } while (0)
 
 __STATIC_INLINE int32_t __SSAT_31(int32_t x)
 {
@@ -1212,8 +1218,7 @@ void csky_cfft_f32(
     /**
      * @brief Instance structure for the Q15 RFFT/RIFFT function.
      */
-    typedef struct
-{
+typedef struct {
     uint32_t fftLenReal;                      /**< length of the real FFT. */
     uint8_t ifftFlagR;           /**< flag that selects forward (ifftFlagR=0) or inverse (ifftFlagR=1) transform. */
     /**< flag that enables (bitReverseFlagR=1) or disables (bitReverseFlagR=0) bit reversal of output. */
@@ -2126,10 +2131,10 @@ typedef struct {
  * @brief Instance structure for the floating-point FIR interpolator.
  */
 typedef struct {
-    uint8_t L;                     /**< upsample factor. */
-    uint16_t phaseLength;          /**< length of each polyphase filter component. */
-    float32_t *pCoeffs;            /**< points to the coefficient array. The array is of length L*phaseLength. */
-    float32_t *pState;             /**< points to the state variable array. The array is of length phaseLength+numTaps-1. */
+    uint8_t L;               /**< upsample factor. */
+    uint16_t phaseLength;    /**< length of each polyphase filter component. */
+    float32_t *pCoeffs;      /**< points to the coefficient array. The array is of length L*phaseLength. */
+    float32_t *pState;       /**< points to the state variable array. The array is of length phaseLength+numTaps-1. */
 } csky_fir_interpolate_instance_f32;
 
 void csky_fir_interpolate_q15(
@@ -2406,7 +2411,7 @@ typedef struct {
 } csky_lms_instance_f32;
 
 void csky_lms_f32(
-    const csky_lms_instance_f32 * S,
+    const csky_lms_instance_f32 *S,
     float32_t *pSrc,
     float32_t *pRef,
     float32_t *pOut,
@@ -3368,7 +3373,8 @@ void csky_q7_to_float(
  * \par Algorithm
  * \image html parkInvFormula.gif
  * where <code>pIalpha</code> and <code>pIbeta</code> are the stator vector components,
- * <code>Id</code> and <code>Iq</code> are rotor vector components and <code>cosVal</code> and <code>sinVal</code> are the
+ * <code>Id</code> and <code>Iq</code> are rotor vector components
+ * and <code>cosVal</code> and <code>sinVal</code> are the
  * cosine and sine values of theta (rotor flux position).
  * \par Fixed-Point Behavior
  * Care must be taken when using the Q31 version of the Park transform.
@@ -3788,27 +3794,25 @@ typedef union {
     float64_t x[1024];
 }exp_cof2;
 
-union ieee754_double
-{
+union ieee754_double {
     float64_t d;
 
     struct {
-        unsigned int mantissa1:32;
-        unsigned int mantissa0:20;
-        unsigned int exponent:11;
-        unsigned int negative:1;
+        unsigned int mantissa1 : 32;
+        unsigned int mantissa0 : 20;
+        unsigned int exponent : 11;
+        unsigned int negative : 1;
     } ieee;
     struct {
-        unsigned int mantissa1:32;
-        unsigned int mantissa0:19;
-        unsigned int quiet_nan:1;
-        unsigned int exponent:11;
-        unsigned int negative:1;
+        unsigned int mantissa1 : 32;
+        unsigned int mantissa0 : 19;
+        unsigned int quiet_nan : 1;
+        unsigned int exponent : 11;
+        unsigned int negative : 1;
     } ieee_nan;
 };
 
-typedef struct
-{
+typedef struct {
     q31_t e;
     long  d[40];
 }mp_no;
@@ -4511,7 +4515,7 @@ __STATIC_INLINE q31_t csky_shr_q31(
 #ifdef CSKY_SIMD
     __ASM volatile(
                   "asr        %0, %1, %2\n\t"
-                  :"=r"(res), "=r"(a),"=r"(shift):"0"(res), "1"(a), "2"(shift));
+                  :"=r"(res), "=r"(a), "=r"(shift):"0"(res), "1"(a), "2"(shift));
 #else
     res =  ((a) >> (shift));
 #endif
@@ -4654,27 +4658,27 @@ __STATIC_INLINE q63_t csky_pshr_q63(
 #else
 /* SMMLAR */
 #define multAcc_32x32_keep32_R(a, x, y) \
-    a = (q31_t) (((((q63_t) a) << 32) + ((q63_t) x * y) + 0x80000000LL) >> 32)
+    (a) = (q31_t) (((((q63_t) (a)) << 32) + ((q63_t) (x) * (y)) + 0x80000000LL) >> 32)
 
 /* SMMLSR */
 #define multSub_32x32_keep32_R(a, x, y) \
-    a = (q31_t) (((((q63_t) a) << 32) - ((q63_t) x * y) + 0x80000000LL) >> 32)
+    (a) = (q31_t) (((((q63_t) (a)) << 32) - ((q63_t) (x) * (y)) + 0x80000000LL) >> 32)
 
 /* SMMULR */
 #define mult_32x32_keep32_R(a, x, y) \
-    a = (q31_t) (((q63_t) x * y + 0x80000000LL) >> 32)
+    (a) = (q31_t) (((q63_t) (x) * (y) + 0x80000000LL) >> 32)
 
 /* SMMLA */
 #define multAcc_32x32_keep32(a, x, y) \
-    a += (q31_t) (((q63_t) x * y) >> 32)
+    (a) += (q31_t) (((q63_t) (x) * (y)) >> 32)
 
 /* SMMLS */
 #define multSub_32x32_keep32(a, x, y) \
-    a -= (q31_t) (((q63_t) x * y) >> 32)
+    (a) -= (q31_t) (((q63_t) (x) * (y)) >> 32)
 
 /* SMMUL */
 #define mult_32x32_keep32(a, x, y) \
-    a = (q31_t) (((q63_t) x * y) >> 32)
+    (a) = (q31_t) (((q63_t) (x) * (y)) >> 32)
 #endif
 
 #ifdef   __cplusplus

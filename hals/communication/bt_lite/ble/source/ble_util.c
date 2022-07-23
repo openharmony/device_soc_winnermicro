@@ -57,7 +57,7 @@ const char *tls_bt_gap_evt_2_str(uint32_t event)
 }
 void tls_bt_dump_hexstring(const char *info, uint8_t *p, int length)
 {
-    int i=0, j=0;
+    int i = 0, j = 0;
     printf("%s\r\n", info);
     for (i=0; i<length; i++) {
         j++;

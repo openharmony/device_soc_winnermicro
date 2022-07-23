@@ -20,7 +20,7 @@
 * Description: main
 *
 * Copyright (c) 2014 Winner Micro Electronic Design Co., Ltd.
-* All rights reserved. 
+* All rights reserved.
 *
 * Author : dave
 *

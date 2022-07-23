@@ -142,8 +142,6 @@ WifiSecurityType WmSec2HoSec(int mode)
         case IEEE80211_ENCRYT_AUTO_WPA:
         case IEEE80211_ENCRYT_AUTO_WPA2:
             return WIFI_SEC_TYPE_PSK;
-        // case /*  */:
-        //     return WIFI_SEC_TYPE_SAE;
         default:
             return -1;
     }
@@ -168,6 +166,8 @@ WifiSecurityType WmAuth2HoSec(int mode)
             return WIFI_SEC_TYPE_PSK;
         case WM_WIFI_AUTH_MODE_UNKNOWN:
             return -1;
+        default:
+            return -1;
     }
     return -1;
 }
@@ -181,8 +181,6 @@ int HoSec2WmSec(WifiSecurityType type)
             return IEEE80211_ENCRYT_WEP40;
         case WIFI_SEC_TYPE_PSK:
             return IEEE80211_ENCRYT_CCMP_WPA2;
-        // case WIFI_SEC_TYPE_SAE:
-        //     return IEEE80211_ENCRYT_AUTO_WPA2;
         default:
             return -1;
     }

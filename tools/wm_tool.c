@@ -2749,9 +2749,9 @@ static int wm_tool_printf(const char *format, ...)
         va_start(ap, format);
         ret = vprintf(format, ap);
         va_end(ap);
-    
+
         fflush(stdout);
-    
+
         return ret;
 }
 
@@ -3540,7 +3540,7 @@ static int wm_tool_gzip_bin(const char *binary, const char *gzbin)
         wm_tool_printf("can not open binary.\r\n");
         return -1;
     }
-    
+
     gzfp = gzopen((char *)gzbin, "wb+");
     if (!gzfp) {
         wm_tool_printf("can not gzip binary.\r\n");
@@ -4391,7 +4391,7 @@ static int wm_tool_xmodem_download(const char *image)
                         pack_counter = 0;
                     } else {
                         pack_counter++;
-                        
+
                         if (packet_data_offset > 0 && packet_data_len > 0) {
                             WM_TOOL_DBG_PRINT("packet_data_offset = %d, packet_data_len = %d\r\n", \
                                 packet_data_offset, packet_data_len);
@@ -4399,7 +4399,7 @@ static int wm_tool_xmodem_download(const char *image)
                                 packet_data[packet_data_offset+1], packet_data[packet_data_offset+2], \
                                 packet_data[packet_data_offset+3]);
                             memmove(packet_data, packet_data + packet_data_offset, packet_data_len);
-                            WM_TOOL_DBG_PRINT("header %x %x %x %x\r\n", packet_data[0], packet_data[1], 
+                            WM_TOOL_DBG_PRINT("header %x %x %x %x\r\n", packet_data[0], packet_data[1],
                                 packet_data[2], packet_data[3]);
                             packet_data_offset = 0;
                         }
@@ -4778,17 +4778,21 @@ static void wm_tool_show_local_com(void)
 }
 static void wm_tool_free_res(void)
 {
-    if (wm_tool_download_image)
+    if (wm_tool_download_image) {
         free(wm_tool_download_image);
+    }
 
-    if (wm_tool_output_image)
+    if (wm_tool_output_image) {
         free(wm_tool_output_image);
+    }
 
-    if (wm_tool_input_binary)
+    if (wm_tool_input_binary) {
         free(wm_tool_input_binary);
+    }
 
-    if (wm_tool_secboot_image)
+    if (wm_tool_secboot_image) {
         free(wm_tool_secboot_image);
+    }
 
     return;
 }
@@ -4832,8 +4836,9 @@ int main(int argc, char *argv[])
     if (wm_tool_show_log_type) {
     }
 
-    if (ret > 0)
+    if (ret > 0) {
         wm_tool_print_usage(argv[0]);
+    }
 
     wm_tool_free_res();
 

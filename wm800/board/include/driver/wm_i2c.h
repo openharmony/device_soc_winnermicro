@@ -74,7 +74,7 @@ typedef struct {
 void tls_i2c_init(u32 freq);
 
 /** I2C initialization mask */
-#define  wm_i2c_int_mask(bl)   do { tls_bitband_write(HR_I2C_CTRL, 6, bl);}while (0);
+#define  wm_i2c_int_mask(bl)   do { tls_bitband_write(HR_I2C_CTRL, 6, bl);}while (0)
 
 /**
  * @brief	send stop signal
@@ -128,7 +128,7 @@ void wm_i2c_transfer_done_register(void (*done)(void));
  *	- \ref WM_FAILED
  *	- \ref WM_SUCCESS
  */
-int wm_i2c_start_write_it(uint8_t devaddr, uint8_t wordaddr, uint8_t * buf, uint16_t len);
+int wm_i2c_start_write_it(uint8_t devaddr, uint8_t wordaddr, uint8_t *buf, uint16_t len);
 
 /**
  * @brief	Get the data stored in data register of I2C module
@@ -136,7 +136,7 @@ int wm_i2c_start_write_it(uint8_t devaddr, uint8_t wordaddr, uint8_t * buf, uint
  * @param[in] ifstop when one send stop signal after read, when zero do not send stop
  * @retval	the received data
  */
-int wm_i2c_start_read_it(uint8_t devaddr, uint8_t wordaddr, uint8_t * buf, uint16_t len);
+int wm_i2c_start_read_it(uint8_t devaddr, uint8_t wordaddr, uint8_t *buf, uint16_t len);
 /**
  * @}
  */

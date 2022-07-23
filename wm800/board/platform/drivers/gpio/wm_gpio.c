@@ -199,7 +199,7 @@ void tls_gpio_write(enum tls_io_name gpio_pin, u8 value)
     }
 
     cpu_sr = tls_os_set_critical();
-    
+   
     reg_en = tls_reg_read32(HR_GPIO_DATA_EN + offset);
     tls_reg_write32(HR_GPIO_DATA_EN + offset, reg_en | (1 << pin));
 

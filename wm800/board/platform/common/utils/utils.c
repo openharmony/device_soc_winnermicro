@@ -83,7 +83,7 @@ int chk_crc8(u8 *ptr, u32 len)
         data = *ptr++;
         crc8 = crc8_tbl[crc8^data];
     }
-    
+
     if (crc8==0x00) {
         return 0;
     } else {
@@ -115,7 +115,7 @@ u8 calculate_crc8(u8 crc8, u8 *ptr, u32 len)
         data = *ptr++;
         crc8 = crc8_tbl[crc8^data];
     }
-    
+
     return crc8;
 }
 
@@ -132,7 +132,7 @@ static u32 _cal_crc32(u32 crc_result, u8 data_8)
     for (i = 0; i < 32; i++) {
         crc_out[i] = 0;
     }
-    
+
     for (i = 0; i < 8; i++) {
         in_data_buf[i] = (data_8 >> i) & flag;
     }
@@ -164,7 +164,7 @@ static u32 _cal_crc32(u32 crc_result, u8 data_8)
                 crc_buf[26]^crc_buf[24]^crc_buf[2];
     crc_out[11] = in_data_buf[3]^in_data_buf[4]^in_data_buf[6]^in_data_buf[7]^crc_buf[28]^crc_buf[27]^
                 crc_buf[25]^crc_buf[24]^crc_buf[3];
-  
+
     crc_out[12] = in_data_buf[1]^in_data_buf[2]^in_data_buf[3]^in_data_buf[5]^in_data_buf[6]^in_data_buf[7]^
                 crc_buf[30]^crc_buf[29]^crc_buf[28]^crc_buf[26]^crc_buf[25]^crc_buf[24]^crc_buf[4];
     crc_out[13] = in_data_buf[0]^in_data_buf[1]^in_data_buf[2]^in_data_buf[4]^in_data_buf[5]^in_data_buf[6]^
@@ -191,12 +191,12 @@ static u32 _cal_crc32(u32 crc_result, u8 data_8)
     crc_out[29] = in_data_buf[0]^in_data_buf[1]^in_data_buf[4]^crc_buf[31]^crc_buf[30]^crc_buf[27]^crc_buf[21];
     crc_out[30] = in_data_buf[0]^in_data_buf[3]^crc_buf[31]^crc_buf[28]^crc_buf[22];
     crc_out[31] = in_data_buf[2]^crc_buf[23]^crc_buf[29];
- 
+
     crc_result = 0;
     for (i = 0; i < 32; i++) {
         if (crc_out[i]) {crc_result |= (1<<i);}
     }
-    
+
     return crc_result;
 }
 
@@ -241,7 +241,7 @@ u32 checksum(u32 *data, u32 length, u32 init)
 int atodec(char ch)
 {
     int dec = -1;
-    
+
     if ((ch >= '0') && (ch <= '9')) {dec = ch - '0';}
 
     return dec;
@@ -278,7 +278,7 @@ int atohex(char ch)
     int hex;
 
     hex = -1;
-    
+
     if ((ch >= '0') && (ch <= '9')) {
         hex = ch - '0';
     } else if ((ch >= 'a') && (ch <= 'f')) {
@@ -318,7 +318,7 @@ int strtohexarray(u8 array[], int cnt, char *str)
     u8 *des;
 
     des = array;
-    
+
     while (cnt-- > 0) {
         int hex = atohex(*str++);
         if (hex < 0) {
@@ -331,10 +331,10 @@ int strtohexarray(u8 array[], int cnt, char *str)
         } else {
             tmp = tmp | (hex & 0x0f);
         }
-        
+
         *des++ = (u8) tmp;
     }
-    
+
     return ((*str==0) ? 0 : -1);
 }
 
@@ -349,7 +349,7 @@ int strtoip(u32 *ipadr, char * str)
     ip = 0;
     head = str;
     tail = str;
-    
+
     for (i = 0; i < 3;) {
         if (*tail == '.') {
             i++;
@@ -372,7 +372,7 @@ int strtoip(u32 *ipadr, char * str)
     ip += n;
 
     *ipadr = ip;
-    
+
     return ((ip == 0) ? -1 : 0);
 }
 

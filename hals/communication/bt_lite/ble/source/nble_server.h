@@ -17,10 +17,10 @@
 #define __NBLE_SERVER_H__
 
 /* Initialize the list for ble server */
-extern void ble_server_init();
+extern void ble_server_init(void);
 
 /* Enable the all service stored in the servcie list one by one */
-extern void ble_server_start_service();
+extern void ble_server_start_service(void);
 
 /* Free servcie by server id */
 extern int ble_server_free(int server_id);

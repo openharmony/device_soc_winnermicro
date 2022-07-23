@@ -195,7 +195,7 @@ unsigned char tls_dma_stop(unsigned char ch);
  * @param[in]    flags    flags setted to selected channel
  *
  * @return       Real DMA Channel No: if there is free dma channel.
- *               0xFF: when DMA channels are all used. 
+ *               0xFF: when DMA channels are all used.
  *
  * @note         If ch is invalid or valid but used, the function will select another free channel.
  *               else return the selected channel no.
