@@ -25,15 +25,12 @@
 /**
  * Generic mempool allocation function.  Used with basic and extended mempools.
  */
-static int
-mem_malloc_mempool_gen(uint16_t num_blocks, uint32_t block_size,
-                       void **out_buf)
+static int mem_malloc_mempool_gen(uint16_t num_blocks, uint32_t block_size, void **out_buf)
 {
     block_size = OS_ALIGN(block_size, OS_ALIGNMENT);
 
     if (num_blocks > 0) {
         *out_buf = (void*)tls_mem_alloc(OS_MEMPOOL_BYTES(num_blocks, block_size));
-
         if (*out_buf == NULL) {
             return OS_ENOMEM;
         }
@@ -60,20 +57,17 @@ mem_malloc_mempool_gen(uint16_t num_blocks, uint32_t block_size,
  *                              OS_ENOMEM on malloc failure;
  *                              Other OS code on unexpected error.
  */
-int
-mem_malloc_mempool(struct os_mempool *mempool, uint16_t num_blocks,
-                   uint32_t block_size, char *name, void **out_buf)
+int mem_malloc_mempool(struct os_mempool *mempool, uint16_t num_blocks,
+                       uint32_t block_size, char *name, void **out_buf)
 {
     void *buf;
     int rc;
     rc = mem_malloc_mempool_gen(num_blocks, block_size, &buf);
-
     if (rc != 0) {
         return rc;
     }
 
     rc = os_mempool_init(mempool, num_blocks, block_size, buf, name);
-
     if (rc != 0) {
         tls_mem_free((void*)buf);
         return rc;
@@ -102,20 +96,17 @@ mem_malloc_mempool(struct os_mempool *mempool, uint16_t num_blocks,
  *                              OS_ENOMEM on malloc failure;
  *                              Other OS code on unexpected error.
  */
-int
-mem_malloc_mempool_ext(struct os_mempool_ext *mpe, uint16_t num_blocks,
-                       uint32_t block_size, char *name, void **out_buf)
+int mem_malloc_mempool_ext(struct os_mempool_ext *mpe, uint16_t num_blocks,
+                           uint32_t block_size, char *name, void **out_buf)
 {
     void *buf;
     int rc;
     rc = mem_malloc_mempool_gen(num_blocks, block_size, &buf);
-
     if (rc != 0) {
         return rc;
     }
 
     rc = os_mempool_ext_init(mpe, num_blocks, block_size, buf, name);
-
     if (rc != 0) {
         tls_mem_free((void*)buf);
         return rc;
@@ -146,23 +137,20 @@ mem_malloc_mempool_ext(struct os_mempool_ext *mpe, uint16_t num_blocks,
  *                              OS_ENOMEM on malloc failure;
  *                              Other OS code on unexpected error.
  */
-int
-mem_malloc_mbuf_pool(struct os_mempool *mempool,
-                     struct os_mbuf_pool *mbuf_pool, uint16_t num_blocks,
-                     uint32_t block_size, char *name,
-                     void **out_buf)
+int mem_malloc_mbuf_pool(struct os_mempool *mempool,
+                         struct os_mbuf_pool *mbuf_pool, uint16_t num_blocks,
+                         uint32_t block_size, char *name,
+                         void **out_buf)
 {
     void *buf;
     int rc;
     block_size = OS_ALIGN(block_size + sizeof(struct os_mbuf), OS_ALIGNMENT);
     rc = mem_malloc_mempool(mempool, num_blocks, block_size, name, &buf);
-
     if (rc != 0) {
         return rc;
     }
 
     rc = os_mbuf_pool_init(mbuf_pool, mempool, block_size, num_blocks);
-
     if (rc != 0) {
         tls_mem_free((void*)buf);
         return rc;
@@ -193,11 +181,10 @@ mem_malloc_mbuf_pool(struct os_mempool *mempool,
  *                              OS_ENOMEM on malloc failure;
  *                              Other OS code on unexpected error.
  */
-int
-mem_malloc_mbufpkt_pool(struct os_mempool *mempool,
-                        struct os_mbuf_pool *mbuf_pool, int num_blocks,
-                        int block_size, char *name,
-                        void **out_buf)
+int mem_malloc_mbufpkt_pool(struct os_mempool *mempool,
+                            struct os_mbuf_pool *mbuf_pool, int num_blocks,
+                            int block_size, char *name,
+                            void **out_buf)
 {
     int rc;
     rc = mem_malloc_mbuf_pool(mempool, mbuf_pool, num_blocks,
@@ -206,20 +193,17 @@ mem_malloc_mbufpkt_pool(struct os_mempool *mempool,
     return rc;
 }
 
-int
-mem_init_mbuf_pool(void *mem, struct os_mempool *mempool,
-                   struct os_mbuf_pool *mbuf_pool, int num_blocks,
-                   int block_size, char *name)
+int mem_init_mbuf_pool(void *mem, struct os_mempool *mempool,
+                       struct os_mbuf_pool *mbuf_pool, int num_blocks,
+                       int block_size, char *name)
 {
     int rc;
     rc = os_mempool_init(mempool, num_blocks, block_size, mem, name);
-
     if (rc != 0) {
         return rc;
     }
 
     rc = os_mbuf_pool_init(mbuf_pool, mempool, block_size, num_blocks);
-
     if (rc != 0) {
         return rc;
     }
@@ -236,7 +220,7 @@ mem_init_mbuf_pool(void *mem, struct os_mempool *mempool,
  * pointer is set to NULL.
  *
  * This function is expected to be called in a loop until the entire mbuf chain
- * has been consumed.  For example:
+ * has been consumed.
  *
  *     struct os_mbuf *frag;
  *     struct os_mbuf *rsp;
@@ -268,9 +252,7 @@ mem_init_mbuf_pool(void *mem, struct os_mempool *mempool,
  * @return                      The next fragment to send on success;
  *                              NULL on failure.
  */
-struct os_mbuf *
-mem_split_frag(struct os_mbuf **om, uint16_t max_frag_sz,
-               mem_frag_alloc_fn *alloc_cb, void *cb_arg)
+struct os_mbuf *mem_split_frag(struct os_mbuf **om, uint16_t max_frag_sz, mem_frag_alloc_fn *alloc_cb, void *cb_arg)
 {
     struct os_mbuf *frag;
     int rc;
@@ -284,14 +266,12 @@ mem_split_frag(struct os_mbuf **om, uint16_t max_frag_sz,
 
     /* Packet needs to be split.  Allocate a new buffer for the fragment. */
     frag = alloc_cb(max_frag_sz, cb_arg);
-
     if (frag == NULL) {
         goto err;
     }
 
     /* Move data from the front of the packet into the fragment mbuf. */
     rc = os_mbuf_appendfrom(frag, *om, 0, max_frag_sz);
-
     if (rc != 0) {
         goto err;
     }

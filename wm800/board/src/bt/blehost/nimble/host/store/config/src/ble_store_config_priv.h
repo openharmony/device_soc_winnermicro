@@ -48,13 +48,19 @@ int ble_store_config_delete_all(void);
 
 #else
 
-static inline int ble_store_config_persist_our_secs(bool flush)   { return 0; }
-static inline int ble_store_config_persist_peer_secs(bool flush)  { return 0; }
-static inline int ble_store_config_persist_cccds(bool flush)      { return 0; }
-static inline void ble_store_config_conf_init(void)         { }
-static inline void ble_store_config_conf_deinit(void)         { }
+static inline int ble_store_config_persist_our_secs(bool flush) {
+    return 0;
+}
+static inline int ble_store_config_persist_peer_secs(bool flush) {
+    return 0;
+}
+static inline int ble_store_config_persist_cccds(bool flush) {
+    return 0;
+}
+static inline void ble_store_config_conf_init(void) {}
+static inline void ble_store_config_conf_deinit(void) {}
 static inline void ble_store_config_persist_flush(void) {}
-static inline int ble_store_config_delete_all(void){}
+static inline int ble_store_config_delete_all(void) {}
 
 #endif /* MYNEWT_VAL(BLE_STORE_CONFIG_PERSIST) */
 

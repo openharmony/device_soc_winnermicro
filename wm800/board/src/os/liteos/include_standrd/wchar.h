@@ -16,19 +16,14 @@
 #ifndef _WCHAR_H
 #define _WCHAR_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include <features.h>
 #include <stddef.h>
 #include <stdio.h>
 
-/* Do not need this  --chengjinsong*/
-#if 0
-#define __NEED_FILE
-#define __NEED_wchar_t
+#ifdef __cplusplus
+extern "C" {
 #endif
+
 #define __NEED___isoc_va_list
 #define __NEED_size_t
 #define __NEED_wint_t

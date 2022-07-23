@@ -134,7 +134,7 @@ struct os_mqueue {
 
 /** Given a mbuf packet header pointer, return a pointer to the mbuf */
 #define OS_MBUF_PKTHDR_TO_MBUF(__hdr)   \
-     (struct os_mbuf *)((uint8_t *)(__hdr) - sizeof(struct os_mbuf))
+    (struct os_mbuf *)((uint8_t *)(__hdr) - sizeof(struct os_mbuf))
 
 /**
  * Gets the length of an entire mbuf chain.  The specified mbuf must have a
@@ -149,7 +149,7 @@ struct os_mqueue {
  * @param __type The type to cast it to
  */
 #define OS_MBUF_DATA(__om, __type) \
-     (__type) ((__om)->om_data)
+    (__type) ((__om)->om_data)
 
 /**
  * Access the "user header" in the head of an mbuf chain.
@@ -173,8 +173,7 @@ struct os_mqueue {
 /*
  * Called by OS_MBUF_LEADINGSPACE() macro
  */
-static inline uint16_t
-_os_mbuf_leadingspace(struct os_mbuf *om)
+static inline uint16_t _os_mbuf_leadingspace(struct os_mbuf *om)
 {
     uint16_t startoff;
     uint16_t leadingspace;
@@ -206,8 +205,7 @@ _os_mbuf_leadingspace(struct os_mbuf *om)
 /** @cond INTERNAL_HIDDEN */
 
 /* Called by OS_MBUF_TRAILINGSPACE() macro. */
-static inline uint16_t
-_os_mbuf_trailingspace(struct os_mbuf *om)
+static inline uint16_t _os_mbuf_trailingspace(struct os_mbuf *om)
 {
     struct os_mbuf_pool *omp;
     omp = om->om_omp;

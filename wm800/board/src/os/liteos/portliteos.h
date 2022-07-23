@@ -32,12 +32,12 @@
 
 #include <csi_core.h>
 
-static inline void portEnableInterrupt( void )
+static inline void portEnableInterrupt(void)
 {
     __enable_irq();
 }
 
-static inline void portDisableInterrupt( void )
+static inline void portDisableInterrupt(void)
 {
     __disable_irq();
 }
