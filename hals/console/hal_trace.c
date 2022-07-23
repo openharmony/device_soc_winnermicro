@@ -28,7 +28,7 @@ int hal_trace_printf(int attr, const char *fmt, ...)
     va_start(ap, fmt);
     vprintf(fmt, ap);
     va_end(ap);
-    
+
     return ret;
 }
 
@@ -37,6 +37,6 @@ int hal_trace_printf(int attr, const char *fmt, ...)
 int HdfSysEventSend(unsigned long eventClass, unsigned int event, const char *content, bool sync)
 {
     int ret = 0;
-    
+
     return ret;
 }

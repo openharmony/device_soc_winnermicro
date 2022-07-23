@@ -24,7 +24,7 @@
 #include "wm_type_def.h"
 
 #define FLASH_FILE_NAME_LEN      32
-#define FLASH_FILE_MAX_NUM       64 
+#define FLASH_FILE_MAX_NUM       64
 
 #define MAX_NUM_OF_OPENED_FILES 32
 static int g_openFileNum = 0;

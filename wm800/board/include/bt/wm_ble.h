@@ -180,10 +180,10 @@ tls_bt_status_t tls_dm_set_privacy(uint8_t enable);
  * @note           None
  */
 tls_bt_status_t tls_ble_conn_parameter_update(const tls_bt_addr_t *bd_addr,
-                                             int min_interval,
-                                             int max_interval,
-                                             int latency,
-                                             int timeout);
+                                              int min_interval,
+                                              int max_interval,
+                                              int latency,
+                                              int timeout);
 
 /**
  * @brief          read the remote device signal strength connected
@@ -257,6 +257,6 @@ tls_bt_status_t tls_ble_gap_adv(uint8_t start, int duration);
 /**
  * @}
  */
- 
+
 #endif /* WM_BLE_H */
 

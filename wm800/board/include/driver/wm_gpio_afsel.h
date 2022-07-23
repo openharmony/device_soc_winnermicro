@@ -76,7 +76,7 @@ void wm_spi_ck_config(enum tls_io_name io_name);
  *			WM_IO_PA_00
  *			WM_IO_PB_04
  *			WM_IO_PB_14 only for 56pin
- *			WM_IO_PB_23 only for 56pin 
+ *			WM_IO_PB_23 only for 56pin
  *				
  * @return None
  */
@@ -88,7 +88,7 @@ void wm_spi_cs_config(enum tls_io_name io_name);
  *			WM_IO_PB_00
  *			WM_IO_PB_03
  *			WM_IO_PB_16 only for 56pin
- *			WM_IO_PB_25 only for 56pin  
+ *			WM_IO_PB_25 only for 56pin
  *				
  * @return None
  */
@@ -100,7 +100,7 @@ void wm_spi_di_config(enum tls_io_name io_name);
  *			WM_IO_PA_07
  *			WM_IO_PB_05
  *			WM_IO_PB_17 only for 56pin
- *			WM_IO_PB_26 only for 56pin  
+ *			WM_IO_PB_26 only for 56pin
  *				
  * @return None
  */
@@ -124,7 +124,7 @@ void wm_sdio_host_config(uint8_t numsel);
 /**
  * @brief  config the pins used for sdio slave ck dat0 dat1 dat2 dat3
  * @param  numsel: config sdio ck cmd dat0 dat1 dat2 dat3 pins multiplex relation,valid para 0
- *			0: 
+ *			0:
  *			  sdio_ck   PB06
  *            sdio_cmd  PB07
  *			  sdio_dat0 PB08
@@ -193,7 +193,7 @@ void wm_uart1_rx_config(enum tls_io_name io_name);
  * @brief  config the pins used for uart1 rts
  * @param  io_name: config uart1 rts pins name
  *			WM_IO_PB_19
- *			WM_IO_PA_02 only for 56pin 
+ *			WM_IO_PA_02 only for 56pin
  *				
  * @return None
  */
@@ -213,7 +213,7 @@ void wm_uart1_cts_config(enum tls_io_name io_name);
  * @brief  config the pins used for uart2 tx or 7816-io
  * @param  io_name: config uart2 tx or 7816-io pins name
  *			WM_IO_PB_02
- *			WM_IO_PA_02 only for 56pin  
+ *			WM_IO_PA_02 only for 56pin
  *				
  * @return None
  */
@@ -223,7 +223,7 @@ void wm_uart2_tx_scio_config(enum tls_io_name io_name);
  * @brief  config the pins used for uart2 rx
  * @param  io_name: config uart2 rx pins name
  *			WM_IO_PB_03
- *			WM_IO_PA_03 only for 56pin  
+ *			WM_IO_PA_03 only for 56pin
  *				
  * @return None
  */
@@ -233,7 +233,7 @@ void wm_uart2_rx_config(enum tls_io_name io_name);
  * @brief  config the pins used for uart2 rts or 7816-clk
  * @param  io_name: config uart2 rts or 7816-clk pins name
  *			WM_IO_PB_04
- *			WM_IO_PA_05 only for 56pin  
+ *			WM_IO_PA_05 only for 56pin
  *				
  * @return None
  */
@@ -243,7 +243,7 @@ void wm_uart2_rts_scclk_config(enum tls_io_name io_name);
  * @brief  config the pins used for uart2 cts
  * @param  io_name: config uart2 cts pins name
  *			WM_IO_PB_05
- *			WM_IO_PA_06 only for 56pin  
+ *			WM_IO_PA_06 only for 56pin
  *				
  * @return None
  */
@@ -253,7 +253,7 @@ void wm_uart2_cts_config(enum tls_io_name io_name);
  * @brief  config the pins used for uart3 tx
  * @param  io_name: config uart1 tx pins name
  *			WM_IO_PB_00
- *			WM_IO_PA_05 only for 56pin  
+ *			WM_IO_PA_05 only for 56pin
  *				
  * @return None
  */
@@ -263,7 +263,7 @@ void wm_uart3_tx_config(enum tls_io_name io_name);
  * @brief  config the pins used for uart3 rx
  * @param  io_name: config uart1 rx pins name
  *			WM_IO_PB_01
- *			WM_IO_PA_06 only for 56pin  
+ *			WM_IO_PA_06 only for 56pin
  *				
  * @return None
  */
@@ -291,7 +291,7 @@ void wm_uart3_cts_config(enum tls_io_name io_name);
  * @brief  config the pins used for uart4 tx
  * @param  io_name: config uart1 tx pins name
  *			WM_IO_PB_04
- *			WM_IO_PA_08 only for 56pin 
+ *			WM_IO_PA_08 only for 56pin
  *				
  * @return None
  */
@@ -301,7 +301,7 @@ void wm_uart4_tx_config(enum tls_io_name io_name);
  * @brief  config the pins used for uart4 rx
  * @param  io_name: config uart1 rx pins name
  *			WM_IO_PB_05
- *			WM_IO_PA_09 only for 56pin  
+ *			WM_IO_PA_09 only for 56pin
  *				
  * @return None
  */
@@ -310,8 +310,8 @@ void wm_uart4_rx_config(enum tls_io_name io_name);
 /**
  * @brief  config the pins used for uart4 rts
  * @param  io_name: config uart4 rts pins name
- *			WM_IO_PA_05 only for 56pin 
- *			WM_IO_PA_10 only for 56pin 
+ *			WM_IO_PA_05 only for 56pin
+ *			WM_IO_PA_10 only for 56pin
  *				
  * @return None
  */
@@ -320,8 +320,8 @@ void wm_uart4_rts_config(enum tls_io_name io_name);
 /**
  * @brief  config the pins used for uart4 cts
  * @param  io_name: config uart4 cts pins name
- *			WM_IO_PA_06 only for 56pin 
- *			WM_IO_PA_11 only for 56pin 
+ *			WM_IO_PA_06 only for 56pin
+ *			WM_IO_PA_11 only for 56pin
  *				
  * @return None
  */
@@ -330,9 +330,9 @@ void wm_uart4_cts_config(enum tls_io_name io_name);
 /**
  * @brief  config the pins used for uart4 tx
  * @param  io_name: config uart1 tx pins name
- *			WM_IO_PA_08 only for 56pin 
- *			WM_IO_PA_12 only for 56pin 
- *			WM_IO_PB_18 only for 56pin 
+ *			WM_IO_PA_08 only for 56pin
+ *			WM_IO_PA_12 only for 56pin
+ *			WM_IO_PB_18 only for 56pin
  *				
  * @return None
  */
@@ -341,9 +341,9 @@ void wm_uart5_tx_config(enum tls_io_name io_name);
 /**
  * @brief  config the pins used for uart4 rx
  * @param  io_name: config uart1 rx pins name
- *			WM_IO_PA_09 only for 56pin 
- *			WM_IO_PA_13 only for 56pin 
- *			WM_IO_PB_17 only for 56pin 
+ *			WM_IO_PA_09 only for 56pin
+ *			WM_IO_PA_13 only for 56pin
+ *			WM_IO_PB_17 only for 56pin
  *				
  * @return None
  */
@@ -352,8 +352,8 @@ void wm_uart5_rx_config(enum tls_io_name io_name);
 /**
  * @brief  config the pins used for uart4 rts
  * @param  io_name: config uart4 rts pins name
- *			WM_IO_PA_14 only for 56pin 
- *			WM_IO_PB_12 only for 56pin 
+ *			WM_IO_PA_14 only for 56pin
+ *			WM_IO_PB_12 only for 56pin
  *				
  * @return None
  */
@@ -362,8 +362,8 @@ void wm_uart5_rts_config(enum tls_io_name io_name);
 /**
  * @brief  config the pins used for uart4 cts
  * @param  io_name: config uart4 cts pins name
- *			WM_IO_PA_15 only for 56pin 
- *			WM_IO_PB_13 only for 56pin 
+ *			WM_IO_PA_15 only for 56pin
+ *			WM_IO_PB_13 only for 56pin
  *				
  * @return None
  */
@@ -372,10 +372,10 @@ void wm_uart5_cts_config(enum tls_io_name io_name);
 /**
  * @brief  config the pins used for i2s ck
  * @param  io_name: config i2s master ck pins name
- *			WM_IO_PA_04	 
+ *			WM_IO_PA_04	
  *			WM_IO_PB_08
- *			WM_IO_PA_08 only for 56pin 
- *			WM_IO_PB_12 only for 56pin 
+ *			WM_IO_PA_08 only for 56pin
+ *			WM_IO_PB_12 only for 56pin
  *				
  * @return None
  */
@@ -386,8 +386,8 @@ void wm_i2s_ck_config(enum tls_io_name io_name);
  * @param  io_name: config i2s master ws pins name
  *			WM_IO_PA_01
  *			WM_IO_PB_09
- *			WM_IO_PA_09 only for 56pin 
- *			WM_IO_PB_13 only for 56pin  
+ *			WM_IO_PA_09 only for 56pin
+ *			WM_IO_PB_13 only for 56pin
  *				
  * @return None
  */
@@ -398,8 +398,8 @@ void wm_i2s_ws_config(enum tls_io_name io_name);
  * @param  io_name: config i2s master do pins name
  *			WM_IO_PA_00
  *			WM_IO_PB_11
- *			WM_IO_PA_10 only for 56pin 
- *			WM_IO_PB_14 only for 56pin   
+ *			WM_IO_PA_10 only for 56pin
+ *			WM_IO_PB_14 only for 56pin
  *				
  * @return None
  */
@@ -410,8 +410,8 @@ void wm_i2s_do_config(enum tls_io_name io_name);
  * @param  io_name: config i2s slave di pins name
  *			WM_IO_PA_07
  *			WM_IO_PB_10
- *			WM_IO_PA_11 only for 56pin 
- *			WM_IO_PB_15 only for 56pin   
+ *			WM_IO_PA_11 only for 56pin
+ *			WM_IO_PB_15 only for 56pin
  *				
  * @return None
  */
@@ -460,9 +460,9 @@ void wm_i2c_sda_config(enum tls_io_name io_name);
  * @param  io_name: config pwm1 pins name
  *			WM_IO_PB_00
  *			WM_IO_PB_19
- *			WM_IO_PA_02 only for 56pin 
- *			WM_IO_PA_10 only for 56pin   
- *			WM_IO_PB_12 only for 56pin   
+ *			WM_IO_PA_02 only for 56pin
+ *			WM_IO_PA_10 only for 56pin
+ *			WM_IO_PB_12 only for 56pin
  *				
  * @return None
  */
@@ -473,9 +473,9 @@ void wm_pwm0_config(enum tls_io_name io_name);
  * @param  io_name: config pwm1 pins name
  *			WM_IO_PB_01
  *			WM_IO_PB_20
- *			WM_IO_PA_03 only for 56pin 
- *			WM_IO_PA_11 only for 56pin   
- *			WM_IO_PB_13 only for 56pin    
+ *			WM_IO_PA_03 only for 56pin
+ *			WM_IO_PA_11 only for 56pin
+ *			WM_IO_PB_13 only for 56pin
  *				
  * @return None
  */
@@ -485,10 +485,10 @@ void wm_pwm1_config(enum tls_io_name io_name);
  * @brief  config the pins used for pwm2
  * @param  io_name: config pwm3 pins name
  *			WM_IO_PA_00
- *			WM_IO_PB_02 
- *			WM_IO_PA_12 only for 56pin 
- *			WM_IO_PB_14 only for 56pin   
- *			WM_IO_PB_24 only for 56pin    
+ *			WM_IO_PB_02
+ *			WM_IO_PA_12 only for 56pin
+ *			WM_IO_PB_14 only for 56pin
+ *			WM_IO_PB_24 only for 56pin
  *				
  * @return None
  */
@@ -499,9 +499,9 @@ void wm_pwm2_config(enum tls_io_name io_name);
  * @param  io_name: config pwm4 pins name
  *			WM_IO_PA_01
  *			WM_IO_PB_03
- *			WM_IO_PA_13 only for 56pin 
- *			WM_IO_PB_15 only for 56pin   
- *			WM_IO_PB_25 only for 56pin     
+ *			WM_IO_PA_13 only for 56pin
+ *			WM_IO_PB_15 only for 56pin
+ *			WM_IO_PB_25 only for 56pin
  *				
  * @return None
  */
@@ -511,10 +511,10 @@ void wm_pwm3_config(enum tls_io_name io_name);
  * @brief  config the pins used for pwm4
  * @param  io_name: config pwm5 pins name
  *			WM_IO_PA_04
- *			WM_IO_PA_07 
- *			WM_IO_PA_14 only for 56pin 
- *			WM_IO_PB_16 only for 56pin   
- *			WM_IO_PB_26 only for 56pin     
+ *			WM_IO_PA_07
+ *			WM_IO_PA_14 only for 56pin
+ *			WM_IO_PB_16 only for 56pin
+ *			WM_IO_PB_26 only for 56pin
  *				
  * @return None
  */
@@ -524,10 +524,10 @@ void wm_pwm4_config(enum tls_io_name io_name);
  * @brief  config the pins used for pwm break
  * @param  io_name: config pwm break pins name
  *			WM_IO_PB_08
- *			WM_IO_PA_05 only for 56pin 
- *			WM_IO_PA_08 only for 56pin   
- *			WM_IO_PA_15 only for 56pin 
- *			WM_IO_PB_17 only for 56pin     
+ *			WM_IO_PA_05 only for 56pin
+ *			WM_IO_PA_08 only for 56pin
+ *			WM_IO_PA_15 only for 56pin
+ *			WM_IO_PB_17 only for 56pin
  *				
  * @return None
  */
@@ -584,7 +584,7 @@ void wm_touch_sensor_config(enum tls_io_name io_name);
  *				
  * @return None
  *
- * @note  This function must call before any others for configure 
+ * @note  This function must call before any others for configure
  * 		  gpio Alternate functions
  */
 void wm_gpio_af_disable(void);

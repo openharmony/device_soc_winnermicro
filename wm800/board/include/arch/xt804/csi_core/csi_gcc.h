@@ -1168,7 +1168,7 @@ __ALWAYS_STATIC_INLINE uint32_t __RBIT(uint32_t value)
 #if (__CK80X >= 0x03U)
     __ASM volatile("brev %0, %1" : "=r"(result) : "r"(value));
 #else
-    int32_t s = 4 /* sizeof(v) */ * 8 - 1; /* extra shift needed at end */
+    int32_t s = 4  * 8 - 1; /* sizeof(v) = 4 */ /* extra shift needed at end */
 
     result = value;                      /* r will be reversed bits of v; first get LSB of v */
 
@@ -1378,7 +1378,7 @@ __ALWAYS_STATIC_INLINE void __STRT(uint32_t value, volatile uint32_t *addr)
     __ASM volatile("stw %1, (%0, 0)" :: "r"(addr), "r"(value) : "memory");
 }
 
-/* @}*/ /* end of group CSI_Core_InstructionInterface */
+/* @} */ /* end of group CSI_Core_InstructionInterface */
 
 /* ##########################  FPU functions  #################################### */
 /**

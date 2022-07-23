@@ -21,7 +21,6 @@ extern "C" {
 #endif
 
 #include <stdbool.h>
-// #include "wm_regs_cm3.h"
 #include "wm_regs.h"
 #include "wm_debug.h"
 #include "wm_dma.h"
@@ -52,13 +51,13 @@ typedef struct _wm_dma_desc {
     unsigned int dma_ctrl;
     unsigned int src_addr;
     unsigned int dest_addr;
-    struct _wm_dma_desc * next;
+    struct _wm_dma_desc *next;
 }wm_dma_desc;
 
 typedef struct _dma_handler_type {
     uint8_t channel;
-    void    (* XferCpltCallback)( struct _dma_handler_type * hdma);     /* !< DMA transfer complete callback */
-    void    (* XferHalfCpltCallback)( struct _dma_handler_type * hdma); /* !< DMA Half transfer complete callback    */
+    void    (* XferCpltCallback)( struct _dma_handler_type *hdma);     /* !< DMA transfer complete callback */
+    void    (* XferHalfCpltCallback)( struct _dma_handler_type *hdma); /* !< DMA Half transfer complete callback    */
 }wm_dma_handler_type;
 
 #define I2S			            ((I2S_T *)HR_I2S_REG_BASE)
@@ -89,7 +88,7 @@ typedef struct _dma_handler_type {
 #define I2S_CTRL_TX_CLR			(1UL<<18)
 #define I2S_CTRL_LZCEN			(1UL<<17)
 #define I2S_CTRL_RZCEN			(1UL<<16)
-#define I2S_CTRL_RXTH(n)		((n-1)<<12)
+#define I2S_CTRL_RXTH(n)		(((n)-1)<<12)
 #define I2S_CTRL_TXTH(n)		((n)<<9)
 #define I2S_CTRL_SLAVE_SEL		(1UL<<8)
 #define I2S_CTRL_MUTE			(1UL<<3)

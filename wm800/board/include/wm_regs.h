@@ -72,7 +72,6 @@ typedef enum IRQn
   WDG_IRQn                      = 31,     /*!< Watch Dog Interrupt                                  */
 } IRQn_Type;
 
-//#include "core_cm3.h"
 #include "wm_type_def.h"
 #ifdef __cplusplus
   #define   __I     volatile             /*!< Defines 'read only' permissions                 */
@@ -684,11 +683,11 @@ typedef volatile unsigned int TLS_REG;    /* Hardware register definition */
 #define HR_TIMER5_CNT                (HR_TIMER_BASE_ADDR + 0x34)
 
 /* timer csr bits defintion */
-#define TLS_TIMER_MS_UNIT(n)               (1UL<<(0+5*n))
-#define TLS_TIMER_ONE_TIME(n)              (1UL<<(1+5*n))
-#define TLS_TIMER_EN(n)                    (1UL<<(2+5*n))
-#define TLS_TIMER_INT_EN(n)                (1UL<<(3+5*n))
-#define TLS_TIMER_INT_CLR(n)            (1UL<<(4+5*n))
+#define TLS_TIMER_MS_UNIT(n)               (1UL<<(0+5*(n)))
+#define TLS_TIMER_ONE_TIME(n)              (1UL<<(1+5*(n)))
+#define TLS_TIMER_EN(n)                    (1UL<<(2+5*(n)))
+#define TLS_TIMER_INT_EN(n)                (1UL<<(3+5*(n)))
+#define TLS_TIMER_INT_CLR(n)            (1UL<<(4+5*(n)))
 
 /***************************************************************
  * WATCH DOG Reg

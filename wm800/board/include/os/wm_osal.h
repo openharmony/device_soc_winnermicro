@@ -28,8 +28,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "wm_config.h"
 #include <core_804.h>
+#include "wm_config.h"
 #include "wm_type_def.h"
 
 /**    OS TICK Frequency   ,this value needs to keep the same as OS self-defined tick value*/
@@ -62,7 +62,7 @@ typedef unsigned int OS_STK;
 #endif
 typedef unsigned int OS_CPU_SR;
 /** TYPE definition of tls_os_task_t */
-typedef void *     tls_os_task_t;
+typedef void     *tls_os_task_t;
 /** TYPE definition of tls_os_timer_t */
 typedef void      tls_os_timer_t;
 /** TYPE definition of tls_os_sem_t */
@@ -231,13 +231,13 @@ int tls_os_get_type(void);
  *                   we suggest you change it to dynamic memory by tls_mem_alloc.
  */
 tls_os_status_t tls_os_task_create(tls_os_task_t *task,
-      const char* name,
-      void (*entry)(void* param),
-      void* param,
-      u8 *stk_start,
-      u32 stk_size,
-      u32 prio,
-      u32 flag);
+    const char* name,
+    void (*entry)(void* param),
+    void* param,
+    u8 *stk_start,
+    u32 stk_size,
+    u32 prio,
+    u32 flag);
 
 /**
  * @brief          This function allows you to delete a task.  The calling
@@ -495,7 +495,7 @@ tls_os_status_t tls_os_queue_create(tls_os_queue_t **queue, u32 queue_size);
  *
  * @note           None
  */
- tls_os_status_t tls_os_queue_delete(tls_os_queue_t *queue);
+tls_os_status_t tls_os_queue_delete(tls_os_queue_t *queue);
 
 /**
  * @brief          This function sends a message to a queue

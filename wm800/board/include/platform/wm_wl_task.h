@@ -28,7 +28,6 @@
 #include "wm_type_def.h"
 #include "wm_wl_mbox.h"
 #include "wm_wl_timers.h"
-// #include "ithread.h"
 
 #define TLS_TASK_START_PRIO                 0
 #define TASK_WL_PRIO                        9
@@ -79,7 +78,7 @@
 #define TLS_MSG_ID_UART1_RX                 8
 
 /** pointer to the semaphore */
-typedef tls_os_sem_t * tls_sem_t;
+typedef tls_os_sem_t *tls_sem_t;
 
 /** Thread start routine */
 typedef void *(*start_routine)(void *arg);
@@ -100,26 +99,26 @@ struct task_msg {
     tls_sem_t *sem;
     union {
       struct {
-          start_routine function;
-          void *ctx;
+            start_routine function;
+            void *ctx;
       } cb;
       struct {
-          start_routine function;
-          void *ctx;
-          u8 cnt;
+            start_routine function;
+            void *ctx;
+            u8 cnt;
       } cbs;
       struct {
-          u32 msecs;
-          tls_timeout_handler h;
-          void *arg;
+            u32 msecs;
+            tls_timeout_handler h;
+            void *arg;
       } tmo;
     } msg;
 };
 
 /** task parameters */
-struct task_parameter{
+struct task_parameter {
     u8 task_id;             /**< task ID */
-    const char * name;      /**< task name */
+    const char *name;      /**< task name */
     u8 *stk_start;          /**< start address of task stack */
     u32 stk_size;           /**< size of task stack */
     u8 mbox_size;           /**< size of mailbox */
