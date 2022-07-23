@@ -62,31 +62,34 @@
 #define UART_TX_INT_FLAG (UIS_TX_FIFO | UIS_TX_FIFO_EMPTY)
 
 /** return count in buffer.  */
-#define CIRC_CNT(head,tail,size) (((head) - (tail)) & ((size)-1))
+#define CIRC_CNT(head, tail, size) (((head) - (tail)) & ((size)-1))
 
 /** Return space available, 0..size-1.  We always leave one free char
    as a completely full buffer has head == tail, which is the same as
    empty.  */
-#define CIRC_SPACE(head,tail,size) CIRC_CNT((tail),((head)+1),(size))
+#define CIRC_SPACE(head, tail, size) CIRC_CNT((tail),((head)+1),(size))
 
 /** Return count up to the end of the buffer.  Carefully avoid
    accessing head and tail more than once, so they can change
    underneath us without returning inconsistent results.  */
-#define CIRC_CNT_TO_END(head,tail,size) \
-    ({int end = (size) - (tail); \
-      int n = ((head) + end) & ((size)-1); \
-      n < end ? n : end;})
+#define CIRC_CNT_TO_END(head, tail, size) do { \
+        int end = (size) - (tail); \
+        int n = ((head) + end) & ((size)-1); \
+        n < end ? n : end; \
+    }while (0)
 
 /** Return space available up to the end of the buffer.  */
-#define CIRC_SPACE_TO_END(head,tail,size) \
-    ({int end = (size) - 1 - (head); \
-      int n = (end + (tail)) & ((size)-1); \
-      n <= end ? n : end+1;})
+#define CIRC_SPACE_TO_END(head, tail, size) do {\
+        int end = (size) - 1 - (head); \
+        int n = (end + (tail)) & ((size)-1); \
+        n <= end ? n : end+1; \
+    }while (0)
 
-#define CIRC_SPACE_TO_END_FULL(head,tail,size) \
-    ({int end = (size) - 1 - (head); \
-      int n = (end + (tail)) & ((size)-1); \
-      n < end ? n : end+1;})
+#define CIRC_SPACE_TO_END_FULL(head, tail, size) do {\
+        int end = (size) - 1 - (head); \
+        int n = (end + (tail)) & ((size)-1); \
+        n < end ? n : end+1;
+    }while (0)
 
 #define uart_circ_empty(circ)        ((circ)->head == (circ)->tail)
 #define uart_circ_chars_pending(circ) \

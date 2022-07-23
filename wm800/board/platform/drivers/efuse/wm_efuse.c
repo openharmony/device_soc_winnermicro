@@ -29,12 +29,12 @@
 #include <stdlib.h>
 #include "wm_debug.h"
 #include "wm_regs.h"
-#include "wm_efuse.h"
 #include "wm_config.h"
 #include "list.h"
 #include "wm_internal_flash.h"
 #include "wm_crypto_hard.h"
 #include "wm_mem.h"
+#include "wm_efuse.h"
 
 #define USE_OTA_FT_PARAM  0
 #include "wm_flash_map.h"
@@ -44,8 +44,7 @@
 #define MAC_ADDR_LEN            (8)
 #define FT_GAIN_LEN                (84)
 
-typedef struct FT_PARAM
-{
+typedef struct FT_PARAM {
     unsigned int        magic_no;
     unsigned int         checksum;
     unsigned char        wifi_mac_addr[MAC_ADDR_LEN];
@@ -59,7 +58,7 @@ typedef struct FT_PARAM
     unsigned char        tx_gain[FT_GAIN_LEN];
 }FT_PARAM_ST;
 
-static u8 default_mac[6] = {0x00,0x25,0x08,0x09,0x01,0x0F};
+static u8 default_mac[6] = {0x00, 0x25, 0x08, 0x09, 0x01, 0x0F};
 
 FT_PARAM_ST gftParam;
 int tls_ft_param_init(void)

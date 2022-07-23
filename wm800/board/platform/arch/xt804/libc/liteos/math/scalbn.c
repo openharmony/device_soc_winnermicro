@@ -27,8 +27,9 @@ double scalbn(double x, int n)
         if (n > 1023) {
             y *= 0x1p1023;
             n -= 1023;
-            if (n > 1023)
+            if (n > 1023) {
                 n = 1023;
+            }
         }
     } else if (n < -1022) {
         /* make sure final n < -53 to avoid double
@@ -38,8 +39,9 @@ double scalbn(double x, int n)
         if (n < -1022) {
             y *= 0x1p-1022 * 0x1p53;
             n += 1022 - 53;
-            if (n < -1022)
+            if (n < -1022) {
                 n = -1022;
+            }
         }
     }
     u.i = (uint64_t)(0x3ff+n)<<52;

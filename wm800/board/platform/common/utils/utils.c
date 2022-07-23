@@ -391,13 +391,13 @@ void mactostr(u8 mac[], char *str)
 
 int hex_to_digit(int c)
 {
-    if ('0' <= c && c <= '9') {
+    if (c >= '0' && c <= '9') {
         return c - '0';
     }
-    if ('A' <= c && c <= 'F') {
+    if (c >= 'A' && c <= 'F') {
         return c - ('A' - 10);
     }
-    if ('a' <= c && c <= 'f') {
+    if (c >= 'a' && c <= 'f') {
         return c - ('a' - 10);
     }
     return -1;
@@ -405,10 +405,10 @@ int hex_to_digit(int c)
 
 int digit_to_hex(int c)
 {
-    if (0 <= c && c <= 9) {
+    if (c >= 0 && c <= 9) {
         return c + '0';
     }
-    if (0xA <= c && c <= 0xF) {
+    if (c >= 0xA && c <= 0xF) {
         return c - 0xA + 'A' ;
     }
     return -1;
@@ -420,12 +420,14 @@ int hexstr_to_unit(char *buf, u32 *d)
     int len = strlen(buf);
     *d = 0;
 
-    if (len > 8)
+    if (len > 8) {
         return -1;
+    }
     for (i=0; i<len; i++) {
         int c = hex_to_digit(buf[i]);
-        if (c < 0)
+        if (c < 0) {
             return -1;
+        }
         *d = (u8)c | (*d << 4);
     }
     return 0;
@@ -434,11 +436,13 @@ int string_to_uint(char *buf, u32 *d)
 {
     int i;
     int len = strlen(buf);
-    if (len > 11 || len == 0)
+    if (len > 11 || len == 0) {
         return -1;
+    }
     for (i=0; i<len; i++) {
-        if (!isdigit(buf[i]))
+        if (!isdigit(buf[i])) {
             return -1;
+        }
     }
     *d = atoi(buf);
     return 0;
@@ -452,35 +456,39 @@ int string_to_ipaddr(const char *buf, u8 *addr)
 
     rc = sscanf(buf, "%u.%u.%u.%u%c",
                 &in[0], &in[1], &in[2], &in[3], &c);
-    if (rc != 4 && (rc != 5 || c != '\n'))
+    if (rc != 4 && (rc != 5 || c != '\n')) {
         return -1;
+    }
     for (count = 0; count < 4; count++) {
-        if (in[count] > 255)
+        if (in[count] > 255) {
             return -1;
+        }
         addr[count] = in[count];
     }
     return 0;
 }
 
-char * strdup(const char *s)
+char *strdup(const char *s)
 {
-    char * ret;
+    char *ret;
     int len;
     len = strlen(s) + 1;
     ret = tls_mem_alloc(len);
-    if (ret == NULL)
+    if (ret == NULL) {
         return NULL;
+    }
     memset(ret, 0, len);
     memcpy(ret, s, len-1);
     return ret;
 }
 
-char * strndup(const char *s, size_t len)
+char *strndup(const char *s, size_t len)
 {
-    char * ret;
+    char *ret;
     ret = tls_mem_alloc(len + 1);
-    if (ret == NULL)
+    if (ret == NULL) {
         return NULL;
+    }
     memset(ret, 0, len + 1);
     memcpy(ret, s, len);
     return ret;
@@ -494,8 +502,8 @@ void delay_cnt(int count)
     int delay = count;
 #endif
 
-    while (delay--)
-        ;
+    while (delay--) {
+    }        
 }
 
 void dumpBuffer(char *name, char* buffer, int len)
@@ -531,16 +539,20 @@ int strcasecmp(const char *s1, const char *s2)
         char a = *s1++;
         char b = *s2++;
 
-        if (a == b)
+        if (a == b) {
             continue;
+        }
 
-        if (a >= 'a' && a <= 'z')
+        if (a >= 'a' && a <= 'z') {
             a -= 'a' - 'A';
-        if (b >= 'a' && b <= 'z')
+        }
+        if (b >= 'a' && b <= 'z') {
             b -= 'a' - 'A';
+        }
 
-        if (a != b)
+        if (a != b) {
             return 1;
+        }
     }
     return 0;
 }

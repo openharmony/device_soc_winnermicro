@@ -337,12 +337,9 @@ int __readByCMD(unsigned char cmd, unsigned long addr, unsigned char *buf, unsig
             M32(HR_FLASH_CMD_START) = CMD_START_Msk;
             break;
         case 0x0B:
-            if ((M32(HR_FLASH_CR) & 0x2) == 0x2)
-            {
+            if ((M32(HR_FLASH_CR) & 0x2) == 0x2) {
                 M32(HR_FLASH_CMD_ADDR) = 0xB400C00B | (((sz - 1) & 0x3FF) << 16);
-            }
-            else
-            {
+            } else {
                 M32(HR_FLASH_CMD_ADDR) = 0xBC00C00B | (((sz - 1) & 0x3FF) << 16);
             }
             M32(HR_FLASH_ADDR) = addr & 0x1FFFFFF;
@@ -420,8 +417,7 @@ int flashRead(unsigned long addr, unsigned char *buf, unsigned long sz)
 
     if ((page_offset == 0)
         && (((unsigned int)buf&0x3) == 0)
-        && ((sz&0x3) == 0)) /* Use 4-bytes aligned and buf must be 4 times, sz must be 4 times */
-    {
+        && ((sz&0x3) == 0)) { /* Use 4-bytes aligned and buf must be 4 times, sz must be 4 times */
         flash_addr = addr;
         unsigned int max_size = 0;
         if (sz >= 512) {
@@ -762,8 +758,9 @@ int tls_fls_otp_write(u32 addr, u8 *buf, u32 len)
     }
     tls_os_sem_release(inside_fls->fls_lock);
 out:
-    if (backbuf)
+    if (backbuf) {
         tls_mem_free(backbuf);
+    }
     return ret;
 }
 
@@ -895,7 +892,6 @@ int tls_fls_write(u32 addr, u8 *buf, u32 len)
         if (len == secremain) {
             break;              // д�������
         } else {                   // д��δ����
-
             secpos++;           // ������ַ��1
             secoff = 0;         // ƫ��λ��Ϊ0
             buf += secremain;   // ָ��ƫ��
@@ -1189,7 +1185,7 @@ int tls_fls_chip_erase(void)
         return TLS_FLS_STATUS_ENOMEM;
     }
 
-    for(i = 0; i < ( inside_fls->density - (INSIDE_FLS_SECBOOT_ADDR & 0xFFFFF)) / INSIDE_FLS_SECTOR_SIZE; i ++) {
+    for (i = 0; i < ( inside_fls->density - (INSIDE_FLS_SECBOOT_ADDR & 0xFFFFF)) / INSIDE_FLS_SECTOR_SIZE; i ++) {
         flashRead(INSIDE_FLS_SECBOOT_ADDR + i * INSIDE_FLS_SECTOR_SIZE, cache, INSIDE_FLS_SECTOR_SIZE);
         for (j = 0; j < INSIDE_FLS_SECTOR_SIZE; j++) {
             if (cache[j] != 0xFF) {

@@ -37,13 +37,13 @@
 #include "wm_crypto_hard.h"
 
 #include "utils.h"
-#include "wm_fwup.h"
 #include "wm_watchdog.h"
 #include "wm_wifi.h"
 #include "wm_flash_map.h"
 #include "wm_wl_task.h"
 #include "wm_params.h"
 #include "wm_param.h"
+#include "wm_fwup.h"
 
 #define FWUP_MSG_QUEUE_SIZE      (4)
 
@@ -329,7 +329,7 @@ u32 tls_fwup_enter(enum tls_fwup_image_src image_src)
 
     do {
         session_id = rand();
-    } while(session_id == 0);
+    } while (session_id == 0);
 
     fwup->current_state = 0;
     fwup->current_image_src = image_src;
@@ -403,7 +403,7 @@ int tls_fwup_get_current_session_id(void)
 
 int tls_fwup_set_update_numer(int number)
 {
-    if (1 == number - fwup->received_number) {
+    if (number - fwup->received_number == 1) {
         fwup->received_number = number;
         return TLS_FWUP_STATUS_OK;
     }
@@ -613,16 +613,16 @@ int tls_fwup_init(void)
     if (fwup_task_stk) {
 #endif
         err = tls_os_task_create(NULL, "fwup",
-                            fwup_scheduler,
-                            (void *)fwup,
+                                 fwup_scheduler,
+                                 (void *)fwup,
 #if TLS_OS_FREERTOS
-                            (void *)fwup_task_stk,
+                                 (void *)fwup_task_stk,
 #else
-                            NULL,
+                                 NULL,
 #endif
-                            FWUP_TASK_STK_SIZE * sizeof(u32),
-                            TLS_FWUP_TASK_PRIO,
-                            0);
+                                 FWUP_TASK_STK_SIZE * sizeof(u32),
+                                 TLS_FWUP_TASK_PRIO,
+                                 0);
         if (err != TLS_OS_SUCCESS) {
             TLS_DBGPRT_ERR("create firmware update process task fail!\n");
 

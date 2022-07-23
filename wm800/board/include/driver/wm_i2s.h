@@ -56,8 +56,8 @@ typedef struct _wm_dma_desc {
 
 typedef struct _dma_handler_type {
     uint8_t channel;
-    void    (* XferCpltCallback)( struct _dma_handler_type *hdma);     /* !< DMA transfer complete callback */
-    void    (* XferHalfCpltCallback)( struct _dma_handler_type *hdma); /* !< DMA Half transfer complete callback    */
+    void    (* XferCpltCallback)(struct _dma_handler_type *hdma);     /* !< DMA transfer complete callback */
+    void    (* XferHalfCpltCallback)(struct _dma_handler_type *hdma); /* !< DMA Half transfer complete callback    */
 }wm_dma_handler_type;
 
 #define I2S			            ((I2S_T *)HR_I2S_REG_BASE)
