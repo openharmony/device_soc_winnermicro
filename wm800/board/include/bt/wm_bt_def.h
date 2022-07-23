@@ -1698,7 +1698,7 @@ typedef enum {
 } tls_ble_uart_mode_t;
 
 typedef void (*tls_ble_output_func_ptr)(uint8_t *p_data, uint32_t length);
-#define TLS_HAL_CBACK(P_CB, P_CBACK, ...)\
+#define TLS_HAL_CBACK(P_CB, P_CBACK, ...) \
     if (P_CB && P_CB->P_CBACK) {            \
         P_CB->P_CBACK(__VA_ARGS__);         \
     } else {                                  \

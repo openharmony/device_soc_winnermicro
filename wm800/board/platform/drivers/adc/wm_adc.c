@@ -53,7 +53,7 @@ ATTRIBUTE_ISR void ADC_IRQHandler(void)
 
         if (gst_adc.adc_cb) {
             adcvalue = tls_read_adc_result();
-            gst_adc.adc_cb((int *)&adcvalue,1);
+            gst_adc.adc_cb((int *)&adcvalue, 1);
         }
     }
     if (reg & CMP_INT_MASK) {
@@ -150,8 +150,9 @@ void tls_adc_start_with_dma(int Channel, int Length)
     u32 value;
     int len;
 
-    if (Channel < 0 || Channel > 11)
+    if (Channel < 0 || Channel > 11) {
         return;
+    }
 
     if (Length > ADC_DEST_BUFFER_SIZE)
         len = ADC_DEST_BUFFER_SIZE;
@@ -195,7 +196,7 @@ void tls_adc_start_with_dma(int Channel, int Length)
     DMA_INTMASK_REG &= ~(0x01 << (gst_adc.dmachannel *2 + 1));
     DMA_CHNLCTRL_REG(gst_adc.dmachannel) = 1;        /* Enable dma */
 
-    /* Enable dma*/
+    /* Enable dma */
     value = tls_reg_read32(HR_SD_ADC_CTRL);
     value |= (1<<0);
     tls_reg_write32(HR_SD_ADC_CTRL, value);
@@ -451,7 +452,7 @@ u32 adc_get_interVolt(void)
 
     tls_adc_init(0, 0);
     tls_adc_reference_sel(ADC_REFERENCE_INTERNAL);
-    tls_adc_set_pga(1,1);
+    tls_adc_set_pga(1, 1);
     tls_adc_set_clk(0x28);
     tls_adc_start_with_cpu(CONFIG_ADC_CHL_VOLT);
     voltValue = 0;

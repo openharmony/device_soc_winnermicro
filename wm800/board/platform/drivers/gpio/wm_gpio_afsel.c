@@ -27,9 +27,9 @@
 #include "wm_irq.h"
 #include "wm_osal.h"
 #include "tls_common.h"
-#include "wm_gpio_afsel.h"
 #include "wm_debug.h"
 #include "wm_pmu.h"
+#include "wm_gpio_afsel.h"
 
 #ifndef WM_SWD_ENABLE
 #define WM_SWD_ENABLE   1
@@ -220,7 +220,7 @@ void wm_psram_config(uint8_t numsel)
             tls_open_peripheral_clock(TLS_PERIPHERAL_TYPE_PSRAM);
             break;
 
-        case 1:// w801
+        case 1: // w801
             tls_io_cfg_set(WM_IO_PA_15, WM_IO_OPTION1); /* CK */
             tls_io_cfg_set(WM_IO_PB_27, WM_IO_OPTION1); /* CS */
             tls_io_cfg_set(WM_IO_PB_02, WM_IO_OPTION4); /* D0 */

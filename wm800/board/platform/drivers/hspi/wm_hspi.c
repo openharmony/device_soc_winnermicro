@@ -26,13 +26,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "wm_hspi.h"
 #include "wm_regs.h"
 #include "wm_config.h"
 #include "wm_mem.h"
 #include "wm_osal.h"
 #include "wm_irq.h"
 #include "wm_io.h"
+#include "wm_hspi.h"
 
 #if TLS_CONFIG_HS_SPI
 
@@ -174,8 +174,7 @@ ATTRIBUTE_ISR void SDIOA_IRQHandler(void)
     csi_kernel_intrpt_enter();
     if (int_src & SDIO_WP_INT_SRC_CMD_DOWN) {
         SDIO_RX_CMD_IRQHandler();
-    }
-    else if (int_src & SDIO_WP_INT_SRC_DATA_UP) {
+    } else if (int_src & SDIO_WP_INT_SRC_DATA_UP) {
         SDIO_RX_IRQHandler();
     } else if (int_src & SDIO_WP_INT_SRC_DATA_DOWN) {
         SDIO_TX_IRQHandler();

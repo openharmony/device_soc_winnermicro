@@ -82,7 +82,7 @@ struct tls_sys_param {
     u32 debug_mode;
     u32 res_4[2];  /* reserv and mark the end */
 
-    /*escape char*/
+    /* escape char */
     u8  EscapeChar;
     u8  EscReserved;
     u16 EscapePeriod; /* unit: ms */

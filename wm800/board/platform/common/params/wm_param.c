@@ -32,11 +32,11 @@
 #include "wm_flash.h"
 #include "wm_internal_flash.h"
 #include "wm_params.h"
-#include "wm_param.h"
 #include "wm_mem.h"
 #include "utils.h"
 #include "wm_flash_map.h"
 #include "wm_crypto_hard.h"
+#include "wm_param.h"
 
 #define USE_TWO_RAM_FOR_PARAMETER  0
 static struct tls_param_flash flash_param;
@@ -443,7 +443,8 @@ int tls_param_init(void)
                 TLS_DBGPRT_INFO("read parameter partition modify count - %d.\n", flash->modify_count);
                 TLS_DBGPRT_INFO("current parameter partition modify count - %d.\n", flash_param.modify_count);
                 if ((flash_param.magic == 0) || (flash_param.modify_count < flash->modify_count)) {
-                    TLS_DBGPRT_INFO("update the parameter in sram using partition - %d,%d,%d.\n", i, flash->length,sizeof(*flash));
+                    TLS_DBGPRT_INFO("update the parameter in sram using partition - %d,%d,%d.\n",
+                                    i, flash->length, sizeof(*flash));
                     if (flash->length != sizeof(*flash)) {
                         MEMCPY(&flash_param, flash, (flash->length-4));
 #if USE_TWO_RAM_FOR_PARAMETER
@@ -459,7 +460,7 @@ int tls_param_init(void)
                 memset(flash, 0, sizeof(*flash));
             }
 
-            /* try to erase one sector at the same block to restore parameter area*/
+            /* try to erase one sector at the same block to restore parameter area */
             if ((tryrestore == 0)&&(damaged >= TLS_PARAM_PARTITION_NUM)) {
                 damaged= 0;
                 is_damage[0] = is_damage[1] = FALSE;
@@ -492,7 +493,6 @@ int tls_param_init(void)
                 break;
             }
 
-            // MEMCPY(&flash_param, flash, sizeof(*flash));
         } else {
             /* restore damaged partitions */
             for (i = 0; i < TLS_PARAM_PARTITION_NUM; i++) {
@@ -550,7 +550,7 @@ int tls_param_load_user(struct tls_sys_param *param)
 * Arguments  :     param        is the param point
 *
 
-* Returns    :
+* Returns
 *
 * Notes    :   This function read user defined parameters first, if wrong, all the parameters restore factory settings.
 **********************************************************************************************************/
@@ -1279,20 +1279,22 @@ int tls_param_to_default(void)
     int err = 0;
     tls_param_load_factory_default();
     err = param_to_flash(TLS_PARAM_ID_ALL, 1, 0);
-    if (err)
+    if (err) {
         return err;
+    }
     err = param_to_flash(TLS_PARAM_ID_ALL, 1, 1);
     flash_param.magic = 0;
 
     return err;
 }
 
-struct tls_sys_param * tls_param_user_param_init(void)
+struct tls_sys_param *tls_param_user_param_init(void)
 {
     if (user_default_param == NULL) {
         user_default_param = tls_mem_alloc(sizeof(*user_default_param));
-        if (user_default_param)
-        memset(user_default_param, 0, sizeof(*user_default_param));
+        if (user_default_param) {
+            memset(user_default_param, 0, sizeof(*user_default_param));
+        }
     }
 
     return user_default_param;
