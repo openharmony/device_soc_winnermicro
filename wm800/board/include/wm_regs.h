@@ -33,50 +33,49 @@ typedef volatile unsigned long        vu32;
 #define M16(adr)    (*((vu16*) (adr)))
 #define M32(adr)    (*((vu32*) (adr)))
 
-#define  ATTRIBUTE_ISR  //__attribute__((isr))
+#define  ATTRIBUTE_ISR  // __attribute__((isr))
 
-typedef enum IRQn
-{
+typedef enum IRQn {
 /******  W800 specific Interrupt Numbers *********************************************************/
-  SDIO_IRQn                   = 0,      /*!< SDIO Receiver/Transmit/Command Receiver/SDIO Command Transmit Interrupt */
-  MAC_IRQn                       = 1,      /*!< MAC Interrupt                                        */
-  RF_CFG_IRQn                 = 2,      /*!< RF_CFG Interrupt                                        */
-  SEC_IRQn                     = 3,      /*!< SEC RX/TX_MNGT/TX_DATA Interrupt                     */
-  DMA_Channel0_IRQn           = 4,      /*!< DMA  Channel 0 global Interrupt                      */
-  DMA_Channel1_IRQn           = 5,      /*!< DMA  Channel 1 global Interrupt                      */
-  DMA_Channel2_IRQn           = 6,      /*!< DMA  Channel 2 global Interrupt                      */
-  DMA_Channel3_IRQn           = 7,      /*!< DMA  Channel 3 global Interrupt                      */
-  DMA_Channel4_7_IRQn         = 8,      /*!< DMA  Channel 4~7 global Interrupt                    */
-  DMA_BRUST_IRQn              = 9,      /*!< DMA Burst global Interrupt                           */
-  I2C_IRQn                       = 10,     /*!< I2C Interrupts                                       */
-  ADC_IRQn                      = 11,     /*!< ADC Convert Interrupts                               */
-  SPI_LS_IRQn                 = 12,     /*!< Low Speed SPI Interrupt                              */
-  SPI_HS_IRQn                 = 13,     /*!< High Speed SPI Interrupt                             */
-  GPIOA_IRQn                  = 14,     /*!< GPIO A Interrupt                                     */
-  GPIOB_IRQn                  = 15,     /*!< GPIO B Interrupt                                     */
-  UART0_IRQn                  = 16,     /*!< UART0 Interrupts                                     */
-  UART1_IRQn                     = 17,     /*!< UART1 Interrupt                                      */
-  TOUCH_IRQn                  = 18,     /*!< Touch Sensor Iterrupt                                */
-  UART24_IRQn                 = 19,     /*!< UART2/3/4/5 Interrupt                                  */
-  BLE_IRQn                    = 20,     /*!< BLE Interrupt                                        */
-  BT_IRQn                     = 21,     /*!< BT Interrupt                                         */
-  PWM_IRQn                       = 22,     /*!< PWM Interrupt                                        */
-  I2S_IRQn                    = 23,     /*!< I2S  Interrupts                                      */
-  SIDO_HOST_IRQn              = 24,     /*!< SDIO Host Interrupts                                 */
-  SYS_TICK_IRQn               = 25,     /*!< SYS Tick Interrupts                                  */
-  RSA_IRQn                    = 26,     /*!< RSA Interrupts                                       */
-  CRYPTION_IRQn               = 27,     /*!< GPSEC Interrupts                                     */
-  FLASH_IRQn                  = 28,     /*!< Flash Interrupt                                      */
-  PMU_IRQn                    = 29,     /*!< PMU Interrupt                                        */
-  TIMER_IRQn                  = 30,     /*!< Timer0~5 Trigger                                     */
-  WDG_IRQn                      = 31,     /*!< Watch Dog Interrupt                                  */
+    SDIO_IRQn                 = 0,      /*!< SDIO Receiver/Transmit/Command Receiver/SDIO Command Transmit Interrupt */
+    MAC_IRQn                  = 1,      /*!< MAC Interrupt                                        */
+    RF_CFG_IRQn               = 2,      /*!< RF_CFG Interrupt                                     */
+    SEC_IRQn                  = 3,      /*!< SEC RX/TX_MNGT/TX_DATA Interrupt                     */
+    DMA_Channel0_IRQn         = 4,      /*!< DMA  Channel 0 global Interrupt                      */
+    DMA_Channel1_IRQn         = 5,      /*!< DMA  Channel 1 global Interrupt                      */
+    DMA_Channel2_IRQn         = 6,      /*!< DMA  Channel 2 global Interrupt                      */
+    DMA_Channel3_IRQn         = 7,      /*!< DMA  Channel 3 global Interrupt                      */
+    DMA_Channel4_7_IRQn       = 8,      /*!< DMA  Channel 4~7 global Interrupt                    */
+    DMA_BRUST_IRQn            = 9,      /*!< DMA Burst global Interrupt                           */
+    I2C_IRQn                  = 10,     /*!< I2C Interrupts                                       */
+    ADC_IRQn                  = 11,     /*!< ADC Convert Interrupts                               */
+    SPI_LS_IRQn               = 12,     /*!< Low Speed SPI Interrupt                              */
+    SPI_HS_IRQn               = 13,     /*!< High Speed SPI Interrupt                             */
+    GPIOA_IRQn                = 14,     /*!< GPIO A Interrupt                                     */
+    GPIOB_IRQn                = 15,     /*!< GPIO B Interrupt                                     */
+    UART0_IRQn                = 16,     /*!< UART0 Interrupts                                     */
+    UART1_IRQn                = 17,     /*!< UART1 Interrupt                                      */
+    TOUCH_IRQn                = 18,     /*!< Touch Sensor Iterrupt                                */
+    UART24_IRQn               = 19,     /*!< UART2/3/4/5 Interrupt                                */
+    BLE_IRQn                  = 20,     /*!< BLE Interrupt                                        */
+    BT_IRQn                   = 21,     /*!< BT Interrupt                                         */
+    PWM_IRQn                  = 22,     /*!< PWM Interrupt                                        */
+    I2S_IRQn                  = 23,     /*!< I2S  Interrupts                                      */
+    SIDO_HOST_IRQn            = 24,     /*!< SDIO Host Interrupts                                 */
+    SYS_TICK_IRQn             = 25,     /*!< SYS Tick Interrupts                                  */
+    RSA_IRQn                  = 26,     /*!< RSA Interrupts                                       */
+    CRYPTION_IRQn             = 27,     /*!< GPSEC Interrupts                                     */
+    FLASH_IRQn                = 28,     /*!< Flash Interrupt                                      */
+    PMU_IRQn                  = 29,     /*!< PMU Interrupt                                        */
+    TIMER_IRQn                = 30,     /*!< Timer0~5 Trigger                                     */
+    WDG_IRQn                  = 31,     /*!< Watch Dog Interrupt                                  */
 } IRQn_Type;
 
 #include "wm_type_def.h"
 #ifdef __cplusplus
-  #define   __I     volatile             /*!< Defines 'read only' permissions                 */
+#define   __I     volatile             /*!< Defines 'read only' permissions                 */
 #else
-  #define   __I     volatile const       /*!< Defines 'read only' permissions                 */
+#define   __I     volatile const       /*!< Defines 'read only' permissions                 */
 #endif
 #define     __O     volatile             /*!< Defines 'write only' permissions                */
 #define     __IO    volatile             /*!< Defines 'read / write' permissions              */
@@ -227,7 +226,7 @@ typedef volatile unsigned int TLS_REG;    /* Hardware register definition */
 #define DMA_CTRL_BURST_SIZE4                   (1<<7)
 
 #define DMA_CTRL_TOTAL_MASK                                     (0xFFF<<8)
-#define DMA_CTRL_TOTAL_SIZE(n)               (n<<8)
+#define DMA_CTRL_TOTAL_SIZE(n)               ((n)<<8)
 
 /***************************************************************
  * PMU Reg

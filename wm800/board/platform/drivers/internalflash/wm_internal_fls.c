@@ -1185,7 +1185,7 @@ int tls_fls_chip_erase(void)
         return TLS_FLS_STATUS_ENOMEM;
     }
 
-    for (i = 0; i < ( inside_fls->density - (INSIDE_FLS_SECBOOT_ADDR & 0xFFFFF)) / INSIDE_FLS_SECTOR_SIZE; i ++) {
+    for (i = 0; i < (inside_fls->density - (INSIDE_FLS_SECBOOT_ADDR & 0xFFFFF)) / INSIDE_FLS_SECTOR_SIZE; i ++) {
         flashRead(INSIDE_FLS_SECBOOT_ADDR + i * INSIDE_FLS_SECTOR_SIZE, cache, INSIDE_FLS_SECTOR_SIZE);
         for (j = 0; j < INSIDE_FLS_SECTOR_SIZE; j++) {
             if (cache[j] != 0xFF) {

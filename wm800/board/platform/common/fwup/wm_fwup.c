@@ -263,7 +263,8 @@ static void fwup_scheduler(void *data)
                                 goto request_finish;
                             } else {
                                 /* Write OTA flag to flash used by boot loader */
-                                tls_fls_write(TLS_FLASH_OTA_FLAG_ADDR, (u8 *)&booter.org_checksum, sizeof(booter.org_checksum));
+                                tls_fls_write(TLS_FLASH_OTA_FLAG_ADDR, (u8 *)&booter.org_checksum,
+                                              sizeof(booter.org_checksum));
                             }
 
                             TLS_DBGPRT_INFO("update the firmware successfully!\n");

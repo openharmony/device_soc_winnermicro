@@ -100,7 +100,7 @@ void PMU_RTC_IRQHandler(void)
 {
     tls_reg_write32(HR_PMU_INTERRUPT_SRC, BIT(4)); /* clear rtc interrupt */
 
-    if (NULL != rtc_context.callback)
+    if (rtc_context.callback != NULL)
         rtc_context.callback(rtc_context.arg);
 
     return;

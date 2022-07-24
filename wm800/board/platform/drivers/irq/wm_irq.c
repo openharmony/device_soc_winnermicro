@@ -25,9 +25,9 @@
 
 #include "core_804.h"
 #include "wm_regs.h"
-#include "wm_irq.h"
 #include "wm_config.h"
 #include "wm_mem.h"
+#include "wm_irq.h"
 
 /* irq functions declare */
 extern ATTRIBUTE_ISR void i2s_I2S_IRQHandler(void);
@@ -71,7 +71,7 @@ static u32 irqen_status = 0;
 void tls_irq_init(void)
 {
     /* clear bt mask */
-    tls_reg_write32(0x40002A10,0xFFFFFFFF);
+    tls_reg_write32(0x40002A10, 0xFFFFFFFF);
     NVIC_ClearPendingIRQ(BT_IRQn);
 
     csi_vic_set_vector(I2S_IRQn, (uint32_t)i2s_I2S_IRQHandler);

@@ -155,12 +155,12 @@ static __inline unsigned int swap_32(unsigned int v)
 
 static __inline u16 get_unaligned_le16(const u8 *p)
 {
-    return p[0] | p[1] << 8;
+    return p[0] | (p[1] << 8);
 }
 
 static __inline u32 get_unaligned_le32(const u8 *p)
 {
-    return p[0] | p[1] << 8 | p[2] << 16 | p[3] << 24;
+    return p[0] | (p[1] << 8) | (p[2] << 16) | (p[3] << 24);
 }
 
 static __inline void put_unaligned_le16(u16 val, u8 *p)

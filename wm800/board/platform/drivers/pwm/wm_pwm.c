@@ -27,10 +27,10 @@
 #include "wm_debug.h"
 #include "wm_regs.h"
 #include "wm_irq.h"
-#include "wm_pwm.h"
 #include "wm_gpio.h"
 #include "wm_cpu.h"
 #include "tls_common.h"
+#include "wm_pwm.h"
 
 typedef void (*pwm_irq_callback)(void);
 static pwm_irq_callback pwm_callback;
@@ -38,8 +38,9 @@ static pwm_irq_callback pwm_callback;
 ATTRIBUTE_ISR void PWM_IRQHandler(void)
 {
     csi_kernel_intrpt_enter();
-    if (pwm_callback)
+    if (pwm_callback) {
         pwm_callback();
+    }
     csi_kernel_intrpt_exit();
 }
 
@@ -184,8 +185,7 @@ int tls_pwm_out_mode_config(u8 channel, enum tls_pwm_out_mode mode)
         tls_reg_write32(HR_PWM_CTL,  tls_reg_read32(HR_PWM_CTL) | BIT(0 + channel / 2));
     } else if (WM_PWM_OUT_MODE_INDPT == mode) {
         tls_reg_write32(HR_PWM_CTL,    tls_reg_read32(HR_PWM_CTL)    & (~BIT(6)));
-        if (channel != 4)
-        {
+        if (channel != 4) {
             tls_reg_write32(HR_PWM_CTL,    tls_reg_read32(HR_PWM_CTL)    & (~BIT(0 + channel / 2)));
             tls_reg_write32(HR_PWM_CTL,    tls_reg_read32(HR_PWM_CTL)    & (~BIT(14 + channel / 2)));
         }
@@ -236,8 +236,7 @@ int tls_pwm_cnt_type_config(u8 channel, enum tls_pwm_cnt_type cnt_type)
         } else if (WM_PWM_CNT_TYPE_CENTER_ALIGN == cnt_type) {
             tls_reg_write32(HR_PWM_CTL,    tls_reg_read32(HR_PWM_CTL) |   BIT(17 + channel * 2));
             tls_reg_write32(HR_PWM_CTL,    tls_reg_read32(HR_PWM_CTL) & (~BIT(16 + channel * 2)));
-        }
-        else
+        } else
             return WM_FAILED;
     }
 
@@ -790,7 +789,7 @@ void tls_pwm_duty_set(u8 channel, u8 duty)
  *
  * @note           None
  */
-int tls_pwm_init(u8 channel,u32 freq, u8 duty, u8 pnum)
+int tls_pwm_init(u8 channel, u32 freq, u8 duty, u8 pnum)
 {
     pwm_init_param pwm_param;
     int ret;

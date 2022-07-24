@@ -414,7 +414,7 @@ static void wm_tool_stdin_to_uart(void);
 
 #define UPDATE_HASH(s, h, c) ((h) = (((h)<<(s)->hash_shift) ^ (c)) & (s)->hash_mask)
 
-#define ERR_RETURN(strm,err) return ((strm)->msg=z_errmsg[1-(err)], (err))
+#define ERR_RETURN(strm, err) return ((strm)->msg=z_errmsg[1-(err)], (err))
 
 #define put_byte(s, c) {(s)->pending_buf[(s)->pending++] = (c);}
 
@@ -436,7 +436,7 @@ static void wm_tool_stdin_to_uart(void);
     ((dist) < 256 ? dist_code[dist] : dist_code[256+((dist)>>7)])
 
 #define FLUSH_BLOCK_ONLY(s, eof) do { \
-    ct_flush_block((s), (s->block_start >= 0L ? \
+    ct_flush_block((s), ((s)->block_start >= 0L ? \
                 (char*)&(s)->window[(unsigned)(s)->block_start] : \
                 (char*)Z_NULL), (long)(s)->strstart - (s)->block_start, (eof)); \
     (s)->block_start = (s)->strstart; \
@@ -456,11 +456,11 @@ static void wm_tool_stdin_to_uart(void);
 
 #define smaller(tree, n, m, depth) \
     ((tree)[n].Freq < (tree)[m].Freq || \
-    ((tree)[n].Freq == (tree)[m].Freq && depth[n] <= (depth)[m]))
+    ((tree)[n].Freq == (tree)[m].Freq && (depth)[n] <= (depth)[m]))
 
 #define pqremove(s, tree, top) do { \
     top = (s)->heap[SMALLEST]; \
-    (s)->heap[SMALLEST] = (s)->heap[s->heap_len--]; \
+    (s)->heap[SMALLEST] = (s)->heap[(s)->heap_len--]; \
     pqdownheap(s, tree, SMALLEST); \
 } while (0)
 
@@ -4626,7 +4626,7 @@ static int wm_tool_xmodem_download(const char *image)
                         frame_data[XMODEM_DATA_SIZE + 4]=(unsigned char)(crc_value);
 
                         write_number = wm_tool_uart_write(frame_data, XMODEM_DATA_SIZE + 5);
-                        if (write_number <= 0){
+                        if (write_number <= 0) {
                             wm_tool_printf("write serial error, errno = %d.\r\n", errno);
                         }
 

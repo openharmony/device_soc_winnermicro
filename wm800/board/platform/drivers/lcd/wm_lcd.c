@@ -35,8 +35,7 @@
  */
 void tls_lcd_fresh_ratio(uint8_t com_num, uint16_t freq)
 {
-    if (freq == 0)
-    {
+    if (freq == 0) {
         freq = 60;
     }
 
@@ -116,7 +115,7 @@ void tls_lcd_init(tls_lcd_options_t *opts)
 
 void lcd_test(void)
 {
-    int i,j;
+    int i, j;
     tls_lcd_options_t lcd_opts = {
         true,
         BIAS_ONEFOURTH,
@@ -165,13 +164,11 @@ void lcd_test(void)
         }
 #else
 
-        for (i=0; i<40; i++)
-        {
+        for (i=0; i<40; i++) {
             lcdDisplaySegment(i, 1);
             tls_os_time_delay(HZ/2);
         }
-        for (i=0; i<40; i++)
-        {
+        for (i=0; i<40; i++) {
             lcdDisplaySegment(i, 0);
             tls_os_time_delay(HZ/2);
         }

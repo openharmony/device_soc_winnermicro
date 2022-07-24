@@ -48,8 +48,8 @@ int tls_touchsensor_init_config(u32 sensorno, u8 scan_period, u8 window, u32 ena
 
     regval = tls_reg_read32(HR_TC_CONFIG);
 
-    /*firstly, disable scan function */
-    tls_reg_write32(HR_TC_CONFIG,regval&(~(1<<TOUCH_SENSOR_EN_BIT)));
+    /* firstly, disable scan function */
+    tls_reg_write32(HR_TC_CONFIG, regval&(~(1<<TOUCH_SENSOR_EN_BIT)));
 
     if (scan_period >=0x3F) {
         regval &= ~(0x3F<<SCAN_PERID_SHIFT_BIT);
@@ -63,7 +63,6 @@ int tls_touchsensor_init_config(u32 sensorno, u8 scan_period, u8 window, u32 ena
 
     if (sensorno && (sensorno <= 15)) {
         regval |= (1<<(sensorno-1+TOUCH_SENSOR_SEL_SHIFT_BIT));
-
     }
 
     if (enable) {

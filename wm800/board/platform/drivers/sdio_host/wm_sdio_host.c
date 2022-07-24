@@ -67,7 +67,7 @@ static int sm_sdh_wait_interrupt(uint8_t srcbit, int timeout)
 {
     int ret = 0;
     unsigned int tmp = (1 << srcbit);
-    volatile int vtimeout= timeout;
+    volatile int vtimeout = timeout;
 
     if (vtimeout == -1) {
         vtimeout = 0x7FFFF;
@@ -131,8 +131,9 @@ begin:
     sh_dumpBuffer("CMD8 respCmd", (char *)respCmd, 5);
     if (respCmd[0] != 0x1AA || (respCmd[1] & 0xFF) != 8) {
         TEST_DEBUG("CMD8 Error\n");
-        if (recnt--)
+        if (recnt--) {
             goto begin;
+        }
         goto end;
     }
     while (1) {
@@ -150,7 +151,7 @@ begin:
         sh_dumpBuffer("ACMD41 respCmd", (char *)respCmd, 5);
         if ((respCmd[1] & 0xFF) != 0x3F) // sd�淶����̶�Ϊ0x3F,���Ե���crc����
             goto end;
-        if (respCmd[0] >> 31 & 0x1) {
+        if ((respCmd[0] >> 31) & 0x1) {
             TEST_DEBUG("card is ready\n");
             break;
         }
@@ -161,7 +162,7 @@ begin:
     sm_sdh_wait_interrupt(3, 1000);
     wm_sdh_get_response(respCmd, 4);
     sh_dumpBuffer("CMD2 respCmd", (char *)respCmd, 16);
-    if ((respCmd[3] >> 24 & 0xFF) != 0x3F) // sd�淶����̶�Ϊ0x3F,���Ե���crc����
+    if (((respCmd[3] >> 24) & 0xFF) != 0x3F) // sd�淶����̶�Ϊ0x3F,���Ե���crc����
         goto end;
     wm_sdh_send_cmd(3, 0, 0x44); // Send CMD3
     sm_sdh_wait_interrupt(0, -1);
@@ -210,7 +211,7 @@ int wm_sd_card_query_csd(uint32_t rca)
     for (i=0; i<16; i++) adjustResp[15-i] = SDIO_HOST->CMD_BUF[i];
     SD_GetCapacity((uint8_t*)&adjustResp[1], &SDCardInfo);
     sh_dumpBuffer("CMD9 respCmd", adjustResp, 16);
-    if ((respCmd[3] >> 24 & 0xFF) != 0x3F) // sd�淶����̶�Ϊ0x3F,���Ե���crc����
+    if (((respCmd[3] >> 24) & 0xFF) != 0x3F) // sd�淶����̶�Ϊ0x3F,���Ե���crc����
         goto end;
     ret = 0;
 end:
@@ -247,7 +248,7 @@ end:
     return ret;
 }
 
-void wm_sd_card_deselect()
+void wm_sd_card_deselect(void)
 {
     wm_sdh_send_cmd(7, 0, 0x04); // Send CMD7
     sm_sdh_wait_interrupt(0, -1);
@@ -265,15 +266,16 @@ int wm_sd_card_query_status(uint32_t rca, uint32_t *respCmd0)
     sm_sdh_wait_interrupt(0, -1);
     wm_sdh_get_response(respCmd, 2);
     sh_dumpBuffer("CMD13 respCmd", (char *)respCmd, 5);
-    if ((respCmd[1] & 0xFF) != 13)
+    if ((respCmd[1] & 0xFF) != 13) {
         goto end;
+    }
     if (respCmd0) {
         *respCmd0 = respCmd[0];
     }
 #if TEST_DEBUG_EN
-    current_state = respCmd[0] >> 9 & 0xF;
-    error_state = respCmd[0] >> 19 & 0x1;
-    TEST_DEBUG("current_state %d, error_state %d\n",current_state,error_state);
+    (current_state = respCmd[0] >> 9) & 0xF;
+    (error_state = respCmd[0] >> 19) & 0x1;
+    TEST_DEBUG("current_state %d, error_state %d\n", current_state, error_state);
 #endif
     ret = 0;
 end:
@@ -387,12 +389,14 @@ int wm_sd_card_stop_trans(void)
     uint32_t respCmd[2];
     wm_sdh_send_cmd(12, 0, 0x44); // Send CMD12
     ret = sm_sdh_wait_interrupt(0, -1);
-    if (ret)
+    if (ret) {
         goto end;
+    }
     wm_sdh_get_response(respCmd, 2);
     sh_dumpBuffer("CMD12 respCmd", (char *)respCmd, 5);
-    if ((respCmd[1] & 0xFF) != 12)
+    if ((respCmd[1] & 0xFF) != 12) {
         goto end;
+    }
     ret = 0;
 end:
     return ret;
@@ -414,20 +418,25 @@ int sdh_card_init(uint32_t *rca_ref)
     sdio_host_reset();
 
     ret = wm_sd_card_initialize(&rca);
-    if (ret)
+    if (ret) {
         goto end;
+    }
     ret = wm_sd_card_query_csd(rca);
-    if (ret)
+    if (ret) {
         goto end;
+    }
     ret = wm_sd_card_query_status(rca, NULL);
-    if (ret)
+    if (ret) {
         goto end;
+    }
     ret = wm_sd_card_select(rca);
-    if (ret)
+    if (ret) {
         goto end;
+    }
     ret = wm_sd_card_query_status(rca, NULL);
-    if (ret)
+    if (ret) {
         goto end;
+    }
     *rca_ref = rca;
     ret = 0;
 end:
@@ -489,8 +498,8 @@ int wm_sd_card_block_write(uint32_t rca, uint32_t sd_addr, char *buf)
         ret = wm_sd_card_query_status(rca, &respCmd[0]);
         if (ret)
             goto end;
-        current_state = respCmd[0] >> 9 & 0xF;
-        error_state = respCmd[0] >> 19 & 0x1;
+        (current_state = respCmd[0] >> 9) & 0xF;
+        (error_state = respCmd[0] >> 19) & 0x1;
         if (current_state == 4) { // tran
             break;
         }
@@ -507,7 +516,7 @@ end:
 }
 
 /* dir: 1, write; 0, read */
-int wm_sd_card_dma_config(u32*mbuf,u32 bufsize,u8 dir)
+int wm_sd_card_dma_config(u32 *mbuf, u32 bufsize, u8 dir)
 {
     int ch;
     u32 addr_inc = 0;
@@ -584,16 +593,17 @@ int wm_sd_card_blocks_read(uint32_t rca, uint32_t sd_addr, char *buf, uint32_t b
     }
     TEST_DEBUG("read complete\n");
     ret = wm_sd_card_stop_trans();
-    if (ret)
+    if (ret) {
         goto end;
+    }
 
     /* waiting for card to trans state */
     do {
         ret = wm_sd_card_query_status(rca, &respCmd[0]);
         if (ret)
             break;
-        current_state = respCmd[0] >> 9 & 0xF;
-        error_state = respCmd[0] >> 19 & 0x1;
+        (current_state = respCmd[0] >> 9) & 0xF;
+        (error_state = respCmd[0] >> 19) & 0x1;
         if (error_state) {
             ret = -1;
             break;
@@ -611,8 +621,8 @@ end:
             retresp = wm_sd_card_query_status(rca, &respCmd[0]);
             if (retresp)
                 break;
-            current_state = respCmd[0] >> 9 & 0xF;
-            error_state = respCmd[0] >> 19 & 0x1;
+            (current_state = respCmd[0] >> 9) & 0xF;
+            (error_state = respCmd[0] >> 19) & 0x1;
             if (error_state) {
                 ret = -1;
                 break;
@@ -638,8 +648,9 @@ int wm_sd_card_blocks_write(uint32_t rca, uint32_t sd_addr, char *buf, uint32_t 
 
     wm_sdh_send_cmd(25, sd_addr, 0x44); // Send CMD25
     ret = sm_sdh_wait_interrupt(0, -1);
-    if (ret)
+    if (ret) {
         goto end;
+    }
     wm_sdh_get_response(respCmd, 2);
     sh_dumpBuffer("CMD25 respCmd", (char *)respCmd, 5);
     if ((respCmd[1] & 0xFF) != 25) {
@@ -654,18 +665,20 @@ int wm_sd_card_blocks_write(uint32_t rca, uint32_t sd_addr, char *buf, uint32_t 
     SDIO_HOST->MMC_INT_SRC |= 0x7ff; // clear all firstly
     SDIO_HOST->MMC_IO_MBCTL = 0xa1; // write data, enable multi blocks data transfer
     ret = wm_sdh_wait_blocks_done();
-    if (ret)
+    if (ret) {
         goto end;
+    }
     ret = wm_sd_card_stop_trans();
-    if (ret)
+    if (ret) {
         goto end;
+    }
     /* waiting for card to trans state */
     do {
         ret = wm_sd_card_query_status(rca, &respCmd[0]);
         if (ret)
             break;
-        current_state = respCmd[0] >> 9 & 0xF;
-        error_state = respCmd[0] >> 19 & 0x1;
+        (current_state = respCmd[0] >> 9) & 0xF;
+        (error_state = respCmd[0] >> 19) & 0x1;
         if (error_state) {
             ret = -1;
             break;
@@ -684,8 +697,8 @@ end:
             retresp = wm_sd_card_query_status(rca, &respCmd[0]);
             if (retresp)
                 break;
-            current_state = respCmd[0] >> 9 & 0xF;
-            error_state = respCmd[0] >> 19 & 0x1;
+            (current_state = respCmd[0] >> 9) & 0xF;
+            (error_state = respCmd[0] >> 19) & 0x1;
             if (error_state) {
                 ret = -1;
                 break;
