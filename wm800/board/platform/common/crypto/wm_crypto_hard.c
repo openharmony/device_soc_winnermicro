@@ -26,7 +26,6 @@
 #include "wm_pmu.h"
 #include "wm_crypto_hard.h"
 
-// #define TEST_ALL_CRYPTO
 #undef    DIGIT_BIT
 #define DIGIT_BIT            28 // 32
 
@@ -52,24 +51,24 @@
 #define SHA1_HASH_SIZE      20
 #define MD5_HASH_SIZE       16
 
-#define STORE32H(x, y) { \
-(y)[0] = (unsigned char)(((x)>>24)&255); \
-(y)[1] = (unsigned char)(((x)>>16)&255); \
-(y)[2] = (unsigned char)(((x)>>8)&255); \
-(y)[3] = (unsigned char)((x)&255); \
-}
-#define STORE32L(x, y) { \
-unsigned long __t = (x); memcpy(y, &__t, 4); \
-}
+#define STORE32H(x, y) do { \
+    (y)[0] = (unsigned char)(((x)>>24)&255); \
+    (y)[1] = (unsigned char)(((x)>>16)&255); \
+    (y)[2] = (unsigned char)(((x)>>8)&255); \
+    (y)[3] = (unsigned char)((x)&255); \
+}whiel (0)
+#define STORE32L(x, y) do { \
+    unsigned long __t = (x); \
+    memcpy(y, &__t, 4); \
+}while (0)
 
-// #define CRYPTO_LOG printf
 #define CRYPTO_LOG(...)
 // extern volatile uint32_t sys_count;
 #define sys_count tls_os_get_time()
 
-struct wm_crypto_ctx  g_crypto_ctx = {0, 0
+struct wm_crypto_ctx  g_crypto_ctx = {0, 0,
 #ifndef CONFIG_KERNEL_NONE
-    ,NULL
+    NULL
 #endif
     };
 
@@ -131,8 +130,7 @@ u32 Reflect(u32 ref, u8 ch)
 {
     int i;
     u32 value = 0;
-    for (i = 1; i < (ch + 1); i++)
-    {
+    for (i = 1; i < (ch + 1); i++) {
         if (ref & 1)
             value |= 1 << (ch - i);
         ref >>= 1;
@@ -164,7 +162,8 @@ void tls_crypto_set_key(void *key, int keylen)
     int i = 0;
     for (i = 0; i < keylen / 4 && i < 6; i++) {
         M32(HR_CRYPTO_KEY0 + (4 * i)) = key32[i];
-    } if (keylen == 32) {
+    }
+    if (keylen == 32) {
         M32(HR_CRYPTO_KEY6) = key32[6];
         M32(HR_CRYPTO_KEY7) = key32[7];
     }
@@ -979,7 +978,6 @@ static void hd_md5_compress(psDigestContext_t *md)
     g_crypto_ctx.gpsec_complete = 0;
     tls_reg_write32(HR_CRYPTO_SEC_CTRL, 0x1); // start crypto
     while (!g_crypto_ctx.gpsec_complete) {
-
     }
     g_crypto_ctx.gpsec_complete = 0;
     for (unsigned int i = 0; i < 4; i++) {
@@ -1235,7 +1233,7 @@ static void rsaMulModDump(unsigned char w)
             break;
     }
     printf("%c", w);
-    dumpUint32(" Val:",((volatile u32*) (RSA_BASE_ADDRESS + addr )), RSAN);
+    dumpUint32(" Val:", ((volatile u32*) (RSA_BASE_ADDRESS + addr)), RSAN);
 }
 
 static void rsaMulModWrite(unsigned char w, hstm_int *a)
@@ -1389,7 +1387,7 @@ int tls_crypto_exptmod(hstm_int *a, hstm_int *e, hstm_int *n, hstm_int *res)
     rsaMulModWrite('B', &X);
     rsaMulModWrite('A', &Y);
     k = pstm_count_bits(e);
-    for(i = k - 1; i >= 0; i--) {
+    for (i = k - 1; i >= 0; i--) {
         if (monmulFlag == 0) {
             rsaMonMulAA();
             monmulFlag = 1;

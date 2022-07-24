@@ -40,7 +40,7 @@ double fmod(double x, double y)
 
     /* normalize x and y */
     if (!ex) {
-        for (i = (uxi<<12); (i>>63) == 0; ex--, i <<= 1){
+        for (i = (uxi<<12); (i>>63) == 0; ex--, i <<= 1) {
         }
         uxi <<= -ex + 1;
     } else {

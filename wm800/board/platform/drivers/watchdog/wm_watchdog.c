@@ -34,7 +34,7 @@
 static volatile u8 wdg_reset = 0;
 static volatile u8 wdg_enable = 0;
 static volatile u32 wdg_value_us = WDG_LOAD_VALUE_DEF;
-static volatile u32 wdg_jumpclear_flag = 0; /* 0:donot jump clear, 1: jump clear, 2:close wdg*/
+static volatile u32 wdg_jumpclear_flag = 0; /* 0:donot jump clear, 1: jump clear, 2:close wdg */
 ATTRIBUTE_ISR void WDG_IRQHandler(void)
 {
     csi_kernel_intrpt_enter();
@@ -193,6 +193,7 @@ void tls_sys_reset(void)
     tls_reg_write32(HR_WDG_LOAD_VALUE, 0x100);
     tls_reg_write32(HR_WDG_CTRL, 0x3);
     tls_reg_write32(HR_WDG_LOCK, 1);
-    while (1);
+    while (1) {
+    }
 }
 

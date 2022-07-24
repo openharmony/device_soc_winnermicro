@@ -22,8 +22,8 @@
 #include "wm_timer.h"
 #include "wm_cpu.h"
 #include "tls_common.h"
-#include "wm_pmu.h"
 #include "wm_wifi.h"
+#include "wm_pmu.h"
 
 struct pmu_irq_context {
     tls_pmu_irq_callback callback;
@@ -50,7 +50,7 @@ void PMU_TIMER0_IRQHandler(void)
     tls_reg_write32(HR_PMU_INTERRUPT_SRC, BIT(0)|0x180); /* clear timer0 interrupt */
     tls_reg_write32(HR_PMU_TIMER0, tls_reg_read32(HR_PMU_TIMER0) & (~BIT(16)));
 
-    if (NULL != pmu_timer0_context.callback)
+    if (pmu_timer0_context.callback != NULL)
         pmu_timer0_context.callback(pmu_timer0_context.arg);
     return;
 }
@@ -59,7 +59,7 @@ void PMU_GPIO_WAKE_IRQHandler(void)
 {
     tls_reg_write32(HR_PMU_INTERRUPT_SRC, BIT(2)|0x180); /* clear gpio wake interrupt */
 
-    if (NULL != pmu_gpio_wake_context.callback)
+    if (pmu_gpio_wake_context.callback != NULL)
         pmu_gpio_wake_context.callback(pmu_gpio_wake_context.arg);
     return;
 }
@@ -68,7 +68,7 @@ void PMU_SDIO_WAKE_IRQHandler(void)
 {
     tls_reg_write32(HR_PMU_INTERRUPT_SRC, BIT(3)|0x180); /* clear sdio wake interrupt */
 
-    if (NULL != pmu_sdio_wake_context.callback)
+    if (pmu_sdio_wake_context.callback != NULL)
         pmu_sdio_wake_context.callback(pmu_sdio_wake_context.arg);
     return;
 }
@@ -208,7 +208,7 @@ void tls_pmu_timer0_start(u16 second)
     u32 val;
     val = tls_reg_read32(HR_PMU_INTERRUPT_SRC);
     if (val&0x180) {
-        tls_reg_write32(HR_PMU_INTERRUPT_SRC,val);
+        tls_reg_write32(HR_PMU_INTERRUPT_SRC, val);
     }
 
     val = tls_reg_read32(HR_PMU_PS_CR);
@@ -254,7 +254,7 @@ void tls_pmu_timer1_start(u16 msec)
 
     val = tls_reg_read32(HR_PMU_INTERRUPT_SRC);
     if (val&0x180) {
-        tls_reg_write32(HR_PMU_INTERRUPT_SRC,val);
+        tls_reg_write32(HR_PMU_INTERRUPT_SRC, val);
     }
 
     val = tls_reg_read32(HR_PMU_PS_CR);
@@ -312,7 +312,7 @@ void tls_pmu_standby_start(void)
     /* Clear Sleep status after exit sleep mode and enter standby mode */
     val = tls_reg_read32(HR_PMU_INTERRUPT_SRC);
     if (val&0x180) {
-        tls_reg_write32(HR_PMU_INTERRUPT_SRC,val);
+        tls_reg_write32(HR_PMU_INTERRUPT_SRC, val);
     }
 
     val = tls_reg_read32(HR_PMU_PS_CR);
@@ -340,7 +340,7 @@ void tls_pmu_sleep_start(void)
     /* Clear Standby status after exit standby mode and enter sleep mode */
     val = tls_reg_read32(HR_PMU_INTERRUPT_SRC);
     if (val&0x180) {
-        tls_reg_write32(HR_PMU_INTERRUPT_SRC,val);
+        tls_reg_write32(HR_PMU_INTERRUPT_SRC, val);
     }
 
     val = tls_reg_read32(HR_PMU_PS_CR);

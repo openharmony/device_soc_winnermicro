@@ -52,7 +52,7 @@ ATTRIBUTE_ISR void GPIOA_IRQHandler(void)
     }
 
     if (found) {
-        if (NULL != gpio_context[i].callback)
+        if (gpio_context[i].callback != NULL)
             gpio_context[i].callback(gpio_context[i].arg);
     }
     csi_kernel_intrpt_exit();
@@ -74,7 +74,7 @@ ATTRIBUTE_ISR void GPIOB_IRQHandler(void)
     }
 
     if (found) {
-        if (NULL != gpio_context[i].callback)
+        if (gpio_context[i].callback != NULL)
             gpio_context[i].callback(gpio_context[i].arg);
     }
     csi_kernel_intrpt_exit();
@@ -240,8 +240,6 @@ void tls_gpio_irq_enable(enum tls_io_name gpio_pin, enum tls_gpio_irq_trig mode)
         offset = 0;
         vec_no = GPIOA_IRQn;
     }
-
-//   TLS_DBGPRT_INFO("\r\ntls_gpio_int_enable gpio pin =%d,mode==%d\r\n",gpio_pin,mode);
 
     switch (mode) {
         case WM_GPIO_IRQ_TRIG_RISING_EDGE:

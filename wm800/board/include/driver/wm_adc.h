@@ -43,13 +43,13 @@
 #define CONFIG_ADC_CHL_SEL(n)	 		((n)<<8)
 
 #define CONFIG_PD_ADC_MASK             	(0x1<<2)
-#define CONFIG_PD_ADC_VAL(n)           	((n)<<2)	/* 1:pd adc, 0: normal work */
+#define CONFIG_PD_ADC_VAL(n)           	((n)<<2)   /* 1:pd adc, 0: normal work */
 
 #define CONFIG_RSTN_ADC_MASK           	(0x1<<1)
 #define CONFIG_RSTN_ADC_VAL(n)          ((n)<<1)   /* 1:normal work, 0:adc reset */
 
 #define CONFIG_EN_LDO_ADC_MASK         	(0x1<<0)
-#define CONFIG_EN_LDO_ADC_VAL(n)       	((n)<<0)	/* 1:ldo work, 0: ldo shutdown */
+#define CONFIG_EN_LDO_ADC_VAL(n)       	((n)<<0)   /* 1:ldo work, 0: ldo shutdown */
 
 /* PGA_CTRL */
 #define CLK_CHOP_SEL_PGA_MASK			(0x7<<4)
@@ -124,7 +124,7 @@ typedef struct adc_st {
     void (*adc_cb)(int *buf, u16 len);
     void (*adc_bigger_cb)(int *buf, u16 len);
     void (*adc_dma_cb)(int *buf, u16 len);
-    u16 valuelen;		/* dma �������ݳ��� */
+    u16 valuelen;     /* dma �������ݳ��� */
     u16 offset;
 }ST_ADC;
 

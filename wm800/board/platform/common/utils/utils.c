@@ -70,8 +70,8 @@ static const u8 crc8_tbl[256] = {
 };
 
 #ifndef isdigit
-#define in_range(c, lo, up)  ((u8)c >= lo && (u8)c <= up)
-#define isdigit(c)           in_range(c, '0', '9')
+#define in_range(c, lo, up)  ((u8)(c) >= (lo) && (u8)(c) <= (up))
+#define isdigit(c)           in_range((c), '0', '9')
 #endif
 int chk_crc8(u8 *ptr, u32 len)
 {

@@ -98,20 +98,20 @@ struct task_msg {
     enum task_msg_type type;
     tls_sem_t *sem;
     union {
-      struct {
+        struct {
             start_routine function;
             void *ctx;
-      } cb;
-      struct {
+        } cb;
+        struct {
             start_routine function;
             void *ctx;
             u8 cnt;
-      } cbs;
-      struct {
+        } cbs;
+        struct {
             u32 msecs;
             tls_timeout_handler h;
             void *arg;
-      } tmo;
+        } tmo;
     } msg;
 };
 

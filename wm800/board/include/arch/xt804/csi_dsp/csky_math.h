@@ -284,7 +284,7 @@ extern "C"
 #define  SUB2(x, xx, y, yy, z, zz, r, s) do {      \
         (r)=(x)-(y);  (s)=(ABS(x)>ABS(y)) ?            \
                 (((((x)-(r))-(y))-(yy))+(xx)) :      \
-                ((((x)-((y)+r))+(xx))-(yy));       \
+                ((((x)-((y)+(r)))+(xx))-(yy));       \
         (z)=(r)+(s); \
         (zz)=((r)-(z))+(s); \
 } while (0)
@@ -3617,7 +3617,7 @@ __STATIC_INLINE q31_t csky_linear_interp_q31(
         y = multAcc_32x32_keep32(y, y1, fract);
 #else
         /* Calculation of y0 * (1-fract) and y is in 2.30 format */
-        y = ((q31_t) ((q63_t) y0 * (0x7FFFFFFF - fract) >> 32));
+        y = ((q31_t) (((q63_t) y0 * (0x7FFFFFFF - fract)) >> 32));
         /* Calculation of y0 * (1-fract) + y1 *fract and y is in 2.30 format */
         y += ((q31_t) (((q63_t) y1 * fract) >> 32));
 #endif

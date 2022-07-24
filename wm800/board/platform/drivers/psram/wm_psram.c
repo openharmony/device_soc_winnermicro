@@ -15,12 +15,12 @@
 
 #include <string.h>
 #include "wm_regs.h"
-#include "wm_psram.h"
 #include "wm_dma.h"
+#include "wm_psram.h"
 
 /* Nonzero if either X or Y is not aligned on a "long" boundary.  */
 #define UNALIGNED(X, Y) \
-    (((uint32_t)X & (sizeof (uint32_t) - 1)) | ((uint32_t)Y & (sizeof (uint32_t) - 1)))
+    (((uint32_t)(X) & (sizeof (uint32_t) - 1)) | ((uint32_t)(Y) & (sizeof (uint32_t) - 1)))
 /* How many bytes are copied each iteration of the 4X unrolled loop.  */
 #define BIGBLOCKSIZE    (sizeof (uint32_t) << 2)
 /* Threshhold for punting to the byte copier.  */
@@ -56,7 +56,7 @@ static void wm_psram_dma_init(uint8_t ch, uint32_t count, void * src, void *dst)
     DMA_CTRL_REG(ch) |= (count<<8);
 }
 
-void psram_DMA_Channel0_IRQHandler()
+void psram_DMA_Channel0_IRQHandler(void)
 {
     tls_reg_write32(HR_DMA_INT_SRC, 0x02);
     dma_rx_tx_done += 1;
@@ -94,7 +94,7 @@ int memcpy_dma(unsigned char *dst, unsigned char *src, int num)
     if (!TOO_SMALL(num) && !UNALIGNED (src, dst)) {
         if (dw_length) {
             wm_psram_dma_stop(psram_channel);
-            wm_psram_dma_init(psram_channel, dw_length*4, src,dst);
+            wm_psram_dma_init(psram_channel, dw_length*4, src, dst);
             wm_psram_dma_go(psram_channel);
             while (dma_rx_tx_done == 0);
             offset += dw_length *4;

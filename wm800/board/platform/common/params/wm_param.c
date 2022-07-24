@@ -45,11 +45,11 @@ static struct tls_sys_param sram_param;
 #endif
 
 struct tls_sys_param *user_default_param = NULL;
-struct tls_sys_param * tls_param_user_param_init(void);
+struct tls_sys_param *tls_param_user_param_init(void);
 
 static tls_os_sem_t *sys_param_lock = NULL;
 static const u8 factory_default_hardware[8] = {'H', 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-u8 updp_mode;// upadate default parameters mode, 0:not updating or up finish; 1:updating
+u8 updp_mode; // upadate default parameters mode, 0:not updating or up finish; 1:updating
 
 static int param_flash_verify(u32 data_addr, u8 *data_buffer, u32 len)
 {
@@ -492,7 +492,6 @@ int tls_param_init(void)
                 err = TLS_PARAM_STATUS_EIO;
                 break;
             }
-
         } else {
             /* restore damaged partitions */
             for (i = 0; i < TLS_PARAM_PARTITION_NUM; i++) {
@@ -581,11 +580,8 @@ void tls_param_load_factory_default(void)
 #endif
     param->ssid_broadcast_enable = TLS_PARAM_SSIDBRD_ENABLE;
     param->encry = TLS_PARAM_ENCRY_OPEN;
-#if 0 // def CONFIG_AP
-#else
-    param->wireless_protocol = TLS_PARAM_IEEE80211_INFRA;
 
-#endif
+    param->wireless_protocol = TLS_PARAM_IEEE80211_INFRA;
 
     param->auto_retrycnt = 255;
     param->auto_roam = TLS_PARAM_ROAM_DISABLE;
