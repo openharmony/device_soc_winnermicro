@@ -19,23 +19,12 @@
 #include "tls_common.h"
 #include "wm_osal.h"
 #include "list.h"
-// #include "netif.h"
 
 struct tls_wif;
 struct wpa_supplicant;
 
 /* Maximum size of the SSID  */
 #define IW_SSID_MAX_SIZE    32
-#if 0
-#define IEEE80211_MODE_INFRA    0
-#define IEEE80211_MODE_IBSS        1
-#define IEEE80211_MODE_AP        2
-#endif
-// #define IEEE80211_RATE_MODE_B      BIT(0)
-// #define IEEE80211_RATE_MODE_G      BIT(1)
-// #define IEEE80211_RATE_MODE_BG     BIT(2)
-// #define IEEE80211_RATE_MODE_N      BIT(3)
-// #define IEEE80211_RATE_MODE_BGN    BIT(4)
 
 enum ieee80211_wireless_mode {
     IEEE80211_MODE_11B = 0,
@@ -109,47 +98,7 @@ struct    iw_scan_req {
     u8        ssid[IW_SSID_MAX_SIZE];
     u32     extra_ies_len;
     u8      extra_ies[0];
-
-    // struct iw_freq    channel_list[IW_MAX_FREQUENCIES];
 };
-
-#if 0
-struct iw_bssid_ex {
-    u32     length;
-    u8      bssid[ETH_ALEN];
-    u16     freq;
-    u32     ssid_len;
-    u8      ssid[IW_SSID_MAX_SIZE];
-    u32     privacy;
-    int     rssi;
-    u8      tsf[8];
-    u16     beacon_int;
-    u16     capabilities;
-    u32     ie_len;
-    u8      ies[0];
-} __attribute__ ((packed));
-
-struct iw_bss_info {
-    u8      bssid[ETH_ALEN];
-    u8      mode;
-    u8      channel;
-    u8      privacy;
-    u8      ssid_len;
-    u8      rssi;
-    u8      ssid[32];
-};
-
-struct iw_scan_results {
-    u32     count;
-    struct iw_bssid_ex   bssid[1];
-};
-
-struct iw_scan_bss {
-    u32     count;
-    u32     length; /* bss info total length */
-    struct iw_bss_info bss[1];
-};
-#endif
 
 /**
  * struct beacon_parameters - beacon parameters
@@ -350,7 +299,6 @@ struct sk_buff {
 };
 
 struct tls_wif {
-    // void *priv;
     struct ieee80211_if_data *priv;
     struct wpa_supplicant *wpa_s;
     struct tls_wl_event_ops *ops;
@@ -358,8 +306,6 @@ struct tls_wif {
     struct hostapd_iface *apif;
 #endif
 
-    // struct netif *ethif;
-    // bool   net_up;
     bool   wlan_create;
     int (*rx_data_cb)(const u8 *bssid, u8 *buf, u32 buf_len);
 #if TLS_CONFIG_AP
@@ -368,14 +314,6 @@ struct tls_wif {
 #if TLS_CONFIG_AP_OPT_FWD
     int (*rx_ip_cb)(const u8 *bssid, u8 *buf, u32 buf_len);
 #endif
-#endif
-
-#if 0
-    int (*send)(struct tls_wif *wif, struct sk_buff *skb);
-    int (*rx_data_cb)(struct tls_wif *wif, struct sk_buff *skb);
-    int (*tx_mgmt)(struct tls_wif *wif, struct sk_buff *skb);
-    int (*send_eapol)(struct tls_wif *wif, struct sk_buff *skb);
-    int (*send_beacon)(struct tls_wif *wif, struct sk_buff *skb);
 #endif
 };
 

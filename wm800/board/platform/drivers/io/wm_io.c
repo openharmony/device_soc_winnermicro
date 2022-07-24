@@ -25,9 +25,9 @@
 
 #include "wm_regs.h"
 #include "wm_osal.h"
-#include "wm_io.h"
 #include "wm_dbg.h"
 #include "tls_common.h"
+#include "wm_io.h"
 
 static void io_cfg_option1(enum tls_io_name name)
 {
@@ -209,7 +209,7 @@ int tls_io_cfg_get(enum tls_io_name name)
 {
     u8  pin;
     u16 offset;
-    u32 afsel,afs1,afs0,dir,pullupen, pulldownen;
+    u32 afsel, afs1, afs0, dir, pullupen, pulldownen;
 
     if (name >= WM_IO_PB_00) {
         pin    = name - WM_IO_PB_00;
@@ -227,11 +227,11 @@ int tls_io_cfg_get(enum tls_io_name name)
     pulldownen = tls_reg_read32(HR_GPIO_PULLDOWN_EN + offset);
 
     if (afsel&BIT(pin)) {
-        if ((0==(afs1&BIT(pin))) && (0==(afs0&BIT(pin))))
+        if (((afs1&BIT(pin)) == 0) && ((afs0&BIT(pin)) == 0))
             return WM_IO_OPTION1;
-        else if ((0==(afs1&BIT(pin))) && (afs0&BIT(pin)))
+        else if (((afs1&BIT(pin)) == 0) && (afs0&BIT(pin)))
             return WM_IO_OPTION2;
-        else if ((afs1&BIT(pin)) && (0==(afs0&BIT(pin))))
+        else if ((afs1&BIT(pin)) && ((afs0&BIT(pin)) == 0))
             return WM_IO_OPTION3;
         else if ((afs1&BIT(pin)) && (afs0&BIT(pin)))
             return WM_IO_OPTION4;

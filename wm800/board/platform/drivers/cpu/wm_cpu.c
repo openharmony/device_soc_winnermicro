@@ -25,8 +25,8 @@
 #include "wm_debug.h"
 #include "wm_regs.h"
 #include "wm_irq.h"
-#include "wm_cpu.h"
 #include "wm_pwm.h"
+#include "wm_cpu.h"
 
 /**
  * @brief          This function is used to set cpu clock

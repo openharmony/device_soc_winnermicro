@@ -69,7 +69,7 @@ static void dma_irq_proc(void *p)
             }
         }
 
-        if (8 == ch) {
+        if (ch == 8) {
             return;
         }
     }

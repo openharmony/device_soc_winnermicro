@@ -52,7 +52,6 @@ void trap_c(uint32_t *regs)
     printf("epc : %8x\n", regs[17]);
 
     while (1) {
-
     }
 }
 

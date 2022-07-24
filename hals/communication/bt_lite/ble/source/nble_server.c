@@ -87,7 +87,8 @@ void ble_server_gap_event(struct ble_gap_event *event, void *arg)
 
                 if (gatts_struct_func_ptr_cb && gatts_struct_func_ptr_cb->connectServerCb) {
                     dl_list_for_each(svr_item, &server_list.list, server_elem_t, list)
-                    gatts_struct_func_ptr_cb->connectServerCb(event->connect.conn_handle, svr_item->server_id,&bdaddr);
+                    gatts_struct_func_ptr_cb->connectServerCb(event->connect.conn_handle, \
+                                                              svr_item->server_id, &bdaddr);
                 }
             }
             break;
@@ -95,7 +96,8 @@ void ble_server_gap_event(struct ble_gap_event *event, void *arg)
             memcpy(bdaddr.addr, event->disconnect.conn.peer_id_addr.val, 6);
             if (gatts_struct_func_ptr_cb && gatts_struct_func_ptr_cb->disconnectServerCb) {
                 dl_list_for_each(svr_item, &server_list.list, server_elem_t, list)
-                gatts_struct_func_ptr_cb->disconnectServerCb(event->disconnect.conn.conn_handle, svr_item->server_id, &bdaddr);
+                gatts_struct_func_ptr_cb->disconnectServerCb(event->disconnect.conn.conn_handle, \
+                                                             svr_item->server_id, &bdaddr);
             }
             break;
         default:
@@ -179,7 +181,7 @@ void ble_server_func_by_attr_handle(uint16_t attr_handle, uint8_t op, uint8_t *d
                         if (svc_item->func.read) {
                             svc_item->func.read(data, len);
 #if BLE_IF_DBG
-    tls_bt_dump_hexstring("To  Remote:", data, *len);
+                            tls_bt_dump_hexstring("To  Remote:", data, *len);
 #endif
                         }
                         break;
@@ -364,8 +366,8 @@ int ble_server_alloc(BleGattService *srvcinfo)
             srvc_sub_elem->func = srvcinfo->attrList[i].func;
             dl_list_add_tail(&serv_elem->srvc_list.list, &srvc_sub_elem->list);
 
-            if (gatt_chr_array[serv_elem->srvc_count].flags & BLE_GATT_CHR_F_NOTIFY || \
-                gatt_chr_array[serv_elem->srvc_count].flags & BLE_GATT_CHR_F_INDICATE) {
+            if ((gatt_chr_array[serv_elem->srvc_count].flags & BLE_GATT_CHR_F_NOTIFY) || \
+                (gatt_chr_array[serv_elem->srvc_count].flags & BLE_GATT_CHR_F_INDICATE)) {
                // NimBLE stack will auto add the cccd.
             } else {
                 gatt_dsc_array = (struct ble_gatt_dsc_def *)tls_mem_alloc(2*sizeof(struct ble_gatt_dsc_def));
