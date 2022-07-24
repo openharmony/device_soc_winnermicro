@@ -88,35 +88,35 @@
 /** The address of the CRC output register. */
 #define HR_CRYPTO_CRC_RESULT    HR_CRYPTO_SHA1_DIGEST4
 
-#define ERR_CRY_OK          0    // /< No error, everything OK.
-#define ERR_FAILURE        -1    /* failure */
-#define ERR_ARG_FAIL            -6    /* Failure due to bad function param */
+#define ERR_CRY_OK           0    // /< No error, everything OK.
+#define ERR_FAILURE         (-1)    /* failure */
+#define ERR_ARG_FAIL        (-6)    /* Failure due to bad function param */
 
 # define PS_SUCCESS          0
-# define PS_FAILURE          -1
+# define PS_FAILURE         (-1)
 # define PS_FAIL             PS_FAILURE /* Just another name */
 
 /*      NOTE: Failure return codes MUST be < 0 */
 /*      NOTE: The range for core error codes should be between -2 and -29 */
-# define PS_ARG_FAIL         -6       /* Failure due to bad function param */
-# define PS_PLATFORM_FAIL    -7       /* Failure as a result of system call error */
-# define PS_MEM_FAIL         -8       /* Failure to allocate requested memory */
-# define PS_LIMIT_FAIL       -9       /* Failure on sanity/limit tests */
-# define PS_UNSUPPORTED_FAIL -10      /* Unimplemented feature error */
-# define PS_DISABLED_FEATURE_FAIL -11 /* Incorrect #define toggle for feature */
-# define PS_PROTOCOL_FAIL    -12      /* A protocol error occurred */
-# define PS_TIMEOUT_FAIL     -13      /* A timeout occurred and MAY be an error */
-# define PS_INTERRUPT_FAIL   -14      /* An interrupt occurred and MAY be an error */
-# define PS_PENDING          -15      /* In process. Not necessarily an error */
-# define PS_EAGAIN           -16      /* Try again later. Not necessarily an error */
-# define PS_OUTPUT_LENGTH    -17      /* Output length negotiation:
+# define PS_ARG_FAIL         (-6)      /* Failure due to bad function param */
+# define PS_PLATFORM_FAIL    (-7)      /* Failure as a result of system call error */
+# define PS_MEM_FAIL         (-8)      /* Failure to allocate requested memory */
+# define PS_LIMIT_FAIL       (-9)      /* Failure on sanity/limit tests */
+# define PS_UNSUPPORTED_FAIL (-10)      /* Unimplemented feature error */
+# define PS_DISABLED_FEATURE_FAIL (-11) /* Incorrect #define toggle for feature */
+# define PS_PROTOCOL_FAIL    (-12)      /* A protocol error occurred */
+# define PS_TIMEOUT_FAIL     (-13)      /* A timeout occurred and MAY be an error */
+# define PS_INTERRUPT_FAIL   (-14)      /* An interrupt occurred and MAY be an error */
+# define PS_PENDING          (-15)      /* In process. Not necessarily an error */
+# define PS_EAGAIN           (-16)      /* Try again later. Not necessarily an error */
+# define PS_OUTPUT_LENGTH    (-17)      /* Output length negotiation:
                                          output buffer is too small. */
-# define PS_HOSTNAME_RESOLUTION -18   /* Cannot resolve host name. */
-# define PS_CONNECT -19               /* Cannot connect to remote host. */
-# define PS_INSECURE_PROTOCOL   -20   /* The operation needs to use insecure protocol.
+# define PS_HOSTNAME_RESOLUTION (-18)   /* Cannot resolve host name. */
+# define PS_CONNECT             (-19)    /* Cannot connect to remote host. */
+# define PS_INSECURE_PROTOCOL   (-20)   /* The operation needs to use insecure protocol.
                                          The caller needs to accept use of insecure
                                          protocol. */
-# define PS_VERIFICATION_FAILED -21   /* Signature verification failed. */
+# define PS_VERIFICATION_FAILED (-21)   /* Signature verification failed. */
 
 // CRC
 #define OUTPUT_REFLECT 1
@@ -523,7 +523,7 @@ int tls_crypto_crc_update(psCrcContext_t *ctx, unsigned char *in, u32 len);
 int tls_crypto_crc_final(psCrcContext_t *ctx, u32 *crc_val);
 
 /**
- *@brief            This function initializes Message-Diggest context for usage in SHA1 algorithm,
+ * @brief            This function initializes Message-Diggest context for usage in SHA1 algorithm,
  *                   starts a new SHA1 operation and writes a new Digest Context.
  *
  * @param[in]        md         Pointer to the SHA1 Digest Context.

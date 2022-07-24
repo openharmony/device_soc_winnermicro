@@ -27,10 +27,10 @@
 * Date : 2014-6-12
 *****************************************************************************/
 
-#include "wm_osal.h"
-#include "wm_mem.h"
-#include "list.h"
 #include <string.h>
+#include "wm_osal.h"
+#include "list.h"
+#include "wm_mem.h"
 #if TLS_OS_LITEOS
 #include "los_memory.h"
 #endif

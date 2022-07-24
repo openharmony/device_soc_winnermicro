@@ -46,7 +46,7 @@ extern void PMU_TIMER1_IRQHandler(void);
 extern void PMU_GPIO_WAKE_IRQHandler(void);
 extern void PMU_RTC_IRQHandler(void);
 
-#define readl(addr) do {\
+#define readl(addr) do { \
         unsigned int __v = (*(volatile unsigned int *) (addr)); __v; \
     }while (0)
 
@@ -79,7 +79,7 @@ ATTRIBUTE_ISR void CORET_IRQ_Handler(void)
     CSI_INTRPT_ENTER();
 #endif
 
-    readl(0xE000E010);// clear tick irq
+    readl(0xE000E010); // clear tick irq
 
 #if defined(CONFIG_KERNEL_RHINO)
     systick_handler();

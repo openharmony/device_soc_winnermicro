@@ -28,7 +28,6 @@
 #include "wm_regs.h"
 #include "wm_irq.h"
 #include "wm_gpio.h"
-#include "wm_hostspi.h"
 #include "wm_dma.h"
 #include "wm_dbg.h"
 #include "wm_mem.h"
@@ -38,6 +37,7 @@
 #include "tls_common.h"
 #include "core_804.h"
 #include "wm_pmu.h"
+#include "wm_hostspi.h"
 
 static struct tls_spi_port *spi_port = NULL;
 
@@ -73,7 +73,7 @@ static void SpiMasterInit(u8 mode, u8 cs_active, u32 fclk)
 
     tls_sys_clk_get(&sysclk);
 
-    SPIM_CLKCFG_REG = sysclk.apbclk*UNIT_MHZ/(fclk*2) - 1;;
+    SPIM_CLKCFG_REG = sysclk.apbclk*UNIT_MHZ/(fclk*2) - 1;
     SPIM_SPICFG_REG = 0;
     SPIM_SPICFG_REG = SPI_FRAME_FORMAT_MOTO | SPI_SET_MASTER_SLAVE(SPI_MASTER) | mode;
     SPIM_INTEN_REG = 0xff;      /* Disable INT */
@@ -102,8 +102,7 @@ int spiWaitIdle(void)
     unsigned long regVal;
     unsigned long timeout = 0;
 
-    do
-    {
+    do {
         timeout++;
         if (timeout > 0x4FFFFF) // 5s
             return TLS_SPI_STATUS_EBUSY;
@@ -151,7 +150,7 @@ static int SpiDmaBlockWrite(u8 * data, u32 len, u8 ifusecmd, u32 cmd)
             DmaDesc.dest_addr = HR_SPI_TXDATA_REG;
             blocksize = (txlen > SPI_DMA_MAX_TRANS_SIZE) ? SPI_DMA_MAX_TRANS_SIZE : txlen;
 
-            if (0 == blocksize)
+            if (blocksize == 0)
                 break;
             DmaDesc.dma_ctrl = TLS_DMA_DESC_CTRL_SRC_ADD_INC |
                                      TLS_DMA_DESC_CTRL_DATA_SIZE_WORD |
@@ -195,7 +194,7 @@ static int SpiDmaBlockWrite(u8 * data, u32 len, u8 ifusecmd, u32 cmd)
         SPIM_TXDATA_REG = word32;
         SPIM_MODECFG_REG = SPI_RX_TRIGGER_LEVEL(0) | SPI_TX_TRIGGER_LEVEL(0);
         SPIM_SPITIMEOUT_REG = SPI_TIMER_EN | SPI_TIME_OUT((u32) 0xffff);
-        if (ifusecmd && 0 == txcmdover)
+        if (ifusecmd && txcmdover == 0)
             temp = 4;
         SPIM_CHCFG_REG = SPI_FORCE_SPI_CS_OUT | SPI_TX_CHANNEL_ON | SPI_CONTINUE_MODE |
                             SPI_START | SPI_VALID_CLKS_NUM(((temp + len - txlenbk) * 8));
@@ -257,8 +256,9 @@ static int SpiDmaBlockRead(u8 * data, u32 len, u8 * txdata, u8 txlen)
         if (rxlenbk > 0) {
             DmaDesc.dest_addr = (int) (data + i * SPI_DMA_MAX_TRANS_SIZE);
             blocksize = (rxlen > SPI_DMA_MAX_TRANS_SIZE) ? SPI_DMA_MAX_TRANS_SIZE : rxlen;
-            if (0 == blocksize)
+            if (blocksize == 0) {
                 break;
+            }
             DmaDesc.dma_ctrl =
                 TLS_DMA_DESC_CTRL_DEST_ADD_INC | TLS_DMA_DESC_CTRL_BURST_SIZE1 |
                 TLS_DMA_DESC_CTRL_DATA_SIZE_WORD |
@@ -523,7 +523,6 @@ static void spi_start_transfer(u32 transfer_bytes)
     }
 
     spi_set_sclk_length(transfer_bytes * 8, 0);
-// if (0 == gSpiCsFlag)
     {
         spi_set_chipselect_mode(SPI_CS_ACTIVE_MODE);
     }
@@ -567,7 +566,6 @@ static void spi_continue_transfer(void)
 
     transfer_bytes =
         spi_fill_txfifo(current_transfer, spi_port->current_remaining_bytes);
-
     if (transfer_bytes) {
         spi_start_transfer(transfer_bytes);
     }
@@ -590,13 +588,11 @@ static void spi_scheduler(void *data)
             switch (msg) {
                 case SPI_SCHED_MSG_START_ENGINE:
                     if (spi_port->current_message) {
-                        TLS_DBGPRT_WARNING
-                            ("spi transaction scheduler is running now!\n");
+                        TLS_DBGPRT_WARNING("spi transaction scheduler is running now!\n");
                         break;
                     }
 
-                    TLS_DBGPRT_SPI_INFO
-                        ("acquire the first transaction message in waiting queue.\n");
+                    TLS_DBGPRT_SPI_INFO("acquire the first transaction message in waiting queue.\n");
                     tls_os_sem_acquire(spi_port->lock, 0);
 
                     spi_port->current_message = spi_next_message();
@@ -686,8 +682,7 @@ int tls_spi_setup(u8 mode, u8 cs_active, u32 fclk)
 
     if ((spi_port->mode == mode) && (spi_port->cs_active == cs_active)
         && (spi_port->speed_hz == fclk)) {
-        TLS_DBGPRT_WARNING
-            ("@mode, @cs_activer, @fclk is the same as settings of the current spi master driver!\n");
+        TLS_DBGPRT_WARNING("@mode, @cs_activer, @fclk is the same as settings of the current spi master driver!\n");
         return TLS_SPI_STATUS_OK;
     }
 
@@ -713,8 +708,7 @@ int tls_spi_setup(u8 mode, u8 cs_active, u32 fclk)
 
     tls_sys_clk_get(&sysclk);
 
-    if ((fclk < TLS_SPI_FCLK_MIN) || (fclk > sysclk.apbclk*UNIT_MHZ/2))        // TLS_SPI_FCLK_MAX
-    {
+    if ((fclk < TLS_SPI_FCLK_MIN) || (fclk > sysclk.apbclk*UNIT_MHZ/2)) {       // TLS_SPI_FCLK_MAX
         TLS_DBGPRT_ERR("@fclk is invalid!\n");
         return TLS_SPI_STATUS_ECLKNOSUPPORT;
     } else {
@@ -1050,8 +1044,7 @@ int tls_spi_sync(struct tls_spi_message *message)
 
     err = tls_os_sem_create(&sem, 0);
     if (err != TLS_OS_SUCCESS) {
-        TLS_DBGPRT_ERR
-            ("create spi transaction synchronizing semaphore fail!\n");
+        TLS_DBGPRT_ERR("create spi transaction synchronizing semaphore fail!\n");
         return TLS_SPI_STATUS_ENOMEM;
     }
 
@@ -1256,8 +1249,7 @@ int tls_spi_task_init(void)
 void tls_spi_queue_send(u32 msg)
 {
     if (TLS_SPI_STATUS_OK == tls_spi_task_init()) {
-        tls_os_queue_send(spi_port->msg_queue,
-                                      (void *) msg, 4);
+        tls_os_queue_send(spi_port->msg_queue, (void *) msg, 4);
     }
 }
 

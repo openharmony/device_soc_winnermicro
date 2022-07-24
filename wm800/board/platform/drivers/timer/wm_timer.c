@@ -23,11 +23,11 @@
  * Copyright (c) 2014 Winner Microelectronics Co., Ltd.
  */
 #include "wm_type_def.h"
-#include "wm_timer.h"
 #include "wm_regs.h"
 #include "wm_irq.h"
 #include "wm_cpu.h"
 #include "wm_pmu.h"
+#include "wm_timer.h"
 
 #include "tls_common.h"
 
@@ -68,9 +68,7 @@ static void timer_irq_callback(void *p)
 
     timer_id = (u8)(u32)p;
 
-    // timer_clear_irq(timer_id);
-
-    if (NULL != timer_context[timer_id].callback)
+    if (timer_context[timer_id].callback != NULL)
         timer_context[timer_id].callback(timer_context[timer_id].arg);
 
     return;
@@ -273,7 +271,6 @@ void tls_timer_destroy(u8 timer_id)
     timer_context[timer_id].arg      = NULL;
 
     wm_timer_bitmap &= ~BIT(timer_id);
-
     if (wm_timer_bitmap == 0) {
         tls_close_peripheral_clock(TLS_PERIPHERAL_TYPE_TIMER);
     }

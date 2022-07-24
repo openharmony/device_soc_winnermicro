@@ -215,9 +215,7 @@ int tls_spifls_write(u32 addr, u8 * buf, u32 len)
     sector_addr = addr / drv->sector_size;
     sector_num = (addr + write_bytes - 1) / drv->sector_size - sector_addr + 1;
 
-    TLS_DBGPRT_FLASH_INFO
-        ("write to flash: sector address - %d, sectors - %d.\n", sector_addr,
-         sector_num);
+    TLS_DBGPRT_FLASH_INFO("write to flash: sector address - %d, sectors - %d.\n", sector_addr, sector_num);
 
     err = TLS_FLS_STATUS_OK;
 
@@ -239,12 +237,12 @@ int tls_spifls_write(u32 addr, u8 * buf, u32 len)
             break;
         }
 
-        if (1 == sector_num) { /* flash write only in one sector */
+        if (sector_num == 1) { /* flash write only in one sector */
             MEMCPY(cache + (addr%drv->sector_size), buf, write_bytes);
             buf += write_bytes;
             write_bytes = 0;
         } else { /* flash write through some sectors */
-            if (0 == i) {
+            if (i == 0) {
                 MEMCPY(cache+(addr%drv->sector_size), buf, drv->sector_size - (addr%drv->sector_size));
                 buf += drv->sector_size - (addr%drv->sector_size);
                 write_bytes -= drv->sector_size - (addr%drv->sector_size);
@@ -268,11 +266,9 @@ int tls_spifls_write(u32 addr, u8 * buf, u32 len)
             break;
         }
 
-        TLS_DBGPRT_FLASH_INFO
-            ("finnaly, write the data in cache to the sector - %d.\n",
-             sector_addr + i);
+        TLS_DBGPRT_FLASH_INFO("finnaly, write the data in cache to the sector - %d.\n", sector_addr + i);
         err = tls_spifls_page_write((sector_addr +i) * (drv->sector_size / drv->page_size),
-                            cache, drv->sector_size / drv->page_size);
+                                    cache, drv->sector_size / drv->page_size);
         if (err != TLS_FLS_STATUS_OK) {
             tls_os_sem_release(spi_fls->fls_lock);
             TLS_DBGPRT_ERR("flash write fail(sector %d)!\n", (sector_addr + i));
@@ -416,8 +412,7 @@ int tls_spifls_drv_register(struct tls_fls_drv *fls_drv)
 
 int tls_spifls_drv_unregister(struct tls_fls_drv *fls_drv)
 {
-    TLS_DBGPRT_WARNING
-        ("unregister spi flash driver operation is not supported!\n");
+    TLS_DBGPRT_WARNING("unregister spi flash driver operation is not supported!\n");
     return TLS_FLS_STATUS_EPERM;
 }
 

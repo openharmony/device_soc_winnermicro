@@ -63,7 +63,7 @@
 #define     WM_WIFI_ELSI            3
 
 #define ETH_ALEN 6
-#endif
+// #endif
 
 /* bss type definition */
 #ifndef IEEE80211_MODE_INFRA
@@ -345,7 +345,7 @@ typedef void (*tls_wifi_psm_chipsleep_callback)(u32 sleeptime);
 typedef void (*tls_wifi_psm_postchipsleep_callback)(void);
 
 /** callback function of receive ETHERNET data */
-typedef int (*net_rx_data_cb)(const u8 *bssid, u8 *buf, u3
+typedef int (*net_rx_data_cb)(const u8 *bssid, u8 *buf, u32 buf_len);
 
 typedef void (*tls_wifi_data_ext_recv_callback)(u8* data, u32 data_len, struct tls_wifi_ext_t *ext);
 

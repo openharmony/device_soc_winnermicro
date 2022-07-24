@@ -28,8 +28,8 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <limits.h>
-#include "stddef.h"
 #include <csi_config.h>
+#include "stddef.h"
 #include "wm_config.h"
 #include "wm_regs.h"
 /* Minimum and maximum values a `signed int' can hold.  */
@@ -52,7 +52,6 @@
 #endif
 
 static unsigned char printf_port = 0;
-// 0 uart0; 1: uart1; other: close;
 unsigned char get_printf_port(void)
 {
     return printf_port;
@@ -128,17 +127,19 @@ static int __ip2str(unsigned char v4v6, unsigned int *inuint, char *outtxt)
     unsigned char l;
 
     if (4 == v4v6) {
-        for(unsigned char i = 0; i < 4; i++) {
+        for (unsigned char i = 0; i < 4; i++) {
             unsigned char bit = (*inuint >> (8 * i)) & 0xff;
             h = bit / 100;
-            if (h)
+            if (h) {
                 outtxt[j++] = '0' + h;
+            }
             m = (bit % 100) / 10;
             if (m) {
                 outtxt[j++] = '0' + m;
             } else {
-                if (h)
+                if (h) {
                     outtxt[j++] = '0';
+                }
             }
             l = (bit % 100) % 10;
             outtxt[j++] = '0' + l;
@@ -350,7 +351,8 @@ int wm_vsscanf(const char *buffer, const char *format, va_list ap)
                 if (ch == '%') {
                     state = st_flags;
                     flags = 0;
-                    rank = rank_int; width = UINT_MAX;
+                    rank = rank_int;
+                    width = UINT_MAX;
                 } else if (isspace((unsigned char)ch)) {
                     q = skipspace(q);
                 } else {
@@ -605,7 +607,7 @@ int wm_vsscanf(const char *buffer, const char *format, va_list ap)
 
                 match_run:            /* Match expression finished */
                     qq = q;
-                    while (width && *q && test_bit(matchmap, (unsigned char)*q)^matchinv) {
+                    while (width && *q && (test_bit(matchmap, (unsigned char)*q)^matchinv)) {
                         *sarg++ = *q++;
                     }
                     if (q != qq) {
@@ -618,8 +620,9 @@ int wm_vsscanf(const char *buffer, const char *format, va_list ap)
         }
     }
 
-    if (bail == bail_eof && !converted)
+    if (bail == bail_eof && !converted) {
         converted = -1;        /* Return EOF (-1) */
+    }
 
     return converted;
 }
@@ -723,11 +726,11 @@ static size_t _out_rev(out_fct_type out, char* buffer, size_t idx, size_t maxlen
     }
 
   // append pad spaces up to given width
-  if (flags & FLAGS_LEFT) {
+    if (flags & FLAGS_LEFT) {
         while (idx - start_idx < width) {
             out(' ', buffer, idx++, maxlen);
-      }
-  }
+        }
+    }
 
     return idx;
 }
@@ -1252,7 +1255,8 @@ static int _vsnprintf(out_fct_type out, char* buffer, const size_t maxlen, const
                                          false, base, precision, width, flags);
                     } else {
                         const unsigned int value = (flags & FLAGS_CHAR) ? (unsigned char)va_arg(va, unsigned int) : \
-                            (flags & FLAGS_SHORT) ? (unsigned short int)va_arg(va, unsigned int) : va_arg(va, unsigned int);
+                            (flags & FLAGS_SHORT) ? (unsigned short int)va_arg(va, unsigned int) : \
+                            va_arg(va, unsigned int);
                         idx = _ntoa_long(out, buffer, idx, maxlen, value, false, base, precision, width, flags);
                     }
                 }

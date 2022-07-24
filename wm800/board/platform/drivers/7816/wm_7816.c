@@ -27,10 +27,10 @@
 #include <string.h>
 #include <stdio.h>
 #include "wm_regs.h"
-#include "wm_7816.h"
 #include "wm_gpio.h"
 #include "wm_uart.h"
 #include "wm_cpu.h"
+#include "wm_7816.h"
 
 #include "wm_osal.h"
 

@@ -24,13 +24,13 @@
  */
 #include <string.h>
 #include "wm_regs.h"
-#include "wm_uart.h"
 #include "wm_debug.h"
 #include "wm_irq.h"
 #include "wm_config.h"
 #include "wm_mem.h"
 #include "wm_dma.h"
 #include "wm_cpu.h"
+#include "wm_uart.h"
 
 #if TLS_CONFIG_UART
 
@@ -263,8 +263,8 @@ void tls_uart_set_fc_status(int uart_no, TLS_UART_FLOW_CTRL_MODE_T status)
     port = &uart_port[uart_no];
     port->fcStatus = status;
     tls_uart_set_flow_ctrl(port, status);
-    if (TLS_UART_FLOW_CTRL_HARDWARE == port->opts.flow_ctrl && 0 == status && port->hw_stopped) // ׼���ر�����ʱ������tx�Ѿ�ֹͣ����Ҫ�ٴ�tx
-    {
+    // ׼���ر�����ʱ������tx�Ѿ�ֹͣ����Ҫ�ٴ�tx
+    if (port->opts.flow_ctrl == TLS_UART_FLOW_CTRL_HARDWARE && status == 0 && port->hw_stopped) {
         tls_uart_tx_enable(port);
         tls_uart_tx_chars(port);
         port->hw_stopped = 0;
@@ -296,7 +296,7 @@ static void tls_uart_tx_disable(struct tls_uart_port *port)
 
 static int tls_uart_config(struct tls_uart_port *port, struct tls_uart_options *opts)
 {
-    if (NULL == port || NULL == opts)
+    if (port == NULL || opts == NULL)
         return WM_FAILED;
 
     tls_uart_set_baud_rate_inside(port, opts->baudrate);
@@ -330,7 +330,7 @@ static int tls_uart_config(struct tls_uart_port *port, struct tls_uart_options *
  */
 static void uart_handle_cts_change(struct tls_uart_port *port, unsigned int status)
 {
-    if (((1 == port->fcStatus)
+    if (((port->fcStatus == 1)
          && (port->opts.flow_ctrl == TLS_UART_FLOW_CTRL_HARDWARE))
         && (port->uart_no == TLS_UART_1)) {
         if (port->hw_stopped) {
@@ -657,10 +657,10 @@ static int findOutIntUart(void)
     int i;
     u32 regValue;
 
-    for(i=TLS_UART_2; i< TLS_UART_MAX; i++) {
+    for (i=TLS_UART_2; i< TLS_UART_MAX; i++) {
         regValue = tls_reg_read32(HR_UART0_INT_SRC + i*STEP_SIZE);
         regValue &= 0x1FF;
-        if ( regValue )
+        if (regValue)
             break;
     }
     return i;
@@ -770,7 +770,7 @@ int tls_uart_port_init(u16 uart_no, tls_uart_options_t * opts, u8 modeChoose)
         return WM_FAILED;
     }
 
-    switch(uart_no) {
+    switch (uart_no) {
         case TLS_UART_0:
         case TLS_UART_1:
             tls_irq_disable((UART0_IRQn+uart_no));
@@ -882,7 +882,7 @@ void tls_uart_tx_sent_callback_register(u16 uart_no, s16(*tx_callback) (struct t
 int tls_uart_try_read(u16 uart_no, int32_t read_size)
 {
     int data_cnt = 0;
-    struct tls_uart_port *port = &uart_port[uart_no];;
+    struct tls_uart_port *port = &uart_port[uart_no];
     struct tls_uart_circ_buf *recv = &port->recv;
 
     data_cnt = CIRC_CNT(recv->head, recv->tail, TLS_UART_RX_BUF_SIZE);
