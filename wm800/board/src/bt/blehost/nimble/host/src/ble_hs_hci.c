@@ -20,6 +20,7 @@
 #include <string.h>
 #include <errno.h>
 #include <stdio.h>
+#include "securec.h"
 #include "os/os.h"
 #include "mem/mem.h"
 #include "nimble/ble_hci_trans.h"
@@ -195,7 +196,7 @@ static int ble_hs_hci_process_ack(uint16_t expected_opcode,
     /* Count events received */
     STATS_INC(ble_hs_stats, hci_event);
     /* Clear ack fields up front to silence spurious gcc warnings. */
-    memset(out_ack, 0, sizeof * out_ack);
+    memset_s(out_ack, sizeof * out_ack, 0, sizeof * out_ack);
 
     switch (ble_hs_hci_ack->opcode) {
         case BLE_HCI_EVCODE_COMMAND_COMPLETE:
@@ -223,7 +224,7 @@ static int ble_hs_hci_process_ack(uint16_t expected_opcode,
                 rc = BLE_HS_ECONTROLLER;
             }
 
-            memcpy(params_buf, out_ack->bha_params, out_ack->bha_params_len);
+            memcpy_s(params_buf, sizeof(params_buf), out_ack->bha_params, out_ack->bha_params_len);
         }
 
         out_ack->bha_params = params_buf;
@@ -428,27 +429,28 @@ int ble_hs_hci_frag_num_mbufs_free(void)
 
 static struct os_mbuf *ble_hs_hci_acl_hdr_prepend(struct os_mbuf *om, uint16_t handle, uint8_t pb_flag)
 {
+    struct os_mbuf *om_tmp = om;
     struct hci_data_hdr hci_hdr;
     struct os_mbuf *om2;
     hci_hdr.hdh_handle_pb_bc = ble_hs_hci_util_handle_pb_bc_join(handle, pb_flag, 0);
-    put_le16(&hci_hdr.hdh_len, OS_MBUF_PKTHDR(om)->omp_len);
-    om2 = os_mbuf_prepend(om, sizeof hci_hdr);
+    put_le16(&hci_hdr.hdh_len, OS_MBUF_PKTHDR(om_tmp)->omp_len);
+    om2 = os_mbuf_prepend(om_tmp, sizeof hci_hdr);
     if (om2 == NULL) {
         return NULL;
     }
 
-    om = om2;
-    om = os_mbuf_pullup(om, sizeof hci_hdr);
-    if (om == NULL) {
+    om_tmp = om2;
+    om_tmp = os_mbuf_pullup(om_tmp, sizeof hci_hdr);
+    if (om_tmp == NULL) {
         return NULL;
     }
 
-    memcpy(om->om_data, &hci_hdr, sizeof hci_hdr);
+    memcpy_s(om_tmp->om_data, sizeof(om_tmp->om_data), &hci_hdr, sizeof hci_hdr);
 #if !BLE_MONITOR
     BLE_HS_LOG(DEBUG, "host tx hci data; handle=%d length=%d\r\n", handle,
                get_le16(&hci_hdr.hdh_len));
 #endif
-    return om;
+    return om_tmp;
 }
 
 int ble_hs_hci_acl_tx_now(struct ble_hs_conn *conn, struct os_mbuf **om)

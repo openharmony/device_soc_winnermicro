@@ -19,6 +19,7 @@
 
 #include <string.h>
 #include <errno.h>
+#include "securec.h"
 #include "nimble/ble.h"
 #include "ble_hs_priv.h"
 #include "ble_l2cap_priv.h"
@@ -36,7 +37,7 @@ static struct ble_l2cap_coc_srv_list ble_l2cap_coc_srvs;
 static os_membuf_t ble_l2cap_coc_srv_mem[
                  OS_MEMPOOL_SIZE(MYNEWT_VAL(BLE_L2CAP_COC_MAX_NUM),
                                  sizeof(struct ble_l2cap_coc_srv))
- ];
+];
 
 static struct os_mempool ble_l2cap_coc_srv_pool;
 
@@ -55,7 +56,7 @@ static struct ble_l2cap_coc_srv *ble_l2cap_coc_srv_alloc(void)
     struct ble_l2cap_coc_srv *srv;
     srv = os_memblock_get(&ble_l2cap_coc_srv_pool);
     if (srv != NULL) {
-        memset(srv, 0, sizeof(*srv));
+        memset_s(srv, sizeof(*srv), 0, sizeof(*srv));
     }
 
     return srv;
@@ -303,8 +304,6 @@ int ble_l2cap_coc_create_srv_chan(struct ble_hs_conn *conn, uint16_t psm,
 static void ble_l2cap_event_coc_disconnected(struct ble_l2cap_chan *chan)
 {
     struct ble_l2cap_event event = { };
-
-    /* FIXME */
     if (!chan->cb) {
         return;
     }

@@ -18,6 +18,7 @@
  */
 
 #include "host/ble_monitor.h"
+#include "securec.h"
 
 #if BLE_MONITOR
 
@@ -181,7 +182,7 @@ static void monitor_write(const void *buf, size_t len)
     /* We will discard any packet which exceeds length of intermediate buffer */
     discard = rtt_pktbuf_pos + len > sizeof(rtt_pktbuf);
     if (!discard) {
-        memcpy(rtt_pktbuf + rtt_pktbuf_pos, buf, len);
+        memcpy_s(rtt_pktbuf + rtt_pktbuf_pos, sizeof(rtt_pktbuf + rtt_pktbuf_pos), buf, len);
     }
 
     rtt_pktbuf_pos += len;
@@ -307,7 +308,6 @@ int ble_monitor_init(void)
                                          rtt_buf, sizeof(rtt_buf),
                                          SEGGER_RTT_MODE_BLOCK_IF_FIFO_FULL);
 #endif
-
     if (rtt_index < 0) {
         return -1;
     }
@@ -353,8 +353,8 @@ int ble_monitor_new_index(uint8_t bus, uint8_t *addr, const char *name)
     struct ble_monitor_new_index pkt;
     pkt.type = 0; /* Primary controller, we don't support other */
     pkt.bus = bus;
-    memcpy(pkt.bdaddr, addr, 6); // 6:size
-    strncpy(pkt.name, name, sizeof(pkt.name) - 1);
+    memcpy_s(pkt.bdaddr, sizeof(pkt.bdaddr), addr, 6); // 6:size
+    strncpy_s(pkt.name, sizeof(pkt.name), name, sizeof(pkt.name) - 1);
     pkt.name[sizeof(pkt.name) - 1] = '\0';
     ble_monitor_send(BLE_MONITOR_OPCODE_NEW_INDEX, &pkt, sizeof(pkt));
     return 0;
@@ -367,7 +367,7 @@ int ble_monitor_log(int level, const char *fmt, ...)
     va_list va;
     int len;
     va_start(va, fmt);
-    len = vsnprintf(NULL, 0, fmt, va);
+    len = vsnprintf_s(NULL, 0, 0, fmt, va);
     va_end(va);
 
     switch (level) {

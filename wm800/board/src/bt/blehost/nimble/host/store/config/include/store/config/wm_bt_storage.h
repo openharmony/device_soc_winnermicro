@@ -128,8 +128,8 @@ extern int btif_config_filter_remove(const char *section, const char *filter[], 
                                      int max_allowed);
 extern int btif_config_exist(const char *section, const char *key, const char *name);
 extern int btif_config_flush(int force);
-extern int btif_config_save();
-extern void btif_clear_remote_all();
+extern int btif_config_save(void);
+extern void btif_clear_remote_all(void);
 extern int btif_wm_config_update_remote_device(const char *key);
 
 extern int btif_config_store_peer_sec(int idx, void *addr, uint8_t *payload, int length);
@@ -144,6 +144,6 @@ extern uint32_t btif_config_get_sec_cccd_item(int idx, void *addr, void *our_sec
     void *peer_sec, int peer_sec_size, void *cccd_info, int cccd_info_size);
 extern int btif_config_store_key_map(const uint8_t *map_info, int length, bool force_flush);
 extern int btif_config_load_key_map(uint8_t *map_info, int length);
-extern int btif_config_delete_all();
+extern int btif_config_delete_all(void);
 
 #endif

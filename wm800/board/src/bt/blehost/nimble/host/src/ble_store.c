@@ -18,9 +18,9 @@
  */
 
 #include <string.h>
-
-#include "host/ble_store.h"
+#include "securec.h"
 #include "ble_hs_priv.h"
+#include "host/ble_store.h"
 
 int ble_store_read(int obj_type, const union ble_store_key *key, union ble_store_value *val)
 {
@@ -57,7 +57,6 @@ int ble_store_write(int obj_type, const union ble_store_value *val)
                  * up some space.
                  */
                 rc = ble_store_overflow_event(obj_type, val);
-
                 if (rc != 0) {
                     return rc;
                 }
@@ -90,7 +89,7 @@ int ble_store_flush(void)
 {
     int rc;
     ble_hs_lock();
-     if (ble_hs_cfg.store_flush_cb == NULL) {
+    if (ble_hs_cfg.store_flush_cb == NULL) {
         rc = BLE_HS_ENOTSUP;
     } else {
         rc = ble_hs_cfg.store_flush_cb();
@@ -299,7 +298,7 @@ int ble_store_iterate(int obj_type,
     int idx = 0;
     uint8_t *pidx;
     /* a magic value to retrieve anything */
-    memset(&key, 0, sizeof(key));
+    memset_s(&key, sizeof(key), 0, sizeof(key));
 
     switch (obj_type) {
         case BLE_STORE_OBJ_TYPE_PEER_SEC:
@@ -362,7 +361,7 @@ int ble_store_clear(void)
     int rc;
     int i;
     /* A zeroed key will always retrieve the first value. */
-    memset(&key, 0, sizeof key);
+    memset_s(&key, sizeof(key), 0, sizeof key);
 
     for (i = 0; i < sizeof obj_types / sizeof obj_types[0]; i++) {
         int obj_type = obj_types[i];

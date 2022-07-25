@@ -38,7 +38,7 @@ struct ble_hs_periodic_sync *ble_hs_periodic_sync_alloc(void)
     struct ble_hs_periodic_sync *psync;
     psync = os_memblock_get(&ble_hs_periodic_sync_pool);
     if (psync) {
-        memset(psync, 0, sizeof(*psync));
+        memset_s(psync, sizeof(*psync), 0, sizeof(*psync));
     }
 
     return psync;
@@ -53,7 +53,7 @@ void ble_hs_periodic_sync_free(struct ble_hs_periodic_sync *psync)
     }
 
 #if MYNEWT_VAL(BLE_HS_DEBUG)
-    memset(psync, 0xff, sizeof * psync);
+    memset_s(psync, sizeof * psync, 0xff, sizeof * psync);
 #endif
     rc = os_memblock_put(&ble_hs_periodic_sync_pool, psync);
     BLE_HS_DBG_ASSERT_EVAL(rc == 0);

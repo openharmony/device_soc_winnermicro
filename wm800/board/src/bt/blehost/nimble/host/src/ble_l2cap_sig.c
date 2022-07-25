@@ -44,6 +44,7 @@
 
 #include <string.h>
 #include <errno.h>
+#include "securec.h"
 #include "nimble/ble.h"
 #include "host/ble_monitor.h"
 #include "ble_hs_priv.h"
@@ -81,7 +82,7 @@ struct ble_l2cap_sig_proc {
             ble_l2cap_sig_update_fn *cb;
             void *cb_arg;
         } update;
-#if MYNEWT_VAL(BLE_L2CAP_COC_MAX_NUM) != 0            
+#if MYNEWT_VAL(BLE_L2CAP_COC_MAX_NUM) != 0
         struct {
             uint8_t chan_cnt;
             struct ble_l2cap_chan *chan[BLE_L2CAP_MAX_COC_CONN_REQ];
@@ -89,7 +90,7 @@ struct ble_l2cap_sig_proc {
         struct {
             struct ble_l2cap_chan *chan;
         } disconnect;
-#endif        
+#endif
 #if MYNEWT_VAL(BLE_L2CAP_ENHANCED_COC)
         struct {
             uint8_t cid_cnt;
@@ -219,7 +220,7 @@ static struct ble_l2cap_sig_proc *ble_l2cap_sig_proc_alloc(void)
     struct ble_l2cap_sig_proc *proc;
     proc = os_memblock_get(&ble_l2cap_sig_proc_pool);
     if (proc != NULL) {
-        memset(proc, 0, sizeof * proc);
+        memset_s(proc, sizeof * proc, 0, sizeof * proc);
     }
 
     return proc;
@@ -233,7 +234,7 @@ static void ble_l2cap_sig_proc_free(struct ble_l2cap_sig_proc *proc)
     if (proc != NULL) {
         ble_l2cap_sig_dbg_assert_proc_not_inserted(proc);
 #if MYNEWT_VAL(BLE_HS_DEBUG)
-        memset(proc, 0xff, sizeof * proc);
+        memset_s(proc, sizeof * proc, 0xff, sizeof * proc);
 #endif
         int rc = os_memblock_put(&ble_l2cap_sig_proc_pool, proc);
         BLE_HS_DBG_ASSERT_EVAL(rc == 0);
@@ -859,7 +860,7 @@ static int ble_l2cap_sig_credit_base_con_req_rx(uint16_t conn_handle,
     }
 
     ble_hs_lock();
-    memset(rsp, 0, len);
+    memset_s(rsp, sizeof(*rsp), 0, len);
     /* Initial dummy values in case of error, just to satisfy PTS */
     rsp->credits = htole16(1);
     rsp->mps = htole16(BLE_L2CAP_ECOC_MIN_MTU);
@@ -1072,7 +1073,7 @@ static int ble_l2cap_sig_coc_req_rx(uint16_t conn_handle, struct ble_l2cap_sig_h
         return 0;
     }
 
-    memset(rsp, 0, sizeof(*rsp));
+    memset_s(rsp, sizeof(*rsp), 0, sizeof(*rsp));
     req = (struct ble_l2cap_sig_le_con_req *)(*om)->om_data;
     ble_hs_lock();
     conn = ble_hs_conn_find_assert(conn_handle);
@@ -1342,7 +1343,7 @@ done:
 }
 
 int ble_l2cap_sig_coc_reconfig(uint16_t conn_handle, struct ble_l2cap_chan *chans[],
-                           uint8_t num, uint16_t new_mtu)
+                               uint8_t num, uint16_t new_mtu)
 {
     struct ble_hs_conn *conn;
     struct ble_l2cap_sig_proc *proc;
@@ -1464,7 +1465,7 @@ static void ble_l2cap_sig_coc_disconnect_cb(struct ble_l2cap_sig_proc *proc, int
         return;
     }
 
-    memset(&event, 0, sizeof(event));
+    memset_s(&event, sizeof(event), 0, sizeof(event));
     chan = proc->disconnect.chan;
     if (!chan) {
         return;
@@ -1487,7 +1488,7 @@ done:
 }
 
 static int ble_l2cap_sig_disc_rsp_rx(uint16_t conn_handle, struct ble_l2cap_sig_hdr *hdr,
-                          struct os_mbuf **om)
+                                     struct os_mbuf **om)
 {
     struct ble_l2cap_sig_disc_rsp *rsp;
     struct ble_l2cap_sig_proc *proc;
@@ -1751,6 +1752,8 @@ void ble_l2cap_sig_conn_broken(uint16_t conn_handle, int reason)
                 break;
 #endif
 #endif
+            default:
+            break;
         }
 
         STAILQ_REMOVE_HEAD(&ble_l2cap_sig_procs, next);
@@ -1793,6 +1796,8 @@ int32_t ble_l2cap_sig_timer(void)
                 ble_l2cap_sig_coc_disconnect_cb(proc, BLE_HS_ETIMEOUT);
                 break;
 #endif
+            default:
+            break;
         }
 
         STAILQ_REMOVE_HEAD(&temp_list, next);

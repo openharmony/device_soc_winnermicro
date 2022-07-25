@@ -250,7 +250,7 @@ os_error_t os_memblock_put_from_cb(struct os_mempool *mp, void *block_addr);
  */
 os_error_t os_memblock_put(struct os_mempool *mp, void *block_addr);
 
-void os_mempool_reset();
+void os_mempool_reset(void);
 
 #ifdef __cplusplus
 }

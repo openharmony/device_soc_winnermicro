@@ -18,6 +18,7 @@
  */
 
 #include <string.h>
+#include "securec.h"
 #include "host/ble_hs_adv.h"
 #include "ble_hs_priv.h"
 
@@ -49,7 +50,7 @@ int ble_ibeacon_set_adv_data(void *uuid128, uint16_t major, uint16_t minor, int8
     buf[2] = 0x02; // 2:array element
     buf[3] = 0x15; // 3:array element
     /** UUID. */
-    memcpy(buf + 4, uuid128, 16); // 4:byte alignment, 16:size
+    memcpy_s(buf + 4, sizeof(buf + 4), uuid128, 16); // 4:byte alignment, 16:size
     /** Version number. */
     put_be16(buf + 20, major); // 20:byte alignment
     put_be16(buf + 22, minor); // 22:byte alignment
@@ -60,7 +61,7 @@ int ble_ibeacon_set_adv_data(void *uuid128, uint16_t major, uint16_t minor, int8
     }
 
     buf[24] = measured_power; // 24:array element
-    memset(&fields, 0, sizeof fields);
+    memset_s(&fields, sizeof fields, 0, sizeof fields);
     fields.mfg_data = buf;
     fields.mfg_data_len = sizeof buf;
     /* Advertise two flags:

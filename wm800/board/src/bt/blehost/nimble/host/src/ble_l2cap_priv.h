@@ -20,9 +20,9 @@
 #ifndef H_L2CAP_PRIV_
 #define H_L2CAP_PRIV_
 
+#include <stdint.h>
 #include "ble_l2cap_coc_priv.h"
 #include "host/ble_l2cap.h"
-#include <stdint.h>
 #include "stats/stats.h"
 #include "os/queue.h"
 #include "os/os_mbuf.h"

@@ -135,7 +135,7 @@ struct ble_hs_conn *ble_hs_conn_alloc(uint16_t conn_handle)
         goto err;
     }
 
-    memset(conn, 0, sizeof * conn);
+    memset_s(conn, sizeof * conn, 0, sizeof * conn);
     conn->bhc_handle = conn_handle;
     conn->tx_ll_mtu = MYNEWT_VAL(BLE_LL_CONN_INIT_MAX_TX_BYTES);
     SLIST_INIT(&conn->bhc_channels);
@@ -231,7 +231,7 @@ void ble_hs_conn_free(struct ble_hs_conn *conn)
     }
 
 #if MYNEWT_VAL(BLE_HS_DEBUG)
-    memset(conn, 0xff, sizeof * conn);
+    memset_s(conn, sizeof * conn, 0xff, sizeof * conn);
 #endif
     rc = os_memblock_put(&ble_hs_conn_pool, conn);
     BLE_HS_DBG_ASSERT_EVAL(rc == 0);
@@ -368,7 +368,7 @@ void ble_hs_conn_addrs(const struct ble_hs_conn *conn, struct ble_hs_conn_addrs 
     rc = ble_hs_id_addr(addrs->our_id_addr.type, &our_id_addr_val, NULL);
     assert(rc == 0);
 #endif
-    memcpy(addrs->our_id_addr.val, our_id_addr_val, 6); // 6:size
+    memcpy_s(addrs->our_id_addr.val, sizeof(addrs->our_id_addr.val), our_id_addr_val, 6); // 6:size
 
     if (memcmp(conn->bhc_our_rpa_addr.val, ble_hs_conn_null_addr, 6) == 0) { // 6:size
         addrs->our_ota_addr = addrs->our_id_addr;
@@ -493,7 +493,6 @@ int ble_hs_conn_init(void)
     rc = os_mempool_init(&ble_hs_conn_pool, MYNEWT_VAL(BLE_MAX_CONNECTIONS),
                          sizeof(struct ble_hs_conn),
                          ble_hs_conn_elem_mem, "ble_hs_conn_pool");
-
     if (rc != 0) {
         return BLE_HS_EOS;
     }

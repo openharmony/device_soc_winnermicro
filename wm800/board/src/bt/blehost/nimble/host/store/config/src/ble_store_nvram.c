@@ -19,7 +19,7 @@
 */
 
 #include "syscfg/syscfg.h"
-
+#include "securec.h"
 #if MYNEWT_VAL(BLE_STORE_CONFIG_PERSIST)
 
 #include <string.h>
@@ -120,7 +120,6 @@ static int ble_nvs_restore_sec_keys()
     for (i = 0; i < MYNEWT_VAL(BLE_STORE_MAX_BONDS); i++) {
         nv_tag_valid = btif_config_get_sec_cccd_item(i, &addr, &our_sec, sizeof(our_sec), &peer_sec,
                        sizeof(peer_sec), &cccd_info[0], sizeof(cccd_info));
-
         if (nv_tag_valid) {
             if (nv_tag_valid & OUR_SEC_VALID_BIT_MASK) {
                 BLE_HS_LOG(ERROR, "load our  sec; ");
@@ -146,7 +145,7 @@ static int ble_nvs_restore_sec_keys()
 
                 for (j = 0; j < cccd_count; j++) {
                     BLE_HS_LOG(ERROR, "load our cccd; ");
-                    memcpy(&cccd.peer_addr, &addr, sizeof(ble_addr_t));
+                    memcpy_s(&cccd.peer_addr, sizeof(cccd.peer_addr), &addr, sizeof(ble_addr_t));
                     cccd.chr_val_handle = ptr_value->chr_val_handle;
                     cccd.flags = ptr_value->flags;
                     cccd.value_changed = ptr_value->value_changed;
@@ -177,7 +176,7 @@ int ble_store_config_persist_cccds(bool flush)
         cccd_nvram_array[i].offset = 0;
     }
 
-    /*prepare the nvram information*/
+    /* prepare the nvram information */
     for (i = 0; i < ble_store_config_num_cccds; i++) {
         ptr_byte = (uint8_t *)&ble_store_config_cccds[i];
         ptr_byte += 8; // 8:value offset; dword alignment
@@ -186,7 +185,9 @@ int ble_store_config_persist_cccds(bool flush)
         for (j = 0; j < prefer_index; j++) {
             rc = ble_addr_cmp(&ble_store_config_cccds[i].peer_addr, &cccd_nvram_array[j].addr);
             if (!rc) {
-                memcpy(&cccd_nvram_array[j].value[cccd_nvram_array[j].offset], ptr_byte, sizeof(ble_store_value_t));
+                memcpy_s(&cccd_nvram_array[j].value[cccd_nvram_array[j].offset],
+                    sizeof(cccd_nvram_array[j].value[cccd_nvram_array[j].offset]),
+                        ptr_byte, sizeof(ble_store_value_t));
                 cccd_nvram_array[j].offset++;
                 found = 1;
                 break;
@@ -196,8 +197,11 @@ int ble_store_config_persist_cccds(bool flush)
         if (found) { continue; }
 
         if (j == prefer_index) {
-            memcpy(&cccd_nvram_array[j].addr, &ble_store_config_cccds[i].peer_addr, sizeof(ble_addr_t));
-            memcpy(&cccd_nvram_array[j].value[cccd_nvram_array[j].offset], ptr_byte, sizeof(ble_store_value_t));
+            memcpy_s(&cccd_nvram_array[j].addr, sizeof(cccd_nvram_array[j].addr),
+                &ble_store_config_cccds[i].peer_addr, sizeof(ble_addr_t));
+            memcpy_s(&cccd_nvram_array[j].value[cccd_nvram_array[j].offset],
+                sizeof(cccd_nvram_array[j].value[cccd_nvram_array[j].offset]),
+                    ptr_byte, sizeof(ble_store_value_t));
             cccd_nvram_array[j].offset++;
             prefer_index++;
         }
@@ -236,7 +240,6 @@ int ble_store_config_persist_peer_secs(bool flush)
 
     for (i = 0; i < ble_store_config_num_peer_secs; i++) {
         nv_idx  = btif_config_get_sec_index(&ble_store_config_peer_secs[i].peer_addr, &found);
-
         if (nv_idx < 0) {
             BLE_HS_LOG(ERROR, "PEER SEC Full, impossible[i=%d][%d]\r\n", i, ble_store_config_num_peer_secs);
             return -1;
@@ -280,11 +283,12 @@ int ble_store_config_persist_our_secs(bool flush)
     if (flush)ble_store_config_persist_flush();
     return 0;
 }
+
 void ble_store_config_persist_flush()
 {
     btif_config_flush(1);
-
 }
+
 int ble_store_config_delete_all()
 {
     btif_config_delete_all();
@@ -293,7 +297,7 @@ int ble_store_config_delete_all()
 
 void ble_store_config_conf_init()
 {
-    memset(cccd_nvram_array, 0, sizeof(cccd_nvram_t)*MYNEWT_VAL(BLE_STORE_MAX_BONDS));
+    memset_s(cccd_nvram_array, sizeof(cccd_nvram_array), 0, sizeof(cccd_nvram_t)*MYNEWT_VAL(BLE_STORE_MAX_BONDS));
     ble_nvs_restore_sec_keys();
     return;
 }
