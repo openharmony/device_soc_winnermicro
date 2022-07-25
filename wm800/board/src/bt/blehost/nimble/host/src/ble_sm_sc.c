@@ -18,7 +18,7 @@
  */
 
 #include <string.h>
-
+#include "securec.h"
 #include "nimble/nimble_opt.h"
 #include "host/ble_sm.h"
 #include "ble_hs_priv.h"
@@ -84,9 +84,9 @@ static uint8_t ble_sm_dbg_sc_keys_set;
 
 void ble_sm_dbg_set_sc_keys(uint8_t *pubkey, uint8_t *privkey)
 {
-    memcpy(ble_sm_dbg_sc_pub_key, pubkey,
+    memcpy_s(ble_sm_dbg_sc_pub_key, sizeof(ble_sm_dbg_sc_pub_key), pubkey,
            sizeof ble_sm_dbg_sc_pub_key);
-    memcpy(ble_sm_dbg_sc_priv_key, privkey,
+    memcpy_s(ble_sm_dbg_sc_priv_key, sizeof(ble_sm_dbg_sc_priv_key), privkey,
            sizeof ble_sm_dbg_sc_priv_key);
     ble_sm_dbg_sc_keys_set = 1;
 }
@@ -150,8 +150,8 @@ static int ble_sm_gen_pub_priv(uint8_t *pub, uint8_t *priv)
 
     if (ble_sm_dbg_sc_keys_set) {
         ble_sm_dbg_sc_keys_set = 0;
-        memcpy(pub, ble_sm_dbg_sc_pub_key, sizeof ble_sm_dbg_sc_pub_key);
-        memcpy(priv, ble_sm_dbg_sc_priv_key, sizeof ble_sm_dbg_sc_priv_key);
+        memcpy_s(pub, sizeof(*pub), ble_sm_dbg_sc_pub_key, sizeof ble_sm_dbg_sc_pub_key);
+        memcpy_s(priv, sizeof(*priv), ble_sm_dbg_sc_priv_key, sizeof ble_sm_dbg_sc_priv_key);
         return 0;
     }
 
@@ -380,7 +380,7 @@ void ble_sm_sc_random_exec(struct ble_sm_proc *proc, struct ble_sm_result *res)
         return;
     }
 
-    memcpy(cmd->value, ble_sm_our_pair_rand(proc), 16); // 16:size
+    memcpy_s(cmd->value, sizeof(cmd->value), ble_sm_our_pair_rand(proc), 16); // 16:size
     rc = ble_sm_tx(proc->conn_handle, txom);
     if (rc != 0) {
         res->app_status = rc;
@@ -457,15 +457,15 @@ void ble_sm_sc_random_rx(struct ble_sm_proc *proc, struct ble_sm_result *res)
     }
 
     /* Ensure proper key size */
-    memset(proc->ltk + proc->key_size, 0, sizeof proc->ltk - proc->key_size);
+    memset_s(proc->ltk + proc->key_size, sizeof(proc->ltk + proc->key_size), 0, sizeof proc->ltk - proc->key_size);
     /* Ensure the ltk gets persisted when the pairing procedure succeeds. */
-    memcpy(proc->our_keys.ltk, proc->ltk, sizeof proc->our_keys.ltk);
+    memcpy_s(proc->our_keys.ltk, sizeof(proc->our_keys.ltk), proc->ltk, sizeof proc->our_keys.ltk);
     proc->our_keys.ltk_valid = 1;
     proc->our_keys.ediv = 0;
     proc->our_keys.rand_val = 0;
     proc->our_keys.ediv_rand_valid = 1;
     proc->our_keys.key_size = proc->key_size;
-    memcpy(proc->peer_keys.ltk, proc->ltk, sizeof proc->peer_keys.ltk);
+    memcpy_s(proc->peer_keys.ltk, sizeof(proc->peer_keys.ltk), proc->ltk, sizeof proc->peer_keys.ltk);
     proc->peer_keys.ltk_valid = 1;
     proc->peer_keys.ediv = 0;
     proc->peer_keys.rand_val = 0;
@@ -518,8 +518,8 @@ void ble_sm_sc_public_key_exec(struct ble_sm_proc *proc, struct ble_sm_result *r
         return;
     }
 
-    memcpy(cmd->x, ble_sm_sc_pub_key + 0, 32); // 32:size
-    memcpy(cmd->y, ble_sm_sc_pub_key + 32, 32); // 32:byte alignment & size
+    memcpy_s(cmd->x, sizeof(cmd->x), ble_sm_sc_pub_key + 0, 32); // 32:size
+    memcpy_s(cmd->y, sizeof(cmd->y), ble_sm_sc_pub_key + 32, 32); // 32:byte alignment & size
     res->app_status = ble_sm_tx(proc->conn_handle, txom);
     if (res->app_status != 0) {
         res->enc_cb = 1;
@@ -577,7 +577,7 @@ void ble_sm_sc_public_key_rx(uint16_t conn_handle, struct os_mbuf **om, struct b
         res->app_status = BLE_HS_ENOENT;
         res->sm_err = BLE_SM_ERR_UNSPECIFIED;
     } else {
-        memcpy(&proc->pub_key_peer, cmd, sizeof(*cmd));
+        memcpy_s(&proc->pub_key_peer, sizeof(proc->pub_key_peer), cmd, sizeof(*cmd));
         rc = ble_sm_alg_gen_dhkey(proc->pub_key_peer.x,
                                   proc->pub_key_peer.y,
                                   ble_sm_sc_priv_key,
@@ -647,9 +647,9 @@ void ble_sm_sc_dhkey_check_exec(struct ble_sm_proc *proc, struct ble_sm_result *
 
     if (proc->pair_alg == BLE_SM_PAIR_ALG_OOB) {
         if (proc->oob_data_remote) {
-            memcpy(proc->tk, proc->oob_data_remote->r, 16); // 16:size
+            memcpy_s(proc->tk, sizeof(proc->tk), proc->oob_data_remote->r, 16); // 16:size
         } else {
-            memset(proc->tk, 0, 16); // 16:size
+            memset_s(proc->tk, sizeof(proc->tk), 0, 16); // 16:size
         }
     }
 
@@ -703,9 +703,9 @@ static void ble_sm_dhkey_check_process(struct ble_sm_proc *proc,
 
         if (proc->pair_alg == BLE_SM_PAIR_ALG_OOB) {
             if (pair_rsp->oob_data_flag) {
-                memcpy(proc->tk, proc->oob_data_local->r, 16); // 16:size
+                memcpy_s(proc->tk, sizeof(proc->tk), proc->oob_data_local->r, 16); // 16:size
             } else {
-                memset(proc->tk, 0, 16); // 16:size
+                memset_s(proc->tk, sizeof(proc->tk), 0, 16); // 16:size
             }
         }
     } else {
@@ -715,9 +715,9 @@ static void ble_sm_dhkey_check_process(struct ble_sm_proc *proc,
 
         if (proc->pair_alg == BLE_SM_PAIR_ALG_OOB) {
             if (pair_req->oob_data_flag) {
-                memcpy(proc->tk, proc->oob_data_local->r, 16); // 16:size
+                memcpy_s(proc->tk, sizeof(proc->tk), proc->oob_data_local->r, 16); // 16:size
             } else {
-                memset(proc->tk, 0, 16); // 16:size
+                memset_s(proc->tk, sizeof(proc->tk), 0, 16); // 16:size
             }
         }
     }
@@ -767,7 +767,7 @@ static void ble_sm_dhkey_check_process(struct ble_sm_proc *proc,
 }
 
 void ble_sm_sc_dhkey_check_rx(uint16_t conn_handle, struct os_mbuf **om,
-                         struct ble_sm_result *res)
+                              struct ble_sm_result *res)
 {
     struct ble_sm_dhkey_check *cmd;
     struct ble_sm_proc *proc;
@@ -792,8 +792,8 @@ void ble_sm_sc_dhkey_check_rx(uint16_t conn_handle, struct os_mbuf **om,
 }
 
 bool ble_sm_sc_oob_data_check(struct ble_sm_proc *proc,
-                         bool oob_data_local_present,
-                         bool oob_data_remote_present)
+                              bool oob_data_local_present,
+                              bool oob_data_remote_present)
 {
     struct ble_sm_pair_cmd *pair_req;
     struct ble_sm_pair_cmd *pair_rsp;

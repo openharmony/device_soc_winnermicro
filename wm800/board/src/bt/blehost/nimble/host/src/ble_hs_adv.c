@@ -19,9 +19,10 @@
 
 #include <string.h>
 #include <errno.h>
+#include "securec.h"
 #include "nimble/ble.h"
-#include "host/ble_hs_adv.h"
 #include "ble_hs_priv.h"
+#include "host/ble_hs_adv.h"
 
 struct find_field_data {
     uint8_t type;
@@ -35,9 +36,10 @@ static ble_uuid128_t ble_hs_adv_uuids128[BLE_HS_ADV_MAX_FIELD_SZ / 16];
 static int ble_hs_adv_set_hdr(uint8_t type, uint8_t data_len, uint8_t max_len,
                               uint8_t *dst, uint8_t *dst_len, struct os_mbuf *om)
 {
+    uint8_t data_len_tmp = data_len;
     if (om) {
-        data_len++;
-        int rc = os_mbuf_append(om, &data_len, sizeof(data_len));
+        data_len_tmp++;
+        int rc = os_mbuf_append(om, &data_len_tmp, sizeof(data_len_tmp));
         if (rc) {
             return rc;
         }
@@ -45,11 +47,11 @@ static int ble_hs_adv_set_hdr(uint8_t type, uint8_t data_len, uint8_t max_len,
         return os_mbuf_append(om, &type, sizeof(type));
     }
 
-    if (*dst_len + 2 + data_len > max_len) { // 2:byte alignment
+    if (*dst_len + 2 + data_len_tmp > max_len) { // 2:byte alignment
         return BLE_HS_EMSGSIZE;
     }
 
-    dst[*dst_len] = data_len + 1;
+    dst[*dst_len] = data_len_tmp + 1;
     dst[*dst_len + 1] = type;
     *dst_len += 2; // 2:byte alignment
     return 0;
@@ -70,7 +72,7 @@ static int ble_hs_adv_set_flat_mbuf(uint8_t type, int data_len, const void *data
         return os_mbuf_append(om, data, data_len);
     }
 
-    memcpy(dst + *dst_len, data, data_len);
+    memcpy_s(dst + *dst_len, sizeof(dst + *dst_len), data, data_len);
     *dst_len += data_len;
     return 0;
 }
@@ -305,7 +307,6 @@ static int adv_set_fields(const struct ble_hs_adv_fields *adv_fields,
          */
         if (adv_fields->tx_pwr_lvl == BLE_HS_ADV_TX_PWR_LVL_AUTO) {
             rc = ble_hs_hci_util_read_adv_tx_pwr(&tx_pwr_lvl);
-
             if (rc != 0) {
                 return rc;
             }
@@ -707,16 +708,18 @@ int ble_hs_adv_parse_fields(struct ble_hs_adv_fields *adv_fields,
                             const uint8_t *src, uint8_t src_len)
 {
     uint8_t field_len;
-    memset(adv_fields, 0, sizeof * adv_fields);
+    const uint8_t *src_tmp = src;
+    uint8_t src_len_tmp = src_len;
+    memset_s(adv_fields, sizeof * adv_fields, 0, sizeof * adv_fields);
 
-    while (src_len > 0) {
-        int rc = ble_hs_adv_parse_one_field(adv_fields, &field_len, src, src_len);
+    while (src_len_tmp > 0) {
+        int rc = ble_hs_adv_parse_one_field(adv_fields, &field_len, src_tmp, src_len_tmp);
         if (rc != 0) {
             return rc;
         }
 
-        src += field_len;
-        src_len -= field_len;
+        src_tmp += field_len;
+        src_len_tmp -= field_len;
     }
 
     return 0;
@@ -725,7 +728,6 @@ int ble_hs_adv_parse_fields(struct ble_hs_adv_fields *adv_fields,
 int ble_hs_adv_parse(const uint8_t *data, uint8_t length,
                      ble_hs_adv_parse_func_t func, void *user_data)
 {
-
     while (length > 1) {
         const struct ble_hs_adv_field *field = (const void *) data;
 

@@ -157,8 +157,7 @@ struct os_mqueue {
  * @param om                    Pointer to the head of an mbuf chain.
  */
 #define OS_MBUF_USRHDR(om)                              \
-    (void *)((uint8_t *)om + sizeof (struct os_mbuf) +  \
-             sizeof (struct os_mbuf_pkthdr))
+    (void *)((uint8_t *)om + sizeof (struct os_mbuf) + sizeof (struct os_mbuf_pkthdr))
 
 /**
  * Retrieves the length of the user header in an mbuf.

@@ -18,6 +18,7 @@
  */
 
 #include <string.h>
+#include "securec.h"
 #include "ble_hs_priv.h"
 
 int ble_l2cap_sig_tx(uint16_t conn_handle, struct os_mbuf *txom)
@@ -55,7 +56,7 @@ int ble_l2cap_sig_reject_tx(uint16_t conn_handle, uint8_t id, uint16_t reason,
     }
 
     cmd->reason = htole16(reason);
-    memcpy(cmd->data, data, data_len);
+    memcpy_s(cmd->data, sizeof(cmd->data), data, data_len);
     STATS_INC(ble_l2cap_stats, sig_rx);
     return ble_l2cap_sig_tx(conn_handle, txom);
 }

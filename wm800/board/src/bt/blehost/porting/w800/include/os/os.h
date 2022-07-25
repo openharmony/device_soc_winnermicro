@@ -27,6 +27,8 @@
 #include "os/os_error.h"
 #include "os/os_mbuf.h"
 #include "os/os_mempool.h"
+#include "syscfg/syscfg.h"
+#include "nimble/nimble_npl.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -40,9 +42,6 @@ extern "C" {
 #define max(a, b) ((a)>(b)?(a):(b))
 #endif
 
-#include "syscfg/syscfg.h"
-#include "nimble/nimble_npl.h"
-
 #define OS_ALIGN(__n, __a) (                             \
         (((__n) & ((__a) - 1)) == 0)                   ? \
             (__n)                                      : \
@@ -51,7 +50,7 @@ extern "C" {
 #define OS_ALIGNMENT    (BLE_NPL_OS_ALIGNMENT)
 
 typedef uint32_t os_sr_t;
-#define OS_ENTER_CRITICAL(_sr) (_sr = ble_npl_hw_enter_critical())
+#define OS_ENTER_CRITICAL(_sr) ((_sr = ble_npl_hw_enter_critical()))
 #define OS_EXIT_CRITICAL(_sr) (ble_npl_hw_exit_critical(_sr))
 #define OS_ASSERT_CRITICAL() assert(ble_npl_hw_is_in_critical())
 

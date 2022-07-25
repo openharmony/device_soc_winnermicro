@@ -52,19 +52,19 @@ static void ble_store_ram_print_value_sec(const struct ble_store_value_sec *sec)
     if (sec->ltk_present) {
         BLE_HS_LOG(DEBUG, "ediv=%u rand=%llu authenticated=%d ltk=",
                    sec->ediv, sec->rand_num, sec->authenticated);
-        ble_hs_log_flat_buf(sec->ltk, 16); //16:len
+        ble_hs_log_flat_buf(sec->ltk, 16); // 16:len
         BLE_HS_LOG(DEBUG, " ");
     }
 
     if (sec->irk_present) {
         BLE_HS_LOG(DEBUG, "irk=");
-        ble_hs_log_flat_buf(sec->irk, 16); //16:len
+        ble_hs_log_flat_buf(sec->irk, 16); // 16:len
         BLE_HS_LOG(DEBUG, " ");
     }
 
     if (sec->csrk_present) {
         BLE_HS_LOG(DEBUG, "csrk=");
-        ble_hs_log_flat_buf(sec->csrk, 16); //16:len
+        ble_hs_log_flat_buf(sec->csrk, 16); // 16:len
         BLE_HS_LOG(DEBUG, " ");
     }
 
@@ -76,7 +76,7 @@ static void ble_store_ram_print_key_sec(const struct ble_store_key_sec *key_sec)
     if (ble_addr_cmp(&key_sec->peer_addr, BLE_ADDR_ANY)) {
         BLE_HS_LOG(DEBUG, "peer_addr_type=%d peer_addr=",
                    key_sec->peer_addr.type);
-        ble_hs_log_flat_buf(key_sec->peer_addr.val, 6); //6:len
+        ble_hs_log_flat_buf(key_sec->peer_addr.val, 6); // 6:len
         BLE_HS_LOG(DEBUG, " ");
     }
 
@@ -164,7 +164,7 @@ static int ble_store_ram_write_our_sec(const struct ble_store_value_sec *value_s
 }
 
 static int ble_store_ram_delete_obj(void *values, int value_size, int idx,
-                         int *num_values)
+                                    int *num_values)
 {
     uint8_t *dst;
 
@@ -226,7 +226,7 @@ static int ble_store_ram_delete_peer_sec(const struct ble_store_key_sec *key_sec
 }
 
 static int ble_store_ram_read_peer_sec(const struct ble_store_key_sec *key_sec,
-                            struct ble_store_value_sec *value_sec)
+                                       struct ble_store_value_sec *value_sec)
 {
     int idx;
     idx = ble_store_ram_find_sec(key_sec, ble_store_ram_peer_secs,
@@ -321,7 +321,7 @@ static int ble_store_ram_delete_cccd(const struct ble_store_key_cccd *key_cccd)
 }
 
 static int ble_store_ram_read_cccd(const struct ble_store_key_cccd *key_cccd,
-                        struct ble_store_value_cccd *value_cccd)
+                                   struct ble_store_value_cccd *value_cccd)
 {
     int idx;
     idx = ble_store_ram_find_cccd(key_cccd);
@@ -364,11 +364,11 @@ static int ble_store_ram_write_cccd(const struct ble_store_value_cccd *value_ccc
  * @return                      0 if a key was found; else BLE_HS_ENOENT.
  */
 int ble_store_ram_read(int obj_type, const union ble_store_key *key,
-                   union ble_store_value *value)
+                       union ble_store_value *value)
 {
     int rc;
 
-    switch(obj_type) {
+    switch (obj_type) {
         case BLE_STORE_OBJ_TYPE_PEER_SEC:
             /* An encryption procedure (bonding) is being attempted.  The nimble
              * stack is asking us to look in our key database for a long-term key
@@ -432,7 +432,7 @@ int ble_store_ram_delete(int obj_type, const union ble_store_key *key)
 {
     int rc;
 
-    switch(obj_type) {
+    switch (obj_type) {
         case BLE_STORE_OBJ_TYPE_PEER_SEC:
             rc = ble_store_ram_delete_peer_sec(&key->sec);
             return rc;

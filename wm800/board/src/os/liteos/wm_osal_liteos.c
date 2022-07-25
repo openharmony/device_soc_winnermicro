@@ -30,6 +30,10 @@
 #ifndef WM_OS_LITEOS_H
 #define WM_OS_LITEOS_H
 
+#include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include "securec.h"
 #include "wm_config.h"
 #include "los_config.h"
 #include "los_task.h"
@@ -38,9 +42,6 @@
 #include "los_swtmr.h"
 #include "los_sem.h"
 #include "los_swtmr.h"
-#include <assert.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include "wm_type_def.h"
 #include "wm_osal.h"
 #include "wm_mem.h"
@@ -148,9 +149,10 @@ tls_os_status_t tls_os_task_create(tls_os_task_t *task,
 
     if (name == NULL) {
         tmp_name = tls_mem_alloc(20); // 20:alloc size
-        if (tmp_name == NULL)
+        if (tmp_name == NULL) {
             printf("mallo c error\n");
-        sprintf(tmp_name, "task%d", prio);
+        }
+        sprintf_s(tmp_name, sizeof(*tmp_name), "task%d", prio);
         stInitParam.pcName = tmp_name;
     } else {
         stInitParam.pcName = name;
@@ -528,7 +530,6 @@ tls_os_status_t tls_os_sem_release(tls_os_sem_t *sem)
         os_status = TLS_OS_ERROR;
 
     return os_status;
-
 }
 
 UINT32 LOS_SemCount(UINT32 semHandle)
@@ -679,7 +680,7 @@ tls_os_status_t tls_os_queue_send(tls_os_queue_t *queue, void *msg, u32 msg_size
 
     if (msg_size == 0) {
         msg_size = sizeof(void *);
-    } 
+    }
     
     ret = LOS_QueueWriteCopy(pHandle->handle, &msg, msg_size, 0);
     if (ret == LOS_OK)
@@ -877,7 +878,7 @@ tls_os_status_t tls_os_timer_create(tls_os_timer_t **timer,
 #if (LOSCFG_BASE_CORE_SWTMR_ALIGN == 1)
     ret = LOS_SwtmrCreate(period, ucMode, tls_swtmr_common_callback, &uwTimerID,
         swtmr_cb, OS_SWTMR_ROUSES_IGNORE, OS_SWTMR_ALIGN_SENSITIVE);
-#else    
+#else
     ret = LOS_SwtmrCreate(period, ucMode, tls_swtmr_common_callback, &uwTimerID, swtmr_cb);
 #endif
     if (ret  == LOS_OK) {
@@ -1190,7 +1191,6 @@ int tls_os_get_type(void)
 *********************************************************************************************************
 */
 void tls_os_time_tick(void *p) {
-
 }
 
 static uint32_t CK_IN_INTRP(void)
@@ -1224,7 +1224,7 @@ u8 tls_get_isr_count(void)
     return (u8)CK_IN_INTRP();
 }
 
-long PortSaveLocalPSR()
+long PortSaveLocalPSR(void)
 {
     return SaveLocalPSR();
 }
@@ -1234,12 +1234,12 @@ void PortRestoreLocalPSR(long ulDummy)
     RestoreLocalPSR(ulDummy);
 }
 
-void PortEnableInterrupt()
+void PortEnableInterrupt(void)
 {
     portEnableInterrupt();
 }
 
-void PorDisableInterrupt()
+void PorDisableInterrupt(void)
 {
     portDisableInterrupt();
 }

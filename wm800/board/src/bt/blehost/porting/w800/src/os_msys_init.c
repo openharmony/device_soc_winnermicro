@@ -98,7 +98,7 @@ void os_msys_init(void)
                       "msys_2");
 #endif
 }
-void os_msys_deinit()
+void os_msys_deinit(void)
 {
 #if MYNEWT_VAL(MSYS_1_BLOCK_COUNT) > 0
 #if MYNEWT_VAL(SYS_MEM_DYNAMIC)

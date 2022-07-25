@@ -17,6 +17,7 @@
  * under the License.
  */
 
+#include "securec.h"
 #include "syscfg/syscfg.h"
 #include "nimble/ble_hci_trans.h"
 #include "ble_hs_priv.h"
@@ -69,11 +70,9 @@ static int ble_hs_flow_tx_num_comp_pkts(void)
              * response from the controller, so don't use the normal blocking
              * HCI API when sending it.
              */
-            rc = ble_hs_hci_cmd_send_buf(
-                                 BLE_HCI_OP(BLE_HCI_OGF_CTLR_BASEBAND,
-                                 BLE_HCI_OCF_CB_HOST_NUM_COMP_PKTS),
-                                 buf, sizeof(buf));
-
+            rc = ble_hs_hci_cmd_send_buf(BLE_HCI_OP(BLE_HCI_OGF_CTLR_BASEBAND,
+                                            BLE_HCI_OCF_CB_HOST_NUM_COMP_PKTS),
+                                         buf, sizeof(buf));
             if (rc != 0) {
                 return rc;
             }
@@ -138,7 +137,7 @@ static os_error_t ble_hs_flow_acl_free(struct os_mempool_ext *mpe, void *data, v
     assert(OS_MBUF_IS_PKTHDR(om));
     assert(OS_MBUF_USRHDR_LEN(om) >= sizeof conn_handle);
     /* Copy the connection handle out of the mbuf. */
-    memcpy(&conn_handle, OS_MBUF_USRHDR(om), sizeof conn_handle);
+    memcpy_s(&conn_handle, sizeof(conn_handle), OS_MBUF_USRHDR(om), sizeof conn_handle);
     /* Free the mbuf back to its pool. */
     rc = os_memblock_put_from_cb(&mpe->mpe_mp, data);
     if (rc != 0) {
@@ -210,7 +209,7 @@ int ble_hs_flow_startup(void)
 #endif
     enable_cmd.enable = BLE_HCI_CTLR_TO_HOST_FC_ACL;
     rc = ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_CTLR_BASEBAND,
-                           BLE_HCI_OCF_CB_SET_CTLR_TO_HOST_FC),
+                                      BLE_HCI_OCF_CB_SET_CTLR_TO_HOST_FC),
                            &enable_cmd, sizeof(enable_cmd), NULL, 0);
     if (rc != 0) {
         return rc;

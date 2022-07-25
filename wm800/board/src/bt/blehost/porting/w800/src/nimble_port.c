@@ -69,7 +69,7 @@ void nimble_port_deinit(void)
 
 void nimble_port_run(void)
 {
-    while(1) {
+    while (1) {
         struct ble_npl_event *ev = ble_npl_eventq_get(&g_eventq_dflt, BLE_NPL_TIME_FOREVER);
         ble_npl_event_run(ev);
         int arg = (int)ble_npl_event_get_arg(ev);
@@ -127,8 +127,7 @@ struct ble_npl_eventq *nimble_port_get_dflt_eventq(void)
 }
 
 #if NIMBLE_CFG_CONTROLLER
-void
-nimble_port_ll_task_func(void *arg)
+void nimble_port_ll_task_func(void *arg)
 {
     extern void ble_ll_task(void *);
     ble_ll_task(arg);

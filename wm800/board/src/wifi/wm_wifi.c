@@ -28,11 +28,12 @@
 *****************************************************************************/
 
 #include <string.h>
+#include "securec.h"
 #include "wm_params.h"
 #include "wm_mem.h"
-#include "wm_wifi.h"
 #include "wm_ram_config.h"
 #include "wm_debug.h"
+#include "wm_wifi.h"
 
 static struct tls_wifi_netif_status_event wifi_netif_status_event;
 static u8 wifi_inited_ok = 0;
@@ -46,7 +47,7 @@ static void wifi_status_changed(u8 status)
         {
             switch (status)
             {
-                case WIFI_JOIN_SUCCESS:         
+                case WIFI_JOIN_SUCCESS:
                     status_event->status_callback(NETIF_WIFI_JOIN_SUCCESS);
                     break;
                 case WIFI_JOIN_FAILED:
@@ -142,9 +143,10 @@ int tls_wifi_netif_add_status_event(tls_wifi_netif_status_event_fn event_fn)
     // if exist, remove from event list first.
     tls_wifi_netif_remove_status_event(event_fn);
     evt = tls_mem_alloc(sizeof(struct tls_wifi_netif_status_event));
-    if (evt==NULL)
+    if (evt==NULL) {
         return -1;
-    memset(evt, 0, sizeof(struct tls_wifi_netif_status_event));
+    }
+    memset_s(evt, sizeof(struct tls_wifi_netif_status_event), 0, sizeof(struct tls_wifi_netif_status_event));
     evt->status_callback = event_fn;
     cpu_sr = tls_os_set_critical();
     dl_list_add_tail(&wifi_netif_status_event.list, &evt->list);

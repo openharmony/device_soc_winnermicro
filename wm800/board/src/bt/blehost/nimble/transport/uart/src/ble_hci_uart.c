@@ -18,6 +18,7 @@
  */
 
 #include <assert.h>
+#include "securec.h"
 #include "sysinit/sysinit.h"
 #include "nimble/hci_common.h"
 #include "host/ble_hs.h"
@@ -123,7 +124,7 @@ static struct ble_npl_eventq hci_evt_rx_tx_queue;
 
 #if (HCI_DBG == TRUE)
 #define HCIDBG(fmt, ...)  \
-    do {\
+    do { \
         if (1) \
             printf("%s(L%d): " fmt, __FUNCTION__, __LINE__,  ## __VA_ARGS__); \
     } while (0)
@@ -154,7 +155,7 @@ static void  hci_dbg_hexstring(const char *msg, const uint8_t *ptr, int a_length
 
     do {
         for (; i < length; i++) {
-            offset += sprintf(sbuffer + offset, "%02X ", (uint8_t)ptr[i]);
+            offset += sprintf_s(sbuffer + offset, sizeof(sbuffer + offset), "%02X ", (uint8_t)ptr[i]);
             if (offset > DBG_TRACE_WARNING_MAX_SIZE_W) {
                 break;
             }
@@ -166,7 +167,7 @@ static void  hci_dbg_hexstring(const char *msg, const uint8_t *ptr, int a_length
 
         if (offset > DBG_TRACE_WARNING_MAX_SIZE_W) {
             sbuffer[offset - 2] = '.'; // 2:byte alignment
-            sbuffer[offset - 3] = '.'; // 2:byte alignment
+            sbuffer[offset - 3] = '.'; // 3:byte alignment
         }
 
         printf("%s", sbuffer);
@@ -383,7 +384,6 @@ static int ble_hci_trans_hs_rx(uint8_t *data, uint16_t len)
         /* Allocate LE Advertising Report Event from lo pool only */
         if ((data[1] == BLE_HCI_EVCODE_LE_META) && (data[3] == BLE_HCI_LE_SUBEV_ADV_RPT)) { // 3:byte alignment
             evbuf = ble_hci_trans_buf_alloc(BLE_HCI_TRANS_BUF_EVT_LO);
-
             /* Skip advertising report if we're out of memory */
             if (!evbuf) {
                 return 0;
@@ -393,7 +393,7 @@ static int ble_hci_trans_hs_rx(uint8_t *data, uint16_t len)
             assert(evbuf != NULL);
         }
 
-        memcpy(evbuf, &data[1], totlen);
+        memcpy_s(evbuf, sizeof(*evbuf), &data[1], totlen);
         rc = ble_hci_trans_ll_evt_tx(evbuf);
         assert(rc == 0);
     } else if (data[0] == BLE_HCI_UART_H4_ACL) {
@@ -483,7 +483,7 @@ static void notify_host_recv(uint8_t *data, uint16_t len)
         return;
     }
 
-    memcpy(item->payload, data, len);
+    memcpy_s(item->payload, sizeof(*item->payload), data, len);
     item->size = len;
     ble_npl_mutex_pend(&hci_resp_queue_mutex, 0);
     TAILQ_INSERT_TAIL(&hci_resp_queue, item, entries);
@@ -518,7 +518,7 @@ static int wm_ble_controller_init(uint8_t uart_idx)
 
     return 0;
 }
-static int wm_ble_controller_deinit()
+static int wm_ble_controller_deinit(void)
 {
     return tls_bt_ctrl_disable();
 }
@@ -537,7 +537,7 @@ static void nimble_vhci_task(void)
     struct ble_npl_event *ev;
     int arg;
 
-    while(1) {
+    while (1) {
         ev = ble_npl_eventq_get(&hci_evt_rx_tx_queue, BLE_NPL_TIME_FOREVER);
         ble_npl_event_run(ev);
         arg = (int)ble_npl_event_get_arg(ev);
@@ -607,9 +607,9 @@ int ble_hci_vuart_init(uint8_t uart_idx)
     SYSINIT_PANIC_ASSERT(rc == 0);
 #if MYNEWT_VAL(SYS_MEM_DYNAMIC)
     ble_hci_vuart_evt_hi_buf = (os_membuf_t *)tls_mem_alloc(
-            sizeof(os_membuf_t) *
-            OS_MEMPOOL_SIZE(MYNEWT_VAL(BLE_HCI_EVT_HI_BUF_COUNT),
-                            MYNEWT_VAL(BLE_HCI_EVT_BUF_SIZE)));
+        sizeof(os_membuf_t) *
+        OS_MEMPOOL_SIZE(MYNEWT_VAL(BLE_HCI_EVT_HI_BUF_COUNT),
+                        MYNEWT_VAL(BLE_HCI_EVT_BUF_SIZE)));
     assert(ble_hci_vuart_evt_hi_buf != NULL);
 #endif
     rc = os_mempool_init(&ble_hci_vuart_evt_hi_pool,
@@ -620,9 +620,9 @@ int ble_hci_vuart_init(uint8_t uart_idx)
     SYSINIT_PANIC_ASSERT(rc == 0);
 #if MYNEWT_VAL(SYS_MEM_DYNAMIC)
     ble_hci_vuart_evt_lo_buf = (os_membuf_t *)tls_mem_alloc(
-            sizeof(os_membuf_t) *
-            OS_MEMPOOL_SIZE(MYNEWT_VAL(BLE_HCI_EVT_LO_BUF_COUNT),
-                            MYNEWT_VAL(BLE_HCI_EVT_BUF_SIZE)));
+        sizeof(os_membuf_t) *
+        OS_MEMPOOL_SIZE(MYNEWT_VAL(BLE_HCI_EVT_LO_BUF_COUNT),
+                        MYNEWT_VAL(BLE_HCI_EVT_BUF_SIZE)));
     assert(ble_hci_vuart_evt_lo_buf != NULL);
 #endif
     rc = os_mempool_init(&ble_hci_vuart_evt_lo_pool,
@@ -635,7 +635,7 @@ int ble_hci_vuart_init(uint8_t uart_idx)
     return rc;
 }
 
-int ble_hci_vuart_deinit()
+int ble_hci_vuart_deinit(void)
 {
     int rc;
     rc = wm_ble_controller_deinit();

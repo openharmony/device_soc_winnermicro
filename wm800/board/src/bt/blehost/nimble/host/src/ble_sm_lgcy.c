@@ -19,6 +19,7 @@
 
 #include <string.h>
 #include <errno.h>
+#include "securec.h"
 #include "nimble/ble.h"
 #include "nimble/nimble_opt.h"
 #include "host/ble_sm.h"
@@ -154,9 +155,9 @@ static int ble_sm_gen_stk(struct ble_sm_proc *proc)
         return rc;
     }
 
-    memcpy(proc->ltk, key, proc->key_size);
+    memcpy_s(proc->ltk, sizeof(proc->ltk), key, proc->key_size);
     /* Ensure proper key size */
-    memset(proc->ltk + proc->key_size, 0, sizeof key - proc->key_size);
+    memset_s(proc->ltk + proc->key_size, sizeof(proc->ltk + proc->key_size), 0, sizeof key - proc->key_size);
     return 0;
 }
 
@@ -173,7 +174,7 @@ void ble_sm_lgcy_random_exec(struct ble_sm_proc *proc, struct ble_sm_result *res
         return;
     }
 
-    memcpy(cmd->value, ble_sm_our_pair_rand(proc), 16); // 16:size
+    memcpy_s(cmd->value, sizeof(cmd->value), ble_sm_our_pair_rand(proc), 16); // 16:size
     rc = ble_sm_tx(proc->conn_handle, txom);
     if (rc != 0) {
         res->app_status = rc;

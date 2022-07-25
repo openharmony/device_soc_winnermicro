@@ -23,7 +23,7 @@
 #include <assert.h>
 #include <stdint.h>
 #include <string.h>
-
+#include "securec.h"
 #include "wm_osal.h"
 #include "os/npl_freertos.h"
 
@@ -123,7 +123,7 @@ static inline bool ble_npl_eventq_is_empty(struct ble_npl_eventq *evq)
 
 static inline void ble_npl_event_init(struct ble_npl_event *ev, ble_npl_event_fn *fn, void *arg)
 {
-    memset(ev, 0, sizeof(*ev));
+    memset_s(ev, sizeof(*ev), 0, sizeof(*ev));
     ev->fn = fn;
     ev->arg = arg;
 }

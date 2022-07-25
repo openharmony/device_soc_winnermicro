@@ -33,7 +33,7 @@ void put_le24(void *buf, uint32_t x)
     u8ptr = buf;
     u8ptr[0] = (uint8_t)x;
     u8ptr[1] = (uint8_t)(x >> 8); // 8:byte alignment
-    u8ptr[2] = (uint8_t)(x >> 16); // 2:array element, 8:byte alignment
+    u8ptr[2] = (uint8_t)(x >> 16); // 2:array element, 16:byte alignment
 }
 
 void put_le32(void *buf, uint32_t x)
@@ -52,12 +52,12 @@ void put_le64(void *buf, uint64_t x)
     u8ptr = buf;
     u8ptr[0] = (uint8_t)x;
     u8ptr[1] = (uint8_t)(x >> 8); // 8:byte alignment
-    u8ptr[2] = (uint8_t)(x >> 16); // 2:array element, 8:byte alignment
-    u8ptr[3] = (uint8_t)(x >> 24); // 2:array element, 8:byte alignment
-    u8ptr[4] = (uint8_t)(x >> 32); // 2:array element, 8:byte alignment
-    u8ptr[5] = (uint8_t)(x >> 40); // 2:array element, 8:byte alignment
-    u8ptr[6] = (uint8_t)(x >> 48); // 2:array element, 8:byte alignment
-    u8ptr[7] = (uint8_t)(x >> 56); // 2:array element, 8:byte alignment
+    u8ptr[2] = (uint8_t)(x >> 16); // 2:array element, 16:byte alignment
+    u8ptr[3] = (uint8_t)(x >> 24); // 3:array element, 24:byte alignment
+    u8ptr[4] = (uint8_t)(x >> 32); // 4:array element, 32:byte alignment
+    u8ptr[5] = (uint8_t)(x >> 40); // 5:array element, 40:byte alignment
+    u8ptr[6] = (uint8_t)(x >> 48); // 6:array element, 48:byte alignment
+    u8ptr[7] = (uint8_t)(x >> 56); // 7:array element, 56:byte alignment
 }
 
 uint16_t get_le16(const void *buf)
@@ -77,7 +77,7 @@ uint32_t get_le24(const void *buf)
     u8ptr = buf;
     x = u8ptr[0];
     x |= (uint32_t)u8ptr[1] << 8; // 8:byte alignment
-    x |= (uint32_t)u8ptr[2] << 16;
+    x |= (uint32_t)u8ptr[2] << 16; // 2:array element, 16:byte alignment
     return x;
 }
 
@@ -100,7 +100,7 @@ uint64_t get_le64(const void *buf)
     u8ptr = buf;
     x = u8ptr[0];
     x |= (uint64_t)u8ptr[1] << 8; // 8:byte alignment
-    x |= (uint64_t)u8ptr[2] << 16; // 2:array element, 8:byte alignment
+    x |= (uint64_t)u8ptr[2] << 16; // 2:array element, 16:byte alignment
     x |= (uint64_t)u8ptr[3] << 24; // 3:array element, 24:byte alignment
     x |= (uint64_t)u8ptr[4] << 32; // 4:array element, 32:byte alignment
     x |= (uint64_t)u8ptr[5] << 40; // 5:array element, 40:byte alignment
