@@ -288,7 +288,7 @@ static int param_to_flash(int id, int modify_count, int partition_num)
             strncpy(dest->sntp_service1, src->sntp_service1, strlen(src->sntp_service1)+1);
             break;
         case TLS_PARAM_ID_SNTP_SERVER2:
-            strncpy(dest->sntp_service2, src->sntp_service2, strlen(src->sntp_service2)+1);
+            strncpy_s(dest->sntp_service2, sizeof(dest->sntp_service2), src->sntp_service2, strlen(src->sntp_service2)+1);
             break;
         case TLS_PARAM_ID_SNTP_SERVER3:
             strncpy(dest->sntp_service3, src->sntp_service3, strlen(src->sntp_service3)+1);
@@ -403,9 +403,9 @@ int tls_param_init(void)
     damaged= 0;
     is_damage[0] = is_damage[1] = FALSE;
     flash = NULL;
-    memset(&flash_param, 0, sizeof(flash_param));
+    memset_s(&flash_param, sizeof(flash_param), 0, sizeof(flash_param));
 #if USE_TWO_RAM_FOR_PARAMETER
-    memset(&sram_param, 0, sizeof(sram_param));
+    memset_s(&sram_param, sizeof(sram_param), 0, sizeof(sram_param));
 #endif
     tryrestore = 0;
     do {
@@ -415,7 +415,7 @@ int tls_param_init(void)
             err = TLS_PARAM_STATUS_EMEM;
             break;
         }
-        memset(flash, 0, sizeof(*flash));
+        memset_s(flash, sizeof(flash), 0, sizeof(*flash));
 
         for (i = 0; i < TLS_PARAM_PARTITION_NUM; i++) {
             TLS_DBGPRT_INFO("read parameter partition - %d.\n", i);
@@ -457,16 +457,16 @@ int tls_param_init(void)
 #endif
                     }
                 }
-                memset(flash, 0, sizeof(*flash));
+                memset_s(flash, sizeof(flash), 0, sizeof(*flash));
             }
 
             /* try to erase one sector at the same block to restore parameter area */
             if ((tryrestore == 0)&&(damaged >= TLS_PARAM_PARTITION_NUM)) {
                 damaged= 0;
                 is_damage[0] = is_damage[1] = FALSE;
-                memset(&flash_param, 0, sizeof(flash_param));
+                memset_s(&flash_param, sizeof(&flash_param), 0, sizeof(flash_param));
 #if USE_TWO_RAM_FOR_PARAMETER
-                memset(&sram_param, 0, sizeof(sram_param));
+                memset_s(&sram_param, sizeof(&sram_param), 0, sizeof(sram_param));
 #endif
                 tls_fls_erase(TLS_FLASH_PARAM_RESTORE_ADDR / INSIDE_FLS_SECTOR_SIZE);
                 tryrestore = 1;
@@ -532,7 +532,7 @@ int tls_param_load_user(struct tls_sys_param *param)
         return TLS_PARAM_STATUS_EINVALID;
     }
     offset += 4;
-    memset(param, 0, sizeof(*param));
+    memset_s(param, sizeof(param), 0, sizeof(*param));
     tls_fls_read(offset, (u8 *)param, sizeof(struct tls_sys_param));
     offset += sizeof(struct tls_sys_param);
     tls_fls_read(offset, (u8 *)&crc32, 4);
@@ -565,7 +565,7 @@ void tls_param_load_factory_default(void)
 
     TLS_DBGPRT_INFO("load the default parameters.\n");
 
-    memset(param, 0, sizeof(*param));
+    memset_s(param, sizeof(param), 0, sizeof(*param));
     MEMCPY(&param->hardware_version, factory_default_hardware, 8);
 
     param->wireless_region = TLS_PARAM_REGION_1_BG_BAND;
@@ -619,13 +619,13 @@ void tls_param_load_factory_default(void)
         param->ipcfg.dns2[2] = 1;
         param->ipcfg.dns2[3] = 1;
 
-    strcpy((char *)param->local_dnsname, "local.winnermicro");
-    strcpy((char *)param->local_device_name, "w800");
+    strcpy_s((char *)param->local_dnsname, sizeof(param->local_dnsname), "local.winnermicro");
+    strcpy_s((char *)param->local_device_name, sizeof(param->local_device_name), "w800");
 
     param->remote_socket_cfg.protocol = TLS_PARAM_SOCKET_TCP;
     param->remote_socket_cfg.client_or_server = TLS_PARAM_SOCKET_SERVER;
     param->remote_socket_cfg.port_num = TLS_PARAM_SOCKET_DEFAULT_PORT;
-    memset(param->remote_socket_cfg.host, 0, 32);
+    memset_s(param->remote_socket_cfg.host, sizeof(param->remote_socket_cfg.host), 0, 32);
 
     param->EscapeChar = 0x2b;
     param->EscapePeriod = 200;
@@ -634,7 +634,7 @@ void tls_param_load_factory_default(void)
     param->WebsCfg.PortNum = 80;
 
     param->debug_mode = 0;
-    memset(param->PassWord, '0', 6);
+    memset_s(param->PassWord, sizeof(param->PassWord), '0', 6);
 
     param->channel4softap = 11;
     param->encry4softap = TLS_PARAM_ENCRY_OPEN;
@@ -667,9 +667,9 @@ void tls_param_load_factory_default(void)
     param->wbgr4softap.max_rate = TLS_PARAM_TX_RATEIDX_36M;
 #endif
 
-    strcpy(param->sntp_service1, "cn.ntp.org.cn");
-    strcpy(param->sntp_service2, "ntp.sjtu.edu.cn");
-    strcpy(param->sntp_service3, "us.pool.ntp.org");
+    strcpy_s(param->sntp_service1, sizeof(param->sntp_service1), "cn.ntp.org.cn");
+    strcpy_s(param->sntp_service2, sizeof(param->sntp_service2), "ntp.sjtu.edu.cn");
+    strcpy_s(param->sntp_service3, sizeof(param->sntp_service3), "us.pool.ntp.org");
 }
 
 /**********************************************************************************************************
@@ -817,11 +817,11 @@ int tls_param_set(int id, void *argv, bool to_flash)
             break;
 
         case TLS_PARAM_ID_DNSNAME:
-            strcpy((char *)param->local_dnsname, (char *)argv);
+            strcpy_s((char *)param->local_dnsname, sizeof(param->local_dnsname), (char *)argv);
             break;
 
         case TLS_PARAM_ID_DEVNAME:
-            strcpy((char *)param->local_device_name, argv);
+            strcpy_s((char *)param->local_device_name,sizeof(param->local_device_name), argv);
             break;
 
         case TLS_PARAM_ID_PSM:
@@ -893,13 +893,13 @@ int tls_param_set(int id, void *argv, bool to_flash)
             break;
 #endif
         case TLS_PARAM_ID_SNTP_SERVER1:
-            strncpy(param->sntp_service1, (const char *)argv, strlen(argv)+1);
+            strncpy_s(param->sntp_service1, sizeof(param->sntp_service1), (const char *)argv, strlen(argv)+1);
             break;
         case TLS_PARAM_ID_SNTP_SERVER2:
-            strncpy(param->sntp_service2, (const char *)argv, strlen(argv)+1);
+            strncpy_s(param->sntp_service2, sizeof(param->sntp_service2), (const char *)argv, strlen(argv)+1);
             break;
         case TLS_PARAM_ID_SNTP_SERVER3:
-            strncpy(param->sntp_service3, (const char *)argv, strlen(argv)+1);
+            strncpy_s(param->sntp_service3, sizeof(param->sntp_service3), (const char *)argv, strlen(argv)+1);
             break;
         case TLS_PARAM_ID_TEM_OFFSET:
             MEMCPY(&param->params_tem, argv, sizeof(struct tls_param_tem_offset));
@@ -1093,11 +1093,11 @@ int tls_param_get(int id, void *argv, bool from_flash)
             break;
 
         case TLS_PARAM_ID_DNSNAME:
-            strcpy((char *)argv, (char *)src->local_dnsname);
+            strcpy_s((char *)argv, sizeof(argv), (char *)src->local_dnsname);
             break;
 
         case TLS_PARAM_ID_DEVNAME:
-            strcpy((char *)argv, (char *)src->local_device_name);
+            strcpy_s((char *)argv, sizeof(argv), (char *)src->local_device_name);
             break;
 
         case TLS_PARAM_ID_PSM:
@@ -1170,13 +1170,13 @@ int tls_param_get(int id, void *argv, bool from_flash)
 #endif
 
         case TLS_PARAM_ID_SNTP_SERVER1:
-            strncpy(argv, src->sntp_service1, strlen(src->sntp_service1)+1);
+            strncpy_s(argv, sizeof(argv), src->sntp_service1, strlen(src->sntp_service1)+1);
             break;
         case TLS_PARAM_ID_SNTP_SERVER2:
-            strncpy(argv, src->sntp_service2, strlen(src->sntp_service2)+1);
+            strncpy_s(argv, sizeof(argv), src->sntp_service2, strlen(src->sntp_service2)+1);
             break;
         case TLS_PARAM_ID_SNTP_SERVER3:
-            strncpy(argv, src->sntp_service3, strlen(src->sntp_service3)+1);
+            strncpy_s(argv, sizeof(argv), src->sntp_service3, strlen(src->sntp_service3)+1);
             break;
         case TLS_PARAM_ID_TEM_OFFSET:
             MEMCPY(argv, &src->params_tem, sizeof(struct tls_param_tem_offset));
@@ -1289,7 +1289,7 @@ struct tls_sys_param *tls_param_user_param_init(void)
     if (user_default_param == NULL) {
         user_default_param = tls_mem_alloc(sizeof(*user_default_param));
         if (user_default_param) {
-            memset(user_default_param, 0, sizeof(*user_default_param));
+            memset_s(user_default_param, sizeof(user_default_param), 0, sizeof(*user_default_param));
         }
     }
 
@@ -1341,8 +1341,8 @@ int tls_param_save_user(struct tls_user_param *user_param)
     param->uart_cfg.stop_bits = TLS_PARAM_UART_STOPBITS_1BITS;
     param->uart_cfg.parity = TLS_PARAM_UART_PARITY_NONE;
 
-    strcpy((char *)param->local_dnsname, "local.winnermicro");
-    strcpy((char *)param->local_device_name, "w800");
+    strcpy_s((char *)param->local_dnsname, sizeof(param->local_dnsname), "local.winnermicro");
+    strcpy_s((char *)param->local_device_name, sizeof(param->local_device_name), "w800");
 
     param->EscapeChar = 0x2b;
     param->EscapePeriod = 200;

@@ -208,7 +208,7 @@ static int ble_server_gatt_svc_access_func(uint16_t conn_handle, uint16_t attr_h
             {
                 while (om) {
                     length =  om->om_len;
-                    memcpy(cache_buffer+offset, om->om_data, length);
+                    memcpy_s(cache_buffer+offset, sizeof(cache_buffer+offset), om->om_data, length);
                     offset += length;
                     assert(offset <= sizeof(cache_buffer));
                     om = SLIST_NEXT(om, om_next);
@@ -244,7 +244,7 @@ int ble_server_uuid_init_from_buf(ble_uuid_any_t *uuid, const void *buf, size_t 
             return 0;
         case OHOS_UUID_TYPE_128_BIT:
             uuid->u.type = BLE_UUID_TYPE_128;
-            memcpy(uuid->u128.value, buf, 16);
+            memcpy_s(uuid->u128.value, sizeof(uuid->u128.value), buf, 16);
             return 0;
         default:
             return 0;
@@ -277,7 +277,7 @@ int ble_server_alloc(BleGattService *srvcinfo)
 
     server_elem_t *serv_elem = (server_elem_t *)tls_mem_alloc(sizeof(server_elem_t));
     assert(serv_elem != NULL);
-    memset(serv_elem, 0, sizeof(server_elem_t));
+    memset_s(serv_elem, sizeof(serv_elem), 0, sizeof(server_elem_t));
     /* init the service list attached to the server element */
     dl_list_init(&serv_elem->srvc_list.list);
 
@@ -306,12 +306,12 @@ int ble_server_alloc(BleGattService *srvcinfo)
     /* alloc service array */
     gatt_svc_array = (struct ble_gatt_svc_def *)tls_mem_alloc(2*sizeof(struct ble_gatt_svc_def));
     assert(gatt_svc_array != NULL);
-    memset(gatt_svc_array, 0, 2*sizeof(struct ble_gatt_svc_def));
+    memset_s(gatt_svc_array, sizeof(gatt_svc_array), 0, 2*sizeof(struct ble_gatt_svc_def));
 
     /* prealloc charactertistic array */
     gatt_chr_array = (struct ble_gatt_chr_def *)tls_mem_alloc((1+char_counter) * sizeof(struct ble_gatt_chr_def));
     assert(gatt_chr_array != NULL);
-    memset(gatt_chr_array, 0, (1+char_counter) * sizeof(struct ble_gatt_chr_def));
+    memset_s(gatt_chr_array, sizeof(gatt_chr_array), 0, (1+char_counter) * sizeof(struct ble_gatt_chr_def));
 
     /* preappending to character array */
     gatt_svc_array[0].characteristics = gatt_chr_array;
@@ -319,7 +319,7 @@ int ble_server_alloc(BleGattService *srvcinfo)
     /* create a service item and appending it to the servcie array */
     nim_service_t *nim_service = (nim_service_t *)tls_mem_alloc(sizeof(nim_service_t));
     assert(nim_service != NULL);
-    memset(nim_service, 0, sizeof(nim_service_t));
+    memset_s(nim_service, sizeof(nim_service), 0, sizeof(nim_service_t));
     nim_service->svc = gatt_svc_array;
     dl_list_add_tail(&nim_service_list.list, &nim_service->list);
 
@@ -371,7 +371,7 @@ int ble_server_alloc(BleGattService *srvcinfo)
                // NimBLE stack will auto add the cccd.
             } else {
                 gatt_dsc_array = (struct ble_gatt_dsc_def *)tls_mem_alloc(2*sizeof(struct ble_gatt_dsc_def));
-                memset(gatt_dsc_array, 0, 2*sizeof(struct ble_gatt_dsc_def));
+                memset_s(gatt_dsc_array, sizeof(gatt_dsc_array), 0, 2*sizeof(struct ble_gatt_dsc_def));
                 gatt_dsc_array[0].uuid = &srvc_sub_elem->uuid;
                 gatt_dsc_array[0].access_cb = ble_server_gatt_svc_access_func;
                 gatt_dsc_array[0].att_flags = srvcinfo->attrList[i].properties |srvcinfo->attrList[i].permission<<8;
@@ -472,7 +472,7 @@ void ble_server_start_service(void)
 
 void ble_server_init(void)
 {
-    memset(&server_list, 0, sizeof(server_elem_t));
+    memset_s(&server_list, sizeof(&server_list), 0, sizeof(server_elem_t));
     dl_list_init(&server_list.list);
     dl_list_init(&nim_service_list.list);
 }

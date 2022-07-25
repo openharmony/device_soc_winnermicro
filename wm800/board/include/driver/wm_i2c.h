@@ -25,14 +25,14 @@
 #ifndef __WM_I2C_H
 #define __WM_I2C_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include "wm_regs.h"
 #include "wm_type_def.h"
 #include "wm_cpu.h"
 #include "wm_irq.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct {
     __IO uint32_t PRER_LO;

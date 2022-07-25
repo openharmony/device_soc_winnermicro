@@ -345,7 +345,7 @@ void tls_spi_trans_type(u8 type)
 
 static void spi_message_init(struct tls_spi_message *m)
 {
-    memset(m, 0, sizeof(*m));
+    memset_s(m, sizeof(m), 0, sizeof(*m));
     dl_list_init(&m->transfers);
 }
 
@@ -778,7 +778,7 @@ int tls_spi_read_with_cmd(const u8 * txbuf, u32 n_tx, u8 * rxbuf, u32 n_rx)
 
     spi_message_init(&message);
 
-    memset(x, 0, sizeof(x));
+    memset_s(x, sizeof(x), 0, sizeof(x));
     if (n_tx) {
         x[0].len = n_tx;
         x[0].tx_buf = txbuf;
@@ -869,7 +869,7 @@ int tls_spi_read(u8 * buf, u32 len)
     }
 #endif
 
-    memset(&t, 0, sizeof(t));
+    memset_s(&t, sizeof(t), 0, sizeof(t));
     t.rx_buf = buf;
     t.len = len;
 
@@ -950,7 +950,7 @@ int tls_spi_write(const u8 * buf, u32 len)
     }
 
 #endif
-    memset(&t, 0, sizeof(t));
+    memset_s(&t, sizeof(t), 0, sizeof(t));
     t.tx_buf = buf;
     t.len = len;
 
@@ -1011,7 +1011,7 @@ int tls_spi_write_with_cmd(const u8 * cmd, u32 n_cmd, const u8 * txbuf,
 
     spi_message_init(&message);
 
-    memset(x, 0, sizeof(x));
+    memset_s(x, sizeof(x), 0, sizeof(x));
     if (n_cmd) {
         x[0].len = n_cmd;
         x[0].tx_buf = (const void *) cmd;
@@ -1144,7 +1144,7 @@ int tls_spi_init(void)
         TLS_DBGPRT_ERR("allocate \"struct tls_spi_port\" fail!\n");
         return TLS_SPI_STATUS_ENOMEM;
     }
-    memset(port, 0, sizeof(struct tls_spi_port));
+    memset_s(port, sizeof(port), 0, sizeof(struct tls_spi_port));
     err = tls_os_sem_create(&port->lock, 1);
     if (err != TLS_OS_SUCCESS) {
         TLS_DBGPRT_ERR("create semaphore @spi_port->lock fail!\n");

@@ -368,8 +368,8 @@ static void mod_sub_status(struct bt_mesh_model *model,
     param = cli->op_param;
 
     if (param->elem_addr != elem_addr || param->mod_id != mod_id ||
-            (param->expect_sub && *param->expect_sub != sub_addr) ||
-                param->cid != cid) {
+       (param->expect_sub && *param->expect_sub != sub_addr) ||
+        param->cid != cid) {
         BT_WARN("Model Subscription Status parameters did not match");
         return;
     }

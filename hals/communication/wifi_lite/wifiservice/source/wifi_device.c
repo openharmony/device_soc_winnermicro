@@ -286,7 +286,7 @@ WifiErrorCode Scan(void)
     }
 
     if (gScannedBuffer != NULL) {
-        memset(gScannedBuffer, 0, BSS_BUFFER_SIZE);
+        memset_s(gScannedBuffer, sizeof(gScannedBuffer), 0, BSS_BUFFER_SIZE);
     } else {
         gScannedBuffer = tls_mem_alloc(BSS_BUFFER_SIZE);
         if (gScannedBuffer == NULL) {
@@ -352,7 +352,7 @@ static void WifiEventCallback(u8 status)
 static void WifiHotspotEventCallback(u8 *mac, enum tls_wifi_client_event_type event)
 {
     StationInfo info = {0};
-    memcpy(info.macAddress, mac, sizeof(info.macAddress));
+    memcpy_s(info.macAddress, sizeof(info.macAddress), mac, sizeof(info.macAddress));
 
     switch (event) {
         case WM_WIFI_CLIENT_EVENT_ONLINE:
@@ -610,12 +610,14 @@ WifiErrorCode AddDeviceConfig(const WifiDeviceConfig* config, int* result)
     }
 
     UtilsSetEnv(KV_FILE_NAME);
-    memset(kvstring, 0, MAX_WIFI_KV_STRING_LEN);
-    memset(keystring, 0, MAX_WIFI_KV_NAME_LEN);
-    memcpy(kvstring, config, sizeof(WifiDeviceConfig));
+    memset_s(kvstring, sizeof(kvstring), 0, MAX_WIFI_KV_STRING_LEN);
+    memset_s(keystring, sizeof(keystring), 0, MAX_WIFI_KV_NAME_LEN);
+    memcpy_s(kvstring, sizeof(kvstring), config, sizeof(WifiDeviceConfig));
     kvstring[sizeof(WifiDeviceConfig)] = '\0';
 
-    sprintf(keystring, WIFI_CFG_INFO"_%d", netId);
+    int n = sprintf_s(keystring, sizeof(keystring), WIFI_CFG_INFO"_%d", netId);
+    if (n < 0) {
+    }
     ret = UtilsSetValue(keystring, kvstring);
     if (ret < 0) {
         return ERROR_WIFI_BUSY;
@@ -658,8 +660,10 @@ WifiErrorCode GetDeviceConfigs(WifiDeviceConfig* result, unsigned int* size)
 
     UtilsSetEnv(KV_FILE_NAME);
     for (i = 0; i < WIFI_MAX_CONFIG_SIZE; i++) {
-        memset(keystring, 0, MAX_WIFI_KV_NAME_LEN);
-        sprintf(keystring, WIFI_CFG_INFO"_%d", i);
+        memset_s(keystring, sizeof(keystring), 0, MAX_WIFI_KV_NAME_LEN);
+        int n = sprintf_s(keystring, sizeof(keystring), WIFI_CFG_INFO"_%d", i);
+        if (n < 0) {
+        }
         int ret = UtilsGetValue(keystring, &gWifiConfigs[i], sizeof(WifiDeviceConfig));
         if (ret == 0) {
             validflag = 1;
@@ -746,8 +750,10 @@ WifiErrorCode RemoveDevice(int networkId)
 
 #if 1
     UtilsSetEnv(KV_FILE_NAME);
-    memset(keystring, 0, MAX_WIFI_KV_NAME_LEN);
-    sprintf(keystring, WIFI_CFG_INFO"_%d", networkId);
+    memset_s(keystring, sizeof(keystring), 0, MAX_WIFI_KV_NAME_LEN);
+    int n = sprintf_s(keystring, sizeof(keystring), WIFI_CFG_INFO"_%d", networkId);
+    if (n < 0) {
+    }
     int ret = UtilsDeleteValue(keystring);
     if (ret < 0) {
         printf("\r\n clear wifi cfg info fail");

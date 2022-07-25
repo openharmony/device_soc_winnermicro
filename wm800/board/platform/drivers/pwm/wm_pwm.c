@@ -748,6 +748,8 @@ void tls_pwm_freq_set(u8 channel, u32 freq)
 
     tls_sys_clk_get(&sysclk);
 
+    if (freq == 0) {
+    }
     clkdiv = sysclk.apbclk*UNIT_MHZ/256/freq;
     tls_pwm_stop(channel);
     tls_pwm_freq_config(channel, clkdiv, 255);
@@ -797,7 +799,7 @@ int tls_pwm_init(u8 channel, u32 freq, u8 duty, u8 pnum)
 
     tls_sys_clk_get(&sysclk);
 
-    memset(&pwm_param, 0, sizeof(pwm_init_param));
+    memset_s(&pwm_param, sizeof(pwm_param), 0, sizeof(pwm_init_param));
     pwm_param.period = 255;
     pwm_param.cnt_type = WM_PWM_CNT_TYPE_EDGE_ALIGN_OUT;
     pwm_param.loop_type = WM_PWM_LOOP_TYPE_LOOP;
@@ -807,6 +809,8 @@ int tls_pwm_init(u8 channel, u32 freq, u8 duty, u8 pnum)
     pwm_param.pnum_int = DISABLE;
     pwm_param.duty = duty;
     pwm_param.channel = channel;
+    if (freq == 0) {
+    }
     pwm_param.clkdiv = sysclk.apbclk*UNIT_MHZ/256/freq;
     ret = tls_pwm_out_init(&pwm_param);
     return ret;

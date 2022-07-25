@@ -208,7 +208,7 @@ static int ble_server_start_adv(void)
         return rc;
     }
     /* set adv parameters */
-    memset(&adv_params, 0, sizeof(adv_params));
+    memset_s(&adv_params, sizeof(&adv_params), 0, sizeof(adv_params));
 
     adv_params.itvl_max = g_adv_param.maxInterval;
     adv_params.itvl_min = g_adv_param.minInterval;
@@ -237,7 +237,7 @@ static int ble_server_start_adv(void)
     }
 
     peer_addr.type = g_adv_param.peerAddrType;
-    memcpy(&peer_addr.val[0], &g_adv_param.peerAddr.addr[0], 6);
+    memcpy_s(&peer_addr.val[0], sizeof(&peer_addr.val), &g_adv_param.peerAddr.addr[0], 6);
 
     BLE_IF_DEBUG("Starting advertising\r\n");
 
@@ -269,7 +269,7 @@ static int gap_event(struct ble_gap_event *event, void *arg)
             if (event->connect.status == 0) {
                 rc = ble_gap_conn_find(event->connect.conn_handle, &desc);
                 assert(rc == 0);
-                memcpy(bdaddr.addr, desc.peer_id_addr.val, 6);
+                memcpy_s(bdaddr.addr, sizeof(bdaddr.addr), desc.peer_id_addr.val, 6);
                 g_conn_handle = event->connect.conn_handle;
                 /* see nble_server.c ble_server_gap_event will handle this callback */
                 if (gatts_struct_func_ptr_cb->connectServerCb) {
@@ -286,7 +286,7 @@ static int gap_event(struct ble_gap_event *event, void *arg)
         case BLE_GAP_EVENT_DISCONNECT:
             BLE_IF_DEBUG("disconnect reason=%d\r\n", event->disconnect.reason);
 
-            memcpy(bdaddr.addr, event->disconnect.conn.peer_id_addr.val, 6);
+            memcpy_s(bdaddr.addr, sizeof(bdaddr.addr), event->disconnect.conn.peer_id_addr.val, 6);
             /* see nble_server.c ble_server_gap_event will handle this callback */
             if (gatts_struct_func_ptr_cb->disconnectServerCb) {
                 gatts_struct_func_ptr_cb->disconnectServerCb(event->disconnect.conn.conn_handle, \
@@ -345,7 +345,7 @@ static int gap_event(struct ble_gap_event *event, void *arg)
             {
                 rc = ble_gap_conn_find(event->enc_change.conn_handle, &desc);
                 assert(rc == 0);
-                memcpy(bdaddr.addr, desc.peer_id_addr.val, 6);
+                memcpy_s(bdaddr.addr, sizeof(bdaddr.addr), desc.peer_id_addr.val, 6);
                 if (gap_func_ptr_cb && gap_func_ptr_cb->securityRespondCb)gap_func_ptr_cb->securityRespondCb(&bdaddr);
                 return 0;
             }
@@ -377,7 +377,7 @@ int EnableBtStack(void)
     if (bt_system_action != WM_BT_SYSTEM_ACTION_IDLE) return OHOS_BT_STATUS_BUSY;
     bt_system_action = WM_BT_SYSTEM_ACTION_ENABLING;
 
-    memset(&ble_hs_cfg, 0, sizeof(ble_hs_cfg));
+    memset_s(&ble_hs_cfg, sizeof(&ble_hs_cfg), 0, sizeof(ble_hs_cfg));
 
     /* * Security manager settings. */
     ble_hs_cfg.sm_io_cap = MYNEWT_VAL(BLE_SM_IO_CAP),
@@ -752,7 +752,7 @@ int BleStartAdvEx(int *advId, const StartAdvRawData rawData, BleAdvParams advPar
         return rc;
     }
     /* set adv parameters */
-    memset(&adv_params, 0, sizeof(adv_params));
+    memset_s(&adv_params, sizeof(&adv_params), 0, sizeof(adv_params));
 
     adv_params.itvl_max = advParam.maxInterval;
     adv_params.itvl_min = advParam.minInterval;
@@ -781,7 +781,7 @@ int BleStartAdvEx(int *advId, const StartAdvRawData rawData, BleAdvParams advPar
     }
 
     peer_addr.type = advParam.peerAddrType;
-    memcpy(&peer_addr.val[0], &advParam.peerAddr.addr[0], 6);
+    memcpy_s(&peer_addr.val[0], sizeof(&peer_addr.val), &advParam.peerAddr.addr[0], 6);
 
     BLE_IF_DEBUG("Starting advertising\r\n");
 

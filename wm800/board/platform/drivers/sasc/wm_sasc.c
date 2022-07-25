@@ -121,36 +121,36 @@ void access_region(uint32_t base_addr, sasc_region_size_e size, sasc_region_attr
 
     switch (pos) {
         case 0:
-            memcpy(dest, (char*)(base_addr + s), sizeof(dest));
+            memcpy_s(dest, sizeof(dest), (char*)(base_addr + s), sizeof(dest));
             TEST_DEBUG("Behind addr %x size 0x%lx can read\n", base_addr + s, (unsigned long)sizeof(dest));
             TEST_DEBUG("start to read addr %x size 0x%lx\n", \
                         base_addr + s - (uint32_t)sizeof(dest), (unsigned long)sizeof(dest));
-            memcpy(dest, (char*)(base_addr + s - sizeof(dest)), sizeof(dest));
+            memcpy_s(dest, sizeof(dest), (char*)(base_addr + s - sizeof(dest)), sizeof(dest));
             TEST_DEBUG("addr %x size 0x%lx can read\n", \
                         base_addr + s - (uint32_t)sizeof(dest), (unsigned long)sizeof(dest));
             break;
         case 1:
-            memcpy(dest, (char*)(base_addr - sizeof(dest)), sizeof(dest));
+            memcpy_s(dest, sizeof(dest), (char*)(base_addr - sizeof(dest)), sizeof(dest));
             TEST_DEBUG("Front addr %x size 0x%lx can read\n", \
                        base_addr - (uint32_t)sizeof(dest), (unsigned long)sizeof(dest));
             TEST_DEBUG("start to read addr %x size 0x%lx\n", base_addr, (unsigned long)sizeof(dest));
-            memcpy(dest, (char*)base_addr, sizeof(dest));
+            memcpy_s(dest, sizeof(dest), (char*)base_addr, sizeof(dest));
             TEST_DEBUG("base_addr %x size 0x%lx can read\n", base_addr, (unsigned long)sizeof(dest));
             break;
         case 2:
-            memcpy((char*)(base_addr - sizeof(dest)), dest, sizeof(dest));
+            memcpy_s((char*)(base_addr - sizeof(dest)), sizeof(base_addr -sizeof(dest)), dest, sizeof(dest));
             TEST_DEBUG("Front addr %x size 0x%lx can write\n", \
                        base_addr - (uint32_t)sizeof(dest), (unsigned long)sizeof(dest));
             TEST_DEBUG("start to write addr %x size 0x%lx\n", base_addr, (unsigned long)sizeof(dest));
-            memcpy((char*)base_addr, dest, sizeof(dest));
+            memcpy_s((char*)base_addr, sizeof(base_addr), dest, sizeof(dest));
             TEST_DEBUG("base_addr %x size 0x%lx can write\n", base_addr, (unsigned long)sizeof(dest));
             break;
         default:
-            memcpy((char*)(base_addr + s), dest, sizeof(dest));
+            memcpy_s((char*)(base_addr + s), sizeof(base_addr + s), dest, sizeof(dest));
             TEST_DEBUG("Behind addr %x size 0x%lx can write\n", base_addr + s, (unsigned long)sizeof(dest));
             TEST_DEBUG("start to write addr %x size 0x%lx\n", \
                        base_addr + s - (uint32_t)sizeof(dest), (unsigned long)sizeof(dest));
-            memcpy((char*)(base_addr + s - sizeof(dest)), dest, sizeof(dest));
+            memcpy_s((char*)(base_addr + s - sizeof(dest)), sizeof(base_addr + s - sizeof(dest)), dest, sizeof(dest));
             TEST_DEBUG("addr %x size 0x%lx can write\n", \
                        base_addr + s - (uint32_t)sizeof(dest), (unsigned long)sizeof(dest));
             break;

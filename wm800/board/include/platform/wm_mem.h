@@ -80,11 +80,11 @@ int  is_safe_addr_debug(void *p, u32 len, char *file, int line);
 #else
 #define MEMCPY(dst, src, len)             do { \
     if (tls_is_safe_addr(dst, len)) { \
-    memcpy(dst, src, len);}}while (0)
+    memcpy_s(dst, sizeof(dst), src, len);}}while (0)
 
 #define SMEMCPY(dst, src, len)            do { \
     if (tls_is_safe_addr(dst, len)) { \
-    memcpy(dst, src, len);}}while (0)
+    memcpy_s(dst, sizeof(dst), src, len);}}while (0)
 #endif
 #else /* WM_MEM_DEBUG */
 
@@ -171,7 +171,7 @@ void *mem_calloc_debug(u32 length, u32 size);
  *
  * @note           None
  */
-#define MEMCPY(dst, src, len)      memcpy(dst, src, len)
+#define MEMCPY(dst, src, len)      memcpy_s(dst, sizeof(dst), src, len)
 
 /**
  * @brief          This function is used to copy memory content from one address to another address
@@ -184,7 +184,7 @@ void *mem_calloc_debug(u32 length, u32 size);
  *
  * @note           None
  */
-#define SMEMCPY(dst, src, len)    memcpy(dst, src, len)
+#define SMEMCPY(dst, src, len)    memcpy_s(dst, sizeof(dst), src, len)
 
 /**
  * @}
@@ -200,8 +200,8 @@ void *mem_calloc_debug(u32 length, u32 size);
 #define tls_mem_free       free
 #define tls_mem_realloc   realloc
 #define tls_mem_calloc    calloc
-#define MEMCPY(dst, src, len)      memcpy(dst, src, len)
-#define SMEMCPY(dst, src, len)    memcpy(dst, src, len)
+#define MEMCPY(dst, src, len)      memcpy_s(dst, sizeof(dst), src, len)
+#define SMEMCPY(dst, src, len)    memcpy_s(dst, sizeof(dst), src, len)
 #endif /* CONFIG_KERNEL_FREERTOS */
 
 #endif /* TLS_MEM_H */

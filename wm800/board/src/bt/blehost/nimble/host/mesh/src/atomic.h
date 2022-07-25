@@ -13,7 +13,6 @@
 extern "C"
 {
 #endif
-#include <stdatomic.h>
 
 typedef int atomic_t;
 typedef atomic_t atomic_val_t;

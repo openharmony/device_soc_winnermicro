@@ -436,7 +436,7 @@ int string_to_uint(char *buf, u32 *d)
 {
     int i;
     int len = strlen(buf);
-    if (len > 11 || len == 0) {
+    if (len > 11 || len == 0) {  // 长度大于11或长度等于0
         return -1;
     }
     for (i=0; i<len; i++) {
@@ -456,11 +456,11 @@ int string_to_ipaddr(const char *buf, u8 *addr)
 
     rc = sscanf(buf, "%u.%u.%u.%u%c",
                 &in[0], &in[1], &in[2], &in[3], &c);
-    if (rc != 4 && (rc != 5 || c != '\n')) {
+    if (rc != 4 && (rc != 5 || c != '\n')) {  // sscanf的返回值不等于4
         return -1;
     }
     for (count = 0; count < 4; count++) {
-        if (in[count] > 255) {
+        if (in[count] > 255) {    // 数组值大于255
             return -1;
         }
         addr[count] = in[count];
@@ -477,8 +477,8 @@ char *strdup(const char *s)
     if (ret == NULL) {
         return NULL;
     }
-    memset(ret, 0, len);
-    memcpy(ret, s, len-1);
+    memset_s(ret, sizeof(ret), 0, len);
+    memcpy_s(ret, sizeof(ret), s, len-1);
     return ret;
 }
 
@@ -489,8 +489,8 @@ char *strndup(const char *s, size_t len)
     if (ret == NULL) {
         return NULL;
     }
-    memset(ret, 0, len + 1);
-    memcpy(ret, s, len);
+    memset_s(ret, sizeof(ret), 0, len + 1);
+    memcpy_s(ret, sizeof(ret), s, len);
     return ret;
 }
 
@@ -503,7 +503,7 @@ void delay_cnt(int count)
 #endif
 
     while (delay--) {
-    }        
+    }
 }
 
 void dumpBuffer(char *name, char* buffer, int len)

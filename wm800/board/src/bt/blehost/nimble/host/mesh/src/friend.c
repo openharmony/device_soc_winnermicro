@@ -190,7 +190,7 @@ void bt_mesh_friend_sec_update(u16_t net_idx)
     int i;
     BT_DBG("net_idx 0x%04x", net_idx);
 
-    for(i = 0; i < ARRAY_SIZE(bt_mesh.frnd); i++) {
+    for (i = 0; i < ARRAY_SIZE(bt_mesh.frnd); i++) {
         struct bt_mesh_friend *frnd = &bt_mesh.frnd[i];
 
         if (frnd->net_idx == BT_MESH_KEY_UNUSED) {
@@ -437,7 +437,6 @@ static int encrypt_friend_pdu(struct bt_mesh_friend *frnd, struct os_mbuf *buf,
     }
 
     src = sys_get_be16(&buf->om_data[5]);
-
     if (bt_mesh_elem_find(src)) {
         u32_t seq;
 
@@ -459,7 +458,7 @@ static int encrypt_friend_pdu(struct bt_mesh_friend *frnd, struct os_mbuf *buf,
         iv_index = (bt_mesh.iv_index - ((bt_mesh.iv_index & 1) != ivi));
     }
 
-    buf->om_data[0] = (nid | (iv_index & 1) << 7);
+    buf->om_data[0] = (nid | ((iv_index & 1) << 7));
 
     if (bt_mesh_net_encrypt(enc, buf, iv_index, false)) {
         BT_ERR("Encrypting failed");
@@ -485,7 +484,7 @@ static struct os_mbuf *encode_friend_ctl(struct bt_mesh_friend *frnd,
     info.dst = frnd->lpn;
     info.ctl = 1;
     info.ttl = 0;
-    memset(info.seq, 0, sizeof(info.seq));
+    memset_s(info.seq, sizeof(info.seq), 0, sizeof(info.seq));
     info.iv_index = BT_MESH_NET_IVI_TX;
     return create_friend_pdu(frnd, &info, sdu);
 }
@@ -1439,9 +1438,8 @@ void bt_mesh_friend_enqueue_rx(struct bt_mesh_net_rx *rx,
 {
     int i;
 
-    if (!rx->friend_match ||
-            (rx->ctx.recv_ttl <= 1 && rx->net_if != BT_MESH_NET_IF_LOCAL) ||
-            bt_mesh_friend_get() != BT_MESH_FRIEND_ENABLED) {
+    if (!rx->friend_match || (rx->ctx.recv_ttl <= 1 && rx->net_if != BT_MESH_NET_IF_LOCAL) ||
+        bt_mesh_friend_get() != BT_MESH_FRIEND_ENABLED) {
         return;
     }
 

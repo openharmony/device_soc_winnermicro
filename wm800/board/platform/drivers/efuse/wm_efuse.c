@@ -76,8 +76,8 @@ int tls_ft_param_init(void)
         return FALSE;
     }
 
-    memset(pft, 0xFF, sizeof(FT_PARAM_ST));
-    memset(&gftParam, 0xFF, sizeof(FT_PARAM_ST));
+    memset_s(pft, sizeof(pft), 0xFF, sizeof(FT_PARAM_ST));
+    memset_s(&gftParam, sizeof(gftParam), 0xFF, sizeof(FT_PARAM_ST));
 
     tls_fls_read(FT_MAGICNUM_ADDR, (unsigned char *)pft, sizeof(FT_PARAM_ST));
     if (pft->magic_no == SIGNATURE_WORD) {
@@ -91,7 +91,7 @@ int tls_ft_param_init(void)
         }
 
         if (gftParam.magic_no != SIGNATURE_WORD) {
-            memcpy(&gftParam, pft, sizeof(FT_PARAM_ST));
+            memcpy_s(&gftParam, sizeof(gftParam), pft, sizeof(FT_PARAM_ST));
         }
     }
     tls_mem_free(pft);
@@ -108,9 +108,9 @@ int tls_ft_param_get(unsigned int opnum, void *data, unsigned int rdlen)
             if ((gftParam.wifi_mac_addr[0]&0x1)
                 ||(0 == (gftParam.wifi_mac_addr[0]|gftParam.wifi_mac_addr[1]|gftParam.wifi_mac_addr[2]|
                 gftParam.wifi_mac_addr[3]|gftParam.wifi_mac_addr[4]|gftParam.wifi_mac_addr[5]))) {
-                memcpy(data, default_mac, rdlen);
+                memcpy_s(data, sizeof(data), default_mac, rdlen);
             } else  {
-                memcpy(data, gftParam.wifi_mac_addr, rdlen);
+                memcpy_s(data, sizeof(data), gftParam.wifi_mac_addr, rdlen);
             }
             break;
         case CMD_BT_MAC:    /* MAC */
@@ -119,11 +119,11 @@ int tls_ft_param_get(unsigned int opnum, void *data, unsigned int rdlen)
                 u8 invalid_bt_mac1[6] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
                 if ((memcmp(gftParam.bt_mac_addr, invalid_bt_mac, 6) == 0)|| \
                     (memcmp(gftParam.bt_mac_addr, invalid_bt_mac1, 6) == 0)) {
-                    memcpy(data, default_mac, rdlen);
+                    memcpy_s(data, sizeof(data), default_mac, rdlen);
                     *((u8*)data+5) +=1;      /* defalut plus 1 */
                     *((u8*)data) |= 0xC0;    /* defalut public static type */
                 } else {
-                    memcpy(data, gftParam.bt_mac_addr, rdlen);
+                    memcpy_s(data, sizeof(data), gftParam.bt_mac_addr, rdlen);
                 }
             }
             break;
@@ -154,9 +154,9 @@ int tls_ft_param_get(unsigned int opnum, void *data, unsigned int rdlen)
 
         case CMD_TX_GAIN: /* gain */
             if (rdlen < FT_GAIN_LEN) {
-                memcpy(data, gftParam.tx_gain, rdlen);
+                memcpy_s(data, sizeof(data), gftParam.tx_gain, rdlen);
             } else {
-                memcpy(data, gftParam.tx_gain, FT_GAIN_LEN);
+                memcpy_s(data, sizeof(data), gftParam.tx_gain, FT_GAIN_LEN);
             }
             break;
 
@@ -176,11 +176,11 @@ int tls_ft_param_set(unsigned int opnum, void *data, unsigned int len)
     }
     switch (opnum) {
         case CMD_WIFI_MAC:    /* MAC */
-            memcpy(gftParam.wifi_mac_addr, (unsigned char *)data, len);
+            memcpy_s(gftParam.wifi_mac_addr, sizeof(gftParam.wifi_mac_addr), (unsigned char *)data, len);
             break;
 
         case CMD_BT_MAC:    /* BT MAC */
-            memcpy(gftParam.bt_mac_addr, (unsigned char *)data, len);
+            memcpy_s(gftParam.bt_mac_addr, sizeof(gftParam.bt_mac_addr), (unsigned char *)data, len);
             break;
 
         case CMD_TX_DC:    /* tx_dcoffset */
@@ -213,7 +213,7 @@ int tls_ft_param_set(unsigned int opnum, void *data, unsigned int len)
             } else {
                 writelen = len;
             }
-            memcpy(gftParam.tx_gain, data, writelen);
+            memcpy_s(gftParam.tx_gain, sizeof(gftParam.tx_gain), data, writelen);
             break;
 
         default:
