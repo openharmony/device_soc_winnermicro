@@ -353,7 +353,7 @@ void *mem_realloc_debug(void *mem_address, u32 size, char* file, int line)
     }
     if (mem_address != NULL) {
         cpu_sr = tls_os_set_critical();
-        memcpy(mem_re_addr, mem_address, size);
+        memcpy_s(mem_re_addr, sizeof(mem_re_addr), mem_address, size);
         tls_os_release_critical(cpu_sr);
         mem_free_debug(mem_address, file, line);
     }
@@ -443,7 +443,7 @@ void *mem_calloc_debug(u32 n, u32 size)
 {
     u32 *buffer = (u32 *)LOS_MemAlloc(OS_SYS_MEM_ADDR, n*size);
     if (buffer) {
-        memset(buffer, 0, n*size);
+        memset_s(buffer, sizeof(buffer), 0, n*size);
     }
 
     return buffer;

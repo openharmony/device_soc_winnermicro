@@ -16,12 +16,12 @@
 #include "nimble/hci_common.h"
 #include "mesh/porting.h"
 
-#include "adv.h"
 #include "net.h"
 #include "foundation.h"
 #include "beacon.h"
 #include "prov.h"
 #include "proxy.h"
+#include "adv.h"
 
 /* Convert from ms to 0.625ms units */
 #define ADV_SCAN_UNIT(_ms) ((_ms) * 8 / 5)
@@ -204,13 +204,12 @@ struct os_mbuf *bt_mesh_adv_create_from_pool(struct os_mbuf_pool *pool,
     }
 
     buf = os_mbuf_get_pkthdr(pool, BT_MESH_ADV_USER_DATA_SIZE);
-
     if (!buf) {
         return NULL;
     }
     adv = get_id(net_buf_id(buf));
     BT_MESH_ADV(buf) = adv;
-    memset(adv, 0, sizeof(*adv));
+    memset_s(adv, sizeof(adv), 0, sizeof(*adv));
     adv->type         = type;
     adv->xmit         = xmit;
     adv->ref_cnt = 1;
@@ -251,7 +250,6 @@ static void bt_mesh_scan_cb(const bt_addr_le_t *addr, s8_t rssi,
         struct net_buf_simple_state state;
         u8_t len, type;
         len = net_buf_simple_pull_u8(buf);
-
         /* Check for early termination */
         if (len == 0) {
             return;
@@ -383,8 +381,7 @@ int bt_mesh_scan_enable(void)
                             &uncoded_params, NULL, NULL, NULL);
 #else
     struct ble_gap_disc_params scan_param = {
-        .passive = 1, .filter_duplicates = 0, .itvl =
-            MESH_SCAN_INTERVAL, .window = MESH_SCAN_WINDOW
+        .passive = 1, .filter_duplicates = 0, .itvl = MESH_SCAN_INTERVAL, .window = MESH_SCAN_WINDOW
     };
     BT_DBG("");
     err =  ble_gap_disc(g_mesh_addr_type, BLE_HS_FOREVER, &scan_param,

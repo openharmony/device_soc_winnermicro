@@ -590,7 +590,7 @@ int tls_fwup_init(void)
         TLS_DBGPRT_ERR("allocate @fwup fail!\n");
         return TLS_FWUP_STATUS_EMEM;
     }
-    memset(fwup, 0, sizeof(*fwup));
+    memset_s(fwup, sizeof(fwup), 0, sizeof(*fwup));
 
     err = tls_os_sem_create(&fwup->list_lock, 1);
     if (err != TLS_OS_SUCCESS) {

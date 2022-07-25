@@ -160,7 +160,7 @@ struct ble_gap_sec_state {
     unsigned bonded : 1;
 
     /** Size of a key used for encryption */
-    unsigned key_size: 5;
+    unsigned key_size : 5;
 };
 
 /** Advertising parameters */

@@ -56,7 +56,8 @@ int tc_ctr_mode(uint8_t *out, unsigned int outlen, const uint8_t *in,
     /* copy the ctr to the nonce */
     (void)_copy(nonce, sizeof(nonce), ctr, sizeof(nonce));
     /* select the last 4 bytes of the nonce to be incremented */
-    block_num = (nonce[12] << 24) | (nonce[13] << 16) | // 12:array element, 24:byte alignment, 13:array element, 16:byte alignment
+    // 12:array element, 24:byte alignment, 13:array element, 16:byte alignment
+    block_num = (nonce[12] << 24) | (nonce[13] << 16) |
                 (nonce[14] << 8) | (nonce[15]); // 14:array element, 8:byte alignment, 15:array element
 
     for (i = 0; i < inlen; ++i) {

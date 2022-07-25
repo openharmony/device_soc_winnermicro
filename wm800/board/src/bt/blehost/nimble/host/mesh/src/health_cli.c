@@ -72,7 +72,7 @@ static void health_fault_status(struct bt_mesh_model *model,
         *param->fault_count = buf->om_len;
     }
 
-    memcpy(param->faults, buf->om_data, *param->fault_count);
+    memcpy_s(param->faults, sizeof(param->faults), buf->om_data, *param->fault_count);
     k_sem_give(&health_cli->op_sync);
 }
 

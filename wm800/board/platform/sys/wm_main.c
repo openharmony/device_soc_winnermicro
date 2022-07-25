@@ -99,7 +99,7 @@ void vApplicationIdleHook(void)
     return;
 }
 
-void wm_gpio_config()
+void wm_gpio_config(void)
 {
     /* must call first */
     wm_gpio_af_disable();
@@ -172,8 +172,7 @@ int main(void)
     tls_os_start_scheduler();
 #else
     TaskStartStk = tls_mem_alloc(sizeof(u32)*TASK_START_STK_SIZE);
-    if (TaskStartStk)
-    {
+    if (TaskStartStk) {
         tls_os_task_create(&tststarthdl, NULL,
                            task_start,
                            (void *)0,
@@ -183,8 +182,8 @@ int main(void)
                            0);
         tls_os_start_scheduler();
     } else {
-        while(1);
-    }    
+        while (1);
+    }
 #endif
     return 0;
 }
@@ -203,8 +202,9 @@ void disp_version_info(void)
     TLS_DBGPRT_INFO("* All rights reserved.                                         *\n");
     TLS_DBGPRT_INFO("* WinnerMicro Firmware Version: %x.%x.%X                         *\n",
                     FirmWareVer[1], FirmWareVer[2], FirmWareVer[3]); // 2:array element, 3:array element
+    // 2:array element, 3:array element, 4:array element, 5:array element
     TLS_DBGPRT_INFO("* WinnerMicro Hardware Version: %x.%x.%x.%x.%x                      *\n",
-                    HwVer[1], HwVer[2], HwVer[3], HwVer[4], HwVer[5]); // 2:array element, 3:array element, 4:array element, 5:array element
+                    HwVer[1], HwVer[2], HwVer[3], HwVer[4], HwVer[5]);
     TLS_DBGPRT_INFO("*                                                              *\n");
     TLS_DBGPRT_INFO("* WinnerMicro Wi-Fi Lib Version: %x.%x.%x                         *\n",
                     WiFiVer[0], WiFiVer[1], WiFiVer[2]); // 2:array element
@@ -263,23 +263,20 @@ void task_start (void *data)
     tls_wifi_netif_event_init();
 
     tls_param_get(TLS_PARAM_ID_PSM, &enable, TRUE);
-    if (enable != TRUE)
-    {
+    if (enable != TRUE) {
         enable = TRUE;
         tls_param_set(TLS_PARAM_ID_PSM, &enable, TRUE);
     }
 #endif
-    UserMain();
+    UserMain(void);
 
-    extern void OHOS_SystemInit();
-    OHOS_SystemInit();
+    extern void OHOS_SystemInit(void);
+    OHOS_SystemInit(void);
 
-    for (;;)
-    {
+    for (;;) {
 #if 1
         tls_os_time_delay(0x10000000);
 #else
-        // printf("start up\n");
         extern void tls_os_disp_task_stat_info(void);
         tls_os_disp_task_stat_info();
         tls_os_time_delay(1000); // 1000:time unit

@@ -16,14 +16,14 @@
 #ifndef __WM_I2S_H
 #define __WM_I2S_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include <stdbool.h>
 #include "wm_regs.h"
 #include "wm_debug.h"
 #include "wm_dma.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef void (*tls_i2s_callback)(uint32_t *data, uint16_t *len);
 

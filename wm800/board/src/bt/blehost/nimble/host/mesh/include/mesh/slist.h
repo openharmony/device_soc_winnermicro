@@ -53,7 +53,7 @@ typedef struct _slist sys_slist_t;
  * @param __sn A sys_snode_t pointer to peek each node of the list
  */
 #define SYS_SLIST_FOR_EACH_NODE(__sl, __sn)             \
-    for (__sn = sys_slist_peek_head(__sl); __sn;            \
+    for (__sn = sys_slist_peek_head(__sl); (__sn);            \
          __sn = sys_slist_peek_next(__sn))
 
 /**
@@ -77,7 +77,7 @@ typedef struct _slist sys_slist_t;
  *             it contains the starting node, or NULL to start from the head
  */
 #define SYS_SLIST_ITERATE_FROM_NODE(__sl, __sn)             \
-    for (__sn = __sn ? sys_slist_peek_next_no_check(__sn)       \
+    for (__sn = (__sn) ? sys_slist_peek_next_no_check(__sn)       \
              : sys_slist_peek_head(__sl);           \
          __sn;                          \
          __sn = sys_slist_peek_next(__sn))
@@ -99,10 +99,10 @@ typedef struct _slist sys_slist_t;
  * @param __sns A sys_snode_t pointer for the loop to run safely
  */
 #define SYS_SLIST_FOR_EACH_NODE_SAFE(__sl, __sn, __sns)         \
-    for (__sn = sys_slist_peek_head(__sl),              \
-             __sns = sys_slist_peek_next(__sn);         \
-         __sn; __sn = __sns,                    \
-             __sns = sys_slist_peek_next(__sn))
+    for ((__sn) = sys_slist_peek_head(__sl),              \
+             (__sns) = sys_slist_peek_next(__sn);         \
+         (__sn); (__sn) = (__sns),                    \
+             (__sns) = sys_slist_peek_next(__sn))
 
 /*
  * @brief Provide the primitive to resolve the container of a list node
@@ -160,8 +160,8 @@ typedef struct _slist sys_slist_t;
  * @param __n The field name of sys_node_t within the container struct
  */
 #define SYS_SLIST_FOR_EACH_CONTAINER(__sl, __cn, __n)           \
-    for (__cn = SYS_SLIST_PEEK_HEAD_CONTAINER(__sl, __cn, __n); __cn; \
-         __cn = SYS_SLIST_PEEK_NEXT_CONTAINER(__cn, __n))
+    for ((__cn) = SYS_SLIST_PEEK_HEAD_CONTAINER(__sl, __cn, __n); (__cn); \
+         (__cn) = SYS_SLIST_PEEK_NEXT_CONTAINER(__cn, __n))
 
 /**
  * @brief Provide the primitive to safely iterate on a list under a container
@@ -179,9 +179,9 @@ typedef struct _slist sys_slist_t;
  * @param __n The field name of sys_node_t within the container struct
  */
 #define SYS_SLIST_FOR_EACH_CONTAINER_SAFE(__sl, __cn, __cns, __n)   \
-    for (__cn = SYS_SLIST_PEEK_HEAD_CONTAINER(__sl, __cn, __n), \
-         __cns = SYS_SLIST_PEEK_NEXT_CONTAINER(__cn, __n); __cn;    \
-         __cn = __cns, __cns = SYS_SLIST_PEEK_NEXT_CONTAINER(__cn, __n))
+    for ((__cn)= SYS_SLIST_PEEK_HEAD_CONTAINER(__sl, __cn, __n), \
+         (__cns) = SYS_SLIST_PEEK_NEXT_CONTAINER(__cn, __n); (__cn);    \
+         (__cn)= (__cns), (__cns) = SYS_SLIST_PEEK_NEXT_CONTAINER(__cn, __n))
 
 /**
  * @brief Initialize a list
@@ -311,7 +311,7 @@ static inline void sys_slist_append(sys_slist_t *list,
  * @param tail A pointer to the last element of the list to append
  */
 static inline void sys_slist_append_list(sys_slist_t *list,
-        void *head, void *tail)
+                                         void *head, void *tail)
 {
     if (!list->tail) {
         list->head = (sys_snode_t *)head;
@@ -332,7 +332,7 @@ static inline void sys_slist_append_list(sys_slist_t *list,
  * @param list_to_append A pointer to the list to append.
  */
 static inline void sys_slist_merge_slist(sys_slist_t *list,
-        sys_slist_t *list_to_append)
+                                         sys_slist_t *list_to_append)
 {
     sys_slist_append_list(list, list_to_append->head,
                           list_to_append->tail);
@@ -442,7 +442,7 @@ static inline void sys_slist_remove(sys_slist_t *list,
  * @return true if node was removed
  */
 static inline bool sys_slist_find_and_remove(sys_slist_t *list,
-        sys_snode_t *node)
+                                             sys_snode_t *node)
 {
     sys_snode_t *prev = NULL;
     sys_snode_t *test;

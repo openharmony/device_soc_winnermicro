@@ -477,7 +477,7 @@ int tls_spifls_init(void)
         return TLS_FLS_STATUS_ENOMEM;
     }
 
-    memset(fls, 0, sizeof(*fls));
+    memset_s(fls, sizeof(fls), 0, sizeof(*fls));
     dl_list_init((struct dl_list *) &fls->fls_drvs);
     err = tls_os_sem_create(&fls->fls_lock, 1);
     if (err != TLS_OS_SUCCESS) {

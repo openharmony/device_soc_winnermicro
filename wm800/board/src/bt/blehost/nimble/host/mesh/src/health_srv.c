@@ -43,7 +43,6 @@ static void health_get_registered(struct bt_mesh_model *mod,
         err = srv->cb->fault_get_reg(mod, company_id, test_id,
                                      net_buf_simple_tail(msg),
                                      &fault_count);
-
         if (err) {
             BT_ERR("Failed to get faults (err %d)", err);
             *test_id = HEALTH_TEST_STANDARD;

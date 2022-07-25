@@ -232,7 +232,6 @@ static int tls_uart_set_stop_bits_inside(struct tls_uart_port *port, TLS_UART_ST
 
     return WM_SUCCESS;
 }
-#endif
 
 static TLS_UART_STATUS_T tls_uart_set_flow_ctrl(struct tls_uart_port * port, TLS_UART_FLOW_CTRL_MODE_T flow_ctrl)
 {
@@ -393,7 +392,7 @@ int tls_uart_fill_buf(struct tls_uart_port *port, char *buf, u32 count)
         TLS_DBGPRT_ERR("mem err 1 count=%d\n", count);
         return -1;
     }
-    memcpy(uart_tx_msg->buf, buf, count);
+    memcpy_s(uart_tx_msg->buf, sizeof(uart_tx_msg->buf), buf, count);
     uart_tx_msg->buflen = count;
     uart_tx_msg->offset = 0;
     uart_tx_msg->finish_callback = uart_tx_finish_callback;
@@ -788,7 +787,7 @@ int tls_uart_port_init(u16 uart_no, tls_uart_options_t * opts, u8 modeChoose)
         tls_mem_free((void *)uart_port[uart_no].recv.buf);
         uart_port[uart_no].recv.buf = NULL;
     }
-    memset(&uart_port[uart_no], 0, sizeof(struct tls_uart_port));
+    memset_s(&uart_port[uart_no], sizeof(uart_port), 0, sizeof(struct tls_uart_port));
     port = &uart_port[uart_no];
     port->regs = (TLS_UART_REGS_T *)(HR_UART0_BASE_ADDR + uart_no*STEP_SIZE);
     if (uart_no==TLS_UART_2) {
@@ -827,7 +826,7 @@ int tls_uart_port_init(u16 uart_no, tls_uart_options_t * opts, u8 modeChoose)
         char *bufrx = tls_mem_alloc(TLS_UART_RX_BUF_SIZE);
         if (!bufrx)
             return WM_FAILED;
-        memset(bufrx, 0, TLS_UART_RX_BUF_SIZE);
+        memset_s(bufrx, sizeof(bufrx), 0, TLS_UART_RX_BUF_SIZE);
         port->recv.buf = (u8 *) bufrx;
     }
     port->recv.head = 0;

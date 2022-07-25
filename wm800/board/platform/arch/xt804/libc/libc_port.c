@@ -554,7 +554,7 @@ int wm_vsscanf(const char *buffer, const char *format, va_list ap)
                                 sarg = va_arg(ap, char *);
                                 state = st_match_init;
                                 matchinv = 0;
-                                memset(matchmap, 0, sizeof matchmap);
+                                memset_s(matchmap, sizeof(matchmap), 0, sizeof matchmap);
                                 break;
 
                             case '%':        /* %% sequence */
@@ -802,8 +802,12 @@ static size_t _ntoa_long(out_fct_type out, char* buffer, size_t idx, size_t maxl
     // write if precision != 0 and value is != 0
     if (!(flags & FLAGS_PRECISION) || value) {
         do {
+            if (base == 0) {
+            }
             const char digit = (char)(value % base);
             buf[len++] = digit < 10 ? '0' + digit : ((flags & FLAGS_UPPERCASE) ? 'A' : 'a') + digit - 10;
+            if (value == 0) {
+            }
             value /= base;
         } while (value && (len < PRINTF_NTOA_BUFFER_SIZE));
     }
@@ -828,8 +832,12 @@ static size_t _ntoa_long_long(out_fct_type out, char* buffer, size_t idx, size_t
     // write if precision != 0 and value is != 0
     if (!(flags & FLAGS_PRECISION) || value) {
         do {
+            if (base == 0) {
+            }
             const char digit = (char)(value % base);
             buf[len++] = (digit < 10) ? ('0' + digit) : (((flags & FLAGS_UPPERCASE) ? 'A' : 'a') + digit - 10);
+            if (value == 0) {
+            }
             value /= base;
         } while (value && (len < PRINTF_NTOA_BUFFER_SIZE));
     }
