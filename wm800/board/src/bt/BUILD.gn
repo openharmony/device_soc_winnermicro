@@ -152,5 +152,6 @@ kernel_module(module_name) {
     "blehost/porting/w800/include/syscfg",
     "blehost/porting/w800/include/sysflash",
     "blehost/porting/w800/include/sysinit",
+    "//utils/native/base/include",
   ]
 }

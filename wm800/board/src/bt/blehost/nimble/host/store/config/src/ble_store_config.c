@@ -19,12 +19,12 @@
 
 #include <stdint.h>
 #include <string.h>
-
+#include "securec.h"
 #include "sysinit/sysinit.h"
 #include "syscfg/syscfg.h"
 #include "host/ble_hs.h"
-#include "store/config/ble_store_config.h"
 #include "ble_store_config_priv.h"
+#include "store/config/ble_store_config.h"
 
 struct ble_store_value_sec ble_store_config_our_secs[MYNEWT_VAL(BLE_STORE_MAX_BONDS)];
 int ble_store_config_num_our_secs;
@@ -103,7 +103,7 @@ static int ble_store_config_find_sec(const struct ble_store_key_sec *key_sec,
     int i;
     skipped = 0;
 
-    for(i = 0; i < num_value_secs; i++) {
+    for (i = 0; i < num_value_secs; i++) {
         cur = value_secs + i;
 
         if (ble_addr_cmp(&key_sec->peer_addr, BLE_ADDR_ANY)) {
@@ -188,7 +188,7 @@ static int ble_store_config_delete_obj(void *values, int value_size, int idx, in
         dst += idx * value_size;
         uint8_t *src = dst + value_size;
         int move_count = *num_values - idx;
-        memmove(dst, src, move_count * value_size);
+        memmove_s(dst, sizeof(*dst), src, move_count * value_size);
     }
 
     return 0;
@@ -239,7 +239,7 @@ static int ble_store_config_delete_peer_sec(const struct ble_store_key_sec *key_
 }
 
 static int ble_store_config_read_peer_sec(const struct ble_store_key_sec *key_sec,
-                               struct ble_store_value_sec *value_sec)
+                                          struct ble_store_value_sec *value_sec)
 {
     int idx;
     idx = ble_store_config_find_sec(key_sec, ble_store_config_peer_secs,
@@ -293,7 +293,7 @@ static int ble_store_config_find_cccd(const struct ble_store_key_cccd *key)
     int i;
     skipped = 0;
 
-    for(i = 0; i < ble_store_config_num_cccds; i++) {
+    for (i = 0; i < ble_store_config_num_cccds; i++) {
         cccd = ble_store_config_cccds + i;
 
         if (ble_addr_cmp(&key->peer_addr, BLE_ADDR_ANY)) {
@@ -354,7 +354,7 @@ static int ble_store_config_read_cccd(const struct ble_store_key_cccd *key_cccd,
 
 static int ble_store_config_write_cccd(const struct ble_store_value_cccd *value_cccd)
 {
-    return 0;  
+    return 0;
 }
 
 /*****************************************************************************
@@ -478,7 +478,7 @@ int ble_store_config_flush(void)
     rc = ble_store_config_persist_cccds(false);
     if (rc != 0) {
         return rc;
-    }   
+    }
 
     ble_store_config_persist_flush();
     

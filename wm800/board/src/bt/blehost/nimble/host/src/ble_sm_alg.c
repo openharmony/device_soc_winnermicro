@@ -22,6 +22,7 @@
 #include <string.h>
 #include "syscfg/syscfg.h"
 #include "nimble/nimble_opt.h"
+#include "securec.h"
 
 #if NIMBLE_BLE_SM
 
@@ -83,8 +84,8 @@ int ble_sm_alg_s1(const uint8_t *k, const uint8_t *r1, const uint8_t *r2, uint8_
      *
      *    r' = r1' || r2'
      */
-    memcpy(out, r2, 8); // 8:size
-    memcpy(out + 8, r1, 8); // 8:size
+    memcpy_s(out, sizeof(*out), r2, 8); // 8:size
+    memcpy_s(out + 8, sizeof(out + 8), r1, 8); // 8:size
     rc = ble_sm_alg_encrypt(k, out, out);
     if (rc != 0) {
         return rc;
@@ -126,8 +127,8 @@ int ble_sm_alg_c1(const uint8_t *k, const uint8_t *r,
     /* pres, preq, rat and iat are concatenated to generate p1 */
     p1[0] = iat;
     p1[1] = rat;
-    memcpy(p1 + 2, preq, 7); // 2:byte alignment, 7:len
-    memcpy(p1 + 9, pres, 7); // 9:byte alignment, 7:len
+    memcpy_s(p1 + 2, sizeof(p1 + 2), preq, 7); // 2:byte alignment, 7:len
+    memcpy_s(p1 + 9, sizeof(p1 + 9), pres, 7); // 9:byte alignment, 7:len
     BLE_HS_LOG(DEBUG, "\n    p1=");
     ble_hs_log_flat_buf(p1, sizeof p1);
     /* Using out_enc_data as temporary output buffer */
@@ -139,9 +140,9 @@ int ble_sm_alg_c1(const uint8_t *k, const uint8_t *r,
     }
 
     /* ra is concatenated with ia and padding to generate p2 */
-    memcpy(p2, ra, 6); // 6:len
-    memcpy(p2 + 6, ia, 6); // 6:byte alignment, 6:len
-    memset(p2 + 12, 0, 4); // 12:byte alignment, 4:len
+    memcpy_s(p2, sizeof(p2), ra, 6); // 6:len
+    memcpy_s(p2 + 6, sizeof(p2 + 6), ia, 6); // 6:byte alignment, 6:len
+    memset_s(p2 + 12, sizeof(p2 + 12), 0, 4); // 12:byte alignment, 4:len
     BLE_HS_LOG(DEBUG, "\n    p2=");
     ble_hs_log_flat_buf(p2, sizeof p2);
     ble_sm_alg_xor_128(out_enc_data, p2, out_enc_data);
@@ -314,10 +315,10 @@ int ble_sm_alg_f6(const uint8_t *w, const uint8_t *n1, const uint8_t *n2,
     swap_buf(m + 32, r, 16); // 16:len, 32:byte alignment
     swap_buf(m + 48, iocap, 3); // 3:len, 48:byte alignment
     m[51] = a1t; // 51:array element
-    memcpy(m + 52, a1, 6); // 6:len, 52:byte alignment
+    memcpy_s(m + 52, sizeof(m + 52), a1, 6); // 6:len, 52:byte alignment
     swap_buf(m + 52, a1, 6); // 6:len, 52:byte alignment
     m[58] = a2t; // 58:array element
-    memcpy(m + 59, a2, 6); // 6:len, 59:byte alignment
+    memcpy_s(m + 59, sizeof(m + 59), a2, 6); // 6:len, 59:byte alignment
     swap_buf(m + 59, a2, 6); // 6:len, 59:byte alignment
     swap_buf(ws, w, 16); // 16:len
     rc = ble_sm_alg_aes_cmac(ws, m, sizeof(m), check);

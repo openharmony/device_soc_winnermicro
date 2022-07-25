@@ -12,6 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#ifndef _ALLTYPES_H_
+#define _ALLTYPES_H_
 
 #define _REDIR_TIME64 1
 #define _Addr int
@@ -367,22 +369,26 @@ typedef unsigned short sa_family_t;
 #endif
 
 #if defined(__NEED_pthread_attr_t) && !defined(__DEFINED_pthread_attr_t)
-typedef struct { union { int __i[sizeof(long)==8?14:9]; volatile int __vi[sizeof(long)==8?14:9]; unsigned long __s[sizeof(long)==8?7:9]; } __u; } pthread_attr_t;
+typedef struct { union { int __i[sizeof(long)==8?14:9]; volatile int __vi[sizeof(long)==8?14:9];
+    unsigned long __s[sizeof(long)==8?7:9]; } __u; } pthread_attr_t;
 #define __DEFINED_pthread_attr_t
 #endif
 
 #if defined(__NEED_pthread_mutex_t) && !defined(__DEFINED_pthread_mutex_t)
-typedef struct { union { int __i[sizeof(long)==8?10:6]; volatile int __vi[sizeof(long)==8?10:6]; volatile void *volatile __p[sizeof(long)==8?5:6]; } __u; } pthread_mutex_t;
+typedef struct { union { int __i[sizeof(long)==8?10:6]; volatile int __vi[sizeof(long)==8?10:6];
+    volatile void *volatile __p[sizeof(long)==8?5:6]; } __u; } pthread_mutex_t;
 #define __DEFINED_pthread_mutex_t
 #endif
 
 #if defined(__NEED_mtx_t) && !defined(__DEFINED_mtx_t)
-typedef struct { union { int __i[sizeof(long)==8?10:6]; volatile int __vi[sizeof(long)==8?10:6]; volatile void *volatile __p[sizeof(long)==8?5:6]; } __u; } mtx_t;
+typedef struct { union { int __i[sizeof(long)==8?10:6]; volatile int __vi[sizeof(long)==8?10:6];
+    volatile void *volatile __p[sizeof(long)==8?5:6]; } __u; } mtx_t;
 #define __DEFINED_mtx_t
 #endif
 
 #if defined(__NEED_pthread_cond_t) && !defined(__DEFINED_pthread_cond_t)
-typedef struct { union { int __i[12]; volatile int __vi[12]; void *__p[12*sizeof(int)/sizeof(void*)]; } __u; } pthread_cond_t;
+typedef struct { union { int __i[12]; volatile int __vi[12];
+    void *__p[12*sizeof(int)/sizeof(void*)]; } __u; } pthread_cond_t;
 #define __DEFINED_pthread_cond_t
 #endif
 
@@ -392,15 +398,19 @@ typedef struct { union { int __i[12]; volatile int __vi[12]; void *__p[12*sizeof
 #endif
 
 #if defined(__NEED_pthread_rwlock_t) && !defined(__DEFINED_pthread_rwlock_t)
-typedef struct { union { int __i[sizeof(long)==8?14:8]; volatile int __vi[sizeof(long)==8?14:8]; void *__p[sizeof(long)==8?7:8]; } __u; } pthread_rwlock_t;
+typedef struct { union { int __i[sizeof(long)==8?14:8]; volatile int __vi[sizeof(long)==8?14:8];
+    void *__p[sizeof(long)==8?7:8]; } __u; } pthread_rwlock_t;
 #define __DEFINED_pthread_rwlock_t
 #endif
 
 #if defined(__NEED_pthread_barrier_t) && !defined(__DEFINED_pthread_barrier_t)
-typedef struct { union { int __i[sizeof(long)==8?8:5]; volatile int __vi[sizeof(long)==8?8:5]; void *__p[sizeof(long)==8?4:5]; } __u; } pthread_barrier_t;
+typedef struct { union { int __i[sizeof(long)==8?8:5]; volatile int __vi[sizeof(long)==8?8:5];
+    void *__p[sizeof(long)==8?4:5]; } __u; } pthread_barrier_t;
 #define __DEFINED_pthread_barrier_t
 #endif
 
 #undef _Addr
 #undef _Int64
 #undef _Reg
+
+#endif /* _ALLTYPES_H_ */

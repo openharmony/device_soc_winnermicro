@@ -350,7 +350,6 @@ static int ble_hs_reset(void)
 
     while (1) {
         uint16_t conn_handle = ble_hs_atomic_first_conn_handle();
-
         if (conn_handle == BLE_HS_CONN_HANDLE_NONE) {
             break;
         }
@@ -406,7 +405,6 @@ static void ble_hs_timer_exp(struct ble_npl_event *ev)
 
 static void ble_hs_timer_reset(uint32_t ticks)
 {
-
     if (!ble_hs_is_enabled()) {
         ble_npl_callout_stop(&ble_hs_timer);
     } else {
@@ -427,7 +425,6 @@ static void ble_hs_timer_sched(int32_t ticks_from_now)
      * sooner than the previous expiration time.
      */
     abs_time = ble_npl_time_get() + ticks_from_now;
-
     if (!ble_npl_callout_is_active(&ble_hs_timer) ||
             ((ble_npl_stime_t)(abs_time -
                                ble_npl_callout_get_ticks(&ble_hs_timer))) < 0) {

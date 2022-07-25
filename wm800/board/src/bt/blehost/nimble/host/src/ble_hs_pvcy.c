@@ -19,6 +19,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+#include "securec.h"
 #include "stats/stats.h"
 #include "ble_hs_priv.h"
 
@@ -41,7 +42,7 @@ static int ble_hs_pvcy_set_addr_timeout(uint16_t timeout)
 
     cmd.rpa_timeout = htole16(timeout);
     return ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_LE,
-                             BLE_HCI_OCF_LE_SET_RPA_TMO),
+                                        BLE_HCI_OCF_LE_SET_RPA_TMO),
                              &cmd, sizeof(cmd), NULL, 0);
 }
 
@@ -50,29 +51,30 @@ static int ble_hs_pvcy_set_resolve_enabled(int enable)
     struct ble_hci_le_set_addr_res_en_cp cmd;
     cmd.enable = enable;
     return ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_LE,
-                             BLE_HCI_OCF_LE_SET_ADDR_RES_EN),
+                                        BLE_HCI_OCF_LE_SET_ADDR_RES_EN),
                              &cmd, sizeof(cmd), NULL, 0);
 }
 
 int ble_hs_pvcy_remove_entry(uint8_t addr_type, const uint8_t *addr)
 {
+    uint8_t addr_type_tmp = addr_type;
     struct ble_hci_le_rmv_resolve_list_cp cmd;
 
-    if (addr_type > BLE_ADDR_RANDOM) {
-        addr_type = addr_type % 2; // 2:byte alignment
+    if (addr_type_tmp > BLE_ADDR_RANDOM) {
+        addr_type_tmp = addr_type_tmp % 2; // 2:byte alignment
     }
 
-    cmd.peer_addr_type = addr_type;
-    memcpy(cmd.peer_id_addr, addr, BLE_DEV_ADDR_LEN);
+    cmd.peer_addr_type = addr_type_tmp;
+    memcpy_s(cmd.peer_id_addr, sizeof(cmd.peer_id_addr), addr, BLE_DEV_ADDR_LEN);
     return ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_LE,
-                             BLE_HCI_OCF_LE_RMV_RESOLV_LIST),
+                                        BLE_HCI_OCF_LE_RMV_RESOLV_LIST),
                              &cmd, sizeof(cmd), NULL, 0);
 }
 
 static int ble_hs_pvcy_clear_entries(void)
 {
     return ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_LE,
-                             BLE_HCI_OCF_LE_CLR_RESOLV_LIST),
+                                        BLE_HCI_OCF_LE_CLR_RESOLV_LIST),
                              NULL, 0, NULL, 0);
 }
 
@@ -87,24 +89,24 @@ static int ble_hs_pvcy_add_entry_hci(const uint8_t *addr, uint8_t addr_type, con
     }
 
     cmd.peer_addr_type = addr_type;
-    memcpy(cmd.peer_id_addr, addr, 6); // 6:size
-    memcpy(cmd.local_irk, ble_hs_pvcy_irk, 16); // 16:size
-    memcpy(cmd.peer_irk, irk, 16); // 16:size
+    memcpy_s(cmd.peer_id_addr, sizeof(cmd.peer_id_addr), addr, 6); // 6:size
+    memcpy_s(cmd.local_irk, sizeof(cmd.local_irk), ble_hs_pvcy_irk, 16); // 16:size
+    memcpy_s(cmd.peer_irk, sizeof(cmd.peer_irk), irk, 16); // 16:size
     rc = ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_LE,
-                           BLE_HCI_OCF_LE_ADD_RESOLV_LIST),
+                                      BLE_HCI_OCF_LE_ADD_RESOLV_LIST),
                            &cmd, sizeof(cmd), NULL, 0);
     if (rc != 0) {
         return rc;
     }
 
     return 0;
-    /* FIXME Controller is BT5.0 and default privacy mode is network which
+    /* Controller is BT5.0 and default privacy mode is network which
      * can cause problems for apps which are not aware of it. We need to
      * sort it out somehow. For now we set device mode for all of the peer
      * devices and application should change it to network if needed
      */
     peer_addr.type = addr_type;
-    memcpy(peer_addr.val, addr, sizeof peer_addr.val);
+    memcpy_s(peer_addr.val, sizeof(peer_addr.val), addr, sizeof peer_addr.val);
     rc = ble_hs_pvcy_set_mode(&peer_addr, BLE_GAP_PRIVATE_MODE_DEVICE);
     if (rc != 0) {
         return rc;
@@ -157,15 +159,15 @@ int ble_hs_pvcy_set_our_irk(const uint8_t *irk)
     uint8_t new_irk[16];
 
     if (irk != NULL) {
-        memcpy(new_irk, irk, 16); // 16:size
+        memcpy_s(new_irk, sizeof(new_irk), irk, 16); // 16:size
     } else {
-        memcpy(new_irk, ble_hs_pvcy_default_irk, 16); // 16:size
+        memcpy_s(new_irk, ble_hs_pvcy_default_irk, 16); // 16:size
     }
 
     /* Clear the resolving list if this is a new IRK. */
-    /* Note , the bluetooth system will be automatically on/off, here I always set default local irk and enable rpa*/
-    if (/*memcmp(ble_hs_pvcy_irk, new_irk, 16) != 0*/1) {
-        memcpy(ble_hs_pvcy_irk, new_irk, 16); // 16:size
+    /* Note , the bluetooth system will be automatically on/off, here I always set default local irk and enable rpa */
+    if (1) {
+        memcpy_s(ble_hs_pvcy_irk, sizeof(ble_hs_pvcy_irk), new_irk, 16); // 16:size
         int rc = ble_hs_pvcy_set_resolve_enabled(0);
         if (rc != 0) {
             return rc;
@@ -188,9 +190,9 @@ int ble_hs_pvcy_set_our_irk(const uint8_t *irk)
          * such case. Peer IRK should be left all-zero since this is not for an
          * actual peer.
          */
-        uint8_t tmp_addr[6]; 
-        memset(tmp_addr, 0, 6); // 16:size
-        memset(new_irk, 0, 16); // 16:size
+        uint8_t tmp_addr[6];
+        memset_s(tmp_addr, sizeof(tmp_addr), 0, 6); // 16:size
+        memset_s(new_irk, sizeof(new_irk), 0, 16); // 16:size
         rc = ble_hs_pvcy_add_entry(tmp_addr, 0, new_irk);
         if (rc != 0) {
             return rc;
@@ -217,7 +219,7 @@ int ble_hs_pvcy_set_mode(const ble_addr_t *addr, uint8_t priv_mode)
 
     cmd.mode = priv_mode;
     cmd.peer_id_addr_type = addr->type;
-    memcpy(cmd.peer_id_addr, addr->val, BLE_DEV_ADDR_LEN);
+    memcpy_s(cmd.peer_id_addr, sizeof(cmd.peer_id_addr), addr->val, BLE_DEV_ADDR_LEN);
     return ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_LE,
                                         BLE_HCI_OCF_LE_SET_PRIVACY_MODE),
                              &cmd, sizeof(cmd), NULL, 0);

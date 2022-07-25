@@ -202,7 +202,6 @@ static int ble_hs_hci_evt_num_completed_pkts(uint8_t event_code, const uint8_t *
 
     for (i = 0; i < ev->count; i++) {
         uint16_t num_pkts = le16toh(ev->completed[i].packets);
-
         if (num_pkts > 0) {
             ble_hs_lock();
             conn = ble_hs_conn_find(le16toh(ev->completed[i].handle));
@@ -256,16 +255,16 @@ static int ble_hs_hci_evt_le_enh_conn_complete(uint8_t subevent, const uint8_t *
         return BLE_HS_ECONTROLLER;
     }
 
-    memset(&evt, 0, sizeof(evt));
+    memset_s(&evt, sizeof(evt), 0, sizeof(evt));
     evt.status = ev->status;
 
     if (evt.status == BLE_ERR_SUCCESS) {
         evt.connection_handle = le16toh(ev->conn_handle);
         evt.role = ev->role;
         evt.peer_addr_type = ev->peer_addr_type;
-        memcpy(evt.peer_addr, ev->peer_addr, BLE_DEV_ADDR_LEN);
-        memcpy(evt.local_rpa, ev->local_rpa, BLE_DEV_ADDR_LEN);
-        memcpy(evt.peer_rpa, ev->peer_rpa, BLE_DEV_ADDR_LEN);
+        memcpy_s(evt.peer_addr, sizeof(evt.peer_addr), ev->peer_addr, BLE_DEV_ADDR_LEN);
+        memcpy_s(evt.local_rpa, sizeof(evt.local_rpa), ev->local_rpa, BLE_DEV_ADDR_LEN);
+        memcpy_s(evt.peer_rpa, sizeof(evt.peer_rpa), ev->peer_rpa, BLE_DEV_ADDR_LEN);
         evt.conn_itvl = le16toh(ev->conn_itvl);
         evt.conn_latency = le16toh(ev->conn_latency);
         evt.supervision_timeout = le16toh(ev->supervision_timeout);
@@ -281,7 +280,7 @@ static int ble_hs_hci_evt_le_enh_conn_complete(uint8_t subevent, const uint8_t *
     if (evt.status == BLE_ERR_DIR_ADV_TMO ||
             evt.role == BLE_HCI_LE_CONN_COMPLETE_ROLE_SLAVE) {
         /* store this until we get set terminated event with adv handle */
-        memcpy(&pend_conn_complete, &evt, sizeof(evt));
+        memcpy_s(&pend_conn_complete, sizeof(pend_conn_complete), &evt, sizeof(evt));
         return 0;
     }
 
@@ -298,14 +297,14 @@ static int ble_hs_hci_evt_le_conn_complete(uint8_t subevent, const uint8_t *data
         return BLE_HS_ECONTROLLER;
     }
 
-    memset(&evt, 0, sizeof(evt));
+    memset_s(&evt, sizeof(evt), 0, sizeof(evt));
     evt.status = ev->status;
 
     if (evt.status == BLE_ERR_SUCCESS) {
         evt.connection_handle = le16toh(ev->conn_handle);
         evt.role = ev->role;
         evt.peer_addr_type = ev->peer_addr_type;
-        memcpy(evt.peer_addr, ev->peer_addr, BLE_DEV_ADDR_LEN);
+        memcpy_s(evt.peer_addr, sizeof(evt.peer_addr), ev->peer_addr, BLE_DEV_ADDR_LEN);
         evt.conn_itvl = le16toh(ev->conn_itvl);
         evt.conn_latency = le16toh(ev->conn_latency);
         evt.supervision_timeout = le16toh(ev->supervision_timeout);
@@ -321,7 +320,7 @@ static int ble_hs_hci_evt_le_conn_complete(uint8_t subevent, const uint8_t *data
     if (evt.status == BLE_ERR_DIR_ADV_TMO ||
             evt.role == BLE_HCI_LE_CONN_COMPLETE_ROLE_SLAVE) {
         /* store this until we get set terminated event with adv handle */
-        memcpy(&pend_conn_complete, &evt, sizeof(evt));
+        memcpy_s(&pend_conn_complete, sizeof(pend_conn_complete), &evt, sizeof(evt));
         return 0;
     }
 
@@ -394,7 +393,7 @@ static int ble_hs_hci_evt_le_adv_rpt(uint8_t subevent, const uint8_t *data, unsi
         data += sizeof(rpt) + rpt->data_len + 1;
         desc.event_type = rpt->type;
         desc.addr.type = rpt->addr_type;
-        memcpy(desc.addr.val, rpt->addr, BLE_DEV_ADDR_LEN);
+        memcpy_s(desc.addr.val, sizeof(desc.addr.val), rpt->addr, BLE_DEV_ADDR_LEN);
         desc.length_data = rpt->data_len;
         desc.data = rpt->data;
         desc.rssi = rpt->data[rpt->data_len];
@@ -421,9 +420,9 @@ static int ble_hs_hci_evt_le_dir_adv_rpt(uint8_t subevent, const uint8_t *data, 
     for (i = 0; i < ev->num_reports; i++) {
         desc.event_type = ev->reports[i].type;
         desc.addr.type = ev->reports[i].addr_type;
-        memcpy(desc.addr.val, ev->reports[i].addr, BLE_DEV_ADDR_LEN);
+        memcpy_s(desc.addr.val, sizeof(desc.addr.val), ev->reports[i].addr, BLE_DEV_ADDR_LEN);
         desc.direct_addr.type = ev->reports[i].dir_addr_type;
-        memcpy(desc.direct_addr.val, ev->reports[i].dir_addr, BLE_DEV_ADDR_LEN);
+        memcpy_s(desc.direct_addr.val, sizeof(desc.direct_addr.val), ev->reports[i].dir_addr, BLE_DEV_ADDR_LEN);
         desc.rssi = ev->reports[i].rssi;
         ble_gap_rx_adv_report(&desc);
     }
@@ -490,7 +489,7 @@ static int ble_hs_hci_evt_le_ext_adv_rpt(uint8_t subevent, const uint8_t *data, 
     report = &ev->reports[0];
 
     for (i = 0; i < ev->num_reports; i++) {
-        memset(&desc, 0, sizeof(desc));
+        memset_s(&desc, sizeof(desc), 0, sizeof(desc));
         desc.props = (report->evt_type) & 0x1F;
         if (desc.props & BLE_HCI_ADV_LEGACY_MASK) {
             legacy_event_type = ble_hs_hci_decode_legacy_type(report->evt_type);
@@ -521,12 +520,12 @@ static int ble_hs_hci_evt_le_ext_adv_rpt(uint8_t subevent, const uint8_t *data, 
         }
 
         desc.addr.type = report->addr_type;
-        memcpy(desc.addr.val, report->addr, 6); // 6:size
+        memcpy_s(desc.addr.val, sizeof(desc.addr.val), report->addr, 6); // 6:size
         desc.length_data = report->data_len;
         desc.data = report->data;
         desc.rssi = report->rssi;
         desc.tx_power = report->tx_power;
-        memcpy(desc.direct_addr.val, report->dir_addr, 6); // 6:size
+        memcpy_s(desc.direct_addr.val, sizeof(desc.direct_addr.val), report->dir_addr, 6); // 6:size
         desc.direct_addr.type = report->dir_addr_type;
         desc.sid = report->sid;
         desc.prim_phy = report->pri_phy;
@@ -764,13 +763,14 @@ int ble_hs_hci_evt_process(const struct ble_hci_ev *ev)
  */
 int ble_hs_hci_evt_acl_process(struct os_mbuf *om)
 {
+    struct os_mbuf *om_tmp = om;
     struct hci_data_hdr hci_hdr;
     struct ble_hs_conn *conn;
     ble_l2cap_rx_fn *rx_cb;
     uint16_t conn_handle;
     int reject_cid;
     int rc;
-    rc = ble_hs_hci_util_data_hdr_strip(om, &hci_hdr);
+    rc = ble_hs_hci_util_data_hdr_strip(om_tmp, &hci_hdr);
     if (rc != 0) {
         goto err;
     }
@@ -782,12 +782,12 @@ int ble_hs_hci_evt_acl_process(struct os_mbuf *om)
                BLE_HCI_DATA_HANDLE(hci_hdr.hdh_handle_pb_bc),
                BLE_HCI_DATA_PB(hci_hdr.hdh_handle_pb_bc),
                hci_hdr.hdh_len);
-    ble_hs_log_mbuf(om);
+    ble_hs_log_mbuf(om_tmp);
     BLE_HS_LOG(DEBUG, "\r\n");
 #endif
 #endif
 
-    if (hci_hdr.hdh_len != OS_MBUF_PKTHDR(om)->omp_len) {
+    if (hci_hdr.hdh_len != OS_MBUF_PKTHDR(om_tmp)->omp_len) {
         rc = BLE_HS_EBADDATA;
         goto err;
     }
@@ -801,8 +801,8 @@ int ble_hs_hci_evt_acl_process(struct os_mbuf *om)
         reject_cid = -1;
     } else {
         /* Forward ACL data to L2CAP. */
-        rc = ble_l2cap_rx(conn, &hci_hdr, om, &rx_cb, &reject_cid);
-        om = NULL;
+        rc = ble_l2cap_rx(conn, &hci_hdr, om_tmp, &rx_cb, &reject_cid);
+        om_tmp = NULL;
     }
 
     ble_hs_unlock();
@@ -829,6 +829,6 @@ int ble_hs_hci_evt_acl_process(struct os_mbuf *om)
 
     return 0;
 err:
-    os_mbuf_free_chain(om);
+    os_mbuf_free_chain(om_tmp);
     return rc;
 }
