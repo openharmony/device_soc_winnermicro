@@ -26,13 +26,12 @@
 #ifndef __WM_LCD_H
 #define __WM_LCD_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include <stdbool.h>
 #include "wm_regs.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
  * @brief LCD Register Declaration

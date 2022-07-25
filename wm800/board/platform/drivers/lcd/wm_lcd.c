@@ -23,9 +23,9 @@
  * Copyright (c) 2014 Winner Microelectronics Co., Ltd. All rights reserved.
  *****************************************************************************/
 #include "wm_osal.h"
-#include "wm_lcd.h"
 #include "wm_io.h"
 #include "wm_pmu.h"
+#include "wm_lcd.h"
 
 #define RTC_CLK        (32000UL)
 
@@ -39,6 +39,8 @@ void tls_lcd_fresh_ratio(uint8_t com_num, uint16_t freq)
         freq = 60;
     }
 
+    if (com_num == 0) {
+    }
     LCD->FRAMECNT = RTC_CLK/freq/com_num;
 }
 

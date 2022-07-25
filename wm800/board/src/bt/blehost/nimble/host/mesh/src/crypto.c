@@ -815,7 +815,7 @@ int bt_mesh_beacon_auth(const u8_t beacon_key[16], u8_t flags,
     BT_DBG("BeaconMsg %s", bt_hex(msg, sizeof(msg)));
     err = bt_mesh_aes_cmac_one(beacon_key, msg, sizeof(msg), tmp);
     if (!err) {
-        memcpy(auth, tmp, 8); // 8:len
+        memcpy_s(auth, sizeof(auth), tmp, 8); // 8:len
     }
 
     return err;

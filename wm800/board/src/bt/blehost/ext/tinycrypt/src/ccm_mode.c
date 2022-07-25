@@ -63,20 +63,21 @@ static void ccm_cbc_mac(uint8_t *T, const uint8_t *data, unsigned int dlen,
                         unsigned int flag, TCAesKeySched_t sched)
 {
     unsigned int i;
+    unsigned int Dlen = dlen;
 
     if (flag > 0) {
-        T[0] ^= (uint8_t)(dlen >> 8); // 8:byte alignment
-        T[1] ^= (uint8_t)(dlen);
-        dlen += 2; // 2:byte alignment
+        T[0] ^= (uint8_t)(Dlen >> 8); // 8:byte alignment
+        T[1] ^= (uint8_t)(Dlen);
+        Dlen += 2; // 2:byte alignment
         i = 2; // 2:byte alignment
     } else {
         i = 0;
     }
 
-    while (i < dlen) {
+    while (i < Dlen) {
         T[i++ % (Nb * Nk)] ^= *data++;
 
-        if (((i % (Nb * Nk)) == 0) || dlen == i) {
+        if (((i % (Nb * Nk)) == 0) || Dlen == i) {
             (void) tc_aes_encrypt(T, T, sched);
         }
     }
@@ -180,7 +181,8 @@ int tc_ccm_generation_encryption(uint8_t *out, unsigned int olen,
     b[14] = b[15] = TC_ZERO_BYTE; // 14:array element, 15:array element
     /* encrypting payload using ctr mode: */
     ccm_ctr_mode(out, plen, payload, plen, b, c->sched);
-    b[14] = b[15] = TC_ZERO_BYTE; /* restoring initial counter for ctr_mode (0): */  // 14:array element, 15:array element
+    b[14] = b[15] = TC_ZERO_BYTE; /* restoring initial counter for ctr_mode (0): */
+    // 14:array element, 15:array element
     /* encrypting b and adding the tag to the output: */
     (void)tc_aes_encrypt(b, b, c->sched);
     out += plen;

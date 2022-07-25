@@ -86,12 +86,13 @@ void psram_init(psram_mode_t mode)
 int memcpy_dma(unsigned char *dst, unsigned char *src, int num)
 {
     int offset = 0;
+    int Num = num;
     unsigned char *psram_access_start = src;
 
-    int left_bytes = num&0x03;
-    int dw_length = (num&(~0x03))>>2;
+    int left_bytes = Num&0x03;
+    int dw_length = (Num&(~0x03))>>2;
 
-    if (!TOO_SMALL(num) && !UNALIGNED (src, dst)) {
+    if (!TOO_SMALL(Num) && !UNALIGNED (src, dst)) {
         if (dw_length) {
             wm_psram_dma_stop(psram_channel);
             wm_psram_dma_init(psram_channel, dw_length*4, src, dst);
@@ -112,7 +113,7 @@ int memcpy_dma(unsigned char *dst, unsigned char *src, int num)
             offset+=1;
         }
     } else {
-        while (num--) {
+        while (Num--) {
             M8(dst++) = M8(psram_access_start++);
             offset++;
         }

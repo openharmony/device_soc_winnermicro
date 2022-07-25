@@ -870,18 +870,19 @@ __STATIC_INLINE uint32_t csi_vic_get_active(int32_t IRQn)
  */
 __STATIC_INLINE void csi_vic_set_threshold(uint32_t VectThreshold, uint32_t PrioThreshold)
 {
-    VectThreshold &= 0x7FUL;
+    uint32_t VectThresholdValue = VectThreshold;
+    VectThresholdValue &= 0x7FUL;
 
-    if (VectThreshold <= 31) {
-        VIC->IPTR = 0x80000000 | (((VectThreshold + 32) & 0xFF) << 8) | ((PrioThreshold & 0x3) << 6);
+    if (VectThresholdValue <= 31) {
+        VIC->IPTR = 0x80000000 | (((VectThresholdValue + 32) & 0xFF) << 8) | ((PrioThreshold & 0x3) << 6);
     }
 
-    if (VectThreshold > 31 && VectThreshold < 96) {
-        VIC->IPTR = 0x80000000 | (((VectThreshold + 32) & 0xFF) << 8) | ((PrioThreshold & 0x7) << 5);
+    if (VectThresholdValue > 31 && VectThresholdValue < 96) {
+        VIC->IPTR = 0x80000000 | (((VectThresholdValue + 32) & 0xFF) << 8) | ((PrioThreshold & 0x7) << 5);
     }
 
-    if (VectThreshold > 95) {
-        VIC->IPTR = 0x80000000 | (((VectThreshold + 32) & 0xFF) << 8) | ((PrioThreshold & 0xF) << 4);
+    if (VectThresholdValue > 95) {
+        VIC->IPTR = 0x80000000 | (((VectThresholdValue + 32) & 0xFF) << 8) | ((PrioThreshold & 0xF) << 4);
     }
 }
 

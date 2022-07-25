@@ -16,7 +16,7 @@
 #include <math.h>
 #include <stdint.h>
 
-double fmod(double x, double y)
+double fmod(long double x, long double y)
 {
     union {double f; uint64_t i;} ux = {x}, uy = {y};
     int ex = (ux.i>>52) & 0x7ff;
@@ -40,7 +40,7 @@ double fmod(double x, double y)
 
     /* normalize x and y */
     if (!ex) {
-        for (i = (uxi<<12); (i>>63) == 0; ex--, i <<= 1) {
+        for (i = (uxi<<12); (i>>63) == 0; ex--, i <<= 1) {  //左移12位
         }
         uxi <<= -ex + 1;
     } else {
@@ -74,7 +74,7 @@ double fmod(double x, double y)
         }
         uxi = i;
     }
-    for (; (uxi>>52) == 0; uxi <<= 1, ex--) {
+    for (; (uxi>>52) == 0; uxi <<= 1, ex--) {   // 右移52位
     }
 
     /* scale result */

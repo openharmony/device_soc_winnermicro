@@ -73,7 +73,7 @@ int uECC_make_key_with_d(uint8_t *public_key, uint8_t *private_key,
     /* This function is designed for test purposes-only (such as validating NIST
      * test vectors) as it uses a provided value for d instead of generating
      * it uniformly at random. */
-    memcpy(_private, d, NUM_ECC_BYTES);
+    memcpy_s(_private, sizeof(_private), d, NUM_ECC_BYTES);
 
     /* Computing public-key from private: */
     if (EccPoint_compute_public_key(_public, _private, curve)) {
@@ -88,7 +88,7 @@ int uECC_make_key_with_d(uint8_t *public_key, uint8_t *private_key,
                                curve->num_bytes,
                                _public + curve->num_words);
         /* erasing temporary buffer used to store secret: */
-        memset(_private, 0, NUM_ECC_BYTES);
+        memset_s(_private, sizeof(_private), 0, NUM_ECC_BYTES);
         return 1;
     }
 
@@ -126,7 +126,7 @@ int uECC_make_key(uint8_t *public_key, uint8_t *private_key, uECC_Curve curve)
                                    curve->num_bytes,
                                    _public + curve->num_words);
             /* erasing temporary buffer that stored secret: */
-            memset(_private, 0, NUM_ECC_BYTES);
+            memset_s(_private, sizeof(_private), 0, NUM_ECC_BYTES);
             return 1;
         }
     }
@@ -177,11 +177,11 @@ int uECC_shared_secret(const uint8_t *public_key, const uint8_t *private_key,
     r = !EccPoint_isZero(_public, curve);
 clear_and_out:
     /* erasing temporary buffer used to store secret: */
-    memset(p2, 0, sizeof(p2));
+    memset_s(p2, sizeof(p2), 0, sizeof(p2));
     __asm__ __volatile__("" :: "g"(p2) : "memory");
-    memset(tmp, 0, sizeof(tmp));
+    memset_s(tmp, sizeof(tmp), 0, sizeof(tmp));
     __asm__ __volatile__("" :: "g"(tmp) : "memory");
-    memset(_private, 0, sizeof(_private));
+    memset_s(_private, sizeof(_private), 0, sizeof(_private));
     __asm__ __volatile__("" :: "g"(_private) : "memory");
     return r;
 }

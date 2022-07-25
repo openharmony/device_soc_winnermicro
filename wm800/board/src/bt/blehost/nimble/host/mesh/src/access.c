@@ -19,8 +19,8 @@
 #include "net.h"
 #include "lpn.h"
 #include "transport.h"
-#include "access.h"
 #include "foundation.h"
+#include "access.h"
 #if MYNEWT_VAL(BLE_MESH_SHELL_MODELS)
 #include "mesh/model_cli.h"
 #endif

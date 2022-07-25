@@ -13,8 +13,8 @@
 #include <errno.h>
 
 #include "os/os_mbuf.h"
-#include "mesh/mesh.h"
 #include "host/ble_uuid.h"
+#include "mesh/mesh.h"
 
 #include "adv.h"
 #include "prov.h"

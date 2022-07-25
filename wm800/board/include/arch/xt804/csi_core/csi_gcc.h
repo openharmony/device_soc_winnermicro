@@ -1164,17 +1164,18 @@ __ALWAYS_STATIC_INLINE void __BKPT(void)
 __ALWAYS_STATIC_INLINE uint32_t __RBIT(uint32_t value)
 {
     uint32_t result;
+    uint32_t Value = value;
 
 #if (__CK80X >= 0x03U)
-    __ASM volatile("brev %0, %1" : "=r"(result) : "r"(value));
+    __ASM volatile("brev %0, %1" : "=r"(result) : "r"(Value));
 #else
     int32_t s = 4  * 8 - 1; /* sizeof(v) = 4 */ /* extra shift needed at end */
 
-    result = value;                      /* r will be reversed bits of v; first get LSB of v */
+    result = Value;                      /* r will be reversed bits of v; first get LSB of v */
 
-    for (value >>= 1U; value; value >>= 1U) {
+    for (Value >>= 1U; Value; Value >>= 1U) {
         result <<= 1U;
-        result |= value & 1U;
+        result |= Value & 1U;
         s--;
     }
 
@@ -1200,6 +1201,7 @@ __ALWAYS_STATIC_INLINE int32_t __SSAT(int32_t x, uint32_t y)
 {
     int32_t posMax, negMin;
     uint32_t i;
+    int32_t z = x;
 
     posMax = 1;
 
@@ -1207,21 +1209,21 @@ __ALWAYS_STATIC_INLINE int32_t __SSAT(int32_t x, uint32_t y)
         posMax = posMax * 2;
     }
 
-    if (x > 0) {
+    if (z > 0) {
         posMax = (posMax - 1);
 
-        if (x > posMax) {
-            x = posMax;
+        if (z > posMax) {
+            z = posMax;
         }
     } else {
         negMin = -posMax;
 
-        if (x < negMin) {
-            x = negMin;
+        if (z < negMin) {
+            z = negMin;
         }
     }
 
-    return (x);
+    return (z);
 }
 
 /**

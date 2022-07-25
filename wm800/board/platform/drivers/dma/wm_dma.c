@@ -184,26 +184,27 @@ void tls_dma_irq_clr(unsigned char ch, unsigned char flags)
  */void tls_dma_irq_register(unsigned char ch, void (*callback)(void *p), void *arg, unsigned char flags)
 {
     unsigned int mask;
+    unsigned char Channel = ch;
 
     mask  = tls_reg_read32(HR_DMA_INT_MASK);
-    mask |= (TLS_DMA_IRQ_BOTH_DONE << (2 * ch));
-    mask &= ~(flags << (2 * ch));
+    mask |= (TLS_DMA_IRQ_BOTH_DONE << (2 * Channel));
+    mask &= ~(flags << (2 * Channel));
     tls_reg_write32(HR_DMA_INT_MASK, mask);
 
-    dma_context[ch].flags = flags;
+    dma_context[Channel].flags = flags;
     if (flags & TLS_DMA_IRQ_BURST_DONE) {
-        dma_context[ch].burst_done_pf   = callback;
-        dma_context[ch].burst_done_priv = arg;
+        dma_context[Channel].burst_done_pf   = callback;
+        dma_context[Channel].burst_done_priv = arg;
     }
     if (flags & TLS_DMA_IRQ_TRANSFER_DONE) {
-        dma_context[ch].transfer_done_pf   = callback;
-        dma_context[ch].transfer_done_priv = arg;
+        dma_context[Channel].transfer_done_pf   = callback;
+        dma_context[Channel].transfer_done_priv = arg;
     }
-    if (ch > 3) {
-        ch = 4;
+    if (sh > 3) {
+        sh = 4;
     }
-    tls_irq_priority(DMA_Channel0_IRQn + ch, ch/2);
-    tls_irq_enable(DMA_Channel0_IRQn + ch);
+    tls_irq_priority(DMA_Channel0_IRQn + Channel, Channel/2);
+    tls_irq_enable(DMA_Channel0_IRQn + Channel);
 }
 
 /**

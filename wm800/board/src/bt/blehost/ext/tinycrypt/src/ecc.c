@@ -129,7 +129,6 @@ bitcount_t uECC_vli_numBits(const uECC_word_t *vli,
     uECC_word_t i;
     uECC_word_t digit;
     wordcount_t num_digits = vli_numDigits(vli, max_words);
-
     if (num_digits == 0) {
         return 0;
     }
@@ -298,7 +297,6 @@ void uECC_vli_modAdd(uECC_word_t *result, const uECC_word_t *left,
                      wordcount_t num_words)
 {
     uECC_word_t carry = uECC_vli_add(result, left, right, num_words);
-
     if (carry || uECC_vli_cmp_unsafe(mod, result, num_words) != 1) {
         /* result > mod (result = mod + remainder), so subtract mod to get
          * remainder. */
@@ -311,7 +309,6 @@ void uECC_vli_modSub(uECC_word_t *result, const uECC_word_t *left,
                      wordcount_t num_words)
 {
     uECC_word_t l_borrow = uECC_vli_sub(result, left, right, num_words);
-
     if (l_borrow) {
         /* In this case, result == -diff == (max int) - diff. Since -x % d == d - x,
          * we can get the correct result from result + mod (with overflow). */
@@ -394,7 +391,7 @@ static void uECC_vli_modSquare_fast(uECC_word_t *result,
     uECC_vli_modMult_fast(result, left, left, curve);
 }
 
-#define EVEN(vli) (!(vli[0] & 1))
+#define EVEN(vli) (!((vli)[0] & 1))
 
 static void vli_modInv_update(uECC_word_t *uv,
                               const uECC_word_t *mod,
@@ -607,7 +604,6 @@ void vli_mmod_fast_secp256r1(unsigned int *result, unsigned int *product)
     tmp[6] = 0; // 6:array element
     tmp[7] = product[13]; // 7:array element, 13:array element
     carry -= uECC_vli_sub(result, result, tmp, NUM_ECC_WORDS);
-
     if (carry < 0) {
         do {
             carry += uECC_vli_add(result, result, curve_secp256r1.p, NUM_ECC_WORDS);

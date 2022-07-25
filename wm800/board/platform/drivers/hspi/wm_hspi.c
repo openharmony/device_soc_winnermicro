@@ -23,9 +23,6 @@
  * Copyright (c) 2015 Winner Microelectronics Co., Ltd.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "wm_regs.h"
 #include "wm_config.h"
 #include "wm_mem.h"
@@ -254,7 +251,7 @@ int tls_slave_spi_init(void)
     struct tls_slave_hspi *hspi;
 
     hspi = &g_slave_hspi;
-    memset(hspi, 0, sizeof(struct tls_slave_hspi));
+    memset_s(hspi, sizeof(hspi), 0, sizeof(struct tls_slave_hspi));
 
     hspi_rx_init(hspi);
     hspi_tx_init(hspi);
