@@ -24,7 +24,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <assert.h>
-
+#include "securec.h"
 #include "wm_bt_config.h"
 
 #if (WM_NIMBLE_INCLUDED == CFG_ON)
@@ -34,8 +34,8 @@
 #include "wm_bt_def.h"
 #include "syscfg/syscfg.h"
 #include "host/ble_hs.h"
-#include "store/config/wm_bt_storage.h"
 #include "ble_store_config_priv.h"
+#include "store/config/wm_bt_storage.h"
 
 #define WM_BT_STORAGE_DEBUG_TAG 0
 // our param area support max bond device count is 5
@@ -71,9 +71,8 @@ static uint8_t string_to_bdaddr(const char *string, tls_bt_addr_t *addr)
     uint8_t *ptr = new_addr.address;
     uint8_t ret = sscanf(string, "%02hhx:%02hhx:%02hhx:%02hhx:%02hhx:%02hhx",
                          &ptr[0], &ptr[1], &ptr[2], &ptr[3], &ptr[4], &ptr[5]) == 6; // 6:len
-
     if (ret) {
-        memcpy(addr, &new_addr, sizeof(tls_bt_addr_t));
+        memcpy_s(addr, sizeof(*addr), &new_addr, sizeof(tls_bt_addr_t));
     }
 
     return ret;
@@ -89,7 +88,7 @@ static const char *bd_to_string(const uint8_t *addr, char *string, size_t size)
     }
 
     const uint8_t *ptr = addr;
-    sprintf(string, "%02x:%02x:%02x:%02x:%02x:%02x",
+    sprintf_s(string, sizeof(*string), "%02x:%02x:%02x:%02x:%02x:%02x",
             ptr[0], ptr[1], ptr[2], // 2:array element
             ptr[3], ptr[4], ptr[5]); // 3:array element, 4:array element, 5:array element
     return string;
@@ -135,7 +134,7 @@ int btif_wm_config_set_local(const nv_tag_t section, const nv_tag_t key, const n
                 if (!dummy_wr) {
                     adapter.valid_bit |= ADAPTER_BD_ADDRESS_VALID_BIT;
                     string_to_bdaddr(value, &address);
-                    memcpy(adapter.bd_addr, address.address, 6); // 6:bytes
+                    memcpy_s(adapter.bd_addr, sizeof(adapter.bd_addr), address.address, 6); // 6:bytes
                 } else {
                     adapter.valid_bit &= ~ADAPTER_BD_ADDRESS_VALID_BIT;
                 }
@@ -151,7 +150,7 @@ int btif_wm_config_set_local(const nv_tag_t section, const nv_tag_t key, const n
                     }
 
                     adapter.valid_bit |= ADAPTER_NAME_VALID_BIT;
-                    memcpy(adapter.name, value, bytes);
+                    memcpy_s(adapter.name, sizeof(adapter.name), value, bytes);
                     adapter.name_len = bytes;
                 } else {
                     /* Invalid name parameter */
@@ -245,7 +244,7 @@ int btif_wm_config_set_local(const nv_tag_t section, const nv_tag_t key, const n
             case NV_LOCAL_ADAPTER_BLE_IR:
                 if (!dummy_wr) {
                     adapter.valid_bit |= ADAPTER_BLE_IR_VALID_BIT;
-                    memcpy(adapter.ir, value, 16); // 16:bytes
+                    memcpy_s(adapter.ir, sizeof(adapter.ir), value, 16); // 16:bytes
                 } else {
                     adapter.valid_bit &= ~ADAPTER_BLE_IR_VALID_BIT;
                 }
@@ -256,7 +255,7 @@ int btif_wm_config_set_local(const nv_tag_t section, const nv_tag_t key, const n
             case NV_LOCAL_ADAPTER_BLE_ER:
                 if (!dummy_wr) {
                     adapter.valid_bit |= ADAPTER_BLE_ER_VALID_BIT;
-                    memcpy(adapter.er, value, 16); // 16:bytes
+                    memcpy_s(adapter.er, sizeof(adapter.er), value, 16); // 16:bytes
                 } else {
                     adapter.valid_bit &= ~ADAPTER_BLE_ER_VALID_BIT;
                 }
@@ -267,7 +266,7 @@ int btif_wm_config_set_local(const nv_tag_t section, const nv_tag_t key, const n
             case NV_LOCAL_ADAPTER_BLE_IRK:
                 if (!dummy_wr) {
                     adapter.valid_bit |= ADAPTER_BLE_IRK_VALID_BIT;
-                    memcpy(adapter.irk, value, 16); // 16:bytes
+                    memcpy_s(adapter.irk, sizeof(adapter.irk), value, 16); // 16:bytes
                 } else {
                     adapter.valid_bit &= ~ADAPTER_BLE_IRK_VALID_BIT;
                 }
@@ -278,7 +277,7 @@ int btif_wm_config_set_local(const nv_tag_t section, const nv_tag_t key, const n
             case NV_LOCAL_ADAPTER_BLE_DHK:
                 if (!dummy_wr) {
                     adapter.valid_bit |= ADAPTER_BLE_DHK_VALID_BIT;
-                    memcpy(adapter.dhk, value, 16); // 16:bytes
+                    memcpy_s(adapter.dhk, sizeof(adapter.dhk), value, 16); // 16:bytes
                 } else {
                     adapter.valid_bit &= ~ADAPTER_BLE_DHK_VALID_BIT;
                 }
@@ -325,7 +324,7 @@ int btif_wm_config_get_local(const nv_tag_t section, const nv_tag_t key, const n
                 case NV_LOCAL_ADAPTER_ADDRESS:
                     if (adapter.valid_bit & ADAPTER_BD_ADDRESS_VALID_BIT) {
                         if (!dummy_rd) {
-                            bd_to_string(adapter.bd_addr, value, 18); // 16:size
+                            bd_to_string(adapter.bd_addr, value, 18); // 18:size
                             *bytes = 6; // 6:bytes
                             *type = BTIF_CFG_TYPE_STR;
                         }
@@ -338,7 +337,7 @@ int btif_wm_config_get_local(const nv_tag_t section, const nv_tag_t key, const n
                 case NV_LOCAL_ADAPTER_NAME:
                     if (adapter.valid_bit & ADAPTER_NAME_VALID_BIT) {
                         if (!dummy_rd) {
-                            memcpy(value, adapter.name, adapter.name_len);
+                            memcpy_s(value, sizeof(*value), adapter.name, adapter.name_len);
                             *bytes = adapter.name_len;
                             *type = BTIF_CFG_TYPE_STR;
                         }
@@ -432,7 +431,7 @@ int btif_wm_config_get_local(const nv_tag_t section, const nv_tag_t key, const n
 
                     if (adapter.valid_bit & ADAPTER_BLE_IR_VALID_BIT) {
                         if (!dummy_rd) {
-                            memcpy(value, adapter.ir, 16); // 16:bytes
+                            memcpy_s(value, sizeof(*value), adapter.ir, 16); // 16:bytes
                             *bytes = 16;
                         }
                     } else {
@@ -446,7 +445,7 @@ int btif_wm_config_get_local(const nv_tag_t section, const nv_tag_t key, const n
 
                     if (adapter.valid_bit & ADAPTER_BLE_ER_VALID_BIT) {
                         if (!dummy_rd) {
-                            memcpy(value, adapter.er, 16); // 16:bytes
+                            memcpy_s(value, sizeof(*value), adapter.er, 16); // 16:bytes
                             *bytes = 16; // 16:bytes
                         }
                     } else {
@@ -460,7 +459,7 @@ int btif_wm_config_get_local(const nv_tag_t section, const nv_tag_t key, const n
 
                     if (adapter.valid_bit & ADAPTER_BLE_IRK_VALID_BIT) {
                         if (!dummy_rd) {
-                            memcpy(value, adapter.irk, 16); // 16:bytes
+                            memcpy_s(value, sizeof(*value), adapter.irk, 16); // 16:bytes
                             *bytes = 16; // 16:bytes
                         }
                     } else {
@@ -474,7 +473,7 @@ int btif_wm_config_get_local(const nv_tag_t section, const nv_tag_t key, const n
 
                     if (adapter.valid_bit & ADAPTER_BLE_DHK_VALID_BIT) {
                         if (!dummy_rd) {
-                            memcpy(value, adapter.dhk, 16); // 16:bytes
+                            memcpy_s(value, sizeof(*value), adapter.dhk, 16); // 16:bytes
                             *bytes = 16; // 16:bytes
                         }
                     } else {
@@ -532,8 +531,9 @@ int btif_wm_config_get_local_str(const nv_tag_t section, const nv_tag_t key, con
 int btif_wm_config_set_local_str(const nv_tag_t section, const nv_tag_t key, const nv_tag_t name,
                                  const char *value)
 {
-    value = value ? value : "";
-    return btif_wm_config_set_local(section, key, name, value, strlen(value) + 1, BTIF_CFG_TYPE_STR,
+    const char *value_tmp = value;
+    value_tmp = value_tmp ? value_tmp : "";
+    return btif_wm_config_set_local(section, key, name, value_tmp, strlen(value_tmp) + 1, BTIF_CFG_TYPE_STR,
                                     false);
 }
 int btif_wm_config_remove_local(const nv_tag_t section, const nv_tag_t key, const nv_tag_t name)
@@ -577,7 +577,7 @@ bool btif_wm_config_find_by_key(uint8_t *bd_addr, int *index, int add)
             if ((device.valid_tag != 0xdeadbeaf) || (device.in_use == 0)) {
                 found = true;
                 *index = i;
-                memcpy(device.bd_addr, bd_addr, 6); // 6:bytes
+                memcpy_s(device.bd_addr, sizeof(device.bd_addr), bd_addr, 6); // 6:bytes
                 device.in_use = 1;
                 device.valid_tag = 0xdeadbeaf;
                 tls_param_set(TLS_PARAM_ID_BT_REMOTE_DEVICE_1 + i, (void *)&device, 0);
@@ -593,7 +593,7 @@ bool btif_wm_config_find_by_key(uint8_t *bd_addr, int *index, int add)
         // the pos[0~(BTM_SEC_MAX_BLE_DEVICE_RECORDS-1)] will be updated once is paried with phone;
         found = true;
         *index = (BTM_SEC_MAX_BLE_DEVICE_RECORDS - 1);
-        memcpy(device.bd_addr, bd_addr, 6); // 6:bytes
+        memcpy_s(device.bd_addr, sizeof(device.bd_addr), bd_addr, 6); // 6:bytes
         device.in_use = 1;
         device.valid_tag = 0xdeadbeaf;
         // the last pos will be overwitten;
@@ -695,10 +695,9 @@ int btif_wm_config_filter_remove_remote(const char *section, const char *filter[
 
 int local_name_str_to_index(const char *tag_name)
 {
-    const char *name[] =
-        {"Address", "Name", "DevClass", "IOCAP", "Discoverable", "Connectable",
-            "DiscoveryTimeout", "AuthReq", "ScanMode", "BleAuthReq",  "LE_LOCAL_KEY_IR",
-            "LE_LOCAL_KEY_IRK", "LE_LOCAL_KEY_DHK", "LE_LOCAL_KEY_ER", NULL};
+    const char *name[] = {"Address", "Name", "DevClass", "IOCAP", "Discoverable", "Connectable",
+                          "DiscoveryTimeout", "AuthReq", "ScanMode", "BleAuthReq",  "LE_LOCAL_KEY_IR",
+                          "LE_LOCAL_KEY_IRK", "LE_LOCAL_KEY_DHK", "LE_LOCAL_KEY_ER", NULL};
     int i = 0;
 
     do {
@@ -718,9 +717,9 @@ int remote_name_str_to_index(const char *tag_name)
 {
     const char *name[] = {"Address", "Name", "DevClass", "Service",
         "LinkKey", "LinkKeyType", "IOCAP", "PinLength", "DevType",
-            "AddrType", "LE_KEY_PENC", "LE_KEY_LENC", "LE_KEY_PID",
-                "LE_KEY_LID", "LE_KEY_PCSRK", "LE_KEY_LCSRK", "Reconnect",
-                    "Manufacturer", "LmpVer", "LmpSubVer", NULL};
+        "AddrType", "LE_KEY_PENC", "LE_KEY_LENC", "LE_KEY_PID",
+        "LE_KEY_LID", "LE_KEY_PCSRK", "LE_KEY_LCSRK", "Reconnect",
+        "Manufacturer", "LmpVer", "LmpSubVer", NULL};
     int i = 0;
 
     do {
@@ -742,7 +741,6 @@ int btif_config_get_int(const char *section, const char *key, const char *name, 
 
     if ((strncmp(section, "Local", 5) == 0) && (strncmp(key, "Adapter", 7) == 0)) { // 5:size, 7:size
         int index = local_name_str_to_index(name);
-
         if (index > 0) {
             return btif_wm_config_get_local_int(NV_LOCAL, NV_LOCAL_ADAPTER, index, value);
         }
@@ -758,7 +756,6 @@ int btif_config_set_int(const char *section, const char *key, const char *name, 
 
     if ((strncmp(section, "Local", 5) == 0) && (strncmp(key, "Adapter", 7) == 0)) { // 5:size, 7:size
         int index = local_name_str_to_index(name);
-
         if (index > 0) {
             return btif_wm_config_set_local_int(NV_LOCAL, NV_LOCAL_ADAPTER, index, value);
         }
@@ -774,7 +771,6 @@ int btif_config_get_str(const char *section, const char *key, const char *name, 
 
     if ((strncmp(section, "Local", 5) == 0) && (strncmp(key, "Adapter", 7) == 0)) { // 5:size, 7:size
         int index = local_name_str_to_index(name);
-
         if (index > 0) {
             return btif_wm_config_get_local_str(NV_LOCAL, NV_LOCAL_ADAPTER, index, value, size);
         }
@@ -789,7 +785,6 @@ int btif_config_set_str(const char *section, const char *key, const char *name, 
 
     if ((strncmp(section, "Local", 5) == 0) && (strncmp(key, "Adapter", 7) == 0)) { // 5:size, 7:size
         int index = local_name_str_to_index(name);
-
         if (index > 0) {
             return btif_wm_config_set_local_str(NV_LOCAL, NV_LOCAL_ADAPTER, index, value);
         }
@@ -806,7 +801,6 @@ int btif_config_get(const char *section, const char *key, const char *name, char
 
     if ((strncmp(section, "Local", 5) == 0) && (strncmp(key, "Adapter", 7) == 0)) { // 5:size, 7:size
         int index = local_name_str_to_index(name);
-
         if (index > 0) {
             return btif_wm_config_get_local(NV_LOCAL, NV_LOCAL_ADAPTER, index, value, bytes, type, false);
         }
@@ -822,7 +816,6 @@ int btif_config_set(const char *section, const char *key, const char *name, cons
 
     if ((strncmp(section, "Local", 5) == 0) && (strncmp(key, "Adapter", 7) == 0)) { // 5:size, 7:size
         int index = local_name_str_to_index(name);
-
         if (index > 0) {
             return btif_wm_config_set_local(NV_LOCAL, NV_LOCAL_ADAPTER, index, value, bytes, type, false);
         }
@@ -838,7 +831,6 @@ int btif_config_remove(const char *section, const char *key, const char *name)
 
     if ((strncmp(section, "Local", 5) == 0) && (strncmp(key, "Adapter", 7) == 0)) { // 5:size, 7:size
         int index = local_name_str_to_index(name);
-
         if (index > 0) {
             return btif_wm_config_remove_local(NV_LOCAL, NV_LOCAL_ADAPTER, index);
         }
@@ -861,7 +853,6 @@ int btif_config_exist(const char *section, const char *key, const char *name)
 
     if ((strncmp(section, "Local", 5) == 0) && (strncmp(key, "Adapter", 7) == 0)) { // 5:size, 7:size
         int index = local_name_str_to_index(name);
-
         if (index > 0) {
             return btif_wm_config_exist_local(NV_LOCAL, NV_LOCAL_ADAPTER, index);
         }
@@ -877,7 +868,7 @@ int btif_config_remove_remote(const char *key)
     return ret;
 }
 
-int btif_config_save()
+int btif_config_save(void)
 {
     return TRUE;
 }
@@ -888,7 +879,7 @@ int btif_config_flush(int force)
     return TRUE;
 }
 /* debug function */
-void btif_clear_remote_all()
+void btif_clear_remote_all(void)
 {
     tls_param_to_flash(TLS_PARAM_ID_ALL);
 }
@@ -954,20 +945,20 @@ int btif_config_store_cccd(int idx, void *addr, int count, void *payload, int le
     bt_remote_device_t device;
     uint8_t *ptr_offset = (uint8_t *)&device;
     assert(idx < BTM_SEC_MAX_BLE_DEVICE_RECORDS);
-    memset(&device, 0, sizeof(device));
+    memset_s(&device, sizeof(device), 0, sizeof(device));
     tls_param_get(TLS_PARAM_ID_BT_REMOTE_DEVICE_1 + idx, (void *)&device, 0);
 
     if ((device.valid_tag == 0xdeadbeae)) {
         device.valid_bit = (count) << 2 | (device.valid_bit & 0x03); // 2:bytes alignment
         ptr_offset += NVRAM_CCCD_SEC_PAYLOAD_OFFSET;
-        memcpy(ptr_offset, payload, length);
+        memcpy_s(ptr_offset, sizeof(*ptr_offset), payload, length);
     } else {
         device.valid_tag = 0xdeadbeae;
         device.valid_bit = (count) << 2; // 2:bytes alignment
         ptr_offset += NVRAM_ADDR_PAYLOAD_OFFSET;
-        memcpy(ptr_offset, addr, sizeof(ble_addr_t));
+        memcpy_s(ptr_offset, sizeof(*ptr_offset), addr, sizeof(ble_addr_t));
         ptr_offset = (uint8_t *)NVRAM_CCCD_SEC_PAYLOAD_OFFSET;
-        memcpy(ptr_offset, payload, length);
+        memcpy_s(ptr_offset, sizeof(*ptr_offset), payload, length);
     }
 
     tls_param_set(TLS_PARAM_ID_BT_REMOTE_DEVICE_1 + idx, (void *)&device, 0);
@@ -978,20 +969,20 @@ int btif_config_store_our_sec(int idx, void *addr, uint8_t *payload, int length)
     bt_remote_device_t device;
     uint8_t *ptr_offset = (uint8_t *)&device;
     assert(idx < BTM_SEC_MAX_BLE_DEVICE_RECORDS);
-    memset(&device, 0, sizeof(device));
+    memset_s(&device, sizeof(device), 0, sizeof(device));
     tls_param_get(TLS_PARAM_ID_BT_REMOTE_DEVICE_1 + idx, (void *)&device, 0);
 
     if ((device.valid_tag == 0xdeadbeae)) {
         device.valid_bit |= 0x01;
         ptr_offset += NVRAM_OUR_SEC_PAYLOAD_OFFSET;
-        memcpy(ptr_offset, payload, length);
+        memcpy_s(ptr_offset, sizeof(*ptr_offset), payload, length);
     } else {
         device.valid_tag = 0xdeadbeae;
         device.valid_bit = 0x01;
         ptr_offset += NVRAM_ADDR_PAYLOAD_OFFSET;
-        memcpy(ptr_offset, addr, sizeof(ble_addr_t));
+        memcpy_s(ptr_offset, sizeof(*ptr_offset), addr, sizeof(ble_addr_t));
         ptr_offset += sizeof(ble_addr_t);
-        memcpy(ptr_offset, payload, length);
+        memcpy_s(ptr_offset, sizeof(*ptr_offset), payload, length);
     }
 
     tls_param_set(TLS_PARAM_ID_BT_REMOTE_DEVICE_1 + idx, (void *)&device, 0);
@@ -1003,20 +994,20 @@ int btif_config_store_peer_sec(int idx, void *addr, uint8_t *payload, int length
     bt_remote_device_t device;
     uint8_t *ptr_offset = (uint8_t *)&device;
     assert(idx < BTM_SEC_MAX_BLE_DEVICE_RECORDS);
-    memset(&device, 0, sizeof(device));
+    memset_s(&device, sizeof(device), 0, sizeof(device));
     tls_param_get(TLS_PARAM_ID_BT_REMOTE_DEVICE_1 + idx, (void *)&device, 0);
 
     if ((device.valid_tag == 0xdeadbeae)) {
         device.valid_bit |= 0x02;
         ptr_offset += NVRAM_PEER_SEC_PAYLOAD_OFFSET;
-        memcpy(ptr_offset, payload, length);
+        memcpy_s(ptr_offset, sizeof(*ptr_offset), payload, length);
     } else {
         device.valid_tag = 0xdeadbeae;
         device.valid_bit = 0x02;
         ptr_offset += NVRAM_ADDR_PAYLOAD_OFFSET;
-        memcpy(ptr_offset, addr, sizeof(ble_addr_t));
+        memcpy_s(ptr_offset, sizeof(*ptr_offset), addr, sizeof(ble_addr_t));
         ptr_offset = (uint8_t *)NVRAM_PEER_SEC_PAYLOAD_OFFSET;
-        memcpy(ptr_offset, payload, length);
+        memcpy_s(ptr_offset, sizeof(*ptr_offset), payload, length);
     }
 
     tls_param_set(TLS_PARAM_ID_BT_REMOTE_DEVICE_1 + idx, (void *)&device, 0);
@@ -1030,15 +1021,15 @@ uint32_t btif_config_get_sec_cccd_item(int idx, void *addr, void *our_sec, int o
     uint8_t *ptr_offset = (uint8_t *)&device;
     uint32_t valid_bit = 0;
     assert(idx < BTM_SEC_MAX_BLE_DEVICE_RECORDS);
-    memset(&device, 0, sizeof(device));
+    memset_s(&device, sizeof(device), 0, sizeof(device));
     tls_param_get(TLS_PARAM_ID_BT_REMOTE_DEVICE_1 + idx, (void *)&device, 0);
 
     if ((device.valid_tag == 0xdeadbeae)) {
         valid_bit = device.valid_bit;
-        memcpy(addr, ptr_offset + NVRAM_ADDR_PAYLOAD_OFFSET, 7); // 7:bytes
-        memcpy(our_sec, ptr_offset + NVRAM_OUR_SEC_PAYLOAD_OFFSET, our_sec_size);
-        memcpy(peer_sec, ptr_offset + NVRAM_PEER_SEC_PAYLOAD_OFFSET, peer_sec_size);
-        memcpy(cccd_info, ptr_offset + NVRAM_CCCD_SEC_PAYLOAD_OFFSET, cccd_info_size);
+        memcpy_s(addr, sizeof(*addr), ptr_offset + NVRAM_ADDR_PAYLOAD_OFFSET, 7); // 7:bytes
+        memcpy_s(our_sec, sizeof(*our_sec), ptr_offset + NVRAM_OUR_SEC_PAYLOAD_OFFSET, our_sec_size);
+        memcpy_s(peer_sec, sizeof(*peer_sec), ptr_offset + NVRAM_PEER_SEC_PAYLOAD_OFFSET, peer_sec_size);
+        memcpy_s(cccd_info, sizeof(*cccd_info), ptr_offset + NVRAM_CCCD_SEC_PAYLOAD_OFFSET, cccd_info_size);
     }
 
     return valid_bit;
@@ -1047,7 +1038,7 @@ uint32_t btif_config_get_sec_cccd_item(int idx, void *addr, void *our_sec, int o
 int btif_config_delete_our_sec(int idx)
 {
     bt_remote_device_t device;
-    memset(&device, 0, sizeof(device));
+    memset_s(&device, sizeof(device), 0, sizeof(device));
     assert(idx < BTM_SEC_MAX_BLE_DEVICE_RECORDS);
     tls_param_get(TLS_PARAM_ID_BT_REMOTE_DEVICE_1 + idx, (void *)&device, 0);
 
@@ -1068,7 +1059,7 @@ int btif_config_delete_our_sec(int idx)
 int btif_config_delete_cccd(int idx)
 {
     bt_remote_device_t device;
-    memset(&device, 0, sizeof(device));
+    memset_s(&device, sizeof(device), 0, sizeof(device));
     assert(idx < BTM_SEC_MAX_BLE_DEVICE_RECORDS);
     tls_param_get(TLS_PARAM_ID_BT_REMOTE_DEVICE_1 + idx, (void *)&device, 0);
 
@@ -1090,7 +1081,7 @@ int btif_config_delete_cccd(int idx)
 int btif_config_delete_peer_sec(int idx)
 {
     bt_remote_device_t device;
-    memset(&device, 0, sizeof(device));
+    memset_s(&device, sizeof(device), 0, sizeof(device));
     assert(idx < BTM_SEC_MAX_BLE_DEVICE_RECORDS);
     tls_param_get(TLS_PARAM_ID_BT_REMOTE_DEVICE_1 + idx, (void *)&device, 0);
 
@@ -1108,7 +1099,7 @@ int btif_config_delete_peer_sec(int idx)
 
     return 0;
 }
-int btif_config_delete_all()
+int btif_config_delete_all(void)
 {
     int idx = 0;
     bt_remote_device_t device;
@@ -1116,8 +1107,7 @@ int btif_config_delete_all()
     device.valid_tag = 0x88888888;
     device.valid_bit = 0;
 
-    for (idx = 0; idx < BTM_SEC_MAX_BLE_DEVICE_RECORDS; idx++)
-    {
+    for (idx = 0; idx < BTM_SEC_MAX_BLE_DEVICE_RECORDS; idx++) {
         tls_param_set(TLS_PARAM_ID_BT_REMOTE_DEVICE_1 + idx, (void *)&device, 0);
     }
 
@@ -1134,7 +1124,7 @@ int btif_config_store_key_map(const uint8_t *map_info, int length, bool force_fl
     }
 
     adapter.valid_bit |= ADAPTER_BLE_IR_VALID_BIT; // reuse the ADAPTER_BLE_IR_VALID_BIT to mark the map key value;
-    memcpy(&adapter.ir[0], map_info, length);
+    memcpy_s(&adapter.ir[0], sizeof(adapter.ir[0]), map_info, length);
     tls_param_set(TLS_PARAM_ID_BT_ADAPTER, (void *)&adapter, 0);
 
     if (force_flush) {
@@ -1149,11 +1139,11 @@ int btif_config_store_key_map(const uint8_t *map_info, int length, bool force_fl
 int btif_config_load_key_map(uint8_t *map_info, int length)
 {
     bt_adapter_t adapter;
-    memset(&adapter, 0, sizeof(adapter));
+    memset_s(&adapter, sizeof(adapter), 0, sizeof(adapter));
     tls_param_get(TLS_PARAM_ID_BT_ADAPTER, &adapter, 0);
 
     if ((adapter.valid_tag == 0xdeadbeaf) && (adapter.valid_bit & ADAPTER_BLE_IR_VALID_BIT)) {
-        memcpy(map_info, &adapter.ir[0], length);
+        memcpy_s(map_info, sizeof(*map_info), &adapter.ir[0], length);
         return 0;
     } else {
         return -1;
@@ -1208,8 +1198,8 @@ static char *nv_tag_2_str(uint8_t state)
         CASE_RETURN_STR(NV_REMOTE_LMPSUBVER)
         CASE_RETURN_STR(NV_REMOTE_MAX_TAG)
 
-    default:
-        return "~~~~~~~~~~~~~~~~!!!Unknown nv tag ID!!!~~~~~~~~~~~~~~~~~";
+        default:
+            return "~~~~~~~~~~~~~~~~!!!Unknown nv tag ID!!!~~~~~~~~~~~~~~~~~";
     }
 }
 #endif

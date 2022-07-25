@@ -19,6 +19,7 @@
 
 #include <stddef.h>
 #include <string.h>
+#include "securec.h"
 #include "host/ble_uuid.h"
 #include "nimble/ble.h"
 #include "ble_hs_priv.h"
@@ -65,7 +66,7 @@ static char *ble_gatts_flags_to_str(uint16_t flags, char *buf, const char *const
     bool non_empty = false;
     size_t length = 0;
     buf[0] = '\0';
-    strcpy(buf, "[");
+    strcpy_s(buf, sizeof(buf), "[");
     length += 1;
 
     for (bit = 0; names[bit]; ++bit) {
@@ -76,16 +77,16 @@ static char *ble_gatts_flags_to_str(uint16_t flags, char *buf, const char *const
             }
 
             if (non_empty) {
-                strcat(buf, "|");
+                strcat_s(buf, sizeof(buf), "|");
                 length += 1;
             }
 
-            strcat(buf, names[bit]);
+            strcat_s(buf,  sizeof(buf), names[bit]);
             non_empty = true;
         }
     }
 
-    strcat(buf, "]");
+    strcat_s(buf, sizeof(buf), "]");
     return buf;
 }
 
@@ -171,9 +172,10 @@ static int ble_gatt_show_local_inc_svc(const struct ble_gatt_svc_def *svc,
 }
 
 static void ble_gatt_show_local_svc(const struct ble_gatt_svc_def *svc,
-                        uint16_t handle, uint16_t end_group_handle,
-                        void *arg)
+                                    uint16_t handle, uint16_t end_group_handle,
+                                    void *arg)
 {
+    uint16_t handle_tmp = handle;
     char uuid_buf[BLE_UUID_STR_LEN];
     char flags_buf[BLE_CHR_FLAGS_STR_LEN];
     printf("%s service\n",
@@ -184,17 +186,17 @@ static void ble_gatt_show_local_svc(const struct ble_gatt_svc_def *svc,
            ble_uuid_to_str(svc->uuid, uuid_buf));
     printf("%" FIELD_INDENT "s %" FIELD_NAME_LEN "s "
            "%d\n", " ", "handle",
-           handle);
+           handle_tmp);
     printf("%" FIELD_INDENT "s %" FIELD_NAME_LEN "s "
            "%d\n", " ", "end_handle",
            end_group_handle);
-    handle++;
+    handle_tmp++;
 
     if (svc->includes) {
-        handle += ble_gatt_show_local_inc_svc(svc, handle, uuid_buf);
+        handle_tmp += ble_gatt_show_local_inc_svc(svc, handle_tmp, uuid_buf);
     }
 
-    ble_gatt_show_local_chr(svc, handle,
+    ble_gatt_show_local_chr(svc, handle_tmp,
                             uuid_buf, flags_buf);
 }
 

@@ -22,6 +22,7 @@
 #include <string.h>
 #include <errno.h>
 #include <stdio.h>
+#include "securec.h"
 #include "os/os_mbuf.h"
 #include "nimble/ble.h"
 #include "ble_hs_priv.h"
@@ -56,8 +57,10 @@ int ble_uuid_init_from_buf(ble_uuid_any_t *uuid, const void *buf, size_t len)
 
         case 16: // 16:case value
             uuid->u.type = BLE_UUID_TYPE_128;
-            memcpy(uuid->u128.value, buf, 16); // 16:size
+            memcpy_s(uuid->u128.value, sizeof(uuid->u128.value), buf, 16); // 16:size
             return 0;
+        default:
+            break;
     }
 
     return BLE_HS_EINVAL;
@@ -81,6 +84,9 @@ int ble_uuid_cmp(const ble_uuid_t *uuid1, const ble_uuid_t *uuid2)
 
         case BLE_UUID_TYPE_128:
             return memcmp(BLE_UUID128(uuid1)->value, BLE_UUID128(uuid2)->value, 16); // 16:size
+        
+        default:
+            break;
     }
 
     BLE_HS_DBG_ASSERT(0);
@@ -116,16 +122,16 @@ char *ble_uuid_to_str(const ble_uuid_t *uuid, char *dst)
 
     switch (uuid->type) {
         case BLE_UUID_TYPE_16:
-            sprintf(dst, "0x%04x", BLE_UUID16(uuid)->value);
+            sprintf_s(dst, sizeof(*dst), "0x%04x", BLE_UUID16(uuid)->value);
             break;
 
         case BLE_UUID_TYPE_32:
-            sprintf(dst, "0x%08x", BLE_UUID32(uuid)->value);
+            sprintf_s(dst, sizeof(*dst), "0x%08x", BLE_UUID32(uuid)->value);
             break;
 
         case BLE_UUID_TYPE_128:
             u8p = BLE_UUID128(uuid)->value;
-            sprintf(dst, "%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-"
+            sprintf_s(dst, sizeof(*dst), "%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-"
                     "%02x%02x%02x%02x%02x%02x",
                     u8p[15], u8p[14], // 15:array element, 14:array element
                     u8p[13], u8p[12], // 13:array element, 12:array element
@@ -175,7 +181,7 @@ int ble_uuid_init_from_att_buf(ble_uuid_any_t *uuid, const void *buf, size_t len
         uuid->u16.value = get_le16(buf);
     } else if (len == 16) { // 16:Analyzing conditions
         uuid->u.type = BLE_UUID_TYPE_128;
-        memcpy(uuid->u128.value, buf, 16); // 16:size
+        memcpy_s(uuid->u128.value, sizeof(uuid->u128.value), buf, 16); // 16:size
     } else {
         rc = BLE_HS_EINVAL;
     }
@@ -198,11 +204,11 @@ int ble_uuid_to_any(const ble_uuid_t *uuid, ble_uuid_any_t *uuid_any)
             break;
 
         case BLE_UUID_TYPE_128:
-            memcpy(uuid_any->u128.value, BLE_UUID128(uuid)->value, 16); // 16:size
+            memcpy_s(uuid_any->u128.value, sizeof(uuid_any->u128.value), BLE_UUID128(uuid)->value, 16); // 16:size
             break;
 
         default:
-            return BLE_HS_EINVAL;
+            break;
     }
 
     return 0;
@@ -233,12 +239,12 @@ int ble_uuid_flat(const ble_uuid_t *uuid, void *dst)
             break;
 
         case BLE_UUID_TYPE_32:
-            memcpy(dst, ble_uuid_base, 16); // 16:size
+            memcpy_s(dst, sizeof(*dst), ble_uuid_base, 16); // 16:size
             put_le32((uint8_t *)dst + 12, BLE_UUID32(uuid)->value); // 12:byte alignment
             break;
 
         case BLE_UUID_TYPE_128:
-            memcpy(dst, BLE_UUID128(uuid)->value, 16); // 16:size
+            memcpy_s(dst, sizeof(*dst), BLE_UUID128(uuid)->value, 16); // 16:size
             break;
 
         default:

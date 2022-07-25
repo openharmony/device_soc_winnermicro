@@ -18,6 +18,7 @@
  */
 
 #include <string.h>
+#include "securec.h"
 #include "nimble/hci_common.h"
 #include "host/ble_hs_hci.h"
 #include "ble_hs_priv.h"
@@ -37,7 +38,7 @@ int ble_hs_hci_util_read_adv_tx_pwr(int8_t *out_tx_pwr)
     struct ble_hci_le_rd_adv_chan_txpwr_rp rsp;
     int rc;
     rc = ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_LE,
-                           BLE_HCI_OCF_LE_RD_ADV_CHAN_TXPWR),
+                                      BLE_HCI_OCF_LE_RD_ADV_CHAN_TXPWR),
                            NULL, 0, &rsp, sizeof(rsp));
     if (rc != 0) {
         return rc;
@@ -54,21 +55,21 @@ int ble_hs_hci_util_read_adv_tx_pwr(int8_t *out_tx_pwr)
 
 int ble_hs_hci_util_rand(void *dst, int len)
 {
+    int len_tmp = len;
     struct ble_hci_le_rand_rp rsp;
     uint8_t *u8ptr;
 
     u8ptr = dst;
 
-    while (len > 0) {
-        int rc = ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_LE, BLE_HCI_OCF_LE_RAND),
-                               NULL, 0, &rsp, sizeof(rsp));
+    while (len_tmp > 0) {
+        int rc = ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_LE, BLE_HCI_OCF_LE_RAND), NULL, 0, &rsp, sizeof(rsp));
         if (rc != 0) {
             return rc;
         }
 
-        int chunk_sz = min(len, sizeof(rsp));
-        memcpy(u8ptr, &rsp.random_number, chunk_sz);
-        len -= chunk_sz;
+        int chunk_sz = min(len_tmp, sizeof(rsp));
+        memcpy_s(u8ptr, sizeof(u8ptr), &rsp.random_number, chunk_sz);
+        len_tmp -= chunk_sz;
         u8ptr += chunk_sz;
     }
 
@@ -82,9 +83,8 @@ int ble_hs_hci_util_read_rssi(uint16_t conn_handle, int8_t *out_rssi)
     int rc;
     cmd.handle = htole16(conn_handle);
     rc = ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_STATUS_PARAMS,
-                           BLE_HCI_OCF_RD_RSSI), &cmd, sizeof(cmd),
+                                      BLE_HCI_OCF_RD_RSSI), &cmd, sizeof(cmd),
                            &rsp, sizeof(rsp));
-
     if (rc != 0) {
         return rc;
     }
@@ -100,9 +100,9 @@ int ble_hs_hci_util_read_rssi(uint16_t conn_handle, int8_t *out_rssi)
 int ble_hs_hci_util_set_random_addr(const uint8_t *addr)
 {
     struct ble_hci_le_set_rand_addr_cp cmd;
-    memcpy(cmd.addr, addr, BLE_DEV_ADDR_LEN);
+    memcpy_s(cmd.addr, sizeof(cmd.addr), addr, BLE_DEV_ADDR_LEN);
     return ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_LE,
-                             BLE_HCI_OCF_LE_SET_RAND_ADDR),
+                                        BLE_HCI_OCF_LE_SET_RAND_ADDR),
                              &cmd, sizeof(cmd), NULL, 0);
 }
 
@@ -161,7 +161,7 @@ int ble_hs_hci_read_chan_map(uint16_t conn_handle, uint8_t *out_chan_map)
     int rc;
     cmd.conn_handle = htole16(conn_handle);
     rc = ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_LE,
-                           BLE_HCI_OCF_LE_RD_CHAN_MAP),
+                                      BLE_HCI_OCF_LE_RD_CHAN_MAP),
                            &cmd, sizeof(cmd), &rsp, sizeof(rsp));
     if (rc != 0) {
         return rc;
@@ -171,15 +171,15 @@ int ble_hs_hci_read_chan_map(uint16_t conn_handle, uint8_t *out_chan_map)
         return BLE_HS_ECONTROLLER;
     }
 
-    memcpy(out_chan_map, rsp.chan_map, 5); // 5:size
+    memcpy_s(out_chan_map, sizeof(out_chan_map), rsp.chan_map, 5); // 5:size
     return 0;
 }
 
 int ble_hs_hci_set_chan_class(const uint8_t *chan_map)
 {
     struct ble_hci_le_set_host_chan_class_cp cmd;
-    memcpy(cmd.chan_map, chan_map, sizeof(cmd.chan_map));
+    memcpy_s(cmd.chan_map, sizeof(cmd.chan_map), chan_map, sizeof(cmd.chan_map));
     return ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_LE,
-                             BLE_HCI_OCF_LE_SET_HOST_CHAN_CLASS),
+                                        BLE_HCI_OCF_LE_SET_HOST_CHAN_CLASS),
                              &cmd, sizeof(cmd), NULL, 0);
 }

@@ -21,6 +21,7 @@
 #include <string.h>
 #include <errno.h>
 #include <stdio.h>
+#include "securec.h"
 #include "os/os.h"
 #include "nimble/hci_common.h"
 #include "nimble/ble_hci_trans.h"
@@ -58,7 +59,7 @@ static int ble_hs_hci_cmd_send(uint16_t opcode, uint8_t len, const void *cmddata
     cmd->length = len;
 
     if (len != 0) {
-        memcpy(cmd->data, cmddata, len);
+        memcpy_s(cmd->data, sizeof(cmd->data), cmddata, len);
     }
 
     rc = ble_hs_hci_cmd_transport(cmd);

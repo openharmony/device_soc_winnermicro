@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
+#include "securec.h"
 #include "host/ble_store.h"
 #include "ble_hs_priv.h"
 
@@ -106,7 +106,7 @@ int ble_store_util_delete_peer(const ble_addr_t *peer_id_addr)
 {
     union ble_store_key key;
     int rc;
-    memset(&key, 0, sizeof key);
+    memset_s(&key, sizeof(key), 0, sizeof key);
     key.sec.peer_addr = *peer_id_addr;
     rc = ble_store_util_delete_all(BLE_STORE_OBJ_TYPE_OUR_SEC, &key);
     if (rc != 0) {
@@ -118,7 +118,7 @@ int ble_store_util_delete_peer(const ble_addr_t *peer_id_addr)
         return rc;
     }
 
-    memset(&key, 0, sizeof key);
+    memset_s(&key, sizeof(key), 0, sizeof key);
     key.cccd.peer_addr = *peer_id_addr;
     rc = ble_store_util_delete_all(BLE_STORE_OBJ_TYPE_CCCD, &key);
     if (rc != 0) {
@@ -186,9 +186,8 @@ int ble_store_util_get_peer_by_index(int index, ble_addr_t *peer_id_addr)
     ble_addr_t peer_id_addrs[MYNEWT_VAL(BLE_STORE_MAX_BONDS)];
     int num_peers;
     int rc;
-    rc = ble_store_util_bonded_peers(
-                         peer_id_addrs, &num_peers,
-                         sizeof peer_id_addrs / sizeof peer_id_addrs[0]);
+    rc = ble_store_util_bonded_peers(peer_id_addrs, &num_peers,
+                                     sizeof peer_id_addrs / sizeof peer_id_addrs[0]);
     if (rc != 0) {
         return rc;
     }
@@ -197,7 +196,7 @@ int ble_store_util_get_peer_by_index(int index, ble_addr_t *peer_id_addr)
         return -1;
     }
 
-    memcpy(peer_id_addr, &peer_id_addrs[index], sizeof(ble_addr_t));
+    memcpy_s(peer_id_addr, sizeof(*peer_id_addr), &peer_id_addrs[index], sizeof(ble_addr_t));
     return rc;
 }
 
@@ -206,9 +205,8 @@ int ble_store_util_delete_oldest_peer(ble_addr_t *peer_id_addr)
     ble_addr_t peer_id_addrs[MYNEWT_VAL(BLE_STORE_MAX_BONDS)];
     int num_peers;
     int rc;
-    rc = ble_store_util_bonded_peers(
-                         peer_id_addrs, &num_peers,
-                         sizeof peer_id_addrs / sizeof peer_id_addrs[0]);
+    rc = ble_store_util_bonded_peers(peer_id_addrs, &num_peers,
+                                     sizeof peer_id_addrs / sizeof peer_id_addrs[0]);
     if (rc != 0) {
         return rc;
     }
@@ -221,9 +219,8 @@ int ble_store_util_delete_oldest_peer(ble_addr_t *peer_id_addr)
     if (rc != 0) {
         return rc;
     }
-    if (peer_id_addr)
-    {
-    memcpy(peer_id_addr, &peer_id_addrs[0], sizeof(ble_addr_t));
+    if (peer_id_addr) {
+        memcpy_s(peer_id_addr, sizeof(*peer_id_addr), &peer_id_addrs[0], sizeof(ble_addr_t));
     }
     return 0;
 }
@@ -241,7 +238,7 @@ int ble_store_util_status_rr(struct ble_store_status_event *event, void *arg)
 {
     switch (event->event_code) {
         case BLE_STORE_EVENT_OVERFLOW:
-            switch(event->overflow.obj_type) {
+            switch (event->overflow.obj_type) {
                 case BLE_STORE_OBJ_TYPE_OUR_SEC:
                 case BLE_STORE_OBJ_TYPE_PEER_SEC:
                 case BLE_STORE_OBJ_TYPE_CCCD:

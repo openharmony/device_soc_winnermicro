@@ -19,6 +19,7 @@
 
 #include <string.h>
 #include <errno.h>
+#include "securec.h"
 #include "syscfg/syscfg.h"
 #include "os/os.h"
 #include "nimble/ble.h"
@@ -35,7 +36,7 @@ static os_membuf_t ble_l2cap_chan_mem[
                  OS_MEMPOOL_SIZE(MYNEWT_VAL(BLE_L2CAP_MAX_CHANS) +
                                  MYNEWT_VAL(BLE_L2CAP_COC_MAX_NUM),
                                  sizeof(struct ble_l2cap_chan))
- ];
+];
 
 STATS_SECT_DECL(ble_l2cap_stats) ble_l2cap_stats;
 STATS_NAME_START(ble_l2cap_stats)
@@ -59,7 +60,7 @@ struct ble_l2cap_chan *ble_l2cap_chan_alloc(uint16_t conn_handle)
         return NULL;
     }
 
-    memset(chan, 0, sizeof * chan);
+    memset_s(chan, sizeof * chan, 0, sizeof * chan);
     chan->conn_handle = conn_handle;
     STATS_INC(ble_l2cap_stats, chan_create);
     return chan;
@@ -76,7 +77,7 @@ void ble_l2cap_chan_free(struct ble_hs_conn *conn, struct ble_l2cap_chan *chan)
     os_mbuf_free_chain(chan->rx_buf);
     ble_l2cap_coc_cleanup_chan(conn, chan);
 #if MYNEWT_VAL(BLE_HS_DEBUG)
-    memset(chan, 0xff, sizeof * chan);
+    memset_s(chan, sizeof * chan, 0xff, sizeof * chan);
 #endif
     rc = os_memblock_put(&ble_l2cap_chan_pool, chan);
     BLE_HS_DBG_ASSERT_EVAL(rc == 0);
@@ -112,7 +113,7 @@ struct os_mbuf *ble_l2cap_prepend_hdr(struct os_mbuf *om, uint16_t cid, uint16_t
         return NULL;
     }
 
-    memcpy(om->om_data, &hdr, sizeof hdr);
+    memcpy_s(om->om_data, sizeof(om->om_data), &hdr, sizeof hdr);
     return om;
 }
 
@@ -143,7 +144,7 @@ int ble_l2cap_get_chan_info(struct ble_l2cap_chan *chan, struct ble_l2cap_chan_i
         return BLE_HS_EINVAL;
     }
 
-    memset(chan_info, 0, sizeof(*chan_info));
+    memset_s(chan_info, sizeof(*chan_info), 0, sizeof(*chan_info));
     chan_info->dcid = chan->dcid;
     chan_info->scid = chan->scid;
     chan_info->our_l2cap_mtu = chan->my_mtu;
@@ -451,9 +452,8 @@ int ble_l2cap_init(void)
 
     ble_sm_init();
 
-    rc = stats_init_and_reg(
-                         STATS_HDR(ble_l2cap_stats), STATS_SIZE_INIT_PARMS(ble_l2cap_stats,
-                                 STATS_SIZE_32), STATS_NAME_INIT_PARMS(ble_l2cap_stats), "ble_l2cap");
+    rc = stats_init_and_reg(STATS_HDR(ble_l2cap_stats), STATS_SIZE_INIT_PARMS(ble_l2cap_stats, STATS_SIZE_32),
+        STATS_NAME_INIT_PARMS(ble_l2cap_stats), "ble_l2cap");
     if (rc != 0) {
         return BLE_HS_EOS;
     }

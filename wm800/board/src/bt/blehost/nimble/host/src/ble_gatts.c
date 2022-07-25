@@ -20,6 +20,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
+#include "securec.h"
 #include "nimble/ble.h"
 #include "host/ble_uuid.h"
 #include "host/ble_store.h"
@@ -428,7 +429,6 @@ static int ble_gatts_svc_incs_satisfied(const struct ble_gatt_svc_def *svc)
 
     for (i = 0; svc->includes[i] != NULL; i++) {
         int idx = ble_gatts_find_svc_entry_idx(svc->includes[i]);
-
         if (idx == -1 || ble_gatts_svc_entries[idx].handle == 0) {
             return 0;
         }
@@ -565,7 +565,6 @@ static struct ble_gatts_clt_cfg *ble_gatts_clt_cfg_find(struct ble_gatts_clt_cfg
 {
     int idx;
     idx = ble_gatts_clt_cfg_find_idx(cfgs, chr_val_handle);
-
     if (idx == -1) {
         return NULL;
     } else {
@@ -916,7 +915,7 @@ static int ble_gatts_register_svc(const struct ble_gatt_svc_def *svc,
 
     /* Register each characteristic. */
     if (svc->characteristics != NULL) {
-        const struct ble_gatt_chr_def *chr;        
+        const struct ble_gatt_chr_def *chr;
         for (chr = svc->characteristics; chr->uuid != NULL; chr++) {
             rc = ble_gatts_register_chr(svc, chr, register_cb, cb_arg);
             if (rc != 0) {
@@ -1142,7 +1141,6 @@ int ble_gatts_start(void)
     if (ble_hs_max_client_configs > 0) {
         ble_gatts_clt_cfg_mem = tls_mem_alloc(OS_MEMPOOL_BYTES(ble_hs_max_client_configs,
                                               sizeof(struct ble_gatts_clt_cfg)));
-
         if (ble_gatts_clt_cfg_mem == NULL) {
             rc = BLE_HS_ENOMEM;
             goto done;
@@ -1151,7 +1149,6 @@ int ble_gatts_start(void)
 
     if (ble_hs_max_services > 0) {
         ble_gatts_svc_entries = tls_mem_alloc(ble_hs_max_services * sizeof * ble_gatts_svc_entries);
-
         if (ble_gatts_svc_entries == NULL) {
             rc = BLE_HS_ENOMEM;
             goto done;
@@ -1164,7 +1161,6 @@ int ble_gatts_start(void)
         rc = ble_gatts_register_svcs(ble_gatts_svc_defs[i],
                                      ble_hs_cfg.gatts_register_cb,
                                      ble_hs_cfg.gatts_register_arg);
-
         if (rc != 0) {
             goto done;
         }
@@ -1191,7 +1187,6 @@ int ble_gatts_start(void)
      * characteristics.
      */
     ble_gatts_clt_cfgs = os_memblock_get(&ble_gatts_clt_cfg_pool);
-
     if (ble_gatts_clt_cfgs == NULL) {
         rc = BLE_HS_ENOMEM;
         goto done;
@@ -1238,7 +1233,7 @@ int ble_gatts_conn_init(struct ble_gatts_conn *gatts_conn)
         }
 
         /* Initialize the client configuration with a copy of the cache. */
-        memcpy(gatts_conn->clt_cfgs, ble_gatts_clt_cfgs,
+        memcpy_s(gatts_conn->clt_cfgs, sizeof(*gatts_conn->clt_cfgs), ble_gatts_clt_cfgs,
                ble_gatts_clt_cfg_size());
         gatts_conn->num_clt_cfgs = ble_gatts_num_cfgable_chrs;
     } else {
@@ -1350,8 +1345,7 @@ int ble_gatts_rx_indicate_ack(uint16_t conn_handle, uint16_t chr_val_handle)
     int clt_cfg_idx;
     int persist;
     int rc;
-    clt_cfg_idx = ble_gatts_clt_cfg_find_idx(ble_gatts_clt_cfgs,
-                  chr_val_handle);
+    clt_cfg_idx = ble_gatts_clt_cfg_find_idx(ble_gatts_clt_cfgs, chr_val_handle);
     if (clt_cfg_idx == -1) {
         /* This characteristic does not have a CCCD. */
         return BLE_HS_ENOENT;
@@ -1683,7 +1677,6 @@ void ble_gatts_bonding_restored(uint16_t conn_handle)
 
             case BLE_ATT_OP_NOTIFY_REQ:
                 rc = ble_gattc_notify(conn_handle, cccd_value.chr_val_handle);
-
                 if (rc == 0) {
                     cccd_value.value_changed = 0;
                     ble_store_write_cccd(&cccd_value);
@@ -1786,7 +1779,7 @@ int ble_gatts_find_svc(const ble_uuid_t *uuid, uint16_t *out_handle)
 }
 
 int ble_gatts_find_chr(const ble_uuid_t *svc_uuid, const ble_uuid_t *chr_uuid,
-                   uint16_t *out_def_handle, uint16_t *out_val_handle)
+                       uint16_t *out_def_handle, uint16_t *out_val_handle)
 {
     struct ble_att_svr_entry *att_chr;
     int rc;
@@ -1834,7 +1827,6 @@ int ble_gatts_find_dsc(const ble_uuid_t *svc_uuid, const ble_uuid_t *chr_uuid,
         }
 
         uint16_t uuid16 = ble_uuid_u16(cur->ha_uuid);
-
         if (uuid16 == BLE_ATT_UUID_CHARACTERISTIC) {
             /* Reached end of characteristic without a match. */
             return BLE_HS_ENOENT;
@@ -2025,8 +2017,7 @@ int ble_gatts_count_cfg(const struct ble_gatt_svc_def *defs)
     ble_hs_max_services += res.svcs;
     ble_hs_max_attrs += res.attrs;
     /* Reserve an extra CCCD for the cache. */
-    ble_hs_max_client_configs +=
-                    res.cccds * (MYNEWT_VAL(BLE_MAX_CONNECTIONS) + 1);
+    ble_hs_max_client_configs += res.cccds * (MYNEWT_VAL(BLE_MAX_CONNECTIONS) + 1);
     return 0;
 }
 
@@ -2068,9 +2059,8 @@ int ble_gatts_init(void)
     int rc;
     ble_gatts_num_cfgable_chrs = 0;
     ble_gatts_clt_cfgs = NULL;
-    rc = stats_init_and_reg(
-                         STATS_HDR(ble_gatts_stats), STATS_SIZE_INIT_PARMS(ble_gatts_stats,
-                                 STATS_SIZE_32), STATS_NAME_INIT_PARMS(ble_gatts_stats), "ble_gatts");
+    rc = stats_init_and_reg(STATS_HDR(ble_gatts_stats), STATS_SIZE_INIT_PARMS(ble_gatts_stats, STATS_SIZE_32),
+        STATS_NAME_INIT_PARMS(ble_gatts_stats), "ble_gatts");
     if (rc != 0) {
         return BLE_HS_EOS;
     }

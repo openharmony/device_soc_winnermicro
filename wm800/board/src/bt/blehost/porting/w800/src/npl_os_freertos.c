@@ -20,6 +20,7 @@
 #include <assert.h>
 #include <stddef.h>
 #include <string.h>
+#include "securec.h"
 #include "nimble/nimble_npl.h"
 #include "wm_osal.h"
 
@@ -127,7 +128,6 @@ ble_npl_error_t npl_freertos_mutex_release(struct ble_npl_mutex *mu)
         assert(0);
     } else {
         status = tls_os_mutex_release(mu->handle);
-
         if (status != TLS_OS_SUCCESS) {
             return BLE_NPL_BAD_MUTEX;
         }
@@ -215,7 +215,7 @@ void npl_freertos_callout_init(struct ble_npl_callout *co, struct ble_npl_eventq
                                ble_npl_event_fn *ev_cb, void *ev_arg)
 {
     tls_os_status_t status;
-    memset(co, 0, sizeof(*co));
+    memset_s(co, sizeof(*co), 0, sizeof(*co));
     status = tls_os_timer_create(&co->handle, os_callout_timer_cb, (void *)co, 1, 0, (u8 *)"co");
     assert(status == TLS_OS_SUCCESS);
     co->evq = evq;

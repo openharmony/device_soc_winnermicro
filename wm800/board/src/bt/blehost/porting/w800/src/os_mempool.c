@@ -23,8 +23,8 @@
 #include <assert.h>
 #include <stdbool.h>
 
-#define OS_MEM_TRUE_BLOCK_SIZE(bsize)   OS_ALIGN(bsize, OS_ALIGNMENT)
-#define OS_MEMPOOL_TRUE_BLOCK_SIZE(mp) OS_MEM_TRUE_BLOCK_SIZE(mp->mp_block_size)
+#define OS_MEM_TRUE_BLOCK_SIZE(bsize)   (OS_ALIGN(bsize, OS_ALIGNMENT))
+#define OS_MEMPOOL_TRUE_BLOCK_SIZE(mp)  (OS_MEM_TRUE_BLOCK_SIZE(mp->mp_block_size))
 
 STAILQ_HEAD(, os_mempool) g_os_mempool_list =
                 STAILQ_HEAD_INITIALIZER(g_os_mempool_list);
@@ -59,7 +59,7 @@ static void os_mempool_poison_check(void *start, int sz)
 #define os_mempool_poison_check(start, sz)
 #endif
 
-void os_mempool_reset()
+void os_mempool_reset(void)
 {
     STAILQ_INIT(&g_os_mempool_list);
 }
@@ -190,6 +190,9 @@ int os_memblock_from(const struct os_mempool *mp, const void *block_addr)
                    "Pointer to void must be native word size.");
     baddr_ptr = (uintptr_t)block_addr;
     true_block_size = OS_MEMPOOL_TRUE_BLOCK_SIZE(mp);
+    if (true_block_size == 0) {
+        return -1;
+    }
     end = mp->mp_membuf_addr + (mp->mp_num_blocks * true_block_size);
 
     /* Check that the block is in the memory buffer range. */
