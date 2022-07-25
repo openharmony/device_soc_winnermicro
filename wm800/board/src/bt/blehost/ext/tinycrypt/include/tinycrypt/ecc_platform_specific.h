@@ -1,4 +1,4 @@
-/* uECC_platform_specific.h - Interface to platform specific functions*/
+/* uECC_platform_specific.h - Interface to platform specific functions */
 
 /* Copyright (c) 2014, Kenneth MacKay
  * All rights reserved.

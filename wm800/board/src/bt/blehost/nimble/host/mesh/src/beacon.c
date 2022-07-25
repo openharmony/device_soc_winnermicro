@@ -19,8 +19,8 @@
 #include "net.h"
 #include "prov.h"
 #include "crypto.h"
-#include "beacon.h"
 #include "foundation.h"
+#include "beacon.h"
 
 #define UNPROVISIONED_INTERVAL    (K_SECONDS(5))
 #define PROVISIONED_INTERVAL      (K_SECONDS(10))
@@ -57,7 +57,7 @@ static struct bt_mesh_subnet *cache_check(u8_t data[21]) // 21:array length
 
 static void cache_add(u8_t data[21], struct bt_mesh_subnet *sub) // 21:array length
 {
-    memcpy(sub->beacon_cache, data, 21); // 21:array length
+    memcpy_s(sub->beacon_cache, sizeof(sub->beacon_cache), data, 21); // 21:array length
 }
 
 static void beacon_complete(int err, void *user_data)

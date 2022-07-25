@@ -149,8 +149,9 @@ void tls_adc_start_with_dma(int Channel, int Length)
 {
     u32 value;
     int len;
+    int channel = Channel;
 
-    if (Channel < 0 || Channel > 11) {
+    if (channel < 0 || channel > 11) {
         return;
     }
 
@@ -172,7 +173,7 @@ void tls_adc_start_with_dma(int Channel, int Length)
         return;
     }
 
-    Channel &= 0xF;
+    channel &= 0xF;
 
     /* disable adc:set adc pd, rstn and ldo disable */
     value = tls_reg_read32(HR_SD_ADC_ANA_CTRL);
@@ -203,7 +204,7 @@ void tls_adc_start_with_dma(int Channel, int Length)
 
     value = tls_reg_read32(HR_SD_ADC_ANA_CTRL);
     value &= ~(CONFIG_ADC_CHL_SEL_MASK);
-    value |= CONFIG_ADC_CHL_SEL(Channel);
+    value |= CONFIG_ADC_CHL_SEL(channel);
     value &= ~(CONFIG_PD_ADC_VAL(1));
     value |= (CONFIG_RSTN_ADC_VAL(1)|CONFIG_EN_LDO_ADC_VAL(1));
     tls_reg_write32(HR_SD_ADC_ANA_CTRL, value);        /* start adc */

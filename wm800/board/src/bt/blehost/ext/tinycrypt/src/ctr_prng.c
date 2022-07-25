@@ -133,7 +133,7 @@ int tc_ctr_prng_init(TCCtrPrng_t *const ctx,
         memcpy(personalization_buf, personalization, len);
     }
 
-    if ((0 != ctx) && (0 != entropy) && (entropyLen >= sizeof seed_material)) {
+    if ((ctx != 0) && (entropy != 0) && (entropyLen >= sizeof seed_material)) {
         /* 10.2.1.3.1 step 3 */
         memcpy(seed_material, entropy, sizeof seed_material);
 
@@ -174,15 +174,15 @@ int tc_ctr_prng_reseed(TCCtrPrng_t *const ctx,
         }
 
         /* 10.2.1.4.1 step 2 */
-        memcpy(additional_input_buf, additional_input, len);
+        memcpy_s(additional_input_buf, sizeof(additional_input_buf), additional_input, len);
     }
 
     unsigned int seedlen = (unsigned int)TC_AES_KEY_SIZE + (unsigned int)TC_AES_BLOCK_SIZE;
 
-    if ((0 != ctx) && (entropyLen >= seedlen)) {
-        uint8_t seed_material[TC_AES_KEY_SIZE + TC_AES_BLOCK_SIZE];        
+    if ((ctx != 0) && (entropyLen >= seedlen)) {
+        uint8_t seed_material[TC_AES_KEY_SIZE + TC_AES_BLOCK_SIZE];
         /* 10.2.1.4.1 step 3 */
-        memcpy(seed_material, entropy, sizeof seed_material);
+        memcpy_s(seed_material, sizeof(seed_material), entropy, sizeof seed_material);
 
         for (unsigned int i = 0U; i < sizeof seed_material; i++) {
             seed_material[i] ^= additional_input_buf[i];
@@ -210,7 +210,7 @@ int tc_ctr_prng_generate(TCCtrPrng_t *const ctx,
     static const unsigned int MAX_BYTES_PER_REQ = 65536U;
     unsigned int result = TC_CRYPTO_FAIL;
 
-    if ((0 != ctx) && (0 != out) && (outlen < MAX_BYTES_PER_REQ)) {
+    if ((ctx != 0) && (out != 0) && (outlen < MAX_BYTES_PER_REQ)) {
         /* 10.2.1.5.1 step 1 */
         if (ctx->reseedCount > MAX_REQS_BEFORE_RESEED) {
             result = TC_CTR_PRNG_RESEED_REQ;
@@ -225,7 +225,7 @@ int tc_ctr_prng_generate(TCCtrPrng_t *const ctx,
                     len = sizeof additional_input_buf;
                 }
 
-                memcpy(additional_input_buf, additional_input, len);
+                memcpy_s(additional_input_buf, sizeof(additional_input_buf), additional_input, len);
                 tc_ctr_prng_update(ctx, additional_input_buf);
             }
 
@@ -264,9 +264,9 @@ int tc_ctr_prng_generate(TCCtrPrng_t *const ctx,
 
 void tc_ctr_prng_uninstantiate(TCCtrPrng_t *const ctx)
 {
-    if (0 != ctx) {
-        memset(ctx->key.words, 0x00, sizeof ctx->key.words);
-        memset(ctx->V,         0x00, sizeof ctx->V);
+    if (ctx != 0) {
+        memset_s(ctx->key.words, sizeof(ctx->key.words), 0x00, sizeof ctx->key.words);
+        memset_s(ctx->V, sizeof(ctx->V), 0x00, sizeof ctx->V);
         ctx->reseedCount = 0U;
     }
 }

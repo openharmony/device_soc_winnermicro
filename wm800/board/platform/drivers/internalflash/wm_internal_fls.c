@@ -669,21 +669,21 @@ int tls_fls_otp_read(u32 addr, u8 *buf, u32 len)
         }
         if (byte) {
             value = M32(addr_read);
-            memcpy(buf, ((char *)&value) + 4 - i, byte);
+            memcpy_s(buf, sizeof(buf), ((char *)&value) + 4 - i, byte);
             addr_read += 4;
             buf += byte;
         }
         word = (len - byte) / 4;
         for (i = 0;i < word; i ++) {
             value = M32(addr_read);
-            memcpy(buf, (char*)&value, 4);
+            memcpy_s(buf, sizeof(buf), (char*)&value, 4);
             buf += 4;
             addr_read += 4;
         }
         byte = (len - byte) % 4;
         if (byte > 0) {
             value = M32(addr_read);
-            memcpy(buf, (char *)&value, byte);
+            memcpy_s(buf, sizeof(buf), (char *)&value, byte);
         }
     }
 
@@ -745,7 +745,7 @@ int tls_fls_otp_write(u32 addr, u8 *buf, u32 len)
     }
     tls_os_sem_acquire(inside_fls->fls_lock, 0);
     eraseSR(erasecmd, eraseAddr);
-    memcpy(backbuf + (addr - eraseAddr), buf, len);
+    memcpy_s(backbuf + (addr - eraseAddr), sizeof(backbuf + (addr - eraseAddr)), buf, len);
     p = eraseAddr;
     q = backbuf;
     size = eraseSize;
@@ -1283,7 +1283,7 @@ int tls_fls_init(void)
         return TLS_FLS_STATUS_ENOMEM;
     }
 
-    memset(fls, 0, sizeof(*fls));
+    memset_s(fls, sizeof(fls), 0, sizeof(*fls));
     err = tls_os_sem_create(&fls->fls_lock, 1);
     if (err != TLS_OS_SUCCESS) {
         tls_mem_free(fls);

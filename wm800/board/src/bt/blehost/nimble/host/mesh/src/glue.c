@@ -20,8 +20,8 @@
 #include "syscfg/syscfg.h"
 #define MESH_LOG_MODULE BLE_MESH_LOG
 
-#include "mesh/glue.h"
 #include "adv.h"
+#include "mesh/glue.h"
 #ifndef MYNEWT
 #include "nimble/nimble_port.h"
 #endif
@@ -256,7 +256,7 @@ void net_buf_add_zeros(struct os_mbuf *om, uint8_t len)
 {
     uint8_t z[len];
     int rc;
-    memset(z, 0, len);
+    memset_s(z, sizeof(z), 0, len);
     rc = os_mbuf_append(om, z, len);
     if (rc) {
         assert(0);
@@ -459,9 +459,9 @@ static int set_ad(const struct bt_data *ad, size_t ad_len, u8_t *buf, u8_t *buf_
 
 #if MYNEWT_VAL(BLE_EXT_ADV)
 static void ble_adv_copy_to_ext_param(struct ble_gap_ext_adv_params *ext_param,
-                          const struct ble_gap_adv_params *param)
+                                      const struct ble_gap_adv_params *param)
 {
-    memset(ext_param, 0, sizeof(*ext_param));
+    memset_s(ext_param, sizeof(ext_param), 0, sizeof(*ext_param));
     ext_param->legacy_pdu = 1;
 
     if (param->conn_mode != BLE_GAP_CONN_MODE_NON) {
@@ -518,7 +518,7 @@ configure:
     err  = ble_gap_ext_adv_configure(*instance, &ext_params, 0,
                                      ble_adv_gap_mesh_cb, NULL);
     if (!err) {
-        memcpy(cur_conf, param, sizeof(*cur_conf));
+        memcpy_s(cur_conf, sizeof(cur_conf), param, sizeof(*cur_conf));
     }
 
 done:
@@ -526,8 +526,8 @@ done:
 }
 
 int bt_le_adv_start(const struct ble_gap_adv_params *param,
-                const struct bt_data *ad, size_t ad_len,
-                const struct bt_data *sd, size_t sd_len)
+                    const struct bt_data *ad, size_t ad_len,
+                    const struct bt_data *sd, size_t sd_len)
 {
     struct os_mbuf *data;
     int instance;

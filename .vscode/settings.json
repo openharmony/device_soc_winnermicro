@@ -1,9 +1,0 @@
-{
-    "files.associations": {
-        "wm_regs.h": "c",
-        "wm_type_def.h": "c",
-        "wm_crypto_hard.h": "c",
-        "wm_ram_config.h": "c",
-        "wm_config.h": "c"
-    }
-}

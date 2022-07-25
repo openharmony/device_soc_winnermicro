@@ -26,6 +26,9 @@
 *
 * Date : 2014-6-6
 *****************************************************************************/
+#ifndef __WM_SPI_HAL_H__
+#define __WM_SPI_HAL_H__
+
 #include "wm_regs.h"
 #include "list.h"
 #include "wm_hostspi.h"
@@ -314,3 +317,4 @@ static __inline u32 spi_data_get(void)
     return tls_reg_read32(HR_SPI_RXDATA_REG);
 }
 
+#endif  /* __WM_SPI_HAL_H__ */

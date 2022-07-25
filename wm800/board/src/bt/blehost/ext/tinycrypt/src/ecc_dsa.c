@@ -66,24 +66,25 @@ static uECC_RNG_Function g_rng_function = 0;
 static void bits2int(uECC_word_t *native, const uint8_t *bits,
                      unsigned bits_size, uECC_Curve curve)
 {
+    unsigned Bits_size =bits_size;
     unsigned num_n_bytes = BITS_TO_BYTES(curve->num_n_bits);
     unsigned num_n_words = BITS_TO_WORDS(curve->num_n_bits);
     int shift;
     uECC_word_t carry;
     uECC_word_t *ptr;
 
-    if (bits_size > num_n_bytes) {
-        bits_size = num_n_bytes;
+    if (Bits_size > num_n_bytes) {
+        Bits_size = num_n_bytes;
     }
 
     uECC_vli_clear(native, num_n_words);
-    uECC_vli_bytesToNative(native, bits, bits_size);
+    uECC_vli_bytesToNative(native, bits, Bits_size);
 
-    if (bits_size * 8 <= (unsigned)curve->num_n_bits) { // 8:byte alignment
+    if (Bits_size * 8 <= (unsigned)curve->num_n_bits) { // 8:byte alignment
         return;
     }
 
-    shift = bits_size * 8 - curve->num_n_bits; // 8:byte alignment
+    shift = Bits_size * 8 - curve->num_n_bits; // 8:byte alignment
     carry = 0;
     ptr = native + num_n_words;
 

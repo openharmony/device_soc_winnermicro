@@ -59,7 +59,7 @@
 }whiel (0)
 #define STORE32L(x, y) do { \
     unsigned long __t = (x); \
-    memcpy(y, &__t, 4); \
+    memcpy_s(y, sizeof(y), &__t, 4); \
 }while (0)
 
 #define CRYPTO_LOG(...)
@@ -284,11 +284,11 @@ int tls_crypto_random_bytes(unsigned char *out, u32 len)
 #endif
         val = tls_reg_read32(HR_CRYPTO_RNG_RESULT);
         if (inLen >= randomBytes) {
-            memcpy(out, (char *)&val, randomBytes);
+            memcpy_s(out, sizeof(out), (char *)&val, randomBytes);
             out += randomBytes;
             inLen -= randomBytes;
         } else {
-            memcpy(out, (char *)&val, inLen);
+            memcpy_s(out, sizeof(out), (char *)&val, inLen);
             inLen = 0;
         }
     }
@@ -333,11 +333,11 @@ int tls_crypto_trng(unsigned char *out, u32 len)
         tls_os_release_critical(cpu_sr);
         val = tls_reg_read32(HR_CRYPTO_RNG_RESULT);
         if (inLen >= randomBytes) {
-            memcpy(out, (char *)&val, randomBytes);
+            memcpy_s(out, sizeof(out), (char *)&val, randomBytes);
             out += randomBytes;
             inLen -= randomBytes;
         } else {
-            memcpy(out, (char *)&val, inLen);
+            memcpy_s(out, sizeof(out), (char *)&val, inLen);
             inLen = 0;
         }
     }
@@ -355,6 +355,8 @@ int tls_crypto_random_bytes_range(unsigned char *out, u32 len, u32 range)
     val = tls_reg_read32(HR_CRYPTO_SEC_CFG);
     for (i = 0; i< len; i++) {
         val =  tls_reg_read32(HR_CRYPTO_RNG_RESULT);
+        if (range == 0) {
+        }
         out[i] = val % range;
     }
     return ERR_CRY_OK;
@@ -380,7 +382,7 @@ int tls_crypto_rc4_init(psCipherContext_t *ctx, const unsigned char *key, u32 ke
     if (keylen != 16 && keylen != 32) {
         return ERR_FAILURE;
     }
-    memcpy(ctx->arc4.state, key, keylen);
+    memcpy_s(ctx->arc4.state, sizeof(ctx->arc4.state), key, keylen);
     ctx->arc4.byteCount = keylen;
     return ERR_CRY_OK;
 }
@@ -450,7 +452,7 @@ int tls_crypto_aes_init(psCipherContext_t *ctx, const unsigned char *IV,
     if (keylen != 16)
         return ERR_FAILURE;
 
-    memcpy(ctx->aes.key.skey, key, keylen);
+    memcpy_s(ctx->aes.key.skey, sizeof(ctx->aes.key.skey), key, keylen);
     ctx->aes.key.type = cbc;
     ctx->aes.key.rounds = 16;
     if (IV) {
@@ -534,7 +536,7 @@ int tls_crypto_3des_init(psCipherContext_t *ctx, const unsigned char *IV,
     if (keylen != DES3_KEY_LEN)
         return ERR_FAILURE;
 
-    memcpy(ctx->des3.key.ek[0], key, keylen);
+    memcpy_s(ctx->des3.key.ek[0], sizeof(ctx->des3.key.ek), key, keylen);
     ctx->des3.key.ek[1][0] =  cbc;
     ctx->des3.blocklen = DES3_IV_LEN;
     if (IV) {
@@ -609,7 +611,7 @@ int tls_crypto_des_init(psCipherContext_t *ctx, const unsigned char *IV,
 {
     if (keylen != DES_KEY_LEN)
         return ERR_FAILURE;
-    memcpy(ctx->des3.key.ek[0], key, keylen);
+    memcpy_s(ctx->des3.key.ek[0], sizeof(ctx->des3.key.ek), key, keylen);
     ctx->des3.key.ek[1][0] =  cbc;
     ctx->des3.blocklen = DES3_IV_LEN;
     if (IV) {
@@ -853,8 +855,8 @@ void tls_crypto_sha1_update(psDigestContext_t *md, const unsigned char *buf, u32
 {
     u32 n;
     while (len > 0) {
-        n = min(len, (64 - md->u.sha1.curlen));
-        memcpy(md->u.sha1.buf + md->u.sha1.curlen, buf, (size_t)n);
+        n = min(len, (64 - md->u.sha1.curlen));  // 64
+        memcpy_s(md->u.sha1.buf + md->u.sha1.curlen, sizeof(md->u.sha1.buf +md->u.sha1.curlen), buf, (size_t)n);
         md->u.sha1.curlen        += n;
         buf                    += n;
         len                    -= n;
@@ -863,7 +865,7 @@ void tls_crypto_sha1_update(psDigestContext_t *md, const unsigned char *buf, u32
         if (md->u.sha1.curlen == 64) {
             hd_sha1_compress(md);
 #ifdef HAVE_NATIVE_INT64
-            md->u.sha1.length += 512;
+            md->u.sha1.length += 512;  // 512
 #else
             n = (md->u.sha1.lengthLo + 512) & 0xFFFFFFFFL;
             if (n < md->u.sha1.lengthLo) {
@@ -958,7 +960,7 @@ int tls_crypto_sha1_final(psDigestContext_t *md, unsigned char *hash)
         val = tls_reg_read32(HR_CRYPTO_SHA1_DIGEST0 + (4 * i));
         STORE32H(val, hash + (4 * i));
     }
-    memset(md, 0x0, sizeof(psSha1_t));
+    memset_s(md, sizeof(md), 0x0, sizeof(psSha1_t));
 
     return SHA1_HASH_SIZE;
 }
@@ -1010,7 +1012,7 @@ void tls_crypto_md5_init(psDigestContext_t *md)
 {
     md->u.md5.state[0] = 0x67452301UL;
     md->u.md5.state[1] = 0xefcdab89UL;
-    md->u.md5.state[2] = 0x98badcfeUL;
+    md->u.md5.state[2] = 0x98badcfeUL;  // 2数组state的第三个
     md->u.md5.state[3] = 0x10325476UL;
     md->u.md5.curlen = 0;
 #ifdef HAVE_NATIVE_INT64
@@ -1042,7 +1044,7 @@ void tls_crypto_md5_update(psDigestContext_t *md, const unsigned char *buf, u32 
 
     while (len > 0) {
         n = min(len, (64 - md->u.md5.curlen));
-        memcpy(md->u.md5.buf + md->u.md5.curlen, buf, (size_t)n);
+        memcpy_s(md->u.md5.buf + md->u.md5.curlen, sizeof(md->u.md5.buf +md->u.md5.curlen), buf, (size_t)n);
         md->u.md5.curlen    += n;
         buf                += n;
         len                -= n;
@@ -1148,7 +1150,7 @@ s32 tls_crypto_md5_final(psDigestContext_t *md, unsigned char *hash)
         val = tls_reg_read32(HR_CRYPTO_SHA1_DIGEST0 + (4 * i));
         STORE32L(val, hash + (4 * i));
     }
-    memset(md, 0x0, sizeof(psMd5_t));
+    memset_s(md, sizeof(md), 0x0, sizeof(psMd5_t));
 
     return MD5_HASH_SIZE;
 }
@@ -1168,33 +1170,33 @@ static void rsaMonMulWriteMc(const u32 mc)
 }
 static void rsaMonMulWriteA(const u32 *const in)
 {
-    memcpy((u32 *)&RSAXBUF, in, RSAN * sizeof(u32));
+    memcpy_s((u32 *)&RSAXBUF, sizeof(&RSAXBUF), in, RSAN * sizeof(u32));
 }
 static void rsaMonMulWriteB(const u32 *const in)
 {
-    memcpy((u32 *)&RSAYBUF, in, RSAN * sizeof(u32));
+    memcpy_s((u32 *)&RSAYBUF, sizeof(&RSAYBUF), in, RSAN * sizeof(u32));
 }
 static void rsaMonMulWriteM(const u32 *const in)
 {
-    memcpy((u32 *)&RSAMBUF, in, RSAN * sizeof(u32));
+    memcpy_s((u32 *)&RSAMBUF, sizeof(&RSAMBUF), in, RSAN * sizeof(u32));
 }
 static void rsaMonMulReadA(u32 *const in)
 {
-    memcpy(in, (u32 *)&RSAXBUF, RSAN * sizeof(u32));
+    memcpy_s(in, sizeof(in) (u32 *)&RSAXBUF, RSAN * sizeof(u32));
 }
 static void rsaMonMulReadB(u32 *const in)
 {
-    memcpy(in, (u32 *)&RSAYBUF, RSAN * sizeof(u32));
+    memcpy_s(in, sizeof(in), (u32 *)&RSAYBUF, RSAN * sizeof(u32));
 }
 static void rsaMonMulReadD(u32 *const in)
 {
-    memcpy(in, (u32 *)&RSADBUF, RSAN * sizeof(u32));
+    memcpy_s(in, sizeof(in), (u32 *)&RSADBUF, RSAN * sizeof(u32));
 }
 static int rsaMulModRead(unsigned char w, hstm_int *a)
 {
     u32 in[64];
     int err = 0;
-    memset(in, 0, 64 * sizeof(u32));
+    memset_s(in, sizeof(in), 0, 64 * sizeof(u32));
     switch (w) {
         case 'A':
             rsaMonMulReadA(in);
@@ -1239,7 +1241,7 @@ static void rsaMulModDump(unsigned char w)
 static void rsaMulModWrite(unsigned char w, hstm_int *a)
 {
     u32 in[64];
-    memset(in, 0, 64 * sizeof(u32));
+    memset_s(in, sizeof(in), 0, 64 * sizeof(u32));
     pstm_to_unsigned_bin_nr(NULL, a, (unsigned char *)in);
     switch (w) {
         case 'A':

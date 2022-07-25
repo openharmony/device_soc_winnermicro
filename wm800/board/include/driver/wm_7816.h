@@ -24,15 +24,15 @@
 #ifndef WM_7816_H_
 #define WM_7816_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include <string.h>
 #include <stdbool.h>
 #include "wm_regs.h"
 #include "wm_type_def.h"
 #include "wm_io.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define WM_SC_DEFAULT_FD    (372)
 

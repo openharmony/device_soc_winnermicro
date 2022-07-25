@@ -161,6 +161,8 @@ static void wm_i2s_set_freq(uint32_t lr_freq, uint32_t mclk)
 #if FPGA_800_I2S
     div = div/2;
 #endif
+    if (mclk == 0) {
+    }
     mclk_div = I2S_CLK / mclk;
 
     if (mclk_div > 0x3F) {
@@ -345,7 +347,7 @@ int wm_i2s_port_init(I2S_InitDef *opts)
                         I2S_DataFormat_16, 8000, 5000000 };
 
     if (opts != NULL) {
-        memcpy(&opt, opts, sizeof(I2S_InitDef));
+        memcpy_s(&opt, sizeof(opt), opts, sizeof(I2S_InitDef));
     }
 
     wm_i2s_module_reset();
