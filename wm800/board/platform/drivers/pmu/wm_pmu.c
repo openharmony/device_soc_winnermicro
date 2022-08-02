@@ -22,8 +22,8 @@
 #include "wm_timer.h"
 #include "wm_cpu.h"
 #include "tls_common.h"
-#include "wm_pmu.h"
 #include "wm_wifi.h"
+#include "wm_pmu.h"
 
 struct pmu_irq_context {
     tls_pmu_irq_callback callback;
@@ -39,11 +39,10 @@ void PMU_TIMER1_IRQHandler(void)
 {
     tls_reg_write32(HR_PMU_INTERRUPT_SRC, BIT(1)|0x180); /* clear timer1 interrupt */
     tls_reg_write32(HR_PMU_TIMER1, tls_reg_read32(HR_PMU_TIMER1) & (~BIT(16)));
-    if (NULL != pmu_timer1_context.callback)
-    {
+    if (pmu_timer1_context.callback != NULL) {
         pmu_timer1_context.callback(pmu_timer1_context.arg);
     }
-    return;    
+    return;
 }
 
 void PMU_TIMER0_IRQHandler(void)
@@ -51,7 +50,7 @@ void PMU_TIMER0_IRQHandler(void)
     tls_reg_write32(HR_PMU_INTERRUPT_SRC, BIT(0)|0x180); /* clear timer0 interrupt */
     tls_reg_write32(HR_PMU_TIMER0, tls_reg_read32(HR_PMU_TIMER0) & (~BIT(16)));
 
-    if (NULL != pmu_timer0_context.callback)
+    if (pmu_timer0_context.callback != NULL)
         pmu_timer0_context.callback(pmu_timer0_context.arg);
     return;
 }
@@ -60,7 +59,7 @@ void PMU_GPIO_WAKE_IRQHandler(void)
 {
     tls_reg_write32(HR_PMU_INTERRUPT_SRC, BIT(2)|0x180); /* clear gpio wake interrupt */
 
-    if (NULL != pmu_gpio_wake_context.callback)
+    if (pmu_gpio_wake_context.callback != NULL)
         pmu_gpio_wake_context.callback(pmu_gpio_wake_context.arg);
     return;
 }
@@ -69,7 +68,7 @@ void PMU_SDIO_WAKE_IRQHandler(void)
 {
     tls_reg_write32(HR_PMU_INTERRUPT_SRC, BIT(3)|0x180); /* clear sdio wake interrupt */
 
-    if (NULL != pmu_sdio_wake_context.callback)
+    if (pmu_sdio_wake_context.callback != NULL)
         pmu_sdio_wake_context.callback(pmu_sdio_wake_context.arg);
     return;
 }
@@ -186,16 +185,13 @@ void tls_pmu_clk_select(u8 bypass)
     u32 val;
 
     val = tls_reg_read32(HR_PMU_PS_CR);
-    if (bypass)
-    {
+    if (bypass) {
         val |= BIT(4);
-    }
-    else
-    {
+    } else {
         val &= ~BIT(4);
     }
-    val |= BIT(3);    
-    tls_reg_write32(HR_PMU_PS_CR, val);    
+    val |= BIT(3);
+    tls_reg_write32(HR_PMU_PS_CR, val);
 }
 
 /**
@@ -211,19 +207,18 @@ void tls_pmu_timer0_start(u16 second)
 {
     u32 val;
     val = tls_reg_read32(HR_PMU_INTERRUPT_SRC);
-    if (val&0x180)
-    {
-        tls_reg_write32(HR_PMU_INTERRUPT_SRC,val);
+    if (val&0x180) {
+        tls_reg_write32(HR_PMU_INTERRUPT_SRC, val);
     }
-    
+
     val = tls_reg_read32(HR_PMU_PS_CR);
-    /*cal 32K osc*/
+    /* cal 32K osc */
     val |= BIT(3);
-    tls_reg_write32(HR_PMU_PS_CR, val);        
+    tls_reg_write32(HR_PMU_PS_CR, val);
 
     val = second;
     val |= BIT(16);
-    tls_reg_write32(HR_PMU_TIMER0, val); 
+    tls_reg_write32(HR_PMU_TIMER0, val);
 }
 
 /**
@@ -241,7 +236,7 @@ void tls_pmu_timer0_stop(void)
 
     val = tls_reg_read32(HR_PMU_TIMER0);
     val &= ~BIT(16);
-    tls_reg_write32(HR_PMU_TIMER0, val); 
+    tls_reg_write32(HR_PMU_TIMER0, val);
 }
 
 /**
@@ -258,31 +253,24 @@ void tls_pmu_timer1_start(u16 msec)
     u32 val;
 
     val = tls_reg_read32(HR_PMU_INTERRUPT_SRC);
-    if (val&0x180)
-    {
-        tls_reg_write32(HR_PMU_INTERRUPT_SRC,val);
+    if (val&0x180) {
+        tls_reg_write32(HR_PMU_INTERRUPT_SRC, val);
     }
-    
+
     val = tls_reg_read32(HR_PMU_PS_CR);
-    /*cal 32K osc*/
-    val |= BIT(3);    
-    if (!(val & BIT(4)))
-    {
-        tls_reg_write32(HR_PMU_PS_CR, val);        
-        if (msec < 5)
-        {
+    /* cal 32K osc */
+    val |= BIT(3);
+    if (!(val & BIT(4))) {
+        tls_reg_write32(HR_PMU_PS_CR, val);
+        if (msec < 5) {
             val = 5;
-        }
-        else
-        {
+        } else {
             val = msec;
         }
-        // Ä¬ÈÏ²ÉÓÃ×îÐ¡µ¥Î»1ms
+        // Ä¬ï¿½Ï²ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½Î»1ms
         val = (val - 5) | (1<<16) | (0<<17) | (0<<20) | (0<<24);
-    }
-    else
-    {
-        // Ä¬ÈÏ²ÉÓÃ×îÐ¡µ¥Î»1ms
+    } else {
+        // Ä¬ï¿½Ï²ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½Î»1ms
         val = (msec-1)|(1<<16) | (0<<17) | (0<<20) | (0<<24);
     }
     tls_reg_write32(HR_PMU_TIMER1, val);
@@ -307,7 +295,7 @@ void tls_pmu_timer1_stop(void)
 }
 
 /**
- * @brief              This function is used to start pmu goto standby 
+ * @brief              This function is used to start pmu goto standby
  *
  * @param        None
  *
@@ -319,15 +307,14 @@ void tls_pmu_standby_start(void)
 {
     u32 val;
 
-    tls_irq_enable(PMU_IRQn);        // Ä¬ÈÏ´ò¿ªÖÐ¶ÏÎªÁËÇå³þIO»½ÐÑµÄÖÐ¶Ï±ê¼Ç
+    tls_irq_enable(PMU_IRQn);        // Ä¬ï¿½Ï´ï¿½ï¿½Ð¶ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½IOï¿½ï¿½ï¿½Ñµï¿½ï¿½Ð¶Ï±ï¿½ï¿½
 
-    /*Clear Sleep status after exit sleep mode and enter standby mode*/
+    /* Clear Sleep status after exit sleep mode and enter standby mode */
     val = tls_reg_read32(HR_PMU_INTERRUPT_SRC);
-    if (val&0x180)
-    {
-        tls_reg_write32(HR_PMU_INTERRUPT_SRC,val);
+    if (val&0x180) {
+        tls_reg_write32(HR_PMU_INTERRUPT_SRC, val);
     }
-        
+
     val = tls_reg_read32(HR_PMU_PS_CR);
     TLS_DBGPRT_INFO("goto standby here\n");
     val |= BIT(0);
@@ -335,7 +322,7 @@ void tls_pmu_standby_start(void)
 }
 
 /**
- * @brief              This function is used to start pmu goto sleep 
+ * @brief              This function is used to start pmu goto sleep
  *
  * @param        None
  *
@@ -348,18 +335,16 @@ void tls_pmu_sleep_start(void)
     u32 val;
     u32 use40M;
 
-    tls_irq_enable(PMU_IRQn);        // Ä¬ÈÏ´ò¿ªÖÐ¶ÏÎªÁËÇå³þIO»½ÐÑ
+    tls_irq_enable(PMU_IRQn);        // Ä¬ï¿½Ï´ï¿½ï¿½Ð¶ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½IOï¿½ï¿½ï¿½ï¿½
 
-    /*Clear Standby status after exit standby mode and enter sleep mode*/
+    /* Clear Standby status after exit standby mode and enter sleep mode */
     val = tls_reg_read32(HR_PMU_INTERRUPT_SRC);
-    if (val&0x180)
-    {
-        tls_reg_write32(HR_PMU_INTERRUPT_SRC,val);
+    if (val&0x180) {
+        tls_reg_write32(HR_PMU_INTERRUPT_SRC, val);
     }
-    
+
     val = tls_reg_read32(HR_PMU_PS_CR);
-    if (val&BIT(4))
-    {
+    if (val&BIT(4)) {
         use40M    = tls_reg_read32(HR_PMU_WLAN_STTS);
         use40M |= BIT(8);
         tls_reg_write32(HR_PMU_WLAN_STTS, use40M);
@@ -380,8 +365,6 @@ void tls_pmu_sleep_start(void)
  */
 void tls_close_peripheral_clock(tls_peripheral_type_s devices)
 {
-    // tls_reg_write32(HR_CLK_BASE_ADDR, tls_reg_read32(HR_CLK_BASE_ADDR) & ~(devices));
-
     return;
 }
 
@@ -396,8 +379,5 @@ void tls_close_peripheral_clock(tls_peripheral_type_s devices)
  */
 void tls_open_peripheral_clock(tls_peripheral_type_s devices)
 {
-    // tls_reg_write32(HR_CLK_BASE_ADDR, tls_reg_read32(HR_CLK_BASE_ADDR) | devices);
-
     return;
 }
-

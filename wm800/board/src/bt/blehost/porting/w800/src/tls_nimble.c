@@ -50,7 +50,7 @@ void tls_nimble_start(void)
 #endif
 }
 
-static void free_host_task_stack()
+static void free_host_task_stack(void)
 {
 #if TLS_OS_LITEOS
 #else

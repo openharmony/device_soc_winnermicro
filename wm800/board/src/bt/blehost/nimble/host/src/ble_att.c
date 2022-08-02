@@ -122,15 +122,13 @@ STATS_NAME(ble_att_stats, write_cmd_rx)
 STATS_NAME(ble_att_stats, write_cmd_tx)
 STATS_NAME_END(ble_att_stats)
 
-static const struct ble_att_rx_dispatch_entry *
-ble_att_rx_dispatch_entry_find(uint8_t op)
+static const struct ble_att_rx_dispatch_entry *ble_att_rx_dispatch_entry_find(uint8_t op)
 {
     const struct ble_att_rx_dispatch_entry *entry;
     int i;
 
     for(i = 0; i < BLE_ATT_RX_DISPATCH_SZ; i++) {
         entry = ble_att_rx_dispatch + i;
-
         if (entry->bde_op == op) {
             return entry;
         }
@@ -143,18 +141,15 @@ ble_att_rx_dispatch_entry_find(uint8_t op)
     return NULL;
 }
 
-int
-ble_att_conn_chan_find(uint16_t conn_handle, struct ble_hs_conn **out_conn,
-                       struct ble_l2cap_chan **out_chan)
+int ble_att_conn_chan_find(uint16_t conn_handle, struct ble_hs_conn **out_conn, struct ble_l2cap_chan **out_chan)
 {
     return ble_hs_misc_conn_chan_find(conn_handle, BLE_L2CAP_CID_ATT,
                                       out_conn, out_chan);
 }
 
-void
-ble_att_inc_tx_stat(uint8_t att_op)
+void ble_att_inc_tx_stat(uint8_t att_op)
 {
-    switch(att_op) {
+    switch (att_op) {
         case BLE_ATT_OP_ERROR_RSP:
             STATS_INC(ble_att_stats, error_rsp_tx);
             break;
@@ -268,10 +263,9 @@ ble_att_inc_tx_stat(uint8_t att_op)
     }
 }
 
-static void
-ble_att_inc_rx_stat(uint8_t att_op)
+static void ble_att_inc_rx_stat(uint8_t att_op)
 {
-    switch(att_op) {
+    switch (att_op) {
         case BLE_ATT_OP_ERROR_RSP:
             STATS_INC(ble_att_stats, error_rsp_rx);
             break;
@@ -385,22 +379,19 @@ ble_att_inc_rx_stat(uint8_t att_op)
     }
 }
 
-void
-ble_att_truncate_to_mtu(const struct ble_l2cap_chan *att_chan,
-                        struct os_mbuf *txom)
+void ble_att_truncate_to_mtu(const struct ble_l2cap_chan *att_chan,
+                             struct os_mbuf *txom)
 {
     int32_t extra_len;
     uint16_t mtu;
     mtu = ble_att_chan_mtu(att_chan);
     extra_len = OS_MBUF_PKTLEN(txom) - mtu;
-
     if (extra_len > 0) {
         os_mbuf_adj(txom, -extra_len);
     }
 }
 
-uint16_t
-ble_att_mtu(uint16_t conn_handle)
+uint16_t ble_att_mtu(uint16_t conn_handle)
 {
     struct ble_l2cap_chan *chan;
     struct ble_hs_conn *conn;
@@ -408,7 +399,6 @@ ble_att_mtu(uint16_t conn_handle)
     int rc;
     ble_hs_lock();
     rc = ble_att_conn_chan_find(conn_handle, &conn, &chan);
-
     if (rc == 0) {
         mtu = ble_att_chan_mtu(chan);
     } else {
@@ -419,8 +409,7 @@ ble_att_mtu(uint16_t conn_handle)
     return mtu;
 }
 
-void
-ble_att_set_peer_mtu(struct ble_l2cap_chan *chan, uint16_t peer_mtu)
+void ble_att_set_peer_mtu(struct ble_l2cap_chan *chan, uint16_t peer_mtu)
 {
     if (peer_mtu < BLE_ATT_MTU_DFLT) {
         peer_mtu = BLE_ATT_MTU_DFLT;
@@ -429,8 +418,7 @@ ble_att_set_peer_mtu(struct ble_l2cap_chan *chan, uint16_t peer_mtu)
     chan->peer_mtu = peer_mtu;
 }
 
-uint16_t
-ble_att_chan_mtu(const struct ble_l2cap_chan *chan)
+uint16_t ble_att_chan_mtu(const struct ble_l2cap_chan *chan)
 {
     uint16_t mtu;
 
@@ -448,9 +436,8 @@ ble_att_chan_mtu(const struct ble_l2cap_chan *chan)
     return mtu;
 }
 
-static void
-ble_att_rx_handle_unknown_request(uint8_t op, uint16_t conn_handle,
-                                  struct os_mbuf **om)
+static void ble_att_rx_handle_unknown_request(uint8_t op, uint16_t conn_handle,
+                                              struct os_mbuf **om)
 {
     /* If this is command (bit6 is set to 1), do nothing */
     if (op & 0x40) {
@@ -463,8 +450,7 @@ ble_att_rx_handle_unknown_request(uint8_t op, uint16_t conn_handle,
     *om = NULL;
 }
 
-static int
-ble_att_rx(struct ble_l2cap_chan *chan)
+static int ble_att_rx(struct ble_l2cap_chan *chan)
 {
     const struct ble_att_rx_dispatch_entry *entry;
     uint8_t op;
@@ -472,7 +458,6 @@ ble_att_rx(struct ble_l2cap_chan *chan)
     struct os_mbuf **om;
     int rc;
     conn_handle = ble_l2cap_get_conn_handle(chan);
-
     if (conn_handle == BLE_HS_CONN_HANDLE_NONE) {
         return BLE_HS_ENOTCONN;
     }
@@ -480,13 +465,11 @@ ble_att_rx(struct ble_l2cap_chan *chan)
     om = &chan->rx_buf;
     BLE_HS_DBG_ASSERT(*om != NULL);
     rc = os_mbuf_copydata(*om, 0, 1, &op);
-
     if (rc != 0) {
         return BLE_HS_EMSGSIZE;
     }
 
     entry = ble_att_rx_dispatch_entry_find(op);
-
     if (entry == NULL) {
         ble_att_rx_handle_unknown_request(op, conn_handle, om);
         return BLE_HS_ENOTSUP;
@@ -496,7 +479,6 @@ ble_att_rx(struct ble_l2cap_chan *chan)
     /* Strip L2CAP ATT header from the front of the mbuf. */
     os_mbuf_adj(*om, 1);
     rc = entry->bde_fn(conn_handle, om);
-
     if (rc != 0) {
         if (rc == BLE_HS_ENOTSUP) {
             ble_att_rx_handle_unknown_request(op, conn_handle, om);
@@ -508,14 +490,12 @@ ble_att_rx(struct ble_l2cap_chan *chan)
     return 0;
 }
 
-uint16_t
-ble_att_preferred_mtu(void)
+uint16_t ble_att_preferred_mtu(void)
 {
     return ble_att_preferred_mtu_val;
 }
 
-int
-ble_att_set_preferred_mtu(uint16_t mtu)
+int ble_att_set_preferred_mtu(uint16_t mtu)
 {
     struct ble_hs_conn *conn;
     int i;
@@ -533,7 +513,7 @@ ble_att_set_preferred_mtu(uint16_t mtu)
     ble_hs_lock();
     i = 0;
 
-    while((conn = ble_hs_conn_find_by_idx(i)) != NULL) {
+    while ((conn = ble_hs_conn_find_by_idx(i)) != NULL) {
         struct ble_l2cap_chan *chan = ble_hs_conn_chan_find_by_scid(conn, BLE_L2CAP_CID_ATT);
         BLE_HS_DBG_ASSERT(chan != NULL);
 
@@ -548,12 +528,10 @@ ble_att_set_preferred_mtu(uint16_t mtu)
     return 0;
 }
 
-struct ble_l2cap_chan *
-ble_att_create_chan(uint16_t conn_handle)
+struct ble_l2cap_chan *ble_att_create_chan(uint16_t conn_handle)
 {
     struct ble_l2cap_chan *chan;
     chan = ble_l2cap_chan_alloc(conn_handle);
-
     if (chan == NULL) {
         return NULL;
     }
@@ -565,15 +543,12 @@ ble_att_create_chan(uint16_t conn_handle)
     return chan;
 }
 
-int
-ble_att_init(void)
+int ble_att_init(void)
 {
     int rc;
     ble_att_preferred_mtu_val = MYNEWT_VAL(BLE_ATT_PREFERRED_MTU);
-    rc = stats_init_and_reg(
-                         STATS_HDR(ble_att_stats), STATS_SIZE_INIT_PARMS(ble_att_stats,
-                                 STATS_SIZE_32), STATS_NAME_INIT_PARMS(ble_att_stats), "ble_att");
-
+    rc = stats_init_and_reg(STATS_HDR(ble_att_stats), STATS_SIZE_INIT_PARMS(ble_att_stats, STATS_SIZE_32),
+        STATS_NAME_INIT_PARMS(ble_att_stats), "ble_att");
     if (rc != 0) {
         return BLE_HS_EOS;
     }

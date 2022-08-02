@@ -25,7 +25,6 @@
 #ifndef WM_UART_H
 #define WM_UART_H
 #include "list.h"
-// #include "wm_regs.h"
 #include "wm_type_def.h"
 #include "wm_osal.h"
 
@@ -55,7 +54,7 @@
 #define UART_BAUDRATE_B1500000      1500000
 #define UART_BAUDRATE_B2000000      2000000
 
-#define UART_RX_INT_FLAG (UIS_RX_FIFO | UIS_RX_FIFO_TIMEOUT | UIS_BREAK |\
+#define UART_RX_INT_FLAG (UIS_RX_FIFO | UIS_RX_FIFO_TIMEOUT | UIS_BREAK | \
         UIS_OVERRUN | UIS_FRM_ERR | UIS_PARITY_ERR)
 #define UART_RX_ERR_INT_FLAG (UIS_BREAK | UIS_FRM_ERR | \
         UIS_PARITY_ERR)
@@ -63,31 +62,34 @@
 #define UART_TX_INT_FLAG (UIS_TX_FIFO | UIS_TX_FIFO_EMPTY)
 
 /** return count in buffer.  */
-#define CIRC_CNT(head,tail,size) (((head) - (tail)) & ((size)-1))
+#define CIRC_CNT(head, tail, size) (((head) - (tail)) & ((size)-1))
 
 /** Return space available, 0..size-1.  We always leave one free char
    as a completely full buffer has head == tail, which is the same as
    empty.  */
-#define CIRC_SPACE(head,tail,size) CIRC_CNT((tail),((head)+1),(size))
+#define CIRC_SPACE(head, tail, size) CIRC_CNT((tail), ((head)+1), (size))
 
 /** Return count up to the end of the buffer.  Carefully avoid
    accessing head and tail more than once, so they can change
    underneath us without returning inconsistent results.  */
-#define CIRC_CNT_TO_END(head,tail,size) \
-    ({int end = (size) - (tail); \
-      int n = ((head) + end) & ((size)-1); \
-      n < end ? n : end;})
+#define CIRC_CNT_TO_END(head, tail, size) do { \
+        int end = (size) - (tail); \
+        int n = ((head) + end) & ((size)-1); \
+        n < end ? n : end; \
+    }while (0)
 
 /** Return space available up to the end of the buffer.  */
-#define CIRC_SPACE_TO_END(head,tail,size) \
-    ({int end = (size) - 1 - (head); \
-      int n = (end + (tail)) & ((size)-1); \
-      n <= end ? n : end+1;})
+#define CIRC_SPACE_TO_END(head, tail, size) do { \
+        int end = (size) - 1 - (head); \
+        int n = (end + (tail)) & ((size)-1); \
+        n <= end ? n : end+1; \
+    }while (0)
 
-#define CIRC_SPACE_TO_END_FULL(head,tail,size) \
-    ({int end = (size) - 1 - (head); \
-      int n = (end + (tail)) & ((size)-1); \
-      n < end ? n : end+1;})
+#define CIRC_SPACE_TO_END_FULL(head, tail, size) do { \
+        int end = (size) - 1 - (head); \
+        int n = (end + (tail)) & ((size)-1); \
+        n < end ? n : end+1; \
+    }while (0)
 
 #define uart_circ_empty(circ)        ((circ)->head == (circ)->tail)
 #define uart_circ_chars_pending(circ) \
@@ -96,8 +98,7 @@
 /**
  * @struct tls_uart_baud_rate    baudrate define
  */
-struct tls_uart_baud_rate
-{
+struct tls_uart_baud_rate {
     u32 baud_rate;
     u16 ubdiv;
     u16 ubdiv_frac;
@@ -106,22 +107,20 @@ struct tls_uart_baud_rate
 /**
  * @enum    uart number enum
  */
-enum
-{
+enum {
     TLS_UART_0 = 0,
     TLS_UART_1 = 1,
     TLS_UART_2 = 2,
     TLS_UART_3 = 3,
     TLS_UART_4 = 4,
-    TLS_UART_5 = 5,    
+    TLS_UART_5 = 5,
     TLS_UART_MAX = 6,
 };
 
 /**
  * @typedef enum TLS_UART_PMODE    Parity Mode
  */
-typedef enum TLS_UART_PMODE
-{
+typedef enum TLS_UART_PMODE {
     TLS_UART_PMODE_DISABLED = 0,    /**< No Parity */
     TLS_UART_PMODE_ODD = 1,     /**< Odd Parity */
     TLS_UART_PMODE_EVEN = 2,    /**< Even Parity */
@@ -132,8 +131,7 @@ typedef enum TLS_UART_PMODE
 /**
  * @typedef enum TLS_UART_CHSIZE    Character Size
  */
-typedef enum TLS_UART_CHSIZE
-{
+typedef enum TLS_UART_CHSIZE {
     TLS_UART_CHSIZE_5BIT = (0x00 << 0), /**< Character size: 5 bit */
     TLS_UART_CHSIZE_6BIT = (0x01 << 0), /**< Character size: 6 bit */
     TLS_UART_CHSIZE_7BIT = (0x02 << 0), /**< Character size: 7 bit */
@@ -143,8 +141,7 @@ typedef enum TLS_UART_CHSIZE
 /**
  * @typedef enum TLS_UART_FLOW_CTRL_MODE    flow control mode
  */
-typedef enum TLS_UART_FLOW_CTRL_MODE
-{
+typedef enum TLS_UART_FLOW_CTRL_MODE {
     TLS_UART_FLOW_CTRL_NONE,
     TLS_UART_FLOW_CTRL_HARDWARE,
 } TLS_UART_FLOW_CTRL_MODE_T;
@@ -152,8 +149,7 @@ typedef enum TLS_UART_FLOW_CTRL_MODE
 /**
  * @typedef enum TLS_UART_RX_FLOW_CTRL_FLAG    flow control rx flag
  */
-typedef enum TLS_UART_RX_FLOW_CTRL_FLAG
-{
+typedef enum TLS_UART_RX_FLOW_CTRL_FLAG {
     TLS_UART_RX_DISABLE,
     TLS_UART_RX_ENABLE,
 } TLS_UART_RX_FLOW_CTRL_FLAG_T;
@@ -161,8 +157,7 @@ typedef enum TLS_UART_RX_FLOW_CTRL_FLAG
 /**
  * @typedef enum TLS_UART_STOPBITS
  */
-typedef enum TLS_UART_STOPBITS
-{
+typedef enum TLS_UART_STOPBITS {
     TLS_UART_ONE_STOPBITS,
     TLS_UART_TWO_STOPBITS,
 } TLS_UART_STOPBITS_T;
@@ -170,8 +165,7 @@ typedef enum TLS_UART_STOPBITS
 /**
  * @typedef enum TLS_UART_STATUS
  */
-typedef enum TLS_UART_STATUS
-{
+typedef enum TLS_UART_STATUS {
     TLS_UART_STATUS_OK,
     TLS_UART_STATUS_ERROR,
 } TLS_UART_STATUS_T;
@@ -179,8 +173,7 @@ typedef enum TLS_UART_STATUS
 /**
  * @typedef enum TLS_UART_MODE   operation mode
  */
-typedef enum TLS_UART_MODE
-{
+typedef enum TLS_UART_MODE {
     TLS_UART_MODE_POLL,         /**< uart operation mode: poll */
     TLS_UART_MODE_INT,          /**< uart operation mode: interrupt mode */
 } TLS_UART_MODE_T;
@@ -188,8 +181,7 @@ typedef enum TLS_UART_MODE
 /**
  * @struct tls_uart_icount
  */
-struct tls_uart_icount
-{
+struct tls_uart_icount {
     u32 cts;
     u32 dsr;
     u32 rng;
@@ -206,8 +198,7 @@ struct tls_uart_icount
 /**
  * @typedef struct tls_uart_options
  */
-typedef struct tls_uart_options
-{
+typedef struct tls_uart_options {
     u32 baudrate;    /**< Set baud rate of the UART */
 
     TLS_UART_CHSIZE_T charlength;   /**< Number of bits to transmit as a character (5 to 8). */
@@ -217,14 +208,12 @@ typedef struct tls_uart_options
     TLS_UART_FLOW_CTRL_MODE_T flow_ctrl;    /**< Flow control type */
 
     TLS_UART_STOPBITS_T stopbits;    /**< Number of stop bits */
-
 } tls_uart_options_t;
 
 /**
  * @typedef struct tls_uart_circ_buf
  */
-typedef struct tls_uart_circ_buf
-{
+typedef struct tls_uart_circ_buf {
 volatile    u8 *buf;
 volatile   u32 head;
 volatile   u32 tail;
@@ -234,8 +223,7 @@ volatile   u32 tail;
 /**
  * @typedef struct tls_uart_net_buf
  */
-typedef struct tls_uart_net_buf
-{
+typedef struct tls_uart_net_buf {
     struct dl_list list;
     char *buf;
     void *pbuf;
@@ -243,8 +231,7 @@ typedef struct tls_uart_net_buf
     u16 offset;
 } tls_uart_net_buf_t;
 
-typedef struct tls_uart_net_msg
-{
+typedef struct tls_uart_net_msg {
     struct dl_list tx_msg_pending_list;
 } tls_uart_net_msg_t;
 #endif
@@ -252,8 +239,7 @@ typedef struct tls_uart_net_msg
 /**
  * @typedef struct TLS_UART_REGS
  */
-typedef struct TLS_UART_REGS
-{
+typedef struct TLS_UART_REGS {
     u32 UR_LC;                       /**< line control register */
     u32 UR_FC;                       /**<  flow control register */
     u32 UR_DMAC;                  /**< dma control register */
@@ -272,8 +258,7 @@ typedef struct TLS_UART_REGS
 /**
  * @typedef struct tls_uart_port
  */
-typedef struct tls_uart_port
-{
+typedef struct tls_uart_port {
     u32 uart_no;                    /**< uart number: 0 or 1 */
 
     u32 uart_irq_no;             /**< uart interrupt number */
@@ -296,8 +281,6 @@ typedef struct tls_uart_port
 
     struct tls_uart_circ_buf recv;          /**< uart ring buffer */
 
-// struct tls_uart_circ_buf xmit;
-
     struct dl_list tx_msg_pending_list;
 
     struct dl_list tx_msg_to_be_freed_list;
@@ -312,8 +295,8 @@ typedef struct tls_uart_port
 
     s16(*rx_callback) (u16 len, void* priv_data);
 
-    s16(*tx_callback) (struct tls_uart_port * port);
-    s16(*tx_sent_callback) (struct tls_uart_port * port);
+    s16(*tx_callback) (struct tls_uart_port *port);
+    s16(*tx_sent_callback) (struct tls_uart_port *port);
 
     bool tx_dma_on;
     bool rx_dma_on;
@@ -324,8 +307,7 @@ typedef struct tls_uart_port
 /**
  * @typedef struct tls_uart_tx_msg
  */
-typedef struct tls_uart_tx_msg
-{
+typedef struct tls_uart_tx_msg {
     struct dl_list list;
     char *buf;
     u16 buflen;
@@ -360,7 +342,8 @@ typedef struct tls_uart_tx_msg
  * @param[in] uart_no: is the uart number.
  *    - \ref TLS_UART_0 TLS_UART_1 TLS_UART_2 TLS_UART_3 TLS_UART_4 TLS_UART_5
  * @param[in] opts: is the uart setting options,if this param is NULL,this function will use the default options.
- * @param[in] modeChoose:; choose uart2 mode or 7816 mode when uart_no is TLS_UART_2, 0 for uart2 mode and 1 for 7816 mode.
+ * @param[in] modeChoose:;
+ * choose uart2 mode or 7816 mode when uart_no is TLS_UART_2, 0 for uart2 mode and 1 for 7816 mode.
  *
  * @retval
  *    - \ref WM_SUCCESS
@@ -368,7 +351,7 @@ typedef struct tls_uart_tx_msg
  *
  * @note When the system is initialized, the function has been called, so users can not call the function.
  */
-int tls_uart_port_init(u16 uart_no, tls_uart_options_t * opts, u8 modeChoose);
+int tls_uart_port_init(u16 uart_no, tls_uart_options_t *opts, u8 modeChoose);
 
 /**
  * @brief          This function is used to register uart rx interrupt.
@@ -405,7 +388,7 @@ void tls_uart_tx_callback_register(u16 uart_no, s16(*tx_callback) (struct tls_ua
  *
  * @note           None
  */
-int tls_uart_read(u16 uart_no, u8 * buf, u16 readsize);
+int tls_uart_read(u16 uart_no, u8 *buf, u16 readsize);
 
 /**
  * @brief          This function is used to check the available data in the cache buffer.

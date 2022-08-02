@@ -62,40 +62,41 @@
 #define TLS_FWUP_STATE_ERROR_MEM      (1 << 4)
 #define TLS_FWUP_STATE_ERROR_CRC      (1 << 5)
 
-#define TLS_FWUP_STATE_ERROR      (TLS_FWUP_STATE_ERROR_IO | TLS_FWUP_STATE_ERROR_SIGNATURE | TLS_FWUP_STATE_ERROR_MEM | TLS_FWUP_STATE_ERROR_CRC)
+#define TLS_FWUP_STATE_ERROR      (TLS_FWUP_STATE_ERROR_IO | TLS_FWUP_STATE_ERROR_SIGNATURE | \
+                                   TLS_FWUP_STATE_ERROR_MEM | TLS_FWUP_STATE_ERROR_CRC)
 
 /**   update type 0:firmware, 1: data   */
 #define TLS_FWUP_DEST_SPECIFIC_FIRMWARE      (0)
 #define TLS_FWUP_DEST_SPECIFIC_DATA      (1)
 
-enum IMAGE_TYPE_ENUM{
+enum IMAGE_TYPE_ENUM {
     IMG_TYPE_SECBOOT    = 0x0,
     IMG_TYPE_FLASHBIN0  = 0x1,
     IMG_TYPE_CPFT       = 0xE
 };
 
-enum 
-{
+enum {
     NOT_ZIP_FILE = 0,
     ZIP_FILE = 1
 };
 typedef union {
     struct {
-        uint32_t img_type: 4;                /*!< bit:  0.. 3  IMAGE_TYPE_ENUM */
-        uint32_t code_encrypt:1;             /*!< bit:  4      whether the code in flash encrypted */
-        uint32_t prikey_sel:3;               /*!< bit:  5.. 7  private key selection */
-        uint32_t signature:1;                /*!< bit:  8      whether signature flag, only indicates if img contains 128bytes signature in the end*/
-        uint32_t _reserved1: 7;              /*!< bit:  9.. 15 Reserved */
-        uint32_t zip_type: 1;                /*!< bit:  16      zip_type bit */
-        uint32_t psram_io: 1;                /*!< bit:  17      psram_io bit */
-        uint32_t erase_block_en: 1;          /*!< bit:  18      flash erase block enable bit */
-        uint32_t erase_always: 1;            /*!< bit:  19      flash erase always bit */
-        uint32_t _reserved2: 12;              /*!< bit: 20..31  Reserved */
+        uint32_t img_type : 4;                /*!< bit:  0.. 3  IMAGE_TYPE_ENUM */
+        uint32_t code_encrypt : 1;             /*!< bit:  4      whether the code in flash encrypted */
+        uint32_t prikey_sel : 3;               /*!< bit:  5.. 7  private key selection */
+        /*!< bit:  8      whether signature flag, only indicates if img contains 128bytes signature in the end */
+        uint32_t signature : 1;
+        uint32_t _reserved1 : 7;              /*!< bit:  9.. 15 Reserved */
+        uint32_t zip_type : 1;                /*!< bit:  16      zip_type bit */
+        uint32_t psram_io : 1;                /*!< bit:  17      psram_io bit */
+        uint32_t erase_block_en : 1;          /*!< bit:  18      flash erase block enable bit */
+        uint32_t erase_always : 1;            /*!< bit:  19      flash erase always bit */
+        uint32_t _reserved2 : 12;              /*!< bit: 20..31  Reserved */
     } b;                                   /*!< Structure    Access by bit */
     uint32_t w;                            /*!< Type         Access by whole register */
 } Img_Attr_Type;
 
-typedef struct IMAGE_HEADER_PARAM{
+typedef struct IMAGE_HEADER_PARAM {
     unsigned int   	magic_no;
     Img_Attr_Type   img_attr;
     unsigned int   	img_addr;
@@ -123,7 +124,7 @@ struct tls_fwup_image_hdr {
 
 /**   Structure for one packet data   */
 struct  tls_fwup_block {
-    u16 number;	// 0~Sum-1
+    u16 number; // 0~Sum-1
     u16 sum;
     u8 data[TLS_FWUP_BLK_SIZE];
     u32 crc32;
@@ -367,4 +368,3 @@ int tls_fwup_img_header_check(IMAGE_HEADER_PARAM_ST *img_param);
  */
 
 #endif /* WM_FWUP_H */
-

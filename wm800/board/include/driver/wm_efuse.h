@@ -47,7 +47,6 @@ enum {
 #define CAL_FLAG_ADDR  (FT_MAGICNUM_ADDR + sizeof(FT_PARAM_ST)+4)
 #define CAL_FLAG_LEN    (4)
 
-// #define TX_GAIN_NEW_ADDR (VCG_ADDR+VCG_LEN)
 #define TX_GAIN_LEN   (28*3)
 
 /**
@@ -187,7 +186,7 @@ int tls_set_tx_lo(u8 *txlo);
 /**
 * @brief 	This function is used to get tx iq gain
 *
-* @param[in]	txGain		
+* @param[in]	txGain
 *
 * @retval	 	TLS_EFUSE_STATUS_OK			get success
 * @retval		TLS_EFUSE_STATUS_EIO		get failed
@@ -197,7 +196,7 @@ int tls_get_tx_iq_gain(u8 *txGain);
 /**
 * @brief 	This function is used to set tx iq gain
 *
-* @param[in]	txGain		
+* @param[in]	txGain
 *
 * @retval	 	TLS_EFUSE_STATUS_OK			set success
 * @retval		TLS_EFUSE_STATUS_EIO		set failed
@@ -207,7 +206,7 @@ int tls_set_tx_iq_gain(u8 *txGain);
 /**
 * @brief 	This function is used to get rx iq gain
 *
-* @param[in]	rxGain		
+* @param[in]	rxGain
 *
 * @retval	 	TLS_EFUSE_STATUS_OK			get success
 * @retval		TLS_EFUSE_STATUS_EIO		get failed
@@ -217,7 +216,7 @@ int tls_get_rx_iq_gain(u8 *rxGain);
 /**
 * @brief 	This function is used to get rx iq gain
 *
-* @param[in]	rxGain		
+* @param[in]	rxGain
 *
 * @retval	 	TLS_EFUSE_STATUS_OK			set success
 * @retval		TLS_EFUSE_STATUS_EIO		set failed
@@ -227,7 +226,7 @@ int tls_set_rx_iq_gain(u8 *rxGain);
 /**
 * @brief 	This function is used to get tx iq phase
 *
-* @param[in]	txPhase		
+* @param[in]	txPhase
 *
 * @retval	 	TLS_EFUSE_STATUS_OK			get success
 * @retval		TLS_EFUSE_STATUS_EIO		get failed
@@ -237,7 +236,7 @@ int tls_get_tx_iq_phase(u8 *txPhase);
 /**
 * @brief 	This function is used to set tx iq phase
 *
-* @param[in]	txPhase		
+* @param[in]	txPhase
 *
 * @retval	 	TLS_EFUSE_STATUS_OK			set success
 * @retval		TLS_EFUSE_STATUS_EIO		set failed
@@ -247,7 +246,7 @@ int tls_set_tx_iq_phase(u8 *txPhase);
 /**
 * @brief 	This function is used to get rx iq phase
 *
-* @param[in]	rxPhase		
+* @param[in]	rxPhase
 *
 * @retval	 	TLS_EFUSE_STATUS_OK			get success
 * @retval		TLS_EFUSE_STATUS_EIO		get failed
@@ -257,7 +256,7 @@ int tls_get_rx_iq_phase(u8 *rxPhase);
 /**
 * @brief 	This function is used to set rx iq phase
 *
-* @param[in]	rxPhase		
+* @param[in]	rxPhase
 *
 * @retval	 	TLS_EFUSE_STATUS_OK			set success
 * @retval		TLS_EFUSE_STATUS_EIO		set failed

@@ -18,27 +18,25 @@
  */
 
 #include <string.h>
-#include "host/ble_hs_id.h"
+#include "securec.h"
 #include "ble_hs_priv.h"
+#include "host/ble_hs_id.h"
 
 static uint8_t ble_hs_id_pub[6];
 static uint8_t ble_hs_id_rnd[6];
 
-void
-ble_hs_id_set_pub(const uint8_t *pub_addr)
+void ble_hs_id_set_pub(const uint8_t *pub_addr)
 {
     ble_hs_lock();
-    memcpy(ble_hs_id_pub, pub_addr, 6);
+    memcpy_s(ble_hs_id_pub, sizeof(ble_hs_id_pub), pub_addr, 6); // 6:size
     ble_hs_unlock();
 }
 
-int
-ble_hs_id_gen_rnd(int nrpa, ble_addr_t *out_addr)
+int ble_hs_id_gen_rnd(int nrpa, ble_addr_t *out_addr)
 {
     int rc;
     out_addr->type = BLE_ADDR_RANDOM;
-    rc = ble_hs_hci_util_rand(out_addr->val, 6);
-
+    rc = ble_hs_hci_util_rand(out_addr->val, 6); // 6:size
     if (rc != 0) {
         return rc;
     }
@@ -52,8 +50,7 @@ ble_hs_id_gen_rnd(int nrpa, ble_addr_t *out_addr)
     return 0;
 }
 
-int
-ble_hs_id_set_rnd(const uint8_t *rnd_addr)
+int ble_hs_id_set_rnd(const uint8_t *rnd_addr)
 {
     uint8_t addr_type_byte;
     int rc;
@@ -61,28 +58,26 @@ ble_hs_id_set_rnd(const uint8_t *rnd_addr)
     ble_hs_lock();
     /* Make sure random part of rnd_addr is not all ones or zeros. Reference:
      * Core v5.0, Vol 6, Part B, section 1.3.2.1 */
-    addr_type_byte = rnd_addr[5] & 0xc0;
+    addr_type_byte = rnd_addr[5] & 0xc0; // 5:array element
     /* count bits set to 1 in random part of address */
     ones = __builtin_popcount(rnd_addr[0]);
     ones += __builtin_popcount(rnd_addr[1]);
-    ones += __builtin_popcount(rnd_addr[2]);
-    ones += __builtin_popcount(rnd_addr[3]);
-    ones += __builtin_popcount(rnd_addr[4]);
-    ones += __builtin_popcount(rnd_addr[5] & 0x3f);
-
+    ones += __builtin_popcount(rnd_addr[2]); // 2:array element
+    ones += __builtin_popcount(rnd_addr[3]); // 3:array element
+    ones += __builtin_popcount(rnd_addr[4]); // 4:array element
+    ones += __builtin_popcount(rnd_addr[5] & 0x3f); // 5:array element
     if ((addr_type_byte != 0x00 && addr_type_byte != 0xc0) ||
-            (ones == 0 || ones == 46)) {
+            (ones == 0 || ones == 46)) { // 6:Analyzing conditions
         rc = BLE_HS_EINVAL;
         goto done;
     }
 
     rc = ble_hs_hci_util_set_random_addr(rnd_addr);
-
     if (rc != 0) {
         goto done;
     }
 
-    memcpy(ble_hs_id_rnd, rnd_addr, 6);
+    memcpy_s(ble_hs_id_rnd, sizeof(ble_hs_id_rnd), rnd_addr, 6);
 done:
     ble_hs_unlock();
     return rc;
@@ -114,15 +109,13 @@ done:
  *                                  identity address of the requested type;
  *                              Other BLE host core code on error.
  */
-int
-ble_hs_id_addr(uint8_t id_addr_type, const uint8_t **out_id_addr,
-               int *out_is_nrpa)
+int ble_hs_id_addr(uint8_t id_addr_type, const uint8_t **out_id_addr, int *out_is_nrpa)
 {
     const uint8_t *id_addr;
     int nrpa;
     BLE_HS_DBG_ASSERT(ble_hs_locked_by_cur_task());
 
-    switch(id_addr_type) {
+    switch (id_addr_type) {
         case BLE_ADDR_PUBLIC:
             id_addr = ble_hs_id_pub;
             nrpa = 0;
@@ -152,35 +145,30 @@ ble_hs_id_addr(uint8_t id_addr_type, const uint8_t **out_id_addr,
     return 0;
 }
 
-int
-ble_hs_id_copy_addr(uint8_t id_addr_type, uint8_t *out_id_addr,
-                    int *out_is_nrpa)
+int ble_hs_id_copy_addr(uint8_t id_addr_type, uint8_t *out_id_addr, int *out_is_nrpa)
 {
     const uint8_t *addr;
     int rc;
     ble_hs_lock();
     rc = ble_hs_id_addr(id_addr_type, &addr, out_is_nrpa);
-
     if (rc == 0 && out_id_addr != NULL) {
-        memcpy(out_id_addr, addr, 6);
+        memcpy_s(out_id_addr, sizeof(out_id_addr), addr, 6);
     }
 
     ble_hs_unlock();
     return rc;
 }
 
-static int
-ble_hs_id_addr_type_usable(uint8_t own_addr_type)
+static int ble_hs_id_addr_type_usable(uint8_t own_addr_type)
 {
     uint8_t id_addr_type;
     int nrpa;
     int rc;
 
-    switch(own_addr_type) {
+    switch (own_addr_type) {
         case BLE_OWN_ADDR_PUBLIC:
         case BLE_OWN_ADDR_RANDOM:
             rc = ble_hs_id_addr(own_addr_type, NULL, NULL);
-
             if (rc != 0) {
                 return rc;
             }
@@ -191,7 +179,6 @@ ble_hs_id_addr_type_usable(uint8_t own_addr_type)
         case BLE_OWN_ADDR_RPA_RANDOM_DEFAULT:
             id_addr_type = ble_hs_misc_own_addr_type_to_id(own_addr_type);
             rc = ble_hs_id_addr(id_addr_type, NULL, &nrpa);
-
             if (rc != 0) {
                 return rc;
             }
@@ -209,12 +196,10 @@ ble_hs_id_addr_type_usable(uint8_t own_addr_type)
     return 0;
 }
 
-int
-ble_hs_id_use_addr(uint8_t own_addr_type)
+int ble_hs_id_use_addr(uint8_t own_addr_type)
 {
     int rc;
     rc = ble_hs_id_addr_type_usable(own_addr_type);
-
     if (rc != 0) {
         return rc;
     }
@@ -223,7 +208,6 @@ ble_hs_id_use_addr(uint8_t own_addr_type)
     if (own_addr_type == BLE_OWN_ADDR_RPA_PUBLIC_DEFAULT ||
             own_addr_type == BLE_OWN_ADDR_RPA_RANDOM_DEFAULT) {
         rc = ble_hs_pvcy_ensure_started();
-
         if (rc != 0) {
             return rc;
         }
@@ -232,8 +216,7 @@ ble_hs_id_use_addr(uint8_t own_addr_type)
     return 0;
 }
 
-int
-ble_hs_id_infer_auto(int privacy, uint8_t *out_addr_type)
+int ble_hs_id_infer_auto(int privacy, uint8_t *out_addr_type)
 {
     static const uint8_t pub_addr_types[] = {
         BLE_OWN_ADDR_RANDOM,
@@ -258,11 +241,10 @@ ble_hs_id_infer_auto(int privacy, uint8_t *out_addr_type)
         num_addr_types = sizeof pub_addr_types / sizeof pub_addr_types[0];
     }
 
-    for(i = 0; i < num_addr_types; i++) {
+    for (i = 0; i < num_addr_types; i++) {
         addr_type = addr_types[i];
         rc = ble_hs_id_addr_type_usable(addr_type);
-
-        switch(rc) {
+        switch (rc) {
             case 0:
                 *out_addr_type = addr_type;
                 goto done;
@@ -285,19 +267,17 @@ done:
  * Clears both the public and random addresses.  This function is necessary
  * when the controller loses its random address (e.g., on a stack reset).
  */
-void
-ble_hs_id_reset(void)
+void ble_hs_id_reset(void)
 {
-    memset(ble_hs_id_pub, 0, sizeof ble_hs_id_pub);
-    memset(ble_hs_id_rnd, 0, sizeof ble_hs_id_pub);
+    memset_s(ble_hs_id_pub, sizeof ble_hs_id_pub, 0, sizeof ble_hs_id_pub);
+    memset_s(ble_hs_id_rnd, sizeof ble_hs_id_rnd, 0, sizeof ble_hs_id_pub);
 }
 
 /**
  * Clears random address. This function is necessary when the host wants to
  * clear random address.
  */
-void
-ble_hs_id_rnd_reset(void)
+void ble_hs_id_rnd_reset(void)
 {
-    memset(ble_hs_id_rnd, 0, sizeof ble_hs_id_rnd);
+    memset_s(ble_hs_id_rnd, sizeof ble_hs_id_rnd, 0, sizeof ble_hs_id_rnd);
 }

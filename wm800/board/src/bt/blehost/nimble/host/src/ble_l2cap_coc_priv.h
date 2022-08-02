@@ -60,10 +60,10 @@ int ble_l2cap_coc_create_server(uint16_t psm, uint16_t mtu,
 int ble_l2cap_coc_create_srv_chan(struct ble_hs_conn *conn, uint16_t psm,
                                   struct ble_l2cap_chan **chan);
 struct ble_l2cap_chan *ble_l2cap_coc_chan_alloc(struct ble_hs_conn *conn,
-        uint16_t psm, uint16_t mtu,
-        struct os_mbuf *sdu_rx,
-        ble_l2cap_event_fn *cb,
-        void *cb_arg);
+    uint16_t psm, uint16_t mtu,
+    struct os_mbuf *sdu_rx,
+    ble_l2cap_event_fn *cb,
+    void *cb_arg);
 void ble_l2cap_coc_cleanup_chan(struct ble_hs_conn *conn, struct ble_l2cap_chan *chan);
 void ble_l2cap_coc_le_credits_update(uint16_t conn_handle, uint16_t dcid,
                                      uint16_t credits);
@@ -72,33 +72,26 @@ int ble_l2cap_coc_recv_ready(struct ble_l2cap_chan *chan,
 int ble_l2cap_coc_send(struct ble_l2cap_chan *chan, struct os_mbuf *sdu_tx);
 void ble_l2cap_coc_set_new_mtu_mps(struct ble_l2cap_chan *chan, uint16_t mtu, uint16_t mps);
 #else
-static inline int
-ble_l2cap_coc_init(void)
+static inline int ble_l2cap_coc_init(void)
 {
     return 0;
 }
 
-static inline int
-ble_l2cap_coc_create_server(uint16_t psm, uint16_t mtu,
-                            ble_l2cap_event_fn *cb, void *cb_arg)
+static inline int ble_l2cap_coc_create_server(uint16_t psm, uint16_t mtu, ble_l2cap_event_fn *cb, void *cb_arg)
 {
     return BLE_HS_ENOTSUP;
 }
 
-static inline int
-ble_l2cap_coc_recv_ready(struct ble_l2cap_chan *chan,
-                         struct os_mbuf *sdu_rx)
+static inline int ble_l2cap_coc_recv_ready(struct ble_l2cap_chan *chan, struct os_mbuf *sdu_rx)
 {
     return BLE_HS_ENOTSUP;
 }
 
-static inline void
-ble_l2cap_coc_cleanup_chan(struct ble_hs_conn *conn, struct ble_l2cap_chan *chan)
+static inline void ble_l2cap_coc_cleanup_chan(struct ble_hs_conn *conn, struct ble_l2cap_chan *chan)
 {
 }
 
-static inline int
-ble_l2cap_coc_send(struct ble_l2cap_chan *chan, struct os_mbuf *sdu_tx)
+static inline int ble_l2cap_coc_send(struct ble_l2cap_chan *chan, struct os_mbuf *sdu_tx)
 {
     return BLE_HS_ENOTSUP;
 }

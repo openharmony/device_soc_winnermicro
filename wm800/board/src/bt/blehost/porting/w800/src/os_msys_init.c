@@ -55,10 +55,9 @@ static struct os_mbuf_pool os_msys_init_2_mbuf_pool;
 static struct os_mempool os_msys_init_2_mempool;
 #endif
 
-static void
-os_msys_init_once(void *data, struct os_mempool *mempool,
-                  struct os_mbuf_pool *mbuf_pool,
-                  int block_count, int block_size, char *name)
+static void os_msys_init_once(void *data, struct os_mempool *mempool,
+                              struct os_mbuf_pool *mbuf_pool,
+                              int block_count, int block_size, char *name)
 {
     int rc;
     rc = mem_init_mbuf_pool(data, mempool, mbuf_pool, block_count, block_size,
@@ -68,8 +67,7 @@ os_msys_init_once(void *data, struct os_mempool *mempool,
     assert(rc == 0);
 }
 
-void
-os_msys_init(void)
+void os_msys_init(void)
 {
     os_msys_reset();
     (void)os_msys_init_once;
@@ -100,8 +98,7 @@ os_msys_init(void)
                       "msys_2");
 #endif
 }
-void
-os_msys_deinit()
+void os_msys_deinit(void)
 {
 #if MYNEWT_VAL(MSYS_1_BLOCK_COUNT) > 0
 #if MYNEWT_VAL(SYS_MEM_DYNAMIC)

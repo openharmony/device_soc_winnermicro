@@ -33,7 +33,7 @@
 typedef void (*tls_timer_irq_callback)(void *arg);
 
 /** timer unit */
-enum tls_timer_unit{
+enum tls_timer_unit {
     TLS_TIMER_UNIT_US = 0,    /**< microsecond level(us) */
     TLS_TIMER_UNIT_MS         /**< millisecond level(ms) */
 };

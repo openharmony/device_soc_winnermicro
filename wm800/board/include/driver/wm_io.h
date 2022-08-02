@@ -197,7 +197,7 @@ enum tls_io_name {
 void tls_io_cfg_set(enum tls_io_name name, u8 option);
 
 /**
- * @brief              This function is used to get io function config 
+ * @brief              This function is used to get io function config
  *
  * @param[in]          name      io name
  *

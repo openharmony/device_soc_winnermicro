@@ -13,45 +13,45 @@
  * limitations under the License.
  */
 
-/***************************************************************************** 
-* 
-* File Name : wm_adc.h 
-* 
-* Description: adc Driver Module 
-* 
-* Copyright (c) 2014 Winner Microelectronics Co., Ltd. 
-* All rights reserved. 
-* 
+/*****************************************************************************
+*
+* File Name : wm_adc.h
+*
+* Description: adc Driver Module
+*
+* Copyright (c) 2014 Winner Microelectronics Co., Ltd.
+* All rights reserved.
+*
 * Author : dave
-* 
+*
 * Date : 2014-8-15
-*****************************************************************************/ 
+*****************************************************************************/
 
 #ifndef WM_ADC_H
 #define WM_ADC_H
 
 #include "wm_type_def.h"
 
-#define ADC_DEST_BUFFER_SIZE			16383// ����Ϊ��
+#define ADC_DEST_BUFFER_SIZE			16383 // ����Ϊ��
 
-/*ADC Result*/
+/* ADC Result */
 #define ADC_RESULT_MASK					(0x3FFFC)
 #define ADC_RESULT_VAL(n)				((n)&ADC_RESULT_MASK)
 
-/*ADC_ANALOG_CTRL*/
+/* ADC_ANALOG_CTRL */
 #define CONFIG_ADC_CHL_SEL_MASK 		(0xF<<8)
 #define CONFIG_ADC_CHL_SEL(n)	 		((n)<<8)
 
 #define CONFIG_PD_ADC_MASK             	(0x1<<2)
-#define CONFIG_PD_ADC_VAL(n)           	((n)<<2)	/*1:pd adc, 0: normal work*/
+#define CONFIG_PD_ADC_VAL(n)           	((n)<<2)   /* 1:pd adc, 0: normal work */
 
 #define CONFIG_RSTN_ADC_MASK           	(0x1<<1)
-#define CONFIG_RSTN_ADC_VAL(n)          ((n)<<1)   /*1:normal work, 0:adc reset*/
+#define CONFIG_RSTN_ADC_VAL(n)          ((n)<<1)   /* 1:normal work, 0:adc reset */
 
 #define CONFIG_EN_LDO_ADC_MASK         	(0x1<<0)
-#define CONFIG_EN_LDO_ADC_VAL(n)       	((n)<<0)	/*1:ldo work, 0: ldo shutdown*/
+#define CONFIG_EN_LDO_ADC_VAL(n)       	((n)<<0)   /* 1:ldo work, 0: ldo shutdown */
 
-/*PGA_CTRL*/
+/* PGA_CTRL */
 #define CLK_CHOP_SEL_PGA_MASK			(0x7<<4)
 #define CLK_CHOP_SEL_PGA_VAL(n)			((n)<<4)
 
@@ -59,26 +59,26 @@
 #define GAIN_CTRL_PGA_VAL(n)			((n)<<7)
 
 #define PGA_BYPASS_MASK					(0x1<<3)
-#define PGA_BYPASS_VAL(n)				((n)<<3)   /*1:bypass pga, 0:use pga*/
+#define PGA_BYPASS_VAL(n)				((n)<<3)   /* 1:bypass pga, 0:use pga */
 
-#define BYPASS_INNER_REF_SEL			(0x1<<2)   /*Internal or external reference select*/
+#define BYPASS_INNER_REF_SEL			(0x1<<2)   /* Internal or external reference select */
 
 #define PGA_CHOP_ENP_MASK				(0x1<<1)
-#define PGA_CHOP_ENP_VAL(n)				((n)<<1)   /*1: enable chop, 0: disable chop*/
+#define PGA_CHOP_ENP_VAL(n)				((n)<<1)   /* 1: enable chop, 0: disable chop */
 
 #define PGA_EN_MASK						(0x1<<0)
-#define PGA_EN_VAL(n)					((n)<<0)   /*1: enable pga, 0: disable pga*/
+#define PGA_EN_VAL(n)					((n)<<0)   /* 1: enable pga, 0: disable pga */
 
-/*Temperature Control*/
+/* Temperature Control */
 #define TEMP_GAIN_MASK					(0x3<<4)
 #define TEMP_GAIN_VAL(n)				((n)<<4)
 
 #define TEMP_CAL_OFFSET_MASK			(0x1<<1)
 
 #define TEMP_EN_MASK					(0x1<<0)
-#define TEMP_EN_VAL(n)					((n)<<0)  /*1: enable temperature, 0: disable temperature*/
+#define TEMP_EN_VAL(n)					((n)<<0)  /* 1: enable temperature, 0: disable temperature */
 
-/*ADC CTRL*/
+/* ADC CTRL */
 #define ANALOG_SWITCH_TIME_MASK			(0x3FF<<20)
 #define ANALOG_SWITCH_TIME_VAL(n)		(((n)&0x3FF)<<20)
 
@@ -88,26 +88,26 @@
 #define CMP_POLAR_MASK                  (0x1<<6)
 
 #define CMP_IRQ_EN_MASK                 (0x1<<5)
-#define CMP_IRQ_EN_VAL(n)				((n)<<5)  /*1: enable cmp irq, 0: disable cmp irq*/
+#define CMP_IRQ_EN_VAL(n)				((n)<<5)  /* 1: enable cmp irq, 0: disable cmp irq */
 
 #define CMP_EN_MASK                 	(0x1<<4)
-#define CMP_EN_VAL(n)					((n)<<4) /*1: enable cmp function, 0: disable cmp function*/
+#define CMP_EN_VAL(n)					((n)<<4) /* 1: enable cmp function, 0: disable cmp function */
 
 #define ADC_IRQ_EN_MASK                 (0x1<<1)
-#define ADC_IRQ_EN_VAL(n)				((n)<<1)   /*1:enable adc transfer irq, 0: disable*/
+#define ADC_IRQ_EN_VAL(n)				((n)<<1)   /* 1:enable adc transfer irq, 0: disable */
 
 #define ADC_DMA_EN_MASK                 (0x1<<0)
-#define ADC_DMA_EN_VAL(n)				((n)<<0)   /*1:enable adc dma, 0: disable*/
+#define ADC_DMA_EN_VAL(n)				((n)<<0)   /* 1:enable adc dma, 0: disable */
 
-/*ADC IRQ Status*/
+/* ADC IRQ Status */
 #define CMP_INT_MASK					(0x1<<1)
 
 #define ADC_INT_MASK					(0x1<<0)
 
-/*CMP Value*/
+/* CMP Value */
 #define CONFIG_ADC_INPUT_CMP_VAL(n)		((n)&0x3FFFF)
 
-/*ADC Channel*/
+/* ADC Channel */
 #define CONFIG_ADC_CHL_OFFSET			(0x0E)
 #define CONFIG_ADC_CHL_VOLT				(0x0D)
 #define CONFIG_ADC_CHL_TEMP				(0x0C)
@@ -119,12 +119,12 @@
 #define ADC_REFERENCE_EXTERNAL  		0       // �ⲿ�ο�
 #define ADC_REFERENCE_INTERNAL  		1       // �ڲ��ο�
 
-typedef struct adc_st{
+typedef struct adc_st {
     u8 dmachannel;
     void (*adc_cb)(int *buf, u16 len);
     void (*adc_bigger_cb)(int *buf, u16 len);
-    void (*adc_dma_cb)(int *buf,u16 len);
-    u16 valuelen;		/*dma �������ݳ���*/
+    void (*adc_dma_cb)(int *buf, u16 len);
+    u16 valuelen;     /* dma �������ݳ��� */
     u16 offset;
 }ST_ADC;
 
@@ -158,7 +158,7 @@ typedef struct adc_st{
  *
  * @note           None
  */
-void tls_adc_init(u8 ifusedma,u8 dmachannel);
+void tls_adc_init(u8 ifusedma, u8 dmachannel);
 
 /**
  * @brief          This function is used to register interrupt callback function.
@@ -318,4 +318,3 @@ void tls_adc_cmp_start(int Channel, int cmp_data, int cmp_pol);
 u32  adc_get_offset(void);
 
 #endif
-

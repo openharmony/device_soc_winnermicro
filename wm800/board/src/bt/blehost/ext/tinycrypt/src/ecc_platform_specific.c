@@ -1,4 +1,4 @@
-/*  uECC_platform_specific.c - Implementation of platform specific functions*/
+/* uECC_platform_specific.c - Implementation of platform specific functions */
 
 /* Copyright (c) 2014, Kenneth MacKay
  * All rights reserved.
@@ -21,7 +21,7 @@
  * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.*/
+ * POSSIBILITY OF SUCH DAMAGE. */
 
 /*
  *  Copyright (C) 2017 by Intel Corporation, All Rights Reserved.
@@ -73,14 +73,13 @@
 int default_CSPRNG(uint8_t *dest, unsigned int size)
 {
     /* input sanity check: */
-    if (dest == (uint8_t *) 0 || (size == 0))
-    { return 0; }
+    if (dest == (uint8_t *) 0 || (size == 0)) {
+        return 0;
+    }
 
     int fd = open("/dev/urandom", O_RDONLY | O_CLOEXEC);
-
     if (fd == -1) {
         fd = open("/dev/random", O_RDONLY | O_CLOEXEC);
-
         if (fd == -1) {
             return 0;
         }
@@ -89,9 +88,8 @@ int default_CSPRNG(uint8_t *dest, unsigned int size)
     char *ptr = (char *)dest;
     size_t left = (size_t) size;
 
-    while(left > 0) {
+    while (left > 0) {
         ssize_t bytes_read = read(fd, ptr, left);
-
         if (bytes_read <= 0) {  // read failed
             close(fd);
             return 0;
@@ -106,4 +104,3 @@ int default_CSPRNG(uint8_t *dest, unsigned int size)
 }
 
 #endif /* platform */
-

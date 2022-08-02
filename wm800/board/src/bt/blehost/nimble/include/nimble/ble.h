@@ -156,8 +156,7 @@ struct ble_mbuf_hdr {
     ((uint8_t)((hdr)->rxinfo.flags & BLE_MBUF_HDR_F_RXSTATE_MASK))
 
 #define BLE_MBUF_HDR_PTR(om)            \
-    (struct ble_mbuf_hdr *)((uint8_t *)om + sizeof(struct os_mbuf) + \
-                            sizeof(struct os_mbuf_pkthdr))
+    (struct ble_mbuf_hdr *)((uint8_t *)(om) + sizeof(struct os_mbuf) + sizeof(struct os_mbuf_pkthdr))
 
 /* BLE mbuf overhead per packet header mbuf */
 #define BLE_MBUF_PKTHDR_OVERHEAD        \

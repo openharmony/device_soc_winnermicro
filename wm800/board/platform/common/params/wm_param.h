@@ -13,24 +13,24 @@
  * limitations under the License.
  */
 
-/***************************************************************************** 
-* 
-* File Name : tls_param.h 
-* 
-* Description: param manager Module 
-* 
-* Copyright (c) 2014 Winner Micro Electronic Design Co., Ltd. 
-* All rights reserved. 
-* 
+/*****************************************************************************
+*
+* File Name : tls_param.h
+*
+* Description: param manager Module
+*
+* Copyright (c) 2014 Winner Micro Electronic Design Co., Ltd.
+* All rights reserved.
+*
 * Author : dave
-* 
+*
 * Date : 2014-6-12
-*****************************************************************************/ 
+*****************************************************************************/
 #ifndef TLS_PARAM_H
 #define TLS_PARAM_H
 #include "wm_type_def.h"
 
-struct tls_param_quick_connect{
+struct tls_param_quick_connect {
     bool quick_connect_en;
     u8 chanId;
 };
@@ -56,33 +56,33 @@ struct tls_sys_param {
     struct tls_param_wps wps;
 
     struct tls_param_ip ipcfg;
-    
+
     u8 local_dnsname[32];
     u8 local_device_name[32];
-    
+
     struct tls_param_oray_client oray_client_setting;
 
     u8 upnp_enable;
-    
+
     u8 always_online;
-    
+
     u8 user_port_mode;
 
     u8 res_2;
-    
+
     struct tls_param_uart uart_cfg;
-    
+
     u8 auto_mode;
     u8 res_3;
     u16 transparent_trigger_length;
     u16 transparent_trigger_period;
-    
+
     struct tls_param_socket remote_socket_cfg;
-    
+
     u32 debug_mode;
     u32 res_4[2];  /* reserv and mark the end */
 
-    /*escape char*/
+    /* escape char */
     u8  EscapeChar;
     u8  EscReserved;
     u16 EscapePeriod; /* unit: ms */
@@ -118,22 +118,13 @@ struct tls_sys_param {
     char sntp_service2[32];
     char sntp_service3[32];
     struct tls_param_tem_offset params_tem;
-    
+
     bt_adapter_t adapter_t;
     bt_remote_device_t remote_device1;
     bt_remote_device_t remote_device2;
     bt_remote_device_t remote_device3;
     bt_remote_device_t remote_device4;
     bt_remote_device_t remote_device5;
-#if 0    
-    bt_remote_device_t remote_device6;
-    
-    bt_remote_device_t remote_device7;
-    bt_remote_device_t remote_device8;
-    bt_remote_device_t remote_device9;
-    bt_remote_device_t remote_device10;
-    #endif
-
 };
 
 struct tls_param_flash {

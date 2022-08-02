@@ -44,7 +44,6 @@ static void gen_onoff_status(struct bt_mesh_model *model,
 
     param = cli->op_param;
     state = net_buf_simple_pull_u8(buf);
-
     if (param->state) {
         *param->state = state;
     }
@@ -71,7 +70,6 @@ static void gen_level_status(struct bt_mesh_model *model,
 
     param = cli->op_param;
     level = net_buf_simple_pull_le16(buf);
-
     if (param->level) {
         *param->level = level;
     }
@@ -156,7 +154,6 @@ int bt_mesh_gen_onoff_get(u16_t net_idx, u16_t addr, u16_t app_idx,
     int err;
     bt_mesh_model_msg_init(msg, OP_GEN_ONOFF_GET);
     err = bt_mesh_model_send(gen_onoff_cli->model, &ctx, msg, NULL, NULL);
-
     if (err) {
         BT_ERR("model_send() failed (err %d)", err);
         goto done;
@@ -192,7 +189,6 @@ int bt_mesh_gen_onoff_set(u16_t net_idx, u16_t addr, u16_t app_idx,
     net_buf_simple_add_u8(msg, val);
     net_buf_simple_add_u8(msg, transaction_id);
     err = bt_mesh_model_send(gen_onoff_cli->model, &ctx, msg, NULL, NULL);
-
     if (err) {
         BT_ERR("model_send() failed (err %d)", err);
         goto done;
@@ -229,7 +225,6 @@ int bt_mesh_gen_level_get(u16_t net_idx, u16_t addr, u16_t app_idx,
     int err;
     bt_mesh_model_msg_init(msg, OP_GEN_LEVEL_GET);
     err = bt_mesh_model_send(gen_level_cli->model, &ctx, msg, NULL, NULL);
-
     if (err) {
         BT_ERR("model_send() failed (err %d)", err);
         goto done;
@@ -265,7 +260,6 @@ int bt_mesh_gen_level_set(u16_t net_idx, u16_t addr, u16_t app_idx,
     net_buf_simple_add_le16(msg, val);
     net_buf_simple_add_u8(msg, transaction_id);
     err = bt_mesh_model_send(gen_level_cli->model, &ctx, msg, NULL, NULL);
-
     if (err) {
         BT_ERR("model_send() failed (err %d)", err);
         goto done;

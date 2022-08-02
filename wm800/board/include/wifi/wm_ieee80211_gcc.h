@@ -152,7 +152,7 @@ struct ieee802_11_elems {
     u8 *cf_params;
     u8 *tim;
     u8 *ibss_params;
-    u8 *country_elem;    
+    u8 *country_elem;
     u8 *challenge;
     u8 *erp_info;
     u8 *ext_supp_rates;
@@ -169,13 +169,13 @@ struct ieee802_11_elems {
     u8 *mdie;
     u8 *ftie;
     u8 *timeout_int;
-    u8 *ch_switch_elem;    
+    u8 *ch_switch_elem;
     u8 *ht_capabilities;
     u8 *ht_operation;
     u8 *vendor_ht_cap;
     u8 *p2p;
     u8 *link_id;
-    u8 *pwr_constr_elem;    
+    u8 *pwr_constr_elem;
     u8 *interworking;
 
     u8 ssid_len;
@@ -188,7 +188,7 @@ struct ieee802_11_elems {
     u8 challenge_len;
     u8 erp_info_len;
     u8 ext_supp_rates_len;
-    u8 ch_switch_elem_len;    
+    u8 ch_switch_elem_len;
     u8 wpa_ie_len;
     u8 rsn_ie_len;
     u8 wmm_len; /* 7 = WMM Information; 24 = WMM Parameter */
@@ -201,44 +201,43 @@ struct ieee802_11_elems {
     u8 ftie_len;
     u8 timeout_int_len;
     u8 ht_capabilities_len;
-    u8 pwr_constr_elem_len;    
-    u8 country_elem_len;    
+    u8 pwr_constr_elem_len;
+    u8 country_elem_len;
     u8 ht_operation_len;
     u8 vendor_ht_cap_len;
     u8 p2p_len;
     u8 interworking_len;
-    
 };
 
 struct ieee80211_hdr {
-     u16 frame_control;
-     u16 duration_id;
-     u8 addr1[6];
-     u8 addr2[6];
-     u8 addr3[6];
-     u16 seq_ctrl;
-     u8 addr4[6];
+    u16 frame_control;
+    u16 duration_id;
+    u8 addr1[6];
+    u8 addr2[6];
+    u8 addr3[6];
+    u16 seq_ctrl;
+    u8 addr4[6];
 }__attribute__((packed));
 
 struct ieee80211_hdr_3addr {
-     u16 frame_control;
-     u16 duration_id;
-     u8 addr1[6];
-     u8 addr2[6];
-     u8 addr3[6];
-     u16 seq_ctrl;
+    u16 frame_control;
+    u16 duration_id;
+    u8 addr1[6];
+    u8 addr2[6];
+    u8 addr3[6];
+    u16 seq_ctrl;
 }__attribute__((packed));
 
 struct ieee80211_qos_hdr {
-     u16 frame_control;
-     u16 duration_id;
-     u8 addr1[6];
-     u8 addr2[6];
-     u8 addr3[6];
-     u16 seq_ctrl;
-     u16 qos_ctrl;
+    u16 frame_control;
+    u16 duration_id;
+    u8 addr1[6];
+    u8 addr2[6];
+    u8 addr3[6];
+    u16 seq_ctrl;
+    u16 qos_ctrl;
 }__attribute__((packed));
-typedef enum _phy_type{
+typedef enum _phy_type {
     phy_80211_b,
     phy_80211_bg,
     phy_80211_bgn,
@@ -610,10 +609,10 @@ static __inline int ieee80211_is_qos_nullfunc(u16 fc)
  * This structure refers to "Quiet information element"
  */
 struct ieee80211_quiet_ie {
-     u8 count;
-     u8 period;
-     u16 duration;
-     u16 offset;
+    u8 count;
+    u8 period;
+    u16 duration;
+    u16 offset;
 }__attribute__((packed));
 
 /**
@@ -622,10 +621,10 @@ struct ieee80211_quiet_ie {
  * This structure refers to "Measurement Request/Report information element"
  */
 struct ieee80211_msrment_ie {
-     u8 token;
-     u8 mode;
-     u8 type;
-     u8 request[1];
+    u8 token;
+    u8 mode;
+    u8 type;
+    u8 request[1];
 }__attribute__((packed));
 
 /**
@@ -634,9 +633,9 @@ struct ieee80211_msrment_ie {
  * This structure refers to "Channel Switch Announcement information element"
  */
 struct ieee80211_channel_sw_ie {
-     u8 mode;
-     u8 new_ch_num;
-     u8 count;
+    u8 mode;
+    u8 new_ch_num;
+    u8 count;
 }__attribute__((packed));
 
 /**
@@ -645,11 +644,11 @@ struct ieee80211_channel_sw_ie {
  * This structure refers to "Traffic Indication Map information element"
  */
 struct ieee80211_tim_ie {
-     u8 dtim_count;
-     u8 dtim_period;
-     u8 bitmap_ctrl;
-     /* variable size: 1 - 251 bytes */
-     u8 virtual_map[1];
+    u8 dtim_count;
+    u8 dtim_period;
+    u8 bitmap_ctrl;
+    /* variable size: 1 - 251 bytes */
+    u8 virtual_map[1];
 }__attribute__((packed));
 
 /**
@@ -658,12 +657,12 @@ struct ieee80211_tim_ie {
  * This structure refers to "Root Announcement information element"
  */
 struct ieee80211_rann_ie {
-     u8 rann_flags;
-     u8 rann_hopcount;
-     u8 rann_ttl;
-     u8 rann_addr[6];
-     u32 rann_seq;
-     u32 rann_metric;
+    u8 rann_flags;
+    u8 rann_hopcount;
+    u8 rann_ttl;
+    u8 rann_addr[6];
+    u32 rann_seq;
+    u32 rann_metric;
 }__attribute__((packed));
 
 #define WLAN_SA_QUERY_TR_ID_LEN 2
@@ -738,43 +737,43 @@ struct ieee80211_mgmt {
                     u8 status_code;
                     u8 variable[0];
                 } __attribute__ ((packed)) wme_action;
-                struct{
+                struct {
                     u8 action_code;
                     u8 element_id;
                     u8 length;
                     struct ieee80211_channel_sw_ie sw_elem;
                 } __attribute__ ((packed)) chan_switch;
-                struct{
+                struct {
                     u8 action_code;
                     u8 channel_width;
                 } __attribute__ ((packed)) chan_width;
-                struct{
+                struct {
                     u8 action_code;
                     u8 dialog_token;
                     u8 element_id;
                     u8 length;
                     struct ieee80211_msrment_ie msr_elem;
                 } __attribute__ ((packed)) measurement;
-                struct{
+                struct {
                     u8 action_code;
                     u8 dialog_token;
                     u16 capab;
                     u16 timeout;
                     u16 start_seq_num;
                 } __attribute__ ((packed)) addba_req;
-                struct{
+                struct {
                     u8 action_code;
                     u8 dialog_token;
                     u16 status;
                     u16 capab;
                     u16 timeout;
                 } __attribute__ ((packed)) addba_resp;
-                struct{
+                struct {
                     u8 action_code;
                     u16 params;
                     u16 reason_code;
                 } __attribute__ ((packed)) delba;
-                struct{
+                struct {
                     u8 action_code;
                     /* capab_info for open and confirm,
                      * reason for close
@@ -787,7 +786,7 @@ struct ieee80211_mgmt {
                      */
                     u8 variable[0];
                 } __attribute__ ((packed)) plink_action;
-                struct{
+                struct {
                     u8 action_code;
                     u8 variable[0];
                 } __attribute__ ((packed)) mesh_action;
@@ -872,7 +871,7 @@ struct ieee80211_bar {
  */
 struct ieee80211_mcs_info {
     u8 rx_mask[IEEE80211_HT_MCS_MASK_LEN];
-    u16 rx_highest;        
+    u16 rx_highest;
     u8 tx_params;
     u8 reserved[3];
 }__attribute__ ((packed)) ;
@@ -911,8 +910,8 @@ struct ieee80211_ht_cap {
     /* 16 bytes MCS information */
     struct ieee80211_mcs_info mcs;
 
-    u16 extended_ht_cap_info;    
-    u32 tx_BF_cap_info;        
+    u16 extended_ht_cap_info;
+    u32 tx_BF_cap_info;
     u8 antenna_selection_info;
 }__attribute__ ((packed)) ;
 
@@ -989,11 +988,11 @@ enum ieee80211_min_mpdu_spacing {
 /* ELEMENTID = 61, HT Operation element in 11n7.3.5.57
 */
 struct ieee80211_ht_info {
-     u8 control_chan;
-     u8 ht_param;
-     u16 operation_mode;
-     u16 stbc_param;
-     u8 basic_set[16];
+    u8 control_chan;
+    u8 ht_param;
+    u16 operation_mode;
+    u16 stbc_param;
+    u8 basic_set[16];
 }__attribute__((packed));
 
 /* for ht_param */
@@ -1137,7 +1136,7 @@ enum ieee80211_statuscode {
     WLAN_STATUS_NO_DIRECT_LINK = 48,
     WLAN_STATUS_STA_NOT_PRESENT = 49,
     WLAN_STATUS_STA_NOT_QSTA = 50,
-    WLAN_STATUS_ASSOC_DENIED_LISTEN_INT_TOO_LARGE = 51,    
+    WLAN_STATUS_ASSOC_DENIED_LISTEN_INT_TOO_LARGE = 51,
 };
 
 /* Reason codes */
@@ -1286,7 +1285,6 @@ enum ieee80211_eid {
     WLAN_EID_ADV_PROTO = 108,
     WLAN_EID_ROAMING_CONSORTIUM = 111,
     WLAN_EID_EXT_CAPAB = 127,
-
 };
 
 /* Action category code */
@@ -1384,14 +1382,14 @@ enum ieee80211_key_len {
 struct ieee80211_country_ie_triplet {
     union {
         struct {
-             u8 first_channel;
-             u8 num_channels;
-             s8 max_power;
+            u8 first_channel;
+            u8 num_channels;
+            s8 max_power;
         }__attribute__((packed))chans;
         struct {
-             u8 reg_extension_id;
-             u8 reg_class;
-             u8 coverage_class;
+            u8 reg_extension_id;
+            u8 reg_class;
+            u8 coverage_class;
         }__attribute__((packed))ext;
     }__attribute__((packed))u;
 }__attribute__((packed));
@@ -1453,10 +1451,11 @@ enum ieee80211_sa_query_action {
  */
 static __inline u8 *ieee80211_get_qos_ctl(struct ieee80211_hdr *hdr)
 {
-    if (ieee80211_has_a4(hdr->frame_control))
+    if (ieee80211_has_a4(hdr->frame_control)) {
         return (u8 *)hdr + 30;
-    else
+    } else {
         return (u8 *)hdr + 24;
+    }
 }
 
 /**
@@ -1471,10 +1470,12 @@ static __inline u8 *ieee80211_get_qos_ctl(struct ieee80211_hdr *hdr)
  */
 static __inline u8 *ieee80211_get_SA(struct ieee80211_hdr *hdr)
 {
-    if (ieee80211_has_a4(hdr->frame_control))
+    if (ieee80211_has_a4(hdr->frame_control)) {
         return hdr->addr4;
-    if (ieee80211_has_fromds(hdr->frame_control))
+    }
+    if (ieee80211_has_fromds(hdr->frame_control)) {
         return hdr->addr3;
+    }
     return hdr->addr2;
 }
 
@@ -1490,10 +1491,11 @@ static __inline u8 *ieee80211_get_SA(struct ieee80211_hdr *hdr)
  */
 static __inline u8 *ieee80211_get_DA(struct ieee80211_hdr *hdr)
 {
-    if (ieee80211_has_tods(hdr->frame_control))
+    if (ieee80211_has_tods(hdr->frame_control)) {
         return hdr->addr3;
-    else
+    } else {
         return hdr->addr1;
+    }
 }
 
 /**
@@ -1503,8 +1505,9 @@ static __inline u8 *ieee80211_get_DA(struct ieee80211_hdr *hdr)
 static __inline bool ieee80211_is_robust_mgmt_frame(struct ieee80211_hdr *hdr)
 {
     if (ieee80211_is_disassoc(hdr->frame_control) ||
-        ieee80211_is_deauth(hdr->frame_control))
+        ieee80211_is_deauth(hdr->frame_control)) {
         return TRUE;
+    }
 
     if (ieee80211_is_action(hdr->frame_control)) {
         u8 *category;
@@ -1516,8 +1519,9 @@ static __inline bool ieee80211_is_robust_mgmt_frame(struct ieee80211_hdr *hdr)
          * the frame has already been found to be a Robust Management
          * Frame (by the other end).
          */
-        if (ieee80211_has_protected(hdr->frame_control))
+        if (ieee80211_has_protected(hdr->frame_control)) {
             return TRUE;
+        }
         category = ((u8 *) hdr) + 24;
         return *category != WLAN_CATEGORY_PUBLIC &&
             *category != WLAN_CATEGORY_HT &&
@@ -1536,10 +1540,11 @@ static __inline bool ieee80211_is_robust_mgmt_frame(struct ieee80211_hdr *hdr)
  */
 static __inline int ieee80211_fhss_chan_to_freq(int channel)
 {
-    if ((channel > 1) && (channel < 96))
-        return channel + 2400;
-    else
+    if ((channel > 1) && (channel < 96)) { // 96:byte alignment
+        return channel + 2400; // 2400:byte alignment
+    } else {
         return -1;
+    }
 }
 
 /**
@@ -1551,10 +1556,11 @@ static __inline int ieee80211_fhss_chan_to_freq(int channel)
  */
 static __inline int ieee80211_freq_to_fhss_chan(int freq)
 {
-    if ((freq > 2401) && (freq < 2496))
-        return freq - 2400;
-    else
+    if ((freq > 2401) && (freq < 2496)) { // 2401:byte alignment, 2496:byte alignment
+        return freq - 2400; // 2400:byte alignment
+    } else {
         return -1;
+    }
 }
 
 /**
@@ -1566,12 +1572,13 @@ static __inline int ieee80211_freq_to_fhss_chan(int freq)
  */
 static __inline int ieee80211_dsss_chan_to_freq(int channel)
 {
-    if ((channel > 0) && (channel < 14))
-        return 2407 + (channel * 5);
-    else if (channel == 14)
-        return 2484;
-    else
+    if ((channel > 0) && (channel < 14)) { // 14:byte alignment
+        return 2407 + (channel * 5); // 2407:byte alignment, 5:byte alignment
+    } else if (channel == 14) { // 14:byte alignment
+        return 2484; // 2484:byte alignment
+    } else {
         return -1;
+    }
 }
 
 /**
@@ -1585,12 +1592,13 @@ static __inline int ieee80211_dsss_chan_to_freq(int channel)
  */
 static __inline int ieee80211_freq_to_dsss_chan(int freq)
 {
-    if ((freq >= 2410) && (freq < 2475))
-        return (freq - 2405) / 5;
-    else if ((freq >= 2482) && (freq < 2487))
-        return 14;
-    else
+    if ((freq >= 2410) && (freq < 2475)) { // 2410:byte alignment, 2475:byte alignment
+        return (freq - 2405) / 5; // 2405:byte alignment, 5:byte alignment
+    } else if ((freq >= 2482) && (freq < 2487)) { // 2482:byte alignment, 2487:byte alignment
+        return 14; // 14:byte alignment
+    } else {
         return -1;
+    }
 }
 
 /* Convert IEEE802.11 HR DSSS channel to frequency (MHz) and back
@@ -1617,11 +1625,12 @@ static __inline int ieee80211_freq_to_dsss_chan(int freq)
  */
 static __inline int ieee80211_ofdm_chan_to_freq(int s_freq, int channel)
 {
-    if ((channel > 0) && (channel <= 200) &&
-        (s_freq >= 4000))
-        return s_freq + (channel * 5);
-    else
+    if ((channel > 0) && (channel <= 200) && // 200:byte alignment
+        (s_freq >= 4000)) { // 4000:byte alignment
+        return s_freq + (channel * 5); // 5:byte alignment
+    } else {
         return -1;
+    }
 }
 
 /**
@@ -1636,11 +1645,12 @@ static __inline int ieee80211_ofdm_chan_to_freq(int s_freq, int channel)
  */
 static __inline int ieee80211_freq_to_ofdm_chan(int s_freq, int freq)
 {
-    if ((freq > (s_freq + 2)) && (freq <= (s_freq + 1202)) &&
-        (s_freq >= 4000))
-        return (freq + 2 - s_freq) / 5;
-    else
+    if ((freq > (s_freq + 2)) && (freq <= (s_freq + 1202)) && // 2:byte alignment, 1202:byte alignment
+        (s_freq >= 4000)) { // 4000:byte alignment
+        return (freq + 2 - s_freq) / 5; // 5:byte alignment
+    } else {
         return -1;
+    }
 }
 
 /**
@@ -1659,7 +1669,7 @@ static __inline unsigned long ieee80211_tu_to_usec(unsigned long tu)
  * @aid: the AID to look for
  */
 static __inline bool ieee80211_check_tim(struct ieee80211_tim_ie *tim,
-                       u8 tim_len, u16 aid)
+                                         u8 tim_len, u16 aid)
 {
     u8 mask;
     u8 index, indexn1, indexn2;
