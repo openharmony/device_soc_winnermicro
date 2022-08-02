@@ -18,6 +18,7 @@
  */
 
 #include <string.h>
+#include "securec.h"
 #include "host/ble_hs_adv.h"
 #include "ble_hs_priv.h"
 
@@ -37,9 +38,7 @@
  *                              BLE_HS_EBUSY if advertising is in progress;
  *                              Other nonzero on failure.
  */
-int
-ble_ibeacon_set_adv_data(void *uuid128, uint16_t major,
-                         uint16_t minor, int8_t measured_power)
+int ble_ibeacon_set_adv_data(void *uuid128, uint16_t major, uint16_t minor, int8_t measured_power)
 {
     struct ble_hs_adv_fields fields;
     uint8_t buf[BLE_IBEACON_MFG_DATA_SIZE];
@@ -48,21 +47,21 @@ ble_ibeacon_set_adv_data(void *uuid128, uint16_t major,
     buf[0] = 0x4c;
     buf[1] = 0x00;
     /** iBeacon indicator. */
-    buf[2] = 0x02;
-    buf[3] = 0x15;
+    buf[2] = 0x02; // 2:array element
+    buf[3] = 0x15; // 3:array element
     /** UUID. */
-    memcpy(buf + 4, uuid128, 16);
+    memcpy_s(buf + 4, sizeof(buf + 4), uuid128, 16); // 4:byte alignment, 16:size
     /** Version number. */
-    put_be16(buf + 20, major);
-    put_be16(buf + 22, minor);
+    put_be16(buf + 20, major); // 20:byte alignment
+    put_be16(buf + 22, minor); // 22:byte alignment
 
     /* Measured Power ranging data (Calibrated tx power at 1 meters). */
-    if (measured_power < -126 || measured_power > 20) {
+    if (measured_power < -126 || measured_power > 20) { // -126:Analyzing conditions, 20:Analyzing conditions
         return BLE_HS_EINVAL;
     }
 
-    buf[24] = measured_power;
-    memset(&fields, 0, sizeof fields);
+    buf[24] = measured_power; // 24:array element
+    memset_s(&fields, sizeof fields, 0, sizeof fields);
     fields.mfg_data = buf;
     fields.mfg_data_len = sizeof buf;
     /* Advertise two flags:

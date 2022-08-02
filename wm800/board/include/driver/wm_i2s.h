@@ -16,15 +16,14 @@
 #ifndef __WM_I2S_H
 #define __WM_I2S_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include <stdbool.h>
-// #include "wm_regs_cm3.h"
 #include "wm_regs.h"
 #include "wm_debug.h"
 #include "wm_dma.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef void (*tls_i2s_callback)(uint32_t *data, uint16_t *len);
 
@@ -47,20 +46,18 @@ typedef struct {
     uint32_t I2S_MclkFreq;
 } I2S_InitDef;
 
-typedef struct _wm_dma_desc
-{
+typedef struct _wm_dma_desc {
     unsigned int valid;
     unsigned int dma_ctrl;
     unsigned int src_addr;
     unsigned int dest_addr;
-    struct _wm_dma_desc * next;
+    struct _wm_dma_desc *next;
 }wm_dma_desc;
 
-typedef struct _dma_handler_type
-{
+typedef struct _dma_handler_type {
     uint8_t channel;
-    void    (* XferCpltCallback)( struct _dma_handler_type * hdma);         /*!< DMA transfer complete callback         */
-    void    (* XferHalfCpltCallback)( struct _dma_handler_type * hdma);     /*!< DMA Half transfer complete callback    */
+    void    (* XferCpltCallback)(struct _dma_handler_type *hdma);     /* !< DMA transfer complete callback */
+    void    (* XferHalfCpltCallback)(struct _dma_handler_type *hdma); /* !< DMA Half transfer complete callback    */
 }wm_dma_handler_type;
 
 #define I2S			            ((I2S_T *)HR_I2S_REG_BASE)
@@ -79,7 +76,7 @@ typedef struct _dma_handler_type
 #define I2S_DataFormat_8		(8)
 #define I2S_DataFormat_16		(16)
 #define I2S_DataFormat_24		(24)
-#define I2S_DataFormat_32		(32)	
+#define I2S_DataFormat_32		(32)
 
 #define I2S_CTRL_CHSEL_MASK		(1UL<<23)
 #define I2S_CTRL_CHSEL_LEFT		(1UL<<23)
@@ -91,7 +88,7 @@ typedef struct _dma_handler_type
 #define I2S_CTRL_TX_CLR			(1UL<<18)
 #define I2S_CTRL_LZCEN			(1UL<<17)
 #define I2S_CTRL_RZCEN			(1UL<<16)
-#define I2S_CTRL_RXTH(n)		((n-1)<<12)
+#define I2S_CTRL_RXTH(n)		(((n)-1)<<12)
 #define I2S_CTRL_TXTH(n)		((n)<<9)
 #define I2S_CTRL_SLAVE_SEL		(1UL<<8)
 #define I2S_CTRL_MUTE			(1UL<<3)
@@ -304,7 +301,7 @@ int wm_i2s_receive_dma(wm_dma_handler_type *hdma, uint16_t *data, uint16_t len);
  * @}
  */
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
 }
 #endif
 

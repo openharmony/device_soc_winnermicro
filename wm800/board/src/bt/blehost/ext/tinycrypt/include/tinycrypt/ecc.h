@@ -106,7 +106,7 @@ typedef uint64_t uECC_dword_t;
 /* Number of bytes to represent an element of the the curve p-256: */
 #define NUM_ECC_BYTES (uECC_WORD_SIZE*NUM_ECC_WORDS)
 
-/* structure that represents an elliptic curve (e.g. p256):*/
+/* structure that represents an elliptic curve (e.g. p256): */
 struct uECC_Curve_t;
 typedef const struct uECC_Curve_t *uECC_Curve;
 struct uECC_Curve_t {
@@ -154,14 +154,14 @@ void vli_mmod_fast_secp256r1(unsigned int *result, unsigned int *product);
 #define BYTES_TO_WORDS_8(a, b, c, d, e, f, g, h) 0x##d##c##b##a, 0x##h##g##f##e
 #define BYTES_TO_WORDS_4(a, b, c, d) 0x##d##c##b##a
 #define BITS_TO_WORDS(num_bits) \
-    ((num_bits + ((uECC_WORD_SIZE * 8) - 1)) / (uECC_WORD_SIZE * 8))
-#define BITS_TO_BYTES(num_bits) ((num_bits + 7) / 8)
+    (((num_bits) + ((uECC_WORD_SIZE * 8) - 1)) / (uECC_WORD_SIZE * 8))
+#define BITS_TO_BYTES(num_bits) (((num_bits) + 7) / 8)
 
 /* definition of curve NIST p-256: */
 static const struct uECC_Curve_t curve_secp256r1 = {
     NUM_ECC_WORDS,
     NUM_ECC_BYTES,
-    256, /* num_n_bits */ {
+    256, { /* num_n_bits */
         BYTES_TO_WORDS_8(FF, FF, FF, FF, FF, FF, FF, FF),
         BYTES_TO_WORDS_8(FF, FF, FF, FF, 00, 00, 00, 00),
         BYTES_TO_WORDS_8(00, 00, 00, 00, 00, 00, 00, 00),

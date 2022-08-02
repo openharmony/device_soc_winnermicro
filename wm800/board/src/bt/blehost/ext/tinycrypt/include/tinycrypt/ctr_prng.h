@@ -61,7 +61,7 @@
 
 #include <tinycrypt/aes.h>
 
-#define TC_CTR_PRNG_RESEED_REQ -1
+#define TC_CTR_PRNG_RESEED_REQ  (-1)
 
 #ifdef __cplusplus
 extern "C" {

@@ -20,16 +20,15 @@
 #include <assert.h>
 #include <stddef.h>
 #include <string.h>
+#include "securec.h"
 #include "nimble/nimble_npl.h"
 #include "wm_osal.h"
 
-struct ble_npl_event *
-npl_freertos_eventq_get(struct ble_npl_eventq *evq, ble_npl_time_t tmo)
+struct ble_npl_event *npl_freertos_eventq_get(struct ble_npl_eventq *evq, ble_npl_time_t tmo)
 {
     struct ble_npl_event *ev = NULL;
     tls_os_status_t status;
     status = tls_os_queue_receive(evq->q, (void **)&ev, sizeof(ev), tmo);
-
     if (status == TLS_OS_SUCCESS) {
     if (ev) {
         ev->queued = false;
@@ -39,8 +38,7 @@ npl_freertos_eventq_get(struct ble_npl_eventq *evq, ble_npl_time_t tmo)
     return ev;
 }
 
-void
-npl_freertos_eventq_put(struct ble_npl_eventq *evq, struct ble_npl_event *ev)
+void npl_freertos_eventq_put(struct ble_npl_eventq *evq, struct ble_npl_event *ev)
 {
     tls_os_status_t status;
 
@@ -53,9 +51,7 @@ npl_freertos_eventq_put(struct ble_npl_eventq *evq, struct ble_npl_event *ev)
     assert(status == TLS_OS_SUCCESS);
 }
 
-void
-npl_freertos_eventq_remove(struct ble_npl_eventq *evq,
-                           struct ble_npl_event *ev)
+void npl_freertos_eventq_remove(struct ble_npl_eventq *evq, struct ble_npl_event *ev)
 {
     tls_os_status_t status;
 
@@ -68,8 +64,7 @@ npl_freertos_eventq_remove(struct ble_npl_eventq *evq,
     ev->queued = 0;
 }
 
-ble_npl_error_t
-npl_freertos_mutex_init(struct ble_npl_mutex *mu)
+ble_npl_error_t npl_freertos_mutex_init(struct ble_npl_mutex *mu)
 {
     tls_os_status_t status;
 
@@ -82,8 +77,8 @@ npl_freertos_mutex_init(struct ble_npl_mutex *mu)
     assert(mu->handle);
     return BLE_NPL_OK;
 }
-ble_npl_error_t
-npl_freertos_mutex_deinit(struct ble_npl_mutex *mu)
+
+ble_npl_error_t npl_freertos_mutex_deinit(struct ble_npl_mutex *mu)
 {
     tls_os_status_t status;
 
@@ -99,8 +94,7 @@ npl_freertos_mutex_deinit(struct ble_npl_mutex *mu)
     return BLE_NPL_OK;
 }
 
-ble_npl_error_t
-npl_freertos_mutex_pend(struct ble_npl_mutex *mu, ble_npl_time_t timeout)
+ble_npl_error_t npl_freertos_mutex_pend(struct ble_npl_mutex *mu, ble_npl_time_t timeout)
 {
     tls_os_status_t status;
 
@@ -120,8 +114,7 @@ npl_freertos_mutex_pend(struct ble_npl_mutex *mu, ble_npl_time_t timeout)
     return status == TLS_OS_SUCCESS ? BLE_NPL_OK : BLE_NPL_TIMEOUT;
 }
 
-ble_npl_error_t
-npl_freertos_mutex_release(struct ble_npl_mutex *mu)
+ble_npl_error_t npl_freertos_mutex_release(struct ble_npl_mutex *mu)
 {
     tls_os_status_t status;
 
@@ -135,7 +128,6 @@ npl_freertos_mutex_release(struct ble_npl_mutex *mu)
         assert(0);
     } else {
         status = tls_os_mutex_release(mu->handle);
-
         if (status != TLS_OS_SUCCESS) {
             return BLE_NPL_BAD_MUTEX;
         }
@@ -144,8 +136,7 @@ npl_freertos_mutex_release(struct ble_npl_mutex *mu)
     return BLE_NPL_OK;
 }
 
-ble_npl_error_t
-npl_freertos_sem_init(struct ble_npl_sem *sem, uint16_t tokens)
+ble_npl_error_t npl_freertos_sem_init(struct ble_npl_sem *sem, uint16_t tokens)
 {
     tls_os_status_t status;
 
@@ -158,8 +149,7 @@ npl_freertos_sem_init(struct ble_npl_sem *sem, uint16_t tokens)
     assert(sem->handle);
     return BLE_NPL_OK;
 }
-ble_npl_error_t
-npl_freertos_sem_deinit(struct ble_npl_sem *sem)
+ble_npl_error_t npl_freertos_sem_deinit(struct ble_npl_sem *sem)
 {
     tls_os_status_t status;
 
@@ -175,8 +165,7 @@ npl_freertos_sem_deinit(struct ble_npl_sem *sem)
     return BLE_NPL_OK;
 }
 
-ble_npl_error_t
-npl_freertos_sem_pend(struct ble_npl_sem *sem, ble_npl_time_t timeout)
+ble_npl_error_t npl_freertos_sem_pend(struct ble_npl_sem *sem, ble_npl_time_t timeout)
 {
     tls_os_status_t status;
 
@@ -198,8 +187,7 @@ uint16_t npl_freertos_get_sem_count(struct ble_npl_sem *sem)
     return (uint16_t)tls_os_sem_get_count(sem->handle);
 }
 
-ble_npl_error_t
-npl_freertos_sem_release(struct ble_npl_sem *sem)
+ble_npl_error_t npl_freertos_sem_release(struct ble_npl_sem *sem)
 {
     tls_os_status_t status;
 
@@ -212,12 +200,10 @@ npl_freertos_sem_release(struct ble_npl_sem *sem)
     assert(status == TLS_OS_SUCCESS);
     return BLE_NPL_OK;
 }
-static void
-os_callout_timer_cb(void *ptmr, void *parg)
+static void os_callout_timer_cb(void *ptmr, void *parg)
 {
     struct ble_npl_callout *co;
     co = (struct ble_npl_callout *)parg;
-
     if (co->evq) {
         ble_npl_eventq_put(co->evq, &co->ev);
     } else {
@@ -225,33 +211,28 @@ os_callout_timer_cb(void *ptmr, void *parg)
     }
 }
 
-void
-npl_freertos_callout_init(struct ble_npl_callout *co, struct ble_npl_eventq *evq,
-                          ble_npl_event_fn *ev_cb, void *ev_arg)
+void npl_freertos_callout_init(struct ble_npl_callout *co, struct ble_npl_eventq *evq,
+                               ble_npl_event_fn *ev_cb, void *ev_arg)
 {
     tls_os_status_t status;
-    memset(co, 0, sizeof(*co));
+    memset_s(co, sizeof(*co), 0, sizeof(*co));
     status = tls_os_timer_create(&co->handle, os_callout_timer_cb, (void *)co, 1, 0, (u8 *)"co");
     assert(status == TLS_OS_SUCCESS);
     co->evq = evq;
     ble_npl_event_init(&co->ev, ev_cb, ev_arg);
 }
 
-ble_npl_error_t
-npl_freertos_callout_reset(struct ble_npl_callout *co, ble_npl_time_t ticks)
+ble_npl_error_t npl_freertos_callout_reset(struct ble_npl_callout *co, ble_npl_time_t ticks)
 {
     tls_os_timer_change(co->handle, ticks);
     return BLE_NPL_OK;
 }
 
-ble_npl_time_t
-npl_freertos_callout_remaining_ticks(struct ble_npl_callout *co,
-                                     ble_npl_time_t now)
+ble_npl_time_t npl_freertos_callout_remaining_ticks(struct ble_npl_callout *co, ble_npl_time_t now)
 {
     ble_npl_time_t rt;
     uint32_t exp;
     exp = tls_os_timer_expirytime(co->handle);
-
     if (exp > now) {
         rt = exp - now;
     } else {
@@ -261,12 +242,10 @@ npl_freertos_callout_remaining_ticks(struct ble_npl_callout *co,
     return rt;
 }
 
-ble_npl_error_t
-npl_freertos_time_ms_to_ticks(uint32_t ms, ble_npl_time_t *out_ticks)
+ble_npl_error_t npl_freertos_time_ms_to_ticks(uint32_t ms, ble_npl_time_t *out_ticks)
 {
     uint64_t ticks;
-    ticks = ((uint64_t)ms * /*configTICK_RATE_HZ*/HZ) / 1000;
-
+    ticks = ((uint64_t)ms * HZ) / 1000; // 1000:time unit
     if (ticks > UINT32_MAX) {
         return BLE_NPL_EINVAL;
     }
@@ -275,12 +254,10 @@ npl_freertos_time_ms_to_ticks(uint32_t ms, ble_npl_time_t *out_ticks)
     return 0;
 }
 
-ble_npl_error_t
-npl_freertos_time_ticks_to_ms(ble_npl_time_t ticks, uint32_t *out_ms)
+ble_npl_error_t npl_freertos_time_ticks_to_ms(ble_npl_time_t ticks, uint32_t *out_ms)
 {
     uint64_t ms;
-    ms = ((uint64_t)ticks * 1000) / /*configTICK_RATE_HZ*/HZ;
-
+    ms = ((uint64_t)ticks * 1000) / HZ; // 1000:time unit
     if (ms > UINT32_MAX) {
         return BLE_NPL_EINVAL;
     }

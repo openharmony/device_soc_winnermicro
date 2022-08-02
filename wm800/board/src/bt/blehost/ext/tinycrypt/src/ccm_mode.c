@@ -44,10 +44,10 @@ int tc_ccm_config(TCCcmMode_t c, TCAesKeySched_t sched, uint8_t *nonce,
             sched == (TCAesKeySched_t) 0 ||
             nonce == (uint8_t *) 0) {
         return TC_CRYPTO_FAIL;
-    } else if (nlen != 13) {
-        return TC_CRYPTO_FAIL; /* The allowed nonce size is: 13. See documentation.*/
-    } else if ((mlen < 4) || (mlen > 16) || (mlen & 1)) {
-        return TC_CRYPTO_FAIL; /* The allowed mac sizes are: 4, 6, 8, 10, 12, 14, 16.*/
+    } else if (nlen != 13) { // 13:Analyzing conditions
+        return TC_CRYPTO_FAIL; /* The allowed nonce size is: 13. See documentation. */
+    } else if ((mlen < 4) || (mlen > 16) || (mlen & 1)) { // 4:Analyzing conditions, 16:Analyzing conditions
+        return TC_CRYPTO_FAIL; /* The allowed mac sizes are: 4, 6, 8, 10, 12, 14, 16. */
     }
 
     c->mlen = mlen;
@@ -63,20 +63,21 @@ static void ccm_cbc_mac(uint8_t *T, const uint8_t *data, unsigned int dlen,
                         unsigned int flag, TCAesKeySched_t sched)
 {
     unsigned int i;
+    unsigned int Dlen = dlen;
 
     if (flag > 0) {
-        T[0] ^= (uint8_t)(dlen >> 8);
-        T[1] ^= (uint8_t)(dlen);
-        dlen += 2;
-        i = 2;
+        T[0] ^= (uint8_t)(Dlen >> 8); // 8:byte alignment
+        T[1] ^= (uint8_t)(Dlen);
+        Dlen += 2; // 2:byte alignment
+        i = 2; // 2:byte alignment
     } else {
         i = 0;
     }
 
-    while(i < dlen) {
+    while (i < Dlen) {
         T[i++ % (Nb * Nk)] ^= *data++;
 
-        if (((i % (Nb * Nk)) == 0) || dlen == i) {
+        if (((i % (Nb * Nk)) == 0) || Dlen == i) {
             (void) tc_aes_encrypt(T, T, sched);
         }
     }
@@ -111,13 +112,13 @@ static int ccm_ctr_mode(uint8_t *out, unsigned int outlen, const uint8_t *in,
     /* copy the counter to the nonce */
     (void) _copy(nonce, sizeof(nonce), ctr, sizeof(nonce));
     /* select the last 2 bytes of the nonce to be incremented */
-    block_num = (uint16_t)((nonce[14] << 8) | (nonce[15]));
+    block_num = (uint16_t)((nonce[14] << 8) | (nonce[15])); // 14:array element, 8:byte alignment, 15:array element
 
-    for(i = 0; i < inlen; ++i) {
+    for (i = 0; i < inlen; ++i) {
         if ((i % (TC_AES_BLOCK_SIZE)) == 0) {
             block_num++;
-            nonce[14] = (uint8_t)(block_num >> 8);
-            nonce[15] = (uint8_t)(block_num);
+            nonce[14] = (uint8_t)(block_num >> 8); // 14:array element
+            nonce[15] = (uint8_t)(block_num); // 15:array element
 
             if (!tc_aes_encrypt(buffer, nonce, sched)) {
                 return TC_CRYPTO_FAIL;
@@ -129,8 +130,8 @@ static int ccm_ctr_mode(uint8_t *out, unsigned int outlen, const uint8_t *in,
     }
 
     /* update the counter */
-    ctr[14] = nonce[14];
-    ctr[15] = nonce[15];
+    ctr[14] = nonce[14]; // 14:array element
+    ctr[15] = nonce[15]; // 15:array element
     return TC_CRYPTO_SUCCESS;
 }
 
@@ -141,12 +142,12 @@ int tc_ccm_generation_encryption(uint8_t *out, unsigned int olen,
 {
     /* input sanity check: */
     if ((out == (uint8_t *) 0) ||
-            (c == (TCCcmMode_t) 0) ||
-            ((plen > 0) && (payload == (uint8_t *) 0)) ||
-            ((alen > 0) && (associated_data == (uint8_t *) 0)) ||
-            (alen >= TC_CCM_AAD_MAX_BYTES) || /* associated data size unsupported */
-            (plen >= TC_CCM_PAYLOAD_MAX_BYTES) || /* payload size unsupported */
-            (olen < (plen + c->mlen))) {  /* invalid output buffer size */
+        (c == (TCCcmMode_t) 0) ||
+        ((plen > 0) && (payload == (uint8_t *) 0)) ||
+        ((alen > 0) && (associated_data == (uint8_t *) 0)) ||
+        (alen >= TC_CCM_AAD_MAX_BYTES) || /* associated data size unsupported */
+        (plen >= TC_CCM_PAYLOAD_MAX_BYTES) || /* payload size unsupported */
+        (olen < (plen + c->mlen))) {  /* invalid output buffer size */
         return TC_CRYPTO_FAIL;
     }
 
@@ -155,14 +156,14 @@ int tc_ccm_generation_encryption(uint8_t *out, unsigned int olen,
     unsigned int i;
     /* GENERATING THE AUTHENTICATION TAG: */
     /* formatting the sequence b for authentication: */
-    b[0] = ((alen > 0) ? 0x40 : 0) | (((c->mlen - 2) / 2 << 3)) | (1);
+    b[0] = ((alen > 0) ? 0x40 : 0) | (((c->mlen - 2) / 2 << 3)) | (1); // 2:byte alignment, 3:byte alignment
 
-    for(i = 1; i <= 13; ++i) {
+    for (i = 1; i <= 13; ++i) { // 13:Analyzing conditions
         b[i] = c->nonce[i - 1];
     }
 
-    b[14] = (uint8_t)(plen >> 8);
-    b[15] = (uint8_t)(plen);
+    b[14] = (uint8_t)(plen >> 8); // 14:array element, 8:byte alignment
+    b[15] = (uint8_t)(plen); // 15:array element
     /* computing the authentication tag using cbc-mac: */
     (void) tc_aes_encrypt(tag, b, c->sched);
 
@@ -177,15 +178,16 @@ int tc_ccm_generation_encryption(uint8_t *out, unsigned int olen,
     /* ENCRYPTION: */
     /* formatting the sequence b for encryption: */
     b[0] = 1; /* q - 1 = 2 - 1 = 1 */
-    b[14] = b[15] = TC_ZERO_BYTE;
+    b[14] = b[15] = TC_ZERO_BYTE; // 14:array element, 15:array element
     /* encrypting payload using ctr mode: */
     ccm_ctr_mode(out, plen, payload, plen, b, c->sched);
-    b[14] = b[15] = TC_ZERO_BYTE; /* restoring initial counter for ctr_mode (0):*/
+    b[14] = b[15] = TC_ZERO_BYTE; /* restoring initial counter for ctr_mode (0): */
+    // 14:array element, 15:array element
     /* encrypting b and adding the tag to the output: */
-    (void) tc_aes_encrypt(b, b, c->sched);
+    (void)tc_aes_encrypt(b, b, c->sched);
     out += plen;
 
-    for(i = 0; i < c->mlen; ++i) {
+    for (i = 0; i < c->mlen; ++i) {
         *out++ = tag[i] ^ b[i];
     }
 
@@ -199,12 +201,12 @@ int tc_ccm_decryption_verification(uint8_t *out, unsigned int olen,
 {
     /* input sanity check: */
     if ((out == (uint8_t *) 0) ||
-            (c == (TCCcmMode_t) 0) ||
-            ((plen > 0) && (payload == (uint8_t *) 0)) ||
-            ((alen > 0) && (associated_data == (uint8_t *) 0)) ||
-            (alen >= TC_CCM_AAD_MAX_BYTES) || /* associated data size unsupported */
-            (plen >= TC_CCM_PAYLOAD_MAX_BYTES) || /* payload size unsupported */
-            (olen < plen - c->mlen)) { /* invalid output buffer size */
+        (c == (TCCcmMode_t) 0) ||
+        ((plen > 0) && (payload == (uint8_t *) 0)) ||
+        ((alen > 0) && (associated_data == (uint8_t *) 0)) ||
+        (alen >= TC_CCM_AAD_MAX_BYTES) || /* associated data size unsupported */
+        (plen >= TC_CCM_PAYLOAD_MAX_BYTES) || /* payload size unsupported */
+        (olen < plen - c->mlen)) { /* invalid output buffer size */
         return TC_CRYPTO_FAIL;
     }
 
@@ -215,31 +217,31 @@ int tc_ccm_decryption_verification(uint8_t *out, unsigned int olen,
     /* formatting the sequence b for decryption: */
     b[0] = 1; /* q - 1 = 2 - 1 = 1 */
 
-    for(i = 1; i < 14; ++i) {
+    for (i = 1; i < 14; ++i) { // 14:Analyzing conditions
         b[i] = c->nonce[i - 1];
     }
 
-    b[14] = b[15] = TC_ZERO_BYTE; /* initial counter value is 0 */
+    b[14] = b[15] = TC_ZERO_BYTE; /* initial counter value is 0 */  // 14:array element, 15:array element
     /* decrypting payload using ctr mode: */
     ccm_ctr_mode(out, plen - c->mlen, payload, plen - c->mlen, b, c->sched);
-    b[14] = b[15] = TC_ZERO_BYTE; /* restoring initial counter value (0) */
+    b[14] = b[15] = TC_ZERO_BYTE; /* restoring initial counter value (0) */  // 14:array element, 15:array element
     /* encrypting b and restoring the tag from input: */
     (void) tc_aes_encrypt(b, b, c->sched);
 
-    for(i = 0; i < c->mlen; ++i) {
+    for (i = 0; i < c->mlen; ++i) {
         tag[i] = *(payload + plen - c->mlen + i) ^ b[i];
     }
 
     /* VERIFYING THE AUTHENTICATION TAG: */
     /* formatting the sequence b for authentication: */
-    b[0] = ((alen > 0) ? 0x40 : 0) | (((c->mlen - 2) / 2 << 3)) | (1);
+    b[0] = ((alen > 0) ? 0x40 : 0) | (((c->mlen - 2) / 2 << 3)) | (1); // 2:byte alignment, 3:byte alignment
 
-    for(i = 1; i < 14; ++i) {
+    for (i = 1; i < 14; ++i) { // 14:Analyzing conditions
         b[i] = c->nonce[i - 1];
     }
 
-    b[14] = (uint8_t)((plen - c->mlen) >> 8);
-    b[15] = (uint8_t)(plen - c->mlen);
+    b[14] = (uint8_t)((plen - c->mlen) >> 8); // 14:array element, 8:byte alignment
+    b[15] = (uint8_t)(plen - c->mlen); // 15:array element
     /* computing the authentication tag using cbc-mac: */
     (void) tc_aes_encrypt(b, b, c->sched);
 

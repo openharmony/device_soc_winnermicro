@@ -1472,7 +1472,7 @@ struct ble_hci_ev_le_subev_periodic_adv_sync_transfer {
 #define BLE_HCI_LE_ADV_RPT_NUM_RPTS_MIN     (1)
 #define BLE_HCI_LE_ADV_RPT_NUM_RPTS_MAX     (0x19)
 
-/* Bluetooth Assigned numbers for version information.*/
+/* Bluetooth Assigned numbers for version information. */
 #define BLE_HCI_VER_BCS_1_0b                (0)
 #define BLE_HCI_VER_BCS_1_1                 (1)
 #define BLE_HCI_VER_BCS_1_2                 (2)

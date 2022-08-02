@@ -40,11 +40,11 @@ typedef uint8_t ble_hs_conn_flags_t;
 
 #if MYNEWT_VAL(BLE_L2CAP_COC_MAX_NUM)
 #define BLE_HS_CONN_L2CAP_COC_CID_MASK_LEN_REM \
-                      ((MYNEWT_VAL(BLE_L2CAP_COC_MAX_NUM) % (8 * sizeof(uint32_t))) ? 1 : 0)
+    ((MYNEWT_VAL(BLE_L2CAP_COC_MAX_NUM) % (8 * sizeof(uint32_t))) ? 1 : 0)
 
 #define BLE_HS_CONN_L2CAP_COC_CID_MASK_LEN  \
-                      (MYNEWT_VAL(BLE_L2CAP_COC_MAX_NUM) / (8 * sizeof(uint32_t)) + \
-                       BLE_HS_CONN_L2CAP_COC_CID_MASK_LEN_REM)
+    (MYNEWT_VAL(BLE_L2CAP_COC_MAX_NUM) / (8 * sizeof(uint32_t)) + \
+    BLE_HS_CONN_L2CAP_COC_CID_MASK_LEN_REM)
 #endif
 
 struct ble_hs_conn {
@@ -123,10 +123,8 @@ struct ble_hs_conn *ble_hs_conn_find_by_addr(const ble_addr_t *addr);
 struct ble_hs_conn *ble_hs_conn_find_by_idx(int idx);
 int ble_hs_conn_exists(uint16_t conn_handle);
 struct ble_hs_conn *ble_hs_conn_first(void);
-struct ble_l2cap_chan *ble_hs_conn_chan_find_by_scid(struct ble_hs_conn *conn,
-        uint16_t cid);
-struct ble_l2cap_chan *ble_hs_conn_chan_find_by_dcid(struct ble_hs_conn *conn,
-        uint16_t cid);
+struct ble_l2cap_chan *ble_hs_conn_chan_find_by_scid(struct ble_hs_conn *conn, uint16_t cid);
+struct ble_l2cap_chan *ble_hs_conn_chan_find_by_dcid(struct ble_hs_conn *conn, uint16_t cid);
 bool ble_hs_conn_chan_exist(struct ble_hs_conn *conn, struct ble_l2cap_chan *chan);
 int ble_hs_conn_chan_insert(struct ble_hs_conn *conn,
                             struct ble_l2cap_chan *chan);

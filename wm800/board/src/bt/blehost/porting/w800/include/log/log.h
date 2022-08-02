@@ -24,8 +24,7 @@
 extern "C" {
 #endif
 
-static inline void
-log_dummy(void *log, ...)
+static inline void log_dummy(void *log, ...)
 {
     (void)log;
 }

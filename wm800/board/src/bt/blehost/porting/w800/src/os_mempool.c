@@ -23,8 +23,8 @@
 #include <assert.h>
 #include <stdbool.h>
 
-#define OS_MEM_TRUE_BLOCK_SIZE(bsize)   OS_ALIGN(bsize, OS_ALIGNMENT)
-#define OS_MEMPOOL_TRUE_BLOCK_SIZE(mp) OS_MEM_TRUE_BLOCK_SIZE(mp->mp_block_size)
+#define OS_MEM_TRUE_BLOCK_SIZE(bsize)   (OS_ALIGN(bsize, OS_ALIGNMENT))
+#define OS_MEMPOOL_TRUE_BLOCK_SIZE(mp)  (OS_MEM_TRUE_BLOCK_SIZE((mp)->mp_block_size))
 
 STAILQ_HEAD(, os_mempool) g_os_mempool_list =
                 STAILQ_HEAD_INITIALIZER(g_os_mempool_list);
@@ -32,25 +32,23 @@ STAILQ_HEAD(, os_mempool) g_os_mempool_list =
 #if MYNEWT_VAL(OS_MEMPOOL_POISON)
 static uint32_t os_mem_poison = 0xde7ec7ed;
 
-static void
-os_mempool_poison(void *start, int sz)
+static void os_mempool_poison(void *start, int sz)
 {
     int i;
     char *p = start;
 
-    for(i = sizeof(struct os_memblock); i < sz;
+    for (i = sizeof(struct os_memblock); i < sz;
             i = i + sizeof(os_mem_poison)) {
         memcpy(p + i, &os_mem_poison, min(sizeof(os_mem_poison), sz - i));
     }
 }
 
-static void
-os_mempool_poison_check(void *start, int sz)
+static void os_mempool_poison_check(void *start, int sz)
 {
     int i;
     char *p = start;
 
-    for(i = sizeof(struct os_memblock); i < sz;
+    for (i = sizeof(struct os_memblock); i < sz;
             i = i + sizeof(os_mem_poison)) {
         assert(!memcmp(p + i, &os_mem_poison,
                        min(sizeof(os_mem_poison), sz - i)));
@@ -61,14 +59,13 @@ os_mempool_poison_check(void *start, int sz)
 #define os_mempool_poison_check(start, sz)
 #endif
 
-void os_mempool_reset()
+void os_mempool_reset(void)
 {
     STAILQ_INIT(&g_os_mempool_list);
 }
 
-os_error_t
-os_mempool_init(struct os_mempool *mp, uint16_t blocks, uint32_t block_size,
-                void *membuf, char *name)
+os_error_t os_mempool_init(struct os_mempool *mp, uint16_t blocks, uint32_t block_size,
+                           void *membuf, char *name)
 {
     int true_block_size;
     uint8_t *block_addr;
@@ -107,7 +104,7 @@ os_mempool_init(struct os_mempool *mp, uint16_t blocks, uint32_t block_size,
     block_addr = (uint8_t *)membuf;
     block_ptr = (struct os_memblock *)block_addr;
 
-    while(blocks > 1) {
+    while (blocks > 1) {
         block_addr += true_block_size;
         os_mempool_poison(block_addr, true_block_size);
         SLIST_NEXT(block_ptr, mb_next) = (struct os_memblock *)block_addr;
@@ -121,13 +118,11 @@ os_mempool_init(struct os_mempool *mp, uint16_t blocks, uint32_t block_size,
     return OS_OK;
 }
 
-os_error_t
-os_mempool_ext_init(struct os_mempool_ext *mpe, uint16_t blocks,
-                    uint32_t block_size, void *membuf, char *name)
+os_error_t os_mempool_ext_init(struct os_mempool_ext *mpe, uint16_t blocks,
+                               uint32_t block_size, void *membuf, char *name)
 {
     int rc;
     rc = os_mempool_init(&mpe->mpe_mp, blocks, block_size, membuf, name);
-
     if (rc != 0) {
         return rc;
     }
@@ -138,8 +133,7 @@ os_mempool_ext_init(struct os_mempool_ext *mpe, uint16_t blocks,
     return 0;
 }
 
-os_error_t
-os_mempool_clear(struct os_mempool *mp)
+os_error_t os_mempool_clear(struct os_mempool *mp)
 {
     struct os_memblock *block_ptr;
     int true_block_size;
@@ -160,8 +154,7 @@ os_mempool_clear(struct os_mempool *mp)
     block_addr = (uint8_t *)mp->mp_membuf_addr;
     block_ptr = (struct os_memblock *)block_addr;
     blocks = mp->mp_num_blocks;
-
-    while(blocks > 1) {
+    while (blocks > 1) {
         block_addr += true_block_size;
         os_mempool_poison(block_addr, true_block_size);
         SLIST_NEXT(block_ptr, mb_next) = (struct os_memblock *)block_addr;
@@ -174,8 +167,7 @@ os_mempool_clear(struct os_mempool *mp)
     return OS_OK;
 }
 
-bool
-os_mempool_is_sane(const struct os_mempool *mp)
+bool os_mempool_is_sane(const struct os_mempool *mp)
 {
     struct os_memblock *block;
     /* Verify that each block in the free list belongs to the mempool. */
@@ -189,8 +181,7 @@ os_mempool_is_sane(const struct os_mempool *mp)
     return true;
 }
 
-int
-os_memblock_from(const struct os_mempool *mp, const void *block_addr)
+int os_memblock_from(const struct os_mempool *mp, const void *block_addr)
 {
     uintptr_t true_block_size;
     uintptr_t baddr_ptr;
@@ -199,6 +190,9 @@ os_memblock_from(const struct os_mempool *mp, const void *block_addr)
                    "Pointer to void must be native word size.");
     baddr_ptr = (uintptr_t)block_addr;
     true_block_size = OS_MEMPOOL_TRUE_BLOCK_SIZE(mp);
+    if (true_block_size == 0) {
+        return -1;
+    }
     end = mp->mp_membuf_addr + (mp->mp_num_blocks * true_block_size);
 
     /* Check that the block is in the memory buffer range. */
@@ -214,8 +208,7 @@ os_memblock_from(const struct os_mempool *mp, const void *block_addr)
     return 1;
 }
 
-void *
-os_memblock_get(struct os_mempool *mp)
+void *os_memblock_get(struct os_mempool *mp)
 {
     os_sr_t sr;
     struct os_memblock *block;
@@ -249,8 +242,7 @@ os_memblock_get(struct os_mempool *mp)
     return (void *)block;
 }
 
-os_error_t
-os_memblock_put_from_cb(struct os_mempool *mp, void *block_addr)
+os_error_t os_memblock_put_from_cb(struct os_mempool *mp, void *block_addr)
 {
     os_sr_t sr;
     struct os_memblock *block;
@@ -267,8 +259,7 @@ os_memblock_put_from_cb(struct os_mempool *mp, void *block_addr)
     return OS_OK;
 }
 
-os_error_t
-os_memblock_put(struct os_mempool *mp, void *block_addr)
+os_error_t os_memblock_put(struct os_mempool *mp, void *block_addr)
 {
     struct os_mempool_ext *mpe;
 
@@ -308,8 +299,7 @@ os_memblock_put(struct os_mempool *mp, void *block_addr)
     return os_memblock_put_from_cb(mp, block_addr);
 }
 
-struct os_mempool *
-os_mempool_info_get_next(struct os_mempool *mp, struct os_mempool_info *omi)
+struct os_mempool *os_mempool_info_get_next(struct os_mempool *mp, struct os_mempool_info *omi)
 {
     struct os_mempool *cur;
 
@@ -330,4 +320,3 @@ os_mempool_info_get_next(struct os_mempool *mp, struct os_mempool_info *omi)
     strncpy(omi->omi_name, cur->name, sizeof(omi->omi_name));
     return (cur);
 }
-

@@ -21,7 +21,7 @@
  * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.*/
+ * POSSIBILITY OF SUCH DAMAGE. */
 
 /*
  *  Copyright (C) 2017 by Intel Corporation, All Rights Reserved.
@@ -66,28 +66,29 @@ static uECC_RNG_Function g_rng_function = 0;
 static void bits2int(uECC_word_t *native, const uint8_t *bits,
                      unsigned bits_size, uECC_Curve curve)
 {
+    unsigned Bits_size = bits_size;
     unsigned num_n_bytes = BITS_TO_BYTES(curve->num_n_bits);
     unsigned num_n_words = BITS_TO_WORDS(curve->num_n_bits);
     int shift;
     uECC_word_t carry;
     uECC_word_t *ptr;
 
-    if (bits_size > num_n_bytes) {
-        bits_size = num_n_bytes;
+    if (Bits_size > num_n_bytes) {
+        Bits_size = num_n_bytes;
     }
 
     uECC_vli_clear(native, num_n_words);
-    uECC_vli_bytesToNative(native, bits, bits_size);
+    uECC_vli_bytesToNative(native, bits, Bits_size);
 
-    if (bits_size * 8 <= (unsigned)curve->num_n_bits) {
+    if (Bits_size * 8 <= (unsigned)curve->num_n_bits) { // 8:byte alignment
         return;
     }
 
-    shift = bits_size * 8 - curve->num_n_bits;
+    shift = Bits_size * 8 - curve->num_n_bits; // 8:byte alignment
     carry = 0;
     ptr = native + num_n_words;
 
-    while(ptr-- > native) {
+    while (ptr-- > native) {
         uECC_word_t temp = *ptr;
         *ptr = (temp >> shift) | carry;
         carry = temp << (uECC_WORD_BITS - shift);
@@ -149,7 +150,7 @@ int uECC_sign_with_k(const uint8_t *private_key, const uint8_t *message_hash,
     uECC_vli_modAdd(s, tmp, s, curve->n, num_n_words); /* s = e + r*d */
     uECC_vli_modMult(s, s, k, curve->n, num_n_words);  /* s = (e + r*d) / k */
 
-    if (uECC_vli_numBits(s, num_n_words) > (bitcount_t)curve->num_bytes * 8) {
+    if (uECC_vli_numBits(s, num_n_words) > (bitcount_t)curve->num_bytes * 8) { // 8:byte alignment
         return 0;
     }
 
@@ -160,24 +161,22 @@ int uECC_sign_with_k(const uint8_t *private_key, const uint8_t *message_hash,
 int uECC_sign(const uint8_t *private_key, const uint8_t *message_hash,
               unsigned hash_size, uint8_t *signature, uECC_Curve curve)
 {
-    uECC_word_t _random[2 * NUM_ECC_WORDS];
+    uECC_word_t _random[2 * NUM_ECC_WORDS]; // 2:byte alignment
     uECC_word_t k[NUM_ECC_WORDS];
     uECC_word_t tries;
 
-    for(tries = 0; tries < uECC_RNG_MAX_TRIES; ++tries) {
+    for (tries = 0; tries < uECC_RNG_MAX_TRIES; ++tries) {
         /* Generating _random uniformly at random: */
         uECC_RNG_Function rng_function = uECC_get_rng();
-
         if (!rng_function ||
-                !rng_function((uint8_t *)_random, 2 * NUM_ECC_WORDS * uECC_WORD_SIZE)) {
+                !rng_function((uint8_t *)_random, 2 * NUM_ECC_WORDS * uECC_WORD_SIZE)) { // 2:byte alignment
             return 0;
         }
 
         // computing k as modular reduction of _random (see FIPS 186.4 B.5.1):
         uECC_vli_mmod(k, _random, curve->n, BITS_TO_WORDS(curve->num_n_bits));
 
-        if (uECC_sign_with_k(private_key, message_hash, hash_size, k, signature,
-                            curve)) {
+        if (uECC_sign_with_k(private_key, message_hash, hash_size, k, signature, curve)) {
             return 1;
         }
     }
@@ -196,17 +195,17 @@ int uECC_verify(const uint8_t *public_key, const uint8_t *message_hash,
 {
     uECC_word_t u1[NUM_ECC_WORDS], u2[NUM_ECC_WORDS];
     uECC_word_t z[NUM_ECC_WORDS];
-    uECC_word_t sum[NUM_ECC_WORDS * 2];
+    uECC_word_t sum[NUM_ECC_WORDS * 2]; // 2:byte alignment
     uECC_word_t rx[NUM_ECC_WORDS];
     uECC_word_t ry[NUM_ECC_WORDS];
     uECC_word_t tx[NUM_ECC_WORDS];
     uECC_word_t ty[NUM_ECC_WORDS];
     uECC_word_t tz[NUM_ECC_WORDS];
-    const uECC_word_t *points[4];
+    const uECC_word_t *points[4]; // 4:array element
     const uECC_word_t *point;
     bitcount_t num_bits;
     bitcount_t i;
-    uECC_word_t _public[NUM_ECC_WORDS * 2];
+    uECC_word_t _public[NUM_ECC_WORDS * 2]; // 2:byte alignment
     uECC_word_t r[NUM_ECC_WORDS], s[NUM_ECC_WORDS];
     wordcount_t num_words = curve->num_words;
     wordcount_t num_n_words = BITS_TO_WORDS(curve->num_n_bits);
@@ -248,8 +247,8 @@ int uECC_verify(const uint8_t *public_key, const uint8_t *message_hash,
     /* Use Shamir's trick to calculate u1*G + u2*Q */
     points[0] = 0;
     points[1] = curve->G;
-    points[2] = _public;
-    points[3] = sum;
+    points[2] = _public; // 2:array element
+    points[3] = sum; // 3:array element
     num_bits = smax(uECC_vli_numBits(u1, num_n_words),
                     uECC_vli_numBits(u2, num_n_words));
     point = points[(!!uECC_vli_testBit(u1, num_bits - 1)) |
@@ -259,7 +258,7 @@ int uECC_verify(const uint8_t *public_key, const uint8_t *message_hash,
     uECC_vli_clear(z, num_words);
     z[0] = 1;
 
-    for(i = num_bits - 2; i >= 0; --i) {
+    for (i = num_bits - 2; i >= 0; --i) { // 2:byte alignment
         uECC_word_t index;
         curve->double_jacobian(rx, ry, z, curve);
         index = (!!uECC_vli_testBit(u1, i)) | ((!!uECC_vli_testBit(u2, i)) << 1);
@@ -286,4 +285,3 @@ int uECC_verify(const uint8_t *public_key, const uint8_t *message_hash,
     /* Accept only if v == r. */
     return (int)(uECC_vli_equal(rx, r, num_words) == 0);
 }
-

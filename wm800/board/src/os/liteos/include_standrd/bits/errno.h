@@ -13,6 +13,9 @@
  * limitations under the License.
  */
 
+#ifndef ERRNO_H
+#define ERRNO_H
+
 #ifdef __LITEOS__
 #define ENOERR           0
 #endif
@@ -167,3 +170,4 @@
 #define EIOCBRETRY      530
 #endif
 
+#endif /* ERRNO_H */

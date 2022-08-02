@@ -94,9 +94,9 @@ static bool check_dup(struct os_mbuf *data)
     const u8_t *tail = net_buf_simple_tail(data);
     u32_t val;
     int i;
-    val = sys_get_be32(tail - 4) ^ sys_get_be32(tail - 8);
+    val = sys_get_be32(tail - 4) ^ sys_get_be32(tail - 8); // 4:byte alignment, 8:byte alignment
 
-    for(i = 0; i < ARRAY_SIZE(dup_cache); i++) {
+    for (i = 0; i < ARRAY_SIZE(dup_cache); i++) {
         if (dup_cache[i] == val) {
             return true;
         }
@@ -111,10 +111,10 @@ static u64_t msg_hash(struct bt_mesh_net_rx *rx, struct os_mbuf *pdu)
 {
     u32_t hash1, hash2;
     /* Three least significant bytes of IVI + first byte of SEQ */
-    hash1 = (BT_MESH_NET_IVI_RX(rx) << 8) | pdu->om_data[2];
+    hash1 = (BT_MESH_NET_IVI_RX(rx) << 8) | pdu->om_data[2]; // 8:byte alignment, 2:array element
     /* Two last bytes of SEQ + SRC */
-    memcpy(&hash2, &pdu->om_data[3], 4);
-    return (u64_t)hash1 << 32 | (u64_t)hash2;
+    memcpy(&hash2, &pdu->om_data[3], 4); // 3:array element, 4:size
+    return (u64_t)hash1 << 32 | (u64_t)hash2; // 32:byte alignment
 }
 
 static bool msg_cache_match(struct bt_mesh_net_rx *rx,
@@ -123,7 +123,7 @@ static bool msg_cache_match(struct bt_mesh_net_rx *rx,
     u64_t hash = msg_hash(rx, pdu);
     u16_t i;
 
-    for(i = 0; i < ARRAY_SIZE(msg_cache); i++) {
+    for (i = 0; i < ARRAY_SIZE(msg_cache); i++) {
         if (msg_cache[i] == hash) {
             return true;
         }
@@ -144,7 +144,7 @@ struct bt_mesh_subnet *bt_mesh_subnet_get(u16_t net_idx)
         return &bt_mesh.sub[0];
     }
 
-    for(i = 0; i < ARRAY_SIZE(bt_mesh.sub); i++) {
+    for (i = 0; i < ARRAY_SIZE(bt_mesh.sub); i++) {
         if (bt_mesh.sub[i].net_idx == net_idx) {
             return &bt_mesh.sub[i];
         }
@@ -160,42 +160,38 @@ int bt_mesh_net_keys_create(struct bt_mesh_subnet_keys *keys,
     u8_t nid;
     int err;
     err = bt_mesh_k2(key, p, sizeof(p), &nid, keys->enc, keys->privacy);
-
     if (err) {
         BT_ERR("Unable to generate NID, EncKey & PrivacyKey");
         return err;
     }
 
-    memcpy(keys->net, key, 16);
+    memcpy(keys->net, key, 16); // 16:size
     keys->nid = nid;
-    BT_DBG("NID 0x%02x EncKey %s", keys->nid, bt_hex(keys->enc, 16));
-    BT_DBG("PrivacyKey %s", bt_hex(keys->privacy, 16));
+    BT_DBG("NID 0x%02x EncKey %s", keys->nid, bt_hex(keys->enc, 16)); // 16:len
+    BT_DBG("PrivacyKey %s", bt_hex(keys->privacy, 16)); // 16:len
     err = bt_mesh_k3(key, keys->net_id);
-
     if (err) {
         BT_ERR("Unable to generate Net ID");
         return err;
     }
 
-    BT_DBG("NetID %s", bt_hex(keys->net_id, 8));
+    BT_DBG("NetID %s", bt_hex(keys->net_id, 8)); // 8:len
 #if (MYNEWT_VAL(BLE_MESH_GATT_PROXY))
     err = bt_mesh_identity_key(key, keys->identity);
-
     if (err) {
         BT_ERR("Unable to generate IdentityKey");
         return err;
     }
 
-    BT_DBG("IdentityKey %s", bt_hex(keys->identity, 16));
+    BT_DBG("IdentityKey %s", bt_hex(keys->identity, 16)); // 16:len
 #endif /* GATT_PROXY */
     err = bt_mesh_beacon_key(key, keys->beacon);
-
     if (err) {
         BT_ERR("Unable to generate beacon key");
         return err;
     }
 
-    BT_DBG("BeaconKey %s", bt_hex(keys->beacon, 16));
+    BT_DBG("BeaconKey %s", bt_hex(keys->beacon, 16)); // 16:len
     return 0;
 }
 
@@ -203,7 +199,7 @@ int friend_cred_set(struct friend_cred *cred, u8_t idx, const u8_t net_key[16])
 {
     u16_t lpn_addr, frnd_addr;
     int err;
-    u8_t p[9];
+    u8_t p[9]; // 9:array length
 #if (MYNEWT_VAL(BLE_MESH_LOW_POWER))
 
     if (cred->addr == bt_mesh.lpn.frnd) {
@@ -223,20 +219,19 @@ int friend_cred_set(struct friend_cred *cred, u8_t idx, const u8_t net_key[16])
            cred->frnd_counter);
     p[0] = 0x01;
     sys_put_be16(lpn_addr, p + 1);
-    sys_put_be16(frnd_addr, p + 3);
-    sys_put_be16(cred->lpn_counter, p + 5);
-    sys_put_be16(cred->frnd_counter, p + 7);
+    sys_put_be16(frnd_addr, p + 3); // 3:byte alignment
+    sys_put_be16(cred->lpn_counter, p + 5); // 5:byte alignment
+    sys_put_be16(cred->frnd_counter, p + 7); // 7:byte alignment
     err = bt_mesh_k2(net_key, p, sizeof(p), &cred->cred[idx].nid,
                      cred->cred[idx].enc, cred->cred[idx].privacy);
-
     if (err) {
         BT_ERR("Unable to generate NID, EncKey & PrivacyKey");
         return err;
     }
 
     BT_DBG("Friend NID 0x%02x EncKey %s", cred->cred[idx].nid,
-           bt_hex(cred->cred[idx].enc, 16));
-    BT_DBG("Friend PrivacyKey %s", bt_hex(cred->cred[idx].privacy, 16));
+           bt_hex(cred->cred[idx].enc, 16)); // 16:len
+    BT_DBG("Friend PrivacyKey %s", bt_hex(cred->cred[idx].privacy, 16)); // 16:len
     return 0;
 }
 
@@ -244,7 +239,7 @@ void friend_cred_refresh(u16_t net_idx)
 {
     int i;
 
-    for(i = 0; i < ARRAY_SIZE(friend_cred); i++) {
+    for (i = 0; i < ARRAY_SIZE(friend_cred); i++) {
         struct friend_cred *cred = &friend_cred[i];
 
         if (cred->addr != BT_MESH_ADDR_UNASSIGNED &&
@@ -260,7 +255,7 @@ int friend_cred_update(struct bt_mesh_subnet *sub)
     int err, i;
     BT_DBG("net_idx 0x%04x", sub->net_idx);
 
-    for(i = 0; i < ARRAY_SIZE(friend_cred); i++) {
+    for (i = 0; i < ARRAY_SIZE(friend_cred); i++) {
         struct friend_cred *cred = &friend_cred[i];
 
         if (cred->addr == BT_MESH_ADDR_UNASSIGNED ||
@@ -269,7 +264,6 @@ int friend_cred_update(struct bt_mesh_subnet *sub)
         }
 
         err = friend_cred_set(cred, 1, sub->keys[1].net);
-
         if (err) {
             return err;
         }
@@ -285,7 +279,7 @@ struct friend_cred *friend_cred_create(struct bt_mesh_subnet *sub, u16_t addr,
     int i, err;
     BT_DBG("net_idx 0x%04x addr 0x%04x", sub->net_idx, addr);
 
-    for(cred = NULL, i = 0; i < ARRAY_SIZE(friend_cred); i++) {
+    for (cred = NULL, i = 0; i < ARRAY_SIZE(friend_cred); i++) {
         if ((friend_cred[i].addr == BT_MESH_ADDR_UNASSIGNED) ||
                 (friend_cred[i].addr == addr &&
                  friend_cred[i].net_idx == sub->net_idx)) {
@@ -304,7 +298,6 @@ struct friend_cred *friend_cred_create(struct bt_mesh_subnet *sub, u16_t addr,
     cred->lpn_counter = lpn_counter;
     cred->frnd_counter = frnd_counter;
     err = friend_cred_set(cred, 0, sub->keys[0].net);
-
     if (err) {
         friend_cred_clear(cred);
         return NULL;
@@ -312,7 +305,6 @@ struct friend_cred *friend_cred_create(struct bt_mesh_subnet *sub, u16_t addr,
 
     if (sub->kr_flag) {
         err = friend_cred_set(cred, 1, sub->keys[1].net);
-
         if (err) {
             friend_cred_clear(cred);
             return NULL;
@@ -335,7 +327,7 @@ int friend_cred_del(u16_t net_idx, u16_t addr)
 {
     int i;
 
-    for(i = 0; i < ARRAY_SIZE(friend_cred); i++) {
+    for (i = 0; i < ARRAY_SIZE(friend_cred); i++) {
         struct friend_cred *cred = &friend_cred[i];
 
         if (cred->addr == addr && cred->net_idx == net_idx) {
@@ -353,7 +345,7 @@ int friend_cred_get(struct bt_mesh_subnet *sub, u16_t addr, u8_t *nid,
     int i;
     BT_DBG("net_idx 0x%04x addr 0x%04x", sub->net_idx, addr);
 
-    for(i = 0; i < ARRAY_SIZE(friend_cred); i++) {
+    for (i = 0; i < ARRAY_SIZE(friend_cred); i++) {
         struct friend_cred *cred = &friend_cred[i];
 
         if (cred->net_idx != sub->net_idx) {
@@ -422,7 +414,7 @@ int bt_mesh_net_create(u16_t idx, u8_t flags, const u8_t key[16],
     int err;
     BT_DBG("idx %u flags 0x%02x iv_index %u", idx, flags,
            (unsigned) iv_index);
-    BT_DBG("NetKey %s", bt_hex(key, 16));
+    BT_DBG("NetKey %s", bt_hex(key, 16)); // 16:len
     (void)memset(msg_cache, 0, sizeof(msg_cache));
     msg_cache_next = 0U;
     sub = &bt_mesh.sub[0];
@@ -430,7 +422,6 @@ int bt_mesh_net_create(u16_t idx, u8_t flags, const u8_t key[16],
 
     if (sub->kr_flag) {
         err = bt_mesh_net_keys_create(&sub->keys[1], key);
-
         if (err) {
             return -EIO;
         }
@@ -438,7 +429,6 @@ int bt_mesh_net_create(u16_t idx, u8_t flags, const u8_t key[16],
         sub->kr_phase = BT_MESH_KR_PHASE_2;
     } else {
         err = bt_mesh_net_keys_create(&sub->keys[0], key);
-
         if (err) {
             return -EIO;
         }
@@ -471,7 +461,7 @@ void bt_mesh_net_revoke_keys(struct bt_mesh_subnet *sub)
     BT_DBG("idx 0x%04x", sub->net_idx);
     memcpy(&sub->keys[0], &sub->keys[1], sizeof(sub->keys[0]));
 
-    for(i = 0; i < ARRAY_SIZE(bt_mesh.app_keys); i++) {
+    for (i = 0; i < ARRAY_SIZE(bt_mesh.app_keys); i++) {
         struct bt_mesh_app_key *key = &bt_mesh.app_keys[i];
 
         if (key->net_idx != sub->net_idx || !key->updated) {
@@ -499,7 +489,7 @@ bool bt_mesh_kr_update(struct bt_mesh_subnet *sub, u8_t new_kr, bool new_key)
             return true;
         }
     } else {
-        switch(sub->kr_phase) {
+        switch (sub->kr_phase) {
             case BT_MESH_KR_PHASE_1:
                 if (!new_key) {
                     /* Ignore */
@@ -537,7 +527,7 @@ void bt_mesh_rpl_reset(void)
     /* Discard "old old" IV Index entries from RPL and flag
      * any other ones (which are valid) as old.
      */
-    for(i = 0; i < ARRAY_SIZE(bt_mesh.rpl); i++) {
+    for (i = 0; i < ARRAY_SIZE(bt_mesh.rpl); i++) {
         struct bt_mesh_rpl *rpl = &bt_mesh.rpl[i];
 
         if (rpl->src) {
@@ -615,7 +605,7 @@ bool bt_mesh_net_iv_update(u32_t iv_index, bool iv_update)
         }
 
         if (iv_index < bt_mesh.iv_index ||
-                iv_index > bt_mesh.iv_index + 42) {
+                iv_index > bt_mesh.iv_index + 42) { // 42:byte alignment
             BT_ERR("IV Index out of sync: 0x%08x != 0x%08x",
                    (unsigned) iv_index,
                    (unsigned) bt_mesh.iv_index);
@@ -673,7 +663,7 @@ do_update:
 
     k_delayed_work_submit(&bt_mesh.ivu_timer, BT_MESH_IVU_TIMEOUT);
 
-    for(i = 0; i < ARRAY_SIZE(bt_mesh.sub); i++) {
+    for (i = 0; i < ARRAY_SIZE(bt_mesh.sub); i++) {
         if (bt_mesh.sub[i].net_idx != BT_MESH_KEY_UNUSED) {
             bt_mesh_net_beacon_update(&bt_mesh.sub[i]);
         }
@@ -718,34 +708,30 @@ int bt_mesh_net_resend(struct bt_mesh_subnet *sub, struct os_mbuf *buf,
     enc = sub->keys[new_key].enc;
     priv = sub->keys[new_key].privacy;
     err = bt_mesh_net_obfuscate(buf->om_data, BT_MESH_NET_IVI_TX, priv);
-
     if (err) {
         BT_ERR("deobfuscate failed (err %d)", err);
         return err;
     }
 
     err = bt_mesh_net_decrypt(enc, buf, BT_MESH_NET_IVI_TX, false);
-
     if (err) {
         BT_ERR("decrypt failed (err %d)", err);
         return err;
     }
 
     seq = bt_mesh_next_seq();
-    buf->om_data[2] = seq >> 16;
-    buf->om_data[3] = seq >> 8;
-    buf->om_data[4] = seq;
+    buf->om_data[2] = seq >> 16; // 16:byte alignment
+    buf->om_data[3] = seq >> 8; // 8:byte alignment
+    buf->om_data[4] = seq; // 4:array element
     /* Get destination, in case it's a proxy client */
     dst = DST(buf->om_data);
     err = bt_mesh_net_encrypt(enc, buf, BT_MESH_NET_IVI_TX, false);
-
     if (err) {
         BT_ERR("encrypt failed (err %d)", err);
         return err;
     }
 
     err = bt_mesh_net_obfuscate(buf->om_data, BT_MESH_NET_IVI_TX, priv);
-
     if (err) {
         BT_ERR("obfuscate failed (err %d)", err);
         return err;
@@ -765,7 +751,7 @@ static void bt_mesh_net_local(struct ble_npl_event *work)
 {
     struct os_mbuf *buf;
 
-    while((buf = net_buf_slist_get(&bt_mesh.local_queue))) {
+    while ((buf = net_buf_slist_get(&bt_mesh.local_queue))) {
         BT_DBG("len %u: %s", buf->om_len, bt_hex(buf->om_data, buf->om_len));
         bt_mesh_net_recv(buf, 0, BT_MESH_NET_IF_LOCAL);
         net_buf_unref(buf);
@@ -782,10 +768,10 @@ int bt_mesh_net_encode(struct bt_mesh_net_tx *tx, struct os_mbuf *buf,
     u8_t *seq;
     int err;
 
-    if (ctl && net_buf_simple_tailroom(buf) < 8) {
+    if (ctl && net_buf_simple_tailroom(buf) < 8) { // 8:Analyzing conditions
         BT_ERR("Insufficient MIC space for CTL PDU");
         return -EINVAL;
-    } else if (net_buf_simple_tailroom(buf) < 4) {
+    } else if (net_buf_simple_tailroom(buf) < 4) { // 4:Analyzing conditions
         BT_ERR("Insufficient MIC space for PDU");
         return -EINVAL;
     }
@@ -796,9 +782,9 @@ int bt_mesh_net_encode(struct bt_mesh_net_tx *tx, struct os_mbuf *buf,
     net_buf_simple_push_be16(buf, tx->src);
     seq = net_buf_simple_push(buf, 3);
     seq_val = bt_mesh_next_seq();
-    seq[0] = seq_val >> 16;
-    seq[1] = seq_val >> 8;
-    seq[2] = seq_val;
+    seq[0] = seq_val >> 16; // 16:byte alignment
+    seq[1] = seq_val >> 8; // 8:byte alignment
+    seq[2] = seq_val; // 2:array element
 
     if (ctl) {
         net_buf_simple_push_u8(buf, tx->ctx->send_ttl | 0x80);
@@ -808,7 +794,7 @@ int bt_mesh_net_encode(struct bt_mesh_net_tx *tx, struct os_mbuf *buf,
 
     if (IS_ENABLED(CONFIG_BT_MESH_LOW_POWER) && tx->friend_cred) {
         if (friend_cred_get(tx->sub, BT_MESH_ADDR_UNASSIGNED,
-                           &nid, &enc, &priv)) {
+            &nid, &enc, &priv)) {
             BT_WARN("Falling back to master credentials");
             tx->friend_cred = 0;
             nid = tx->sub->keys[tx->sub->kr_flag].nid;
@@ -822,9 +808,8 @@ int bt_mesh_net_encode(struct bt_mesh_net_tx *tx, struct os_mbuf *buf,
         priv = tx->sub->keys[tx->sub->kr_flag].privacy;
     }
 
-    net_buf_simple_push_u8(buf, (nid | (BT_MESH_NET_IVI_TX & 1) << 7));
+    net_buf_simple_push_u8(buf, (nid | (BT_MESH_NET_IVI_TX & 1) << 7)); // 7:byte alignment
     err = bt_mesh_net_encrypt(enc, buf, BT_MESH_NET_IVI_TX, proxy);
-
     if (err) {
         return err;
     }
@@ -847,7 +832,6 @@ int bt_mesh_net_send(struct bt_mesh_net_tx *tx, struct os_mbuf *buf,
     }
 
     err = bt_mesh_net_encode(tx, buf, false);
-
     if (err) {
         goto done;
     }
@@ -906,16 +890,16 @@ static bool auth_match(struct bt_mesh_subnet_keys *keys,
 {
     u8_t net_auth[8];
 
-    if (memcmp(net_id, keys->net_id, 8)) {
+    if (memcmp(net_id, keys->net_id, 8)) { // 8:size
         return false;
     }
 
     bt_mesh_beacon_auth(keys->beacon, flags, keys->net_id, iv_index,
                         net_auth);
 
-    if (memcmp(auth, net_auth, 8)) {
+    if (memcmp(auth, net_auth, 8)) { // 8:size
         BT_WARN("Authentication Value %s != %s",
-                bt_hex(auth, 8), bt_hex(net_auth, 8));
+                bt_hex(auth, 8), bt_hex(net_auth, 8)); // 8:size
         return false;
     }
 
@@ -923,12 +907,12 @@ static bool auth_match(struct bt_mesh_subnet_keys *keys,
 }
 
 struct bt_mesh_subnet *bt_mesh_subnet_find(const u8_t net_id[8], u8_t flags,
-        u32_t iv_index, const u8_t auth[8],
-        bool *new_key)
+    u32_t iv_index, const u8_t auth[8],
+    bool *new_key)
 {
     int i;
 
-    for(i = 0; i < ARRAY_SIZE(bt_mesh.sub); i++) {
+    for (i = 0; i < ARRAY_SIZE(bt_mesh.sub); i++) {
         struct bt_mesh_subnet *sub = &bt_mesh.sub[i];
 
         if (sub->net_idx == BT_MESH_KEY_UNUSED) {
@@ -999,7 +983,7 @@ static int friend_decrypt(struct bt_mesh_subnet *sub, const u8_t *data,
     int i;
     BT_DBG("NID 0x%02x net_idx 0x%04x", NID(data), sub->net_idx);
 
-    for(i = 0; i < ARRAY_SIZE(friend_cred); i++) {
+    for (i = 0; i < ARRAY_SIZE(friend_cred); i++) {
         struct friend_cred *cred = &friend_cred[i];
 
         if (cred->net_idx != sub->net_idx) {
@@ -1035,7 +1019,7 @@ static bool net_find_and_decrypt(const u8_t *data, size_t data_len,
     unsigned int i;
     BT_DBG("");
 
-    for(i = 0; i < ARRAY_SIZE(bt_mesh.sub); i++) {
+    for (i = 0; i < ARRAY_SIZE(bt_mesh.sub); i++) {
         sub = &bt_mesh.sub[i];
 
         if (sub->net_idx == BT_MESH_KEY_UNUSED) {
@@ -1083,7 +1067,7 @@ static bool net_find_and_decrypt(const u8_t *data, size_t data_len,
  */
 static bool relay_to_adv(enum bt_mesh_net_if net_if)
 {
-    switch(net_if) {
+    switch (net_if) {
         case BT_MESH_NET_IF_LOCAL:
             return true;
 
@@ -1141,7 +1125,6 @@ static void bt_mesh_net_relay(struct os_mbuf *sbuf,
     }
 
     buf = bt_mesh_adv_create(BT_MESH_ADV_DATA, transmit, K_NO_WAIT);
-
     if (!buf) {
         BT_ERR("Out of relay buffers");
         return;

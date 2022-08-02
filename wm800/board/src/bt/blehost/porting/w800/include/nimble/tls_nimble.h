@@ -13,10 +13,13 @@
  * limitations under the License.
  */
 
-#pragma once
+#ifndef _TLS_NIMBLE_H_
+#define _TLS_NIMBLE_H_
 
 /**
  * @brief  Starts nimble host thread
  */
 extern void tls_nimble_start(void);
 extern void tls_nimble_stop(void);
+
+#endif  /* _TLS_NIMBLE_H_ */

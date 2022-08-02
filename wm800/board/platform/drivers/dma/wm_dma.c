@@ -26,12 +26,12 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "wm_dma.h"
 #include "wm_regs.h"
 #include "wm_irq.h"
 #include "wm_osal.h"
 #include "core_804.h"
 #include "wm_pmu.h"
+#include "wm_dma.h"
 
 static u16 dma_used_bit = 0;
 struct tls_dma_channels {
@@ -62,62 +62,58 @@ static void dma_irq_proc(void *p)
     ch = (unsigned char)(unsigned long)p;
     int_src = tls_reg_read32(HR_DMA_INT_SRC);
 
-    if (ch > 3)
-    {
-        for (ch = 4; ch < 8; ch++)
-        {
-            if (int_src & (TLS_DMA_IRQ_BOTH_DONE << ch * 2))
+    if (ch > 3) {
+        for (ch = 4; ch < 8; ch++) {
+            if (int_src & (TLS_DMA_IRQ_BOTH_DONE << (ch * 2))) { // 2:byte alignment
                 break;
+            }
         }
 
-        if (8 == ch)
+        if (ch == 8) {
             return;
+        }
     }
 
-    if (DMA_CTRL_REG(ch) & 0x01)
-    {
+    if (DMA_CTRL_REG(ch) & 0x01) {
         uint32_t temp = 0, cur_len = 0;
-        static uint32_t len[8] = {0,0,0,0,0,0,0,0};
-        
+        static uint32_t len[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+
         temp = DMA_CTRL_REG(ch);
-        if (len[ch] == 0)
-        {
+        if (len[ch] == 0) {
             len[ch] = (temp & 0xFFFF00) >> 8;
         }
         cur_len = (temp & 0xFFFF00) >> 8;
-        if ((cur_len + len[ch]) > 0xFFFF)
-        {
+        if ((cur_len + len[ch]) > 0xFFFF) {
             cur_len = 0;
             DMA_CHNLCTRL_REG(ch) |= (1 << 1);
-            while(DMA_CHNLCTRL_REG(ch) & (1 << 0));
+            while (DMA_CHNLCTRL_REG(ch) & (1 << 0)) {
+            }
             DMA_CHNLCTRL_REG(ch) |= (1 << 0);
         }
-        
+
         temp &= ~(0xFFFF << 8);
         temp |= ((cur_len + len[ch]) << 8);
         DMA_CTRL_REG(ch) = temp;
     }
 
-    if ((int_src & (TLS_DMA_IRQ_BOTH_DONE << ch * 2)) &&
-        (TLS_DMA_IRQ_BOTH_DONE == dma_context[ch].flags))
-    {
+    if ((int_src & (TLS_DMA_IRQ_BOTH_DONE << (ch * 2))) &&
+        (TLS_DMA_IRQ_BOTH_DONE == dma_context[ch].flags)) {
         tls_dma_irq_clr(ch, TLS_DMA_IRQ_BOTH_DONE);
-        if (dma_context[ch].burst_done_pf)
+        if (dma_context[ch].burst_done_pf) {
             dma_context[ch].burst_done_pf(dma_context[ch].burst_done_priv);
-    }
-    else if ((int_src & (TLS_DMA_IRQ_BURST_DONE << ch * 2)) &&
-             (TLS_DMA_IRQ_BURST_DONE == dma_context[ch].flags))
-    {
+        }
+    } else if ((int_src & (TLS_DMA_IRQ_BURST_DONE << (ch * 2))) &&
+             (TLS_DMA_IRQ_BURST_DONE == dma_context[ch].flags)) {
         tls_dma_irq_clr(ch, TLS_DMA_IRQ_BOTH_DONE);
-        if (dma_context[ch].burst_done_pf)
+        if (dma_context[ch].burst_done_pf) {
             dma_context[ch].burst_done_pf(dma_context[ch].burst_done_priv);
-    }
-    else if ((int_src & (TLS_DMA_IRQ_TRANSFER_DONE << ch * 2)) &&
-             (TLS_DMA_IRQ_TRANSFER_DONE == dma_context[ch].flags))
-    {
+        }
+    } else if ((int_src & (TLS_DMA_IRQ_TRANSFER_DONE << (ch * 2))) &&
+             (TLS_DMA_IRQ_TRANSFER_DONE == dma_context[ch].flags)) {
         tls_dma_irq_clr(ch, TLS_DMA_IRQ_BOTH_DONE);
-        if (dma_context[ch].transfer_done_pf)
+        if (dma_context[ch].transfer_done_pf) {
             dma_context[ch].transfer_done_pf(dma_context[ch].transfer_done_priv);
+        }
     }
     return;
 }
@@ -156,8 +152,8 @@ ATTRIBUTE_ISR void DMA_Channel4_7_IRQHandler(void)
 /**
  * @brief              This function is used to clear dma interrupt flag.
  *
- * @param[in]         ch            Channel no.[0~7]
- * @param[in]         flags        Flags setted to TLS_DMA_IRQ_BURST_DONE, TLS_DMA_IRQ_TRANSFER_DONE, TLS_DMA_IRQ_BOTH_DONE.
+ * @param[in]         ch      Channel no.[0~7]
+ * @param[in]         flags   Flags setted to TLS_DMA_IRQ_BURST_DONE, TLS_DMA_IRQ_TRANSFER_DONE, TLS_DMA_IRQ_BOTH_DONE.
  *
  * @return             None
  *
@@ -167,7 +163,7 @@ void tls_dma_irq_clr(unsigned char ch, unsigned char flags)
 {
     unsigned int int_src = 0;
 
-    int_src |= flags << 2 * ch;
+    int_src |= (flags << (2 * ch)); // 2:byte alignment
 
     tls_reg_write32(HR_DMA_INT_SRC, int_src);
 
@@ -177,10 +173,10 @@ void tls_dma_irq_clr(unsigned char ch, unsigned char flags)
 /**
  * @brief              This function is used to register dma interrupt callback function.
  *
- * @param[in]         ch            Channel no.[0~7]
- * @param[in]         callback    is the dma interrupt call back function.
- * @param[in]         arg            the param of the callback function.
- * @param[in]         flags        Flags setted to TLS_DMA_IRQ_BURST_DONE, TLS_DMA_IRQ_TRANSFER_DONE, TLS_DMA_IRQ_BOTH_DONE.
+ * @param[in]    ch            Channel no.[0~7]
+ * @param[in]    callback    is the dma interrupt call back function.
+ * @param[in]    arg            the param of the callback function.
+ * @param[in]    flags        Flags setted to TLS_DMA_IRQ_BURST_DONE, TLS_DMA_IRQ_TRANSFER_DONE, TLS_DMA_IRQ_BOTH_DONE.
  *
  * @return             None
  *
@@ -188,27 +184,27 @@ void tls_dma_irq_clr(unsigned char ch, unsigned char flags)
  */void tls_dma_irq_register(unsigned char ch, void (*callback)(void *p), void *arg, unsigned char flags)
 {
     unsigned int mask;
+    unsigned char Channel = ch;
 
     mask  = tls_reg_read32(HR_DMA_INT_MASK);
-    mask |= TLS_DMA_IRQ_BOTH_DONE << 2 * ch;
-    mask &= ~(flags << 2 * ch);
+    mask |= (TLS_DMA_IRQ_BOTH_DONE << (2 * Channel));
+    mask &= ~(flags << (2 * Channel)); // 2:byte alignment
     tls_reg_write32(HR_DMA_INT_MASK, mask);
 
-    dma_context[ch].flags = flags;
-    if (flags & TLS_DMA_IRQ_BURST_DONE)
-    {
-        dma_context[ch].burst_done_pf   = callback;
-        dma_context[ch].burst_done_priv = arg;
+    dma_context[Channel].flags = flags;
+    if (flags & TLS_DMA_IRQ_BURST_DONE) {
+        dma_context[Channel].burst_done_pf   = callback;
+        dma_context[Channel].burst_done_priv = arg;
     }
-    if (flags & TLS_DMA_IRQ_TRANSFER_DONE)
-    {
-        dma_context[ch].transfer_done_pf   = callback;
-        dma_context[ch].transfer_done_priv = arg;
+    if (flags & TLS_DMA_IRQ_TRANSFER_DONE) {
+        dma_context[Channel].transfer_done_pf   = callback;
+        dma_context[Channel].transfer_done_priv = arg;
     }
-    if (ch > 3)
-        ch = 4;
-    tls_irq_priority(DMA_Channel0_IRQn + ch, ch/2);
-    tls_irq_enable(DMA_Channel0_IRQn + ch);
+    if (sh > 3) {
+        sh = 4; // 4:byte alignment
+    }
+    tls_irq_priority(DMA_Channel0_IRQn + Channel, Channel / 2); // 2:byte alignment
+    tls_irq_enable(DMA_Channel0_IRQn + Channel);
 }
 
 /**
@@ -225,8 +221,7 @@ int tls_dma_wait_complt(unsigned char ch)
 {
     unsigned long timeout = 0;
 
-    while(DMA_CHNLCTRL_REG(ch) & DMA_CHNL_CTRL_CHNL_ON) 
-    {
+    while (DMA_CHNLCTRL_REG(ch) & DMA_CHNL_CTRL_CHNL_ON) {
         tls_os_time_delay(1);
         timeout ++;
         if (timeout > 500)
@@ -248,9 +243,8 @@ int tls_dma_wait_complt(unsigned char ch)
  * @retval         0     failed
  *
  * @note
- *                  DMA Descriptor:
- *                    +--------------------------------------------------------------+
- *                    |Vld[31] |                    RSV                              |
+ *     DMA Descriptor: +--------------------------------------------------------------+
+ *                     |Vld[31] |                    RSV                              |
  *                     +--------------------------------------------------------------+
  *                     |                  RSV           |         Dma_Ctrl[16:0]      |
  *                     +--------------------------------------------------------------+
@@ -261,12 +255,14 @@ int tls_dma_wait_complt(unsigned char ch)
  *                     |                       Next_Desc_Add[31:0]                    |
  *                     +--------------------------------------------------------------+
  */
-unsigned char tls_dma_start_by_wrap(unsigned char ch, struct tls_dma_descriptor *dma_desc, 
+unsigned char tls_dma_start_by_wrap(unsigned char ch, struct tls_dma_descriptor *dma_desc,
                                     unsigned char auto_reload,
                                     unsigned short src_zize,
                                     unsigned short dest_zize)
 {
-    if ((ch > 7) && !dma_desc) return 1;
+    if ((ch > 7) && !dma_desc) { // 7:byte alignment
+        return 1;
+    }
 
     DMA_SRCWRAPADDR_REG(ch) = dma_desc->src_addr;
     DMA_DESTWRAPADDR_REG(ch) = dma_desc->dest_addr;
@@ -288,9 +284,8 @@ unsigned char tls_dma_start_by_wrap(unsigned char ch, struct tls_dma_descriptor 
  * @retval         0     failed
  *
  * @note
- *                  DMA Descriptor:
- *                    +--------------------------------------------------------------+
- *                    |Vld[31] |                    RSV                              |
+ *     DMA Descriptor: +--------------------------------------------------------------+
+ *                     |Vld[31] |                    RSV                              |
  *                     +--------------------------------------------------------------+
  *                     |                  RSV           |         Dma_Ctrl[16:0]      |
  *                     +--------------------------------------------------------------+
@@ -303,10 +298,11 @@ unsigned char tls_dma_start_by_wrap(unsigned char ch, struct tls_dma_descriptor 
  */
 unsigned char tls_dma_start(unsigned char ch, struct tls_dma_descriptor *dma_desc, unsigned char auto_reload)
 {
-    if ((ch > 7) && !dma_desc) return 1;
+    if ((ch > 7) && !dma_desc) { // 7:byte alignment
+        return 1;
+    }
 
-    if ((dma_used_bit &(1<<ch)) == 0)
-    {
+    if ((dma_used_bit &(1<<ch)) == 0) {
         dma_used_bit |= (1<<ch);
     }
     DMA_SRCADDR_REG(ch) = dma_desc->src_addr;
@@ -330,12 +326,13 @@ unsigned char tls_dma_start(unsigned char ch, struct tls_dma_descriptor *dma_des
  */
 unsigned char tls_dma_stop(unsigned char ch)
 {
-    if (ch > 7) return 1;
-    if (DMA_CHNLCTRL_REG(ch) & DMA_CHNL_CTRL_CHNL_ON)
-    {
+    if (ch > 7) { // 7:byte alignment
+        return 1;
+    }
+    if (DMA_CHNLCTRL_REG(ch) & DMA_CHNL_CTRL_CHNL_ON) {
         DMA_CHNLCTRL_REG(ch) |= DMA_CHNL_CTRL_CHNL_OFF;
 
-        while(DMA_CHNLCTRL_REG(ch) & DMA_CHNL_CTRL_CHNL_ON);
+        while (DMA_CHNLCTRL_REG(ch) & DMA_CHNL_CTRL_CHNL_ON);
     }
 
     return 0;
@@ -347,7 +344,7 @@ unsigned char tls_dma_stop(unsigned char ch)
  * @param[in]      ch       specified channel when ch is valid and not used.
  * @param[in]      flags    flags setted to selected channel
  *
- * @return         Real DMA Channel No. 
+ * @return         Real DMA Channel No.
  *
  * @note
  * If ch is invalid or valid but used, the function will select a random free channel.
@@ -357,42 +354,34 @@ unsigned char tls_dma_request(unsigned char ch, unsigned char flags)
 {
     unsigned char freeCh = 0xFF;
 
-    /*If channel is valid, try to use specified DMA channel!*/
-    if ((ch < 8))
-    {
-        if (!(channels.channels[ch] & TLS_DMA_FLAGS_CHANNEL_VALID))
-        {
+    /* If channel is valid, try to use specified DMA channel! */
+    if ((ch < 8)) {
+        if (!(channels.channels[ch] & TLS_DMA_FLAGS_CHANNEL_VALID)) {
             freeCh = ch;
         }
     }
 
-    /*If ch is not valid, or ch has been used, try to select another free channel for the caller*/
-    if (freeCh == 0xFF)
-    {
-         int i = 0;
-        for (i = 0; i < 8; i++)
-        {
-            if (!(channels.channels[i] & TLS_DMA_FLAGS_CHANNEL_VALID))
-            {
+    /* If ch is not valid, or ch has been used, try to select another free channel for the caller */
+    if (freeCh == 0xFF) {
+        int i = 0;
+        for (i = 0; i < 8; i++) {
+            if (!(channels.channels[i] & TLS_DMA_FLAGS_CHANNEL_VALID)) {
                 freeCh = i;
                 break;
             }
         }
 
-        if (8 == i)
-        {
+        if (i == 8) {
             printf("!!!There is no free DMA channel.!!!\n");
         }
     }
 
-    if ((freeCh < 8))
-    {
-        if (dma_used_bit == 0)
-        {
+    if ((freeCh < 8)) {
+        if (dma_used_bit == 0) {
             tls_open_peripheral_clock(TLS_PERIPHERAL_TYPE_DMA);
         }
         dma_used_bit |= (1<<freeCh);
-        
+
         channels.channels[freeCh] = flags | TLS_DMA_FLAGS_CHANNEL_VALID;
         DMA_MODE_REG(freeCh) = flags;
     }
@@ -411,21 +400,18 @@ unsigned char tls_dma_request(unsigned char ch, unsigned char flags)
  */
 void tls_dma_free(unsigned char ch)
 {
-    if (ch < 8)
-    {
+    if (ch < 8) {
         tls_dma_stop(ch);
 
         DMA_SRCADDR_REG(ch) = 0;
         DMA_DESTADDR_REG(ch) = 0;
         DMA_MODE_REG(ch) = 0;
         DMA_CTRL_REG(ch) = 0;
-//        DMA_INTSRC_REG = 0xffff;
         DMA_INTSRC_REG |= 0x03<<(ch*2);
 
         channels.channels[ch] = 0x00;
         dma_used_bit &= ~(1<<ch);
-        if (dma_used_bit == 0)
-        {
+        if (dma_used_bit == 0) {
             tls_close_peripheral_clock(TLS_PERIPHERAL_TYPE_DMA);
         }
     }
@@ -444,10 +430,8 @@ void tls_dma_init(void)
 {
     u32 i = 0;
     u32 value = 0;
-    for (i = 0; i < 8; i++)
-    {
-        if (!(dma_used_bit & (1<<i)))
-        {
+    for (i = 0; i < 8; i++) {
+        if (!(dma_used_bit & (1<<i))) {
             value |= 3<<(i*2);
         }
     }
@@ -455,4 +439,3 @@ void tls_dma_init(void)
     DMA_INTMASK_REG = value;
     DMA_INTSRC_REG  = value;
 }
-

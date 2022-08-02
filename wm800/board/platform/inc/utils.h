@@ -14,13 +14,13 @@
  */
 
 /**************************************************************************
- * File Name                   : utils.h 
- * Author                      : 
+ * File Name                   : utils.h
+ * Author                      :
  * Version                     : 1.0
- * Date                        : 
- * Description                 : 
+ * Date                        :
+ * Description                 :
  *
- * Copyright (c) 2014 Winner Microelectronics Co., Ltd. 
+ * Copyright (c) 2014 Winner Microelectronics Co., Ltd.
  * All rights reserved.
  *
  ***************************************************************************/
@@ -37,7 +37,7 @@ int strtodec(int *dec, char *str);
 int atohex(char ch);
 int strtohex(u32 *hex, char *str);
 int strtohexarray(u8 array[], int cnt, char *str);
-int strtoip(u32 *ipadr, char * str);
+int strtoip(u32 *ipadr, char *str);
 void iptostr(u32 ip, char *str);
 void mactostr(u8 mac[], char *str);
 
@@ -46,8 +46,8 @@ int digit_to_hex(int c);
 int hexstr_to_unit(char *buf, u32 *d);
 int string_to_uint(char *buf, u32 *d);
 int string_to_ipaddr(const char *buf, u8 *addr);
-char * strdup(const char *s);
-char * strndup(const char *s, size_t len);
+char *strdup(const char *s);
+char *strndup(const char *s, size_t len);
 
 int sendchar(int ch);
 

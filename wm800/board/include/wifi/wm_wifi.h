@@ -40,17 +40,17 @@
 /** MACRO for callback EVNET to close soft-AP */
 #define    NETIF_WIFI_SOFTAP_CLOSED          0x7
 
-/* Return Error definition*/
+/* Return Error definition */
 /** invalid SSID */
-#define    WM_WIFI_ERR_SSID           -1
+#define    WM_WIFI_ERR_SSID         (-1)
 /** invalid key */
-#define    WM_WIFI_ERR_KEY               -2
+#define    WM_WIFI_ERR_KEY          (-2)
 /** wps is busing */
-#define WM_WIFI_WPS_BUSY           -3
+#define WM_WIFI_WPS_BUSY           (-3)
 /** scan is busing */
-#define WM_WIFI_SCANNING_BUSY       -4
+#define WM_WIFI_SCANNING_BUSY       (-4)
 /** station is connecting */
-#define WM_WIFI_STA_BUSY           -5
+#define WM_WIFI_STA_BUSY           (-5)
 
 /* error number definition */
 /** no error */
@@ -63,9 +63,9 @@
 #define     WM_WIFI_ELSI            3
 
 #define ETH_ALEN 6
-#endif
+// #endif
 
-/* bss type definition*/
+/* bss type definition */
 #ifndef IEEE80211_MODE_INFRA
 /** station mode */
 #define IEEE80211_MODE_INFRA    1
@@ -125,16 +125,18 @@
 #define     WIFI_SOFTAP_CLOSED              0x6
 
 enum tls_wifi_auth_mode {
-
     WM_WIFI_AUTH_MODE_WPA_PSK_TKIP      = 4, /**< authenticate mode : wpa psk rc4 */
     WM_WIFI_AUTH_MODE_WPA_PSK_CCMP      = 8, /**< authenticate mode : wpa psk aes */
-    WM_WIFI_AUTH_MODE_WPA_PSK_AUTO      = (WM_WIFI_AUTH_MODE_WPA_PSK_TKIP | WM_WIFI_AUTH_MODE_WPA_PSK_CCMP), /**< authenticate mode : wpa psk, tkip and aes */
+    /**< authenticate mode : wpa psk, tkip and aes */
+    WM_WIFI_AUTH_MODE_WPA_PSK_AUTO      = (WM_WIFI_AUTH_MODE_WPA_PSK_TKIP | WM_WIFI_AUTH_MODE_WPA_PSK_CCMP),
     WM_WIFI_AUTH_MODE_WPA2_PSK_TKIP     = 16, /**< authenticate mode : wpa2 psk rc4 */
     WM_WIFI_AUTH_MODE_WPA2_PSK_CCMP     = 32, /**< authenticate mode : wpa2 psk aes */
-    WM_WIFI_AUTH_MODE_WPA2_PSK_AUTO     = (WM_WIFI_AUTH_MODE_WPA2_PSK_TKIP | WM_WIFI_AUTH_MODE_WPA2_PSK_CCMP), /**< authenticate mode : wpa2 psk, tkip and aes */
+    /**< authenticate mode : wpa2 psk, tkip and aes */
+    WM_WIFI_AUTH_MODE_WPA2_PSK_AUTO     = (WM_WIFI_AUTH_MODE_WPA2_PSK_TKIP | WM_WIFI_AUTH_MODE_WPA2_PSK_CCMP),
     WM_WIFI_AUTH_MODE_WPA_WPA2_PSK_TKIP = (WM_WIFI_AUTH_MODE_WPA_PSK_TKIP | WM_WIFI_AUTH_MODE_WPA2_PSK_TKIP),
     WM_WIFI_AUTH_MODE_WPA_WPA2_PSK_CCMP = (WM_WIFI_AUTH_MODE_WPA_PSK_CCMP | WM_WIFI_AUTH_MODE_WPA2_PSK_CCMP),
-    WM_WIFI_AUTH_MODE_WPA_WPA2_PSK_AUTO = (WM_WIFI_AUTH_MODE_WPA_PSK_AUTO | WM_WIFI_AUTH_MODE_WPA2_PSK_AUTO), /**< authenticate mode : wpa and wpa2, tkip and aes */
+    /**< authenticate mode : wpa and wpa2, tkip and aes */
+    WM_WIFI_AUTH_MODE_WPA_WPA2_PSK_AUTO = (WM_WIFI_AUTH_MODE_WPA_PSK_AUTO | WM_WIFI_AUTH_MODE_WPA2_PSK_AUTO),
     WM_WIFI_AUTH_MODE_UNKNOWN           = 128
 };
 
@@ -205,14 +207,14 @@ enum tls_wifi_client_event_type {
     WM_WIFI_CLIENT_EVENT_OFFLINE
 };
 
-enum tls_wifi_op_mode{
+enum tls_wifi_op_mode {
     STATION_MODE = 1,
     SOFTAP_MODE,
     STATIONAP_MODE
 };
 
 /** current bss information */
-struct tls_curr_bss_t{
+struct tls_curr_bss_t {
     u8 bssid[ETH_ALEN];    /**< BSSID of connected AP */
     u8 ssid[32];           /**< SSID of connected AP */
     u8 ssid_len;           /**< SSID length of connected AP */
@@ -229,7 +231,7 @@ struct tls_curr_bss_t{
 };
 
 /** secret key information */
-struct tls_key_info_t{
+struct tls_key_info_t {
     u8 format;     /**< key format, value is: 0-hex, 1-ascii */
     u8 index;      /**< key index, value is: 1-4 (only wep) */
     u8 key_len;    /**< key length */
@@ -237,7 +239,7 @@ struct tls_key_info_t{
 };
 
 /** Wi-Fi configuration of softap */
-struct tls_softap_info_t{
+struct tls_softap_info_t {
     u8 ssid[33];    /**< SSID of softap */
     u8 encrypt;     /**< encryption mode of softap, value is: IEEE80211_ENCRYT_NONE,
                          IEEE80211_ENCRYT_WEP40,     IEEE80211_ENCRYT_WEP104,
@@ -248,14 +250,14 @@ struct tls_softap_info_t{
 };
 
 /** ip address information */
-struct tls_ip_info_t{
+struct tls_ip_info_t {
     u8 ip_addr[4];     /**< IP address */
     u8 netmask[4];     /**< netmask */
     u8 dnsname[32];    /**< DNS server name */
 };
 
 /** Wi-Fi configuration of ibss */
-struct tls_ibss_info_t{
+struct tls_ibss_info_t {
     u8 ssid[33];    /**< SSID of ibss */
     u8 encrypt;     /**< encryption mode of ibss, value is: IEEE80211_ENCRYT_NONE,
                          IEEE80211_ENCRYT_WEP40,     IEEE80211_ENCRYT_WEP104,
@@ -267,7 +269,7 @@ struct tls_ibss_info_t{
 };
 
 /** ip address information of ibss */
-struct tls_ibssip_info_t{
+struct tls_ibssip_info_t {
     u8 ip[4];         /**< IP address */
     u8 netmask[4];    /**< netmask */
     u8 gateway[4];    /**< gateway */
@@ -323,9 +325,10 @@ struct tls_wifi_tx_rate_t {
 };
 
 /** scan param */
-struct tls_wifi_scan_param_t{
+struct tls_wifi_scan_param_t {
     u32 scan_times;        /**< Scan times, >=0, if zero, only 1 times */
-    u16 scan_chanlist;     /**< Scan channel list ,[0,3FFF],per bit is one channel,if zero or above 0x3FFF, scan all channel*/
+    /**< Scan channel list ,[0,3FFF],per bit is one channel,if zero or above 0x3FFF, scan all channel*/
+    u16 scan_chanlist;
     u16 scan_chinterval;   /**< Scan channel switch time,>=0, if zero, use default value, unit:ms */
 };
 
@@ -342,14 +345,13 @@ typedef void (*tls_wifi_psm_chipsleep_callback)(u32 sleeptime);
 typedef void (*tls_wifi_psm_postchipsleep_callback)(void);
 
 /** callback function of receive ETHERNET data */
-typedef int (*net_rx_data_cb)(const u8 *bssid, u8 *buf, u3
+typedef int (*net_rx_data_cb)(const u8 *bssid, u8 *buf, u32 buf_len);
 
 typedef void (*tls_wifi_data_ext_recv_callback)(u8* data, u32 data_len, struct tls_wifi_ext_t *ext);
 
 /** wifi event status structure for user layer*/
 typedef void (*tls_wifi_netif_status_event_fn)(u8 status);
-struct tls_wifi_netif_status_event
-{
+struct tls_wifi_netif_status_event {
     struct dl_list list;
     tls_wifi_netif_status_event_fn status_callback;
 };
@@ -504,8 +506,8 @@ u32 tls_wifi_get_psm_chipsleep_flag(void);
 
  *                      4: bt
  *
- * @return         0£ºsuccess
- *                 -1£ºfailed
+ * @return         0ï¿½ï¿½success
+ *                 -1ï¿½ï¿½failed
  *
  * @note           None
  */
@@ -530,7 +532,7 @@ int     tls_wifi_get_oneshot_flag(void);
 typedef void (*tls_wifi_oneshot_result_callback)(enum tls_wifi_oneshot_result_type type);
 
 /**
- * @brief          before calling tls_wifi_get_oneshot_ssidpwd or tls_wifi_get_oneshot_customdata, 
+ * @brief          before calling tls_wifi_get_oneshot_ssidpwd or tls_wifi_get_oneshot_customdata,
  *                 application should call this function to register the call back function
  *
  * @param[in]      callback         callback function pointer
@@ -608,15 +610,13 @@ int tls_wifi_passive_scan(void);
 *
 * @param[in]     scan_param
 *                scan_param member
-*                    scan_times:
-
 *
 * @retval        WM_SUCCESS                will start scan
 * @retval        WM_WIFI_SCANNING_BUSY     wifi module is scanning now
 * @retval        WM_FAILED                other Error
 *
 * @note           in case not SUCCESS, user need to call this function again to trigger the scan
-*/ 
+*/
 int tls_wifi_scan_by_param(struct tls_wifi_scan_param_t *scan_param);
 
 /**
@@ -659,7 +659,7 @@ int tls_wifi_get_scan_rslt(u8* buf, u32 buffer_size);
  * @param[in]      ipinfo   softap ip address
  *
  * @retval         WM_WIFI_ERR_SSID     SSID is NULL
- * @retval         WM_WIFI_ERR_KEY      key info not 
+ * @retval         WM_WIFI_ERR_KEY      key info not
 
  *
  * @note           None
@@ -808,7 +808,7 @@ int tls_wifi_connect_by_bssid(u8 *bssid, u8 *pwd, u8 pwd_len);
  *                   User should register netif status callback
  *                 to get TCP/IP layer status;
  */
-int tls_wifi_connect_by_ssid_bssid(u8 *ssid, u8 ssid_len, u8 *bssid, u8 *pwd, u8 pwd_len );
+int tls_wifi_connect_by_ssid_bssid(u8 *ssid, u8 ssid_len, u8 *bssid, u8 *pwd, u8 pwd_len);
 
 /**
  * @brief          Set auto connect mode: Enable/Disable.
@@ -1009,7 +1009,8 @@ u8 tls_wifi_get_tx_gain_max(enum tls_wifi_tx_rate tx_rate);
  *
  * @note           None
  */
-int tls_wifi_send_mgmt(enum tls_wifi_mgmt_type type, struct tls_wifi_hdr_mac_t *mac, u8 *ie, u16 ie_len, struct tls_wifi_tx_rate_t *tx);
+int tls_wifi_send_mgmt(enum tls_wifi_mgmt_type type, struct tls_wifi_hdr_mac_t *mac,
+                       u8 *ie, u16 ie_len, struct tls_wifi_tx_rate_t *tx);
 
 /**
  * @brief          This function is used to send an 802.11 frame
@@ -1109,7 +1110,7 @@ int tls_wifi_mem_cfg(u32 startmem, u8 txcnt, u8 rxcnt);
  * @brief          This function is used to set max sta num
  *
  * @param[in]      ap_sta_num: can be accepted num for sta
- *                       
+ *
  * @retval         0  :successfullly
  *                    <0:failure if ap_sta_num is 0
  *
@@ -1121,12 +1122,12 @@ int tls_wifi_softap_set_sta_num(unsigned char ap_sta_num);
  * @brief          This function is used to deauth sta connected to softap
  *
  * @param[in]      hwaddr: sta's mac to deauth
- *                       
+ *
  * @retval         0  :successfullly
  *                    <0:failure if hwaddr is null
  *
  * @note           None
- */ 
+ */
 int tls_wifi_softap_del_station(unsigned char* hwaddr);
 
 /**
@@ -1232,9 +1233,8 @@ u8* tls_wifi_buffer_acquire(int total_len);
  * @param[in]      buffer:   tx data's buffer from tcp/ip
  * @return          None
  *
- * @note          tls_wifi_buffer_acquire/tls_wifi_buffer_release must be used at pair 
+ * @note          tls_wifi_buffer_acquire/tls_wifi_buffer_release must be used at pair
  */
 void tls_wifi_buffer_release(bool is_apsta, u8* buffer);
 
 #endif /* TLS_WIFI_FUNC_H */
-

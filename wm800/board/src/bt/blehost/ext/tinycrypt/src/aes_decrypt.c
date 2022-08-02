@@ -72,10 +72,10 @@ int tc_aes128_set_decrypt_key(TCAesKeySched_t s, const uint8_t *k)
 
 static inline void mult_row_column(uint8_t *out, const uint8_t *in)
 {
-    out[0] = multe(in[0]) ^ multb(in[1]) ^ multd(in[2]) ^ mult9(in[3]);
-    out[1] = mult9(in[0]) ^ multe(in[1]) ^ multb(in[2]) ^ multd(in[3]);
-    out[2] = multd(in[0]) ^ mult9(in[1]) ^ multe(in[2]) ^ multb(in[3]);
-    out[3] = multb(in[0]) ^ multd(in[1]) ^ mult9(in[2]) ^ multe(in[3]);
+    out[0] = multe(in[0]) ^ multb(in[1]) ^ multd(in[2]) ^ mult9(in[3]); // 2:array element, 3:array element
+    out[1] = mult9(in[0]) ^ multe(in[1]) ^ multb(in[2]) ^ multd(in[3]); // 2:array element, 3:array element
+    out[2] = multd(in[0]) ^ mult9(in[1]) ^ multe(in[2]) ^ multb(in[3]); // 2:array element, 3:array element
+    out[3] = multb(in[0]) ^ multd(in[1]) ^ mult9(in[2]) ^ multe(in[3]); // 2:array element, 3:array element
 }
 
 static inline void inv_mix_columns(uint8_t *s)
@@ -83,36 +83,36 @@ static inline void inv_mix_columns(uint8_t *s)
     uint8_t t[Nb * Nk];
     mult_row_column(t, s);
     mult_row_column(&t[Nb], s + Nb);
-    mult_row_column(&t[2 * Nb], s + (2 * Nb));
-    mult_row_column(&t[3 * Nb], s + (3 * Nb));
+    mult_row_column(&t[2 * Nb], s + (2 * Nb)); // 2:byte alignment
+    mult_row_column(&t[3 * Nb], s + (3 * Nb)); // 3:byte alignment
     (void)_copy(s, sizeof(t), t, sizeof(t));
 }
 
 static inline void add_round_key(uint8_t *s, const unsigned int *k)
 {
-    s[0] ^= (uint8_t)(k[0] >> 24);
-    s[1] ^= (uint8_t)(k[0] >> 16);
-    s[2] ^= (uint8_t)(k[0] >> 8);
-    s[3] ^= (uint8_t)(k[0]);
-    s[4] ^= (uint8_t)(k[1] >> 24);
-    s[5] ^= (uint8_t)(k[1] >> 16);
-    s[6] ^= (uint8_t)(k[1] >> 8);
-    s[7] ^= (uint8_t)(k[1]);
-    s[8] ^= (uint8_t)(k[2] >> 24);
-    s[9] ^= (uint8_t)(k[2] >> 16);
-    s[10] ^= (uint8_t)(k[2] >> 8);
-    s[11] ^= (uint8_t)(k[2]);
-    s[12] ^= (uint8_t)(k[3] >> 24);
-    s[13] ^= (uint8_t)(k[3] >> 16);
-    s[14] ^= (uint8_t)(k[3] >> 8);
-    s[15] ^= (uint8_t)(k[3]);
+    s[0] ^= (uint8_t)(k[0] >> 24); // 24:byte alignment
+    s[1] ^= (uint8_t)(k[0] >> 16); // 16:byte alignment
+    s[2] ^= (uint8_t)(k[0] >> 8); // 8:byte alignment, 2:array element
+    s[3] ^= (uint8_t)(k[0]); // 3:array element
+    s[4] ^= (uint8_t)(k[1] >> 24); // 24:byte alignment, 4:array element
+    s[5] ^= (uint8_t)(k[1] >> 16); // 16:byte alignment, 5:array element
+    s[6] ^= (uint8_t)(k[1] >> 8); // 8:byte alignment, 6:array element
+    s[7] ^= (uint8_t)(k[1]); // 7:array element
+    s[8] ^= (uint8_t)(k[2] >> 24); // 2:array element, 24:byte alignment, 8:array element
+    s[9] ^= (uint8_t)(k[2] >> 16); // 2:array element, 16:byte alignment, 9:array element
+    s[10] ^= (uint8_t)(k[2] >> 8); // 2:array element, 8:byte alignment, 10:array element
+    s[11] ^= (uint8_t)(k[2]); // 2:array element, 11:array element
+    s[12] ^= (uint8_t)(k[3] >> 24); // 3:array element, 24:byte alignment, 12:array element
+    s[13] ^= (uint8_t)(k[3] >> 16); // 3:array element, 16:byte alignment, 13:array element
+    s[14] ^= (uint8_t)(k[3] >> 8); // 3:array element, 8:byte alignment, 14:array element
+    s[15] ^= (uint8_t)(k[3]); // 3:array element, 15:array element
 }
 
 static inline void inv_sub_bytes(uint8_t *s)
 {
     unsigned int i;
 
-    for(i = 0; i < (Nb * Nk); ++i) {
+    for (i = 0; i < (Nb * Nk); ++i) {
         s[i] = inv_sbox[s[i]];
     }
 }
@@ -126,21 +126,21 @@ static inline void inv_shift_rows(uint8_t *s)
 {
     uint8_t t[Nb * Nk];
     t[0]  = s[0];
-    t[1] = s[13];
-    t[2] = s[10];
-    t[3] = s[7];
-    t[4]  = s[4];
-    t[5] = s[1];
-    t[6] = s[14];
-    t[7] = s[11];
-    t[8]  = s[8];
-    t[9] = s[5];
-    t[10] = s[2];
-    t[11] = s[15];
-    t[12] = s[12];
-    t[13] = s[9];
-    t[14] = s[6];
-    t[15] = s[3];
+    t[1] = s[13]; // 13:array element
+    t[2] = s[10]; // 2:array element, 10:array element
+    t[3] = s[7]; // 3:array element, 7:array element
+    t[4]  = s[4]; // 4:array element
+    t[5] = s[1]; // 5:array element
+    t[6] = s[14]; // 6:array element, 14:array element
+    t[7] = s[11]; // 7:array element, 11:array element
+    t[8]  = s[8]; // 8:array element
+    t[9] = s[5]; // 9:array element, 5:array element
+    t[10] = s[2]; // 10:array element, 2:array element
+    t[11] = s[15]; // 11:array element, 15:array element
+    t[12] = s[12]; // 12:array element
+    t[13] = s[9]; // 13:array element, 9:array element
+    t[14] = s[6]; // 14:array element, 6:array element
+    t[15] = s[3]; // 15:array element, 3:array element
     (void)_copy(s, sizeof(t), t, sizeof(t));
 }
 
@@ -160,7 +160,7 @@ int tc_aes_decrypt(uint8_t *out, const uint8_t *in, const TCAesKeySched_t s)
     (void)_copy(state, sizeof(state), in, sizeof(state));
     add_round_key(state, s->words + Nb * Nr);
 
-    for(i = Nr - 1; i > 0; --i) {
+    for (i = Nr - 1; i > 0; --i) {
         inv_shift_rows(state);
         inv_sub_bytes(state);
         add_round_key(state, s->words + Nb * i);
@@ -171,7 +171,7 @@ int tc_aes_decrypt(uint8_t *out, const uint8_t *in, const TCAesKeySched_t s)
     inv_sub_bytes(state);
     add_round_key(state, s->words);
     (void)_copy(out, sizeof(state), state, sizeof(state));
-    /*zeroing out the state buffer */
+    /* zeroing out the state buffer */
     _set(state, TC_ZERO_BYTE, sizeof(state));
     return TC_CRYPTO_SUCCESS;
 }

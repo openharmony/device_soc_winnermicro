@@ -58,7 +58,7 @@ void _set(void *to, uint8_t val, unsigned int len)
  */
 uint8_t _double_byte(uint8_t a)
 {
-    return ((a << 1) ^ ((a >> 7) * MASK_TWENTY_SEVEN));
+    return ((a << 1) ^ ((a >> 7) * MASK_TWENTY_SEVEN)); // 7:byte alignment
 }
 
 int _compare(const uint8_t *a, const uint8_t *b, size_t size)
@@ -67,7 +67,7 @@ int _compare(const uint8_t *a, const uint8_t *b, size_t size)
     const uint8_t *tempb = b;
     uint8_t result = 0;
 
-    for(unsigned int i = 0; i < size; i++) {
+    for (unsigned int i = 0; i < size; i++) {
         result |= tempa[i] ^ tempb[i];
     }
 

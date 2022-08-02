@@ -20,7 +20,7 @@
 #define BT_MESH_ADV_USER_DATA_SIZE (sizeof(struct bt_mesh_adv *))
 
 #define BT_MESH_MBUF_HEADER_SIZE (sizeof(struct os_mbuf_pkthdr) + \
-                                    BT_MESH_ADV_USER_DATA_SIZE +\
+                                    BT_MESH_ADV_USER_DATA_SIZE +  \
                     sizeof(struct os_mbuf))
 
 enum bt_mesh_adv_type {
@@ -37,8 +37,8 @@ struct bt_mesh_adv {
     const struct bt_mesh_send_cb *cb;
     void *cb_data;
 
-    u8_t      type: 2,
-              busy: 1;
+    u8_t      type : 2,
+              busy : 1;
     u8_t      xmit;
 
     /* For transport layer segment sending */
@@ -59,9 +59,9 @@ struct os_mbuf *bt_mesh_adv_create(enum bt_mesh_adv_type type, u8_t xmit,
                                    s32_t timeout);
 
 struct os_mbuf *bt_mesh_adv_create_from_pool(struct os_mbuf_pool *pool,
-        bt_mesh_adv_alloc_t get_id,
-        enum bt_mesh_adv_type type,
-        u8_t xmit, s32_t timeout);
+    bt_mesh_adv_alloc_t get_id,
+    enum bt_mesh_adv_type type,
+    u8_t xmit, s32_t timeout);
 
 void bt_mesh_adv_send(struct os_mbuf *buf, const struct bt_mesh_send_cb *cb,
                       void *cb_data);

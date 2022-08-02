@@ -35,9 +35,8 @@ static uint16_t ble_svc_bas_battery_handle;
 uint8_t ble_svc_bas_battery_level;
 
 /* Access function */
-static int
-ble_svc_bas_access(uint16_t conn_handle, uint16_t attr_handle,
-                   struct ble_gatt_access_ctxt *ctxt, void *arg);
+static int ble_svc_bas_access(uint16_t conn_handle, uint16_t attr_handle,
+                              struct ble_gatt_access_ctxt *ctxt, void *arg);
 
 static const struct ble_gatt_svc_def ble_svc_bas_defs[] = {
     {
@@ -71,15 +70,14 @@ static const struct ble_gatt_svc_def ble_svc_bas_defs[] = {
 /**
  * BAS access function
  */
-static int
-ble_svc_bas_access(uint16_t conn_handle, uint16_t attr_handle,
-                   struct ble_gatt_access_ctxt *ctxt,
-                   void *arg)
+static int ble_svc_bas_access(uint16_t conn_handle, uint16_t attr_handle,
+                              struct ble_gatt_access_ctxt *ctxt,
+                              void *arg)
 {
     uint16_t uuid16 = ble_uuid_u16(ctxt->chr->uuid);
     int rc;
 
-    switch(uuid16) {
+    switch (uuid16) {
         case BLE_SVC_BAS_CHR_UUID16_BATTERY_LEVEL:
             assert(ctxt->op == BLE_GATT_ACCESS_OP_READ_CHR);
             rc = os_mbuf_append(ctxt->om, &ble_svc_bas_battery_level,
@@ -96,11 +94,11 @@ ble_svc_bas_access(uint16_t conn_handle, uint16_t attr_handle,
  * Set the battery level, must be between 0 and 100.
  * If greater than 100, it will be silently set to 100.
  */
-int
-ble_svc_bas_battery_level_set(uint8_t level)
+int ble_svc_bas_battery_level_set(uint8_t level)
 {
-    if (level > 100)
-    { level = 100; }
+    if (level > 100) { // 100:Analyzing conditions
+        level = 100; // 100:Analyzing conditions
+    }
 
     if (ble_svc_bas_battery_level != level) {
         ble_svc_bas_battery_level = level;
@@ -115,8 +113,7 @@ ble_svc_bas_battery_level_set(uint8_t level)
 /**
  * Initialize the Battery Service.
  */
-void
-ble_svc_bas_init(void)
+void ble_svc_bas_init(void)
 {
     int rc;
     /* Ensure this function only gets called by sysinit. */

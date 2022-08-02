@@ -13,24 +13,24 @@
  * limitations under the License.
  */
 
-/***************************************************************************** 
-* 
+/*****************************************************************************
+*
 * File Name : wm_mem.c
-* 
-* Description: memory manager Module 
-* 
-* Copyright (c) 2014 Winner Micro Electronic Design Co., Ltd. 
-* All rights reserved. 
-* 
+*
+* Description: memory manager Module
+*
+* Copyright (c) 2014 Winner Micro Electronic Design Co., Ltd.
+* All rights reserved.
+*
 * Author : dave
-* 
-* Date : 2014-6-12 
-*****************************************************************************/ 
+*
+* Date : 2014-6-12
+*****************************************************************************/
 
-#include "wm_osal.h"
-#include "wm_mem.h"
-#include "list.h"
 #include <string.h>
+#include "wm_osal.h"
+#include "list.h"
+#include "wm_mem.h"
 #if TLS_OS_LITEOS
 #include "los_memory.h"
 #endif
@@ -52,7 +52,7 @@ struct dl_list memory_free_list;
 #define MEM_BLOCK_SIZE           800
 MEMORY_BLOCK mem_blocks[MEM_BLOCK_SIZE];
 
-u32 alloc_heap_mem_bytes = 0; 
+u32 alloc_heap_mem_bytes = 0;
 u32 alloc_heap_mem_blk_cnt = 0;
 u32 alloc_heap_mem_max_size = 0;
 
@@ -73,7 +73,7 @@ u32 alloc_heap_mem_max_size = 0;
  *        method was called from
  * \return Pointer to the allocated memory or NULL in case of a failure
  */
-void * mem_alloc_debug(u32 size, char* file, int line)
+void *mem_alloc_debug(u32 size, char* file, int line)
 {
     void *buf = NULL;
     u32 pad_len;
@@ -95,8 +95,7 @@ void * mem_alloc_debug(u32 size, char* file, int line)
             printf("mem_alloc_debug: tls_os_sem_create mem_sem error\r\n");
         dl_list_init(&memory_used_list);
         dl_list_init(&memory_free_list);
-        for(int i = 0; i < MEM_BLOCK_SIZE; i++)
-        {
+        for (int i = 0; i < MEM_BLOCK_SIZE; i++) {
             dl_list_add_tail(&memory_free_list, &mem_blocks[i].list);
         }
     }
@@ -109,7 +108,6 @@ void * mem_alloc_debug(u32 size, char* file, int line)
     //
     pad_len = sizeof(u32) - (size & 0x3);
     buf = malloc(sizeof(MEMORY_PATTERN) + PRE_OVERSIZE + size + pad_len + OVERSIZE + sizeof(MEMORY_PATTERN));
-
     if (buf) {
         //
         // Memory allocation succeeded. Add information about the allocated
@@ -119,75 +117,56 @@ void * mem_alloc_debug(u32 size, char* file, int line)
         PMEMORY_PATTERN  mem_ptn_tl;
         PMEMORY_BLOCK  mem_blk_hd1;
 
-     if (dl_list_empty(&memory_free_list))
-     {
-         printf("Memory blocks empty!\r\n");
-            free(buf);
-            tls_os_release_critical(cpu_sr);
-            tls_os_sem_release(mem_sem);
-         tls_mem_alloc_info();
-            return NULL;
-     }
-     mem_blk_hd1 = dl_list_first(&memory_free_list, MEMORY_BLOCK, list);
-     dl_list_del(&mem_blk_hd1->list);
-     dl_list_add_tail(&memory_used_list, &mem_blk_hd1->list);
-        alloc_heap_mem_bytes += size+sizeof(MEMORY_PATTERN)+sizeof(MEMORY_PATTERN)+pad_len + PRE_OVERSIZE + OVERSIZE;
-        alloc_heap_mem_blk_cnt++;
-        if (alloc_heap_mem_bytes > alloc_heap_mem_max_size)
-        {
-            alloc_heap_mem_max_size = alloc_heap_mem_bytes;
-            // printf("alloc_heap_mem_max_size=%d\n", alloc_heap_mem_max_size);
+        if (dl_list_empty(&memory_free_list)) {
+            printf("Memory blocks empty!\r\n");
+                free(buf);
+                tls_os_release_critical(cpu_sr);
+                tls_os_sem_release(mem_sem);
+            tls_mem_alloc_info();
+                return NULL;
         }
-        
-        mem_blk_hd1->pad = pad_len;
-        mem_blk_hd1->file = file;
-        mem_blk_hd1->line = line;
-        mem_blk_hd1->length = size;
-        mem_blk_hd1->header_pattern = (u32)buf;
-        
-        // Fill in the memory header and trailer
-        mem_ptn_hd = (PMEMORY_PATTERN)buf;
-        mem_ptn_hd->pattern0= MEM_HEADER_PATTERN;
-        /*mem_ptn_hd->pattern1= MEM_HEADER_PATTERN;
-        mem_ptn_hd->pattern2= MEM_HEADER_PATTERN;
-        mem_ptn_hd->pattern3= MEM_HEADER_PATTERN;*/
+        mem_blk_hd1 = dl_list_first(&memory_free_list, MEMORY_BLOCK, list);
+        dl_list_del(&mem_blk_hd1->list);
+        dl_list_add_tail(&memory_used_list, &mem_blk_hd1->list);
+            alloc_heap_mem_bytes += size+sizeof(MEMORY_PATTERN) + sizeof(MEMORY_PATTERN) + pad_len +\
+                PRE_OVERSIZE + OVERSIZE;
+            alloc_heap_mem_blk_cnt++;
+            if (alloc_heap_mem_bytes > alloc_heap_mem_max_size) {
+                alloc_heap_mem_max_size = alloc_heap_mem_bytes;
+            }
 
-        mem_ptn_tl = (PMEMORY_PATTERN)(((u8 *)(buf))+size + sizeof(MEMORY_PATTERN)+pad_len + PRE_OVERSIZE + OVERSIZE);
-        mem_ptn_tl->pattern0= MEM_TAILER_PATTERN;
-        /*mem_ptn_tl->pattern1= MEM_TAILER_PATTERN;
-        mem_ptn_tl->pattern2= MEM_TAILER_PATTERN;
-        mem_ptn_tl->pattern3= MEM_TAILER_PATTERN;*/
+            mem_blk_hd1->pad = pad_len;
+            mem_blk_hd1->file = file;
+            mem_blk_hd1->line = line;
+            mem_blk_hd1->length = size;
+            mem_blk_hd1->header_pattern = (u32)buf;
 
-        // Jump ahead by memory header so pointer returned to caller points at the right place
-        buf = ((u8 *)buf) + sizeof (MEMORY_PATTERN) + PRE_OVERSIZE;
+            // Fill in the memory header and trailer
+            mem_ptn_hd = (PMEMORY_PATTERN)buf;
+            mem_ptn_hd->pattern0= MEM_HEADER_PATTERN;
 
-#if 0
+            mem_ptn_tl = (PMEMORY_PATTERN)(((u8 *)(buf))+size + sizeof(MEMORY_PATTERN)+pad_len + \
+                PRE_OVERSIZE + OVERSIZE);
+            mem_ptn_tl->pattern0= MEM_TAILER_PATTERN;
 
-        printf("==>Memory was allocated from %s at line %d with length %d\n",
-                  mem_blk_hd1->file,
-                  mem_blk_hd1->line,               
-                  mem_blk_hd1->length);
-        printf("==>mem alloc ptr = 0x%x\n", buf);
-
-#endif
-    }
-    else
-    {
+            // Jump ahead by memory header so pointer returned to caller points at the right place
+            buf = ((u8 *)buf) + sizeof (MEMORY_PATTERN) + PRE_OVERSIZE;
+    } else {
         printf("==>Memory was allocated from %s at line %d with length %d, allocated size %d, count %d\r\n",
-                   file,
-                   line,               
-                   size, alloc_heap_mem_bytes, alloc_heap_mem_blk_cnt);
+               file,
+               line,
+               size, alloc_heap_mem_bytes, alloc_heap_mem_blk_cnt);
         tls_os_release_critical(cpu_sr);
     tls_os_sem_release(mem_sem);
-     tls_mem_alloc_info();
-     return buf;
+    tls_mem_alloc_info();
+    return buf;
     }
     tls_os_release_critical(cpu_sr);
     tls_os_sem_release(mem_sem);
     return buf;
 }
 
-void * mem_calloc_debug(u32 n, u32 size, char* file, int line)
+void *mem_calloc_debug(u32 n, u32 size, char* file, int line)
 {
     void *buf = NULL;
     u32 pad_len;
@@ -209,8 +188,7 @@ void * mem_calloc_debug(u32 n, u32 size, char* file, int line)
             printf("mem_alloc_debug: tls_os_sem_create mem_sem error\r\n");
         dl_list_init(&memory_used_list);
         dl_list_init(&memory_free_list);
-        for(int i = 0; i < MEM_BLOCK_SIZE; i++)
-        {
+        for (int i = 0; i < MEM_BLOCK_SIZE; i++) {
             dl_list_add_tail(&memory_free_list, &mem_blocks[i].list);
         }
     }
@@ -223,7 +201,6 @@ void * mem_calloc_debug(u32 n, u32 size, char* file, int line)
     //
     pad_len = sizeof(u32) - ((n*size) & 0x3);
     buf = malloc(sizeof(MEMORY_PATTERN) + PRE_OVERSIZE + n*size + pad_len + OVERSIZE + sizeof(MEMORY_PATTERN));
-
     if (buf) {
         //
         // Memory allocation succeeded. Add information about the allocated
@@ -233,69 +210,48 @@ void * mem_calloc_debug(u32 n, u32 size, char* file, int line)
         PMEMORY_PATTERN  mem_ptn_tl;
         PMEMORY_BLOCK  mem_blk_hd1;
 
-     if (dl_list_empty(&memory_free_list))
-     {
-         printf("Memory blocks empty!\r\n");
-            free(buf);
-            tls_os_release_critical(cpu_sr);
-            tls_os_sem_release(mem_sem);
-             tls_mem_alloc_info();
-            return NULL;
-     }
-     mem_blk_hd1 = dl_list_first(&memory_free_list, MEMORY_BLOCK, list);
-     dl_list_del(&mem_blk_hd1->list);
-     dl_list_add_tail(&memory_used_list, &mem_blk_hd1->list);
+    if (dl_list_empty(&memory_free_list)) {
+    printf("Memory blocks empty!\r\n");
+    free(buf);
+    tls_os_release_critical(cpu_sr);
+    tls_os_sem_release(mem_sem);
+    tls_mem_alloc_info();
+    return NULL;
+    }
+        mem_blk_hd1 = dl_list_first(&memory_free_list, MEMORY_BLOCK, list);
+        dl_list_del(&mem_blk_hd1->list);
+        dl_list_add_tail(&memory_used_list, &mem_blk_hd1->list);
         alloc_heap_mem_bytes += n*size+sizeof(MEMORY_PATTERN)+sizeof(MEMORY_PATTERN)+pad_len + PRE_OVERSIZE + OVERSIZE;
         alloc_heap_mem_blk_cnt++;
-        if (alloc_heap_mem_bytes > alloc_heap_mem_max_size)
-        {
+        if (alloc_heap_mem_bytes > alloc_heap_mem_max_size) {
             alloc_heap_mem_max_size = alloc_heap_mem_bytes;
-            // printf("alloc_heap_mem_max_size=%d\n", alloc_heap_mem_max_size);
         }
-        
+
         mem_blk_hd1->pad = pad_len;
         mem_blk_hd1->file = file;
         mem_blk_hd1->line = line;
         mem_blk_hd1->length = n*size;
         mem_blk_hd1->header_pattern = (u32)buf;
-        
+
         // Fill in the memory header and trailer
         mem_ptn_hd = (PMEMORY_PATTERN)buf;
         mem_ptn_hd->pattern0= MEM_HEADER_PATTERN;
-        /*mem_ptn_hd->pattern1= MEM_HEADER_PATTERN;
-        mem_ptn_hd->pattern2= MEM_HEADER_PATTERN;
-        mem_ptn_hd->pattern3= MEM_HEADER_PATTERN;*/
 
         mem_ptn_tl = (PMEMORY_PATTERN)(((u8 *)(buf))+n*size + sizeof(MEMORY_PATTERN)+pad_len + PRE_OVERSIZE + OVERSIZE);
         mem_ptn_tl->pattern0= MEM_TAILER_PATTERN;
-        /*mem_ptn_tl->pattern1= MEM_TAILER_PATTERN;
-        mem_ptn_tl->pattern2= MEM_TAILER_PATTERN;
-        mem_ptn_tl->pattern3= MEM_TAILER_PATTERN;*/
 
         // Jump ahead by memory header so pointer returned to caller points at the right place
         buf = ((u8 *)buf) + sizeof (MEMORY_PATTERN) + PRE_OVERSIZE;
-
-#if 0
-
-        printf("==>Memory was allocated from %s at line %d with length %d\r\n",
-                  mem_blk_hd1->file,
-                  mem_blk_hd1->line,               
-                  mem_blk_hd1->length);
-        printf("==>mem alloc ptr = 0x%x\n", buf);
-
-#endif
-    }
-    else
-    {
+    } else {
         printf("==>Memory was allocated from %s at line %d with length %d, allocated size %d, count %d\r\n",
-                   file,
-                   line,               
-                   n*size, alloc_heap_mem_bytes, alloc_heap_mem_blk_cnt);
-        
+               file,
+               line,
+               n*size, alloc_heap_mem_bytes, alloc_heap_mem_blk_cnt);
+
     tls_os_release_critical(cpu_sr);
     tls_os_sem_release(mem_sem);
-     tls_mem_alloc_info();
-     return buf;
+    tls_mem_alloc_info();
+    return buf;
     }
     tls_os_release_critical(cpu_sr);
     tls_os_sem_release(mem_sem);
@@ -321,101 +277,64 @@ void mem_free_debug(void *p,  char* file, int line)
     mem_ptn_hd = (PMEMORY_PATTERN) (((u8 *)p) - sizeof(MEMORY_PATTERN)  - PRE_OVERSIZE);
     tls_os_sem_acquire(mem_sem, 0);
     cpu_sr = tls_os_set_critical();
-    dl_list_for_each(mem_blk_hd1, &memory_used_list, MEMORY_BLOCK, list){
-        if (mem_blk_hd1->header_pattern == (u32)mem_ptn_hd)
-        {
+    dl_list_for_each(mem_blk_hd1, &memory_used_list, MEMORY_BLOCK, list) {
+        if (mem_blk_hd1->header_pattern == (u32)mem_ptn_hd) {
             needfree = 1;
             break;
         }
     }
-    if (needfree)
-    {
+    if (needfree) {
         dl_list_del(&mem_blk_hd1->list);
         dl_list_add_tail(&memory_free_list, &mem_blk_hd1->list);
-        alloc_heap_mem_bytes -= mem_blk_hd1->length + sizeof(MEMORY_PATTERN) + sizeof(MEMORY_PATTERN) + PRE_OVERSIZE + OVERSIZE +
-            mem_blk_hd1->pad;
+        alloc_heap_mem_bytes -= mem_blk_hd1->length + sizeof(MEMORY_PATTERN) + sizeof(MEMORY_PATTERN) +
+            PRE_OVERSIZE + OVERSIZE + mem_blk_hd1->pad;
         alloc_heap_mem_blk_cnt--;
     }
-    if (needfree == 0)
-    {
-     printf("Memory Block %p was deallocated from %s at line %d \r\n", mem_ptn_hd, file, line);
-     printf("Memory %p has been deallocated!\r\n", p);
-     dl_list_for_each_reverse(mem_blk_hd1, &memory_free_list, MEMORY_BLOCK, list){
-            if (mem_blk_hd1->header_pattern == (u32)mem_ptn_hd)
-            {
-                printf("Memory Block %p has been put free list!\r\n", mem_ptn_hd);
-                break;
-            }
+    if (needfree == 0) {
+    printf("Memory Block %p was deallocated from %s at line %d \r\n", mem_ptn_hd, file, line);
+    printf("Memory %p has been deallocated!\r\n", p);
+    dl_list_for_each_reverse(mem_blk_hd1, &memory_free_list, MEMORY_BLOCK, list) {
+        if (mem_blk_hd1->header_pattern == (u32)mem_ptn_hd) {
+            printf("Memory Block %p has been put free list!\r\n", mem_ptn_hd);
+            break;
         }
-        tls_os_release_critical(cpu_sr);
-        tls_os_sem_release(mem_sem);
-        tls_mem_alloc_info();
-     return;
     }
-#if 0
-    if (mem_blk_hd1->line == 976 || mem_blk_hd1->line == 983)
-    {
-     printf("Memory Block %p can not deallocated from %s at line %d \r\n", mem_ptn_hd, file, line);
-     printf("Memory %p has been deallocated!\r\n", p);
-        tls_mem_alloc_info();
+    tls_os_release_critical(cpu_sr);
+    tls_os_sem_release(mem_sem);
+    tls_mem_alloc_info();
+    return;
     }
-#endif
     mem_ptn_tl = (PMEMORY_PATTERN) ((u8 *)p + mem_blk_hd1->length + mem_blk_hd1->pad + OVERSIZE);
     //
     // Check that header was not corrupted
     //
-    if (mem_ptn_hd->pattern0 != MEM_HEADER_PATTERN /*|| mem_ptn_hd->pattern1 != MEM_HEADER_PATTERN 
-        || mem_ptn_hd->pattern2 != MEM_HEADER_PATTERN || mem_ptn_hd->pattern3 != MEM_HEADER_PATTERN*/) 
-    {
+    if (mem_ptn_hd->pattern0 != MEM_HEADER_PATTERN) {
         printf("Memory %p was deallocated from %s at line %d \r\n", p, file, line);
         printf("Memory header corruption due to underflow detected at memory block %p\r\n",
             mem_ptn_hd);
-        printf("Header pattern 0(0x%x)\r\n",// , 1(0x%x), 2(0x%x), 3(0x%x)
-            mem_ptn_hd->pattern0 /*,
-            mem_ptn_hd->pattern1,
-            mem_ptn_hd->pattern2,
-            mem_ptn_hd->pattern3*/);
-        // printf("Dumping information about memory block. "
-        //        "This information may itself have been "
-         //       "corrupted and could cause machine to bugcheck.\r\n");
+        printf("Header pattern 0(0x%x)\r\n", mem_ptn_hd->pattern0);
         printf("Memory was allocated from %s at line %d with length %d\r\n",
-                mem_blk_hd1->file,
-                mem_blk_hd1->line,
-                mem_blk_hd1->length);
+               mem_blk_hd1->file,
+               mem_blk_hd1->line,
+               mem_blk_hd1->length);
         haserr = 1;
     }
-
-#if 0
-    printf("<==free memory allocated from %s at line %d with length %d\n",
-            mem_blk_hd->file,
-            mem_blk_hd->line,
-            mem_blk_hd->length);
-    printf("<==free memory 0x%x\n", (u8 *)mem_blk_hd+sizeof(*mem_blk_hd));
-#endif
 
     //
     // Check that trailer was not corrupted
     //
-    if (mem_ptn_tl->pattern0 != MEM_TAILER_PATTERN /*|| mem_ptn_tl->pattern1 != MEM_TAILER_PATTERN 
-        || mem_ptn_tl->pattern2 != MEM_TAILER_PATTERN || mem_ptn_tl->pattern3 != MEM_TAILER_PATTERN*/) {
-     printf("Memory %p was deallocated from %s at line %d \r\n", p, file, line);
+    if (mem_ptn_tl->pattern0 != MEM_TAILER_PATTERN) {
+        printf("Memory %p was deallocated from %s at line %d \r\n", p, file, line);
         printf("Memory tailer corruption due to overflow detected at %p\r\n", mem_ptn_hd);
-        printf("Tailer pattern 0(0x%x)\r\n",// , 1(0x%x), 2(0x%x), 3(0x%x)
-            mem_ptn_tl->pattern0/*,
-            mem_ptn_tl->pattern1,
-            mem_ptn_tl->pattern2,
-            mem_ptn_tl->pattern3*/);
-        // printf("Dumping information about memory block. "
-        //       "This information may itself have been "
-        //        "corrupted and could cause machine to bugcheck.\r\n");
+        printf("Tailer pattern 0(0x%x)\r\n", mem_ptn_tl->pattern0);
         printf("Memory was allocated from %s at line %d with length %d\r\n",
-                mem_blk_hd1->file, mem_blk_hd1->line, mem_blk_hd1->length);
+            mem_blk_hd1->file, mem_blk_hd1->line, mem_blk_hd1->length);
         haserr = 1;
     }
-    if (needfree){
+    if (needfree) {
         free(mem_ptn_hd);
     }
-    
+
     tls_os_release_critical(cpu_sr);
     tls_os_sem_release(mem_sem);
 
@@ -423,95 +342,82 @@ void mem_free_debug(void *p,  char* file, int line)
         tls_mem_alloc_info();
 }
 
-void * mem_realloc_debug(void *mem_address, u32 size, char* file, int line)
+void *mem_realloc_debug(void *mem_address, u32 size, char* file, int line)
 {
-    void * mem_re_addr;
+    void *mem_re_addr;
     u32 cpu_sr;
 
-    if ((mem_re_addr = mem_alloc_debug(size,  file, line)) == NULL){
+    if ((mem_re_addr = mem_alloc_debug(size,  file, line)) == NULL) {
         printf("mem_realloc_debug failed(size=%d).\r\n", size);
         return NULL;
     }
-    if (mem_address != NULL)
-    {
+    if (mem_address != NULL) {
         cpu_sr = tls_os_set_critical();
-        memcpy(mem_re_addr, mem_address, size);
+        memcpy_s(mem_re_addr, sizeof(mem_re_addr), mem_address, size);
         tls_os_release_critical(cpu_sr);
         mem_free_debug(mem_address, file, line);
     }
-    // printf("mem_realloc_debug mem_address=%p, mem_re_addr=%p, size=%d, file=%s, line=%d\n", mem_address, mem_re_addr, size, file, line);
     return mem_re_addr;
 }
 
 void tls_mem_alloc_info(void)
 {
     int i;
-    MEMORY_BLOCK * pos;
+    MEMORY_BLOCK *pos;
     u32 cpu_sr;
-    
+
     tls_os_sem_acquire(mem_sem, 0);
     cpu_sr = tls_os_set_critical();
     printf("==>Memory was allocated size %d, count %d\r\n",
         alloc_heap_mem_bytes, alloc_heap_mem_blk_cnt);
     i = 1;
-    dl_list_for_each(pos, &memory_used_list, MEMORY_BLOCK, list){
+    dl_list_for_each(pos, &memory_used_list, MEMORY_BLOCK, list) {
         printf("Block(%2d): addr<%p>, file<%s>, line<%d>, length<%d>\r\n",
-                i, pos->header_pattern, pos->file, pos->line, pos->length);
+               i, pos->header_pattern, pos->file, pos->line, pos->length);
         i++;
     }
     tls_os_release_critical(cpu_sr);
     tls_os_sem_release(mem_sem);
-    
 }
 
 int is_safe_addr_debug(void* p, u32 len, char* file, int line)
 {
     int i;
-    MEMORY_BLOCK * pos;
+    MEMORY_BLOCK *pos;
     u32 cpu_sr;
 
-    if (((u32)p) >= (u32)0x64ae8 || ((u32)p) < (u32)0x54ae8)
-    {
+    if (((u32)p) >= (u32)0x64ae8 || ((u32)p) < (u32)0x54ae8) {
         return 1;
     }
     tls_os_sem_acquire(mem_sem, 0);
     cpu_sr = tls_os_set_critical();
     i = 1;
-    dl_list_for_each(pos, &memory_used_list, MEMORY_BLOCK, list){
-        if ((pos->header_pattern + sizeof (MEMORY_PATTERN)  + PRE_OVERSIZE) <= ((u32)p) && ((u32)p) <= ((u32)(pos->header_pattern + sizeof(MEMORY_PATTERN) + PRE_OVERSIZE + pos->length)))
-        {
-            if (((u32)p) + len > ((u32)(pos->header_pattern + sizeof(MEMORY_PATTERN) + PRE_OVERSIZE + pos->length)))
-            {
+    dl_list_for_each(pos, &memory_used_list, MEMORY_BLOCK, list) {
+        if ((pos->header_pattern + sizeof (MEMORY_PATTERN)  + PRE_OVERSIZE) <= ((u32)p) && ((u32)p) <= \
+            ((u32)(pos->header_pattern + sizeof(MEMORY_PATTERN) + PRE_OVERSIZE + pos->length))) {
+            if (((u32)p) + len > ((u32)(pos->header_pattern + sizeof(MEMORY_PATTERN) + PRE_OVERSIZE + pos->length))) {
                 printf("==>Memory oversize. Block(%2d): addr<%p>, file<%s>, line<%d>, length<%d>\r\n",
                     i, pos->header_pattern, pos->file, pos->line, pos->length);
                 break;
-            }
-            else
-            {
+            } else {
                 tls_os_release_critical(cpu_sr);
                 tls_os_sem_release(mem_sem);
                 return 1;
             }
         }
-        // else if (((u32)p) < pos->header_pattern)
-        // {
-        //    // tls_os_release_critical(cpu_sr);
-        //    tls_os_sem_release(mem_sem);
-        //    return 1;
-       // }
         i++;
     }
     tls_os_release_critical(cpu_sr);
     tls_os_sem_release(mem_sem);
-    printf("==>Memory is not safe addr<%p>, file<%s>, line<%d>.\r\n",p, file, line);
+    printf("==>Memory is not safe addr<%p>, file<%s>, line<%d>.\r\n", p, file, line);
     return 0;
 }
 
 #else /* WM_MEM_DEBUG */
-void * mem_alloc_debug(u32 size)
+void *mem_alloc_debug(u32 size)
 {
     u32 *buffer = (u32 *)LOS_MemAlloc(OS_SYS_MEM_ADDR, size);
-    
+
     if (buffer == NULL)
         printf("malloc error \n");
 
@@ -521,25 +427,23 @@ void * mem_alloc_debug(u32 size)
 void mem_free_debug(void *p)
 {
     int ret = LOS_MemFree(OS_SYS_MEM_ADDR, p);
-    if (ret)
-    {
+    if (ret) {
         printf("mem free error\n");
     }
 }
 
-void * mem_realloc_debug(void *mem_address, u32 size)
+void *mem_realloc_debug(void *mem_address, u32 size)
 {
-    u32 * mem_re_addr = (u32 *)LOS_MemRealloc(OS_SYS_MEM_ADDR, mem_address, size);
-    
+    u32 *mem_re_addr = (u32 *)LOS_MemRealloc(OS_SYS_MEM_ADDR, mem_address, size);
+
     return mem_re_addr;
 }
 
 void *mem_calloc_debug(u32 n, u32 size)
 {
     u32 *buffer = (u32 *)LOS_MemAlloc(OS_SYS_MEM_ADDR, n*size);
-    if (buffer) 
-    {
-        memset(buffer, 0, n*size);
+    if (buffer) {
+        memset_s(buffer, sizeof(buffer), 0, n*size);
     }
 
     return buffer;
@@ -554,4 +458,3 @@ u32 tls_mem_get_avail_heapsize(void)
     }
     return status.totalFreeSize;
 }
-

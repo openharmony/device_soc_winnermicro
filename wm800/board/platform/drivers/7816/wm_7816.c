@@ -27,49 +27,45 @@
 #include <string.h>
 #include <stdio.h>
 #include "wm_regs.h"
-#include "wm_7816.h"
 #include "wm_gpio.h"
 #include "wm_uart.h"
 #include "wm_cpu.h"
+#include "wm_7816.h"
 
 #include "wm_osal.h"
 
 #define DEBUG_7816        1
 
 #if DEBUG_7816
-#define PRINT_DEBUG(fmt, args...)   do{(printf("[DEBUG] "), printf(fmt, ##args));}while(0)
+#define PRINT_DEBUG(fmt, args...)   do {(printf("[DEBUG] "), printf(fmt, ##args));}while (0)
 #else
 #define PRINT_DEBUG(fmt, args...)
 #endif
 
 #define SYS_CLK        (40000000)
-#define WM_SC_RST_PIN        WM_IO_PB_23 // (23)    
-#define WM_SC_PWR_PIN        WM_IO_PB_24 // (29)    
+#define WM_SC_RST_PIN        WM_IO_PB_23 // (23)
+#define WM_SC_PWR_PIN        WM_IO_PB_24 // (29)
 
 sc_io_map sc_io;
 
 /**
  * @brief
  *    This function is used to config the pin in gpio or 7816 mode for the 7816 power on timing
- * @param[in] mode : 1--gpio mode ; 0--7816 mode    
+ * @param[in] mode : 1--gpio mode ; 0--7816 mode
  * @retval
  */
 void wm_sc_io_clk_config(uint8_t mode)
-{    
-    if (sc_io.initialed == 0)
-    {
+{
+    if (sc_io.initialed == 0) {
         printf("error : 7816 io map must init....\r\n");
         return ;
     }
-    if (mode)  // gpio mode
-    {
+    if (mode) { // gpio mode
         tls_io_cfg_set(sc_io.clk_pin_num, WM_IO_OPTION5);
         tls_io_cfg_set(sc_io.io_pin_num, WM_IO_OPTION5);
         tls_gpio_cfg(sc_io.clk_pin_num, WM_GPIO_DIR_OUTPUT, WM_GPIO_ATTR_PULLHIGH);
         tls_gpio_cfg(sc_io.io_pin_num, WM_GPIO_DIR_OUTPUT, WM_GPIO_ATTR_PULLHIGH);
-    }
-    else  // 7816 mode
-    {    
+    } else  { // 7816 mode
         tls_io_cfg_set(sc_io.clk_pin_num, sc_io.clk_opt);
         tls_io_cfg_set(sc_io.io_pin_num, sc_io.io_opt);
     }
@@ -78,7 +74,7 @@ void wm_sc_io_clk_config(uint8_t mode)
 /**
  * @brief
  *    This function is used to config the block guard time param in 7816 mode
- * @param[in] bgt : the value of blcok guard time will be set    
+ * @param[in] bgt : the value of blcok guard time will be set
  * @retval
  */
 void wm_sc_set_bgt(uint8_t bgt)
@@ -118,7 +114,7 @@ void wm_sc_rx_retry_times(uint8_t count)
     reg = tls_reg_read32(HR_UART2_LINE_CTRL);
     reg &= ~(0x7 << 20);
     tls_reg_write32(HR_UART2_LINE_CTRL, reg|(count<<20));
-    tls_bitband_write(HR_UART2_LINE_CTRL, 19, 1);    
+    tls_bitband_write(HR_UART2_LINE_CTRL, 19, 1);
 }
 
 /**
@@ -130,11 +126,11 @@ void wm_sc_rx_retry_times(uint8_t count)
 void wm_sc_set_etu(uint16_t etu)
 {
     uint32_t reg;
-    
+
     reg = tls_reg_read32(HR_UART2_BAUD_RATE_CTRL);
     reg &= ~ 0xFFFF;
     reg |= etu;
-    tls_reg_write32(HR_UART2_BAUD_RATE_CTRL, reg);    
+    tls_reg_write32(HR_UART2_BAUD_RATE_CTRL, reg);
 }
 
 /**
@@ -152,7 +148,7 @@ void wm_sc_set_frequency(uint32_t freq)
     tls_sys_clk_get(&clk);
 
     div = (clk.apbclk * 1000000 + freq)/(2 * freq) - 1;
-    
+
     reg = tls_reg_read32(HR_UART2_BAUD_RATE_CTRL);
     reg &= ~ 0x3F0000;
     reg |= (div<<16);
@@ -166,7 +162,7 @@ void wm_sc_set_frequency(uint32_t freq)
  */
 void wm_sc_powerInit(void)
 {
-#ifdef WM_SC_PWR_PIN    
+#ifdef WM_SC_PWR_PIN
     tls_gpio_cfg(WM_SC_RST_PIN, WM_GPIO_DIR_OUTPUT, WM_GPIO_ATTR_PULLHIGH);
     tls_gpio_cfg(WM_SC_PWR_PIN, WM_GPIO_DIR_OUTPUT, WM_GPIO_ATTR_PULLHIGH);
 #endif
@@ -174,20 +170,20 @@ void wm_sc_powerInit(void)
 
 /**
  * @brief
- *    power on the 7816 device if power is controled by GPIO 
+ *    power on the 7816 device if power is controled by GPIO
  * @retval
  */
 void wm_sc_poweron(void)
 {
-#ifdef WM_SC_PWR_PIN    
+#ifdef WM_SC_PWR_PIN
     tls_gpio_cfg(WM_SC_PWR_PIN, WM_GPIO_DIR_OUTPUT, WM_GPIO_ATTR_PULLHIGH);
     tls_gpio_write(WM_SC_PWR_PIN, 1);
-#endif    
+#endif
 }
 
 /**
  * @brief
- *    power off the 7816 device if power is controled by GPIO 
+ *    power off the 7816 device if power is controled by GPIO
  * @retval
  */
 void wm_sc_poweroff(void)
@@ -195,17 +191,17 @@ void wm_sc_poweroff(void)
 #ifdef WM_SC_PWR_PIN
     tls_gpio_cfg(WM_SC_PWR_PIN, WM_GPIO_DIR_OUTPUT, WM_GPIO_ATTR_PULLHIGH);
     tls_gpio_write(WM_SC_PWR_PIN, 0);
-#endif    
+#endif
 }
 
 /**
  * @brief
- *    driver the reset gpio in low level 
+ *    driver the reset gpio in low level
  * @retval
  */
 void wm_sc_rst_low(void)
 {
-#ifdef WM_SC_RST_PIN    
+#ifdef WM_SC_RST_PIN
     tls_gpio_cfg(WM_SC_RST_PIN, WM_GPIO_DIR_OUTPUT, WM_GPIO_ATTR_PULLHIGH);
     tls_gpio_write(WM_SC_RST_PIN, 0);
 #endif
@@ -213,15 +209,15 @@ void wm_sc_rst_low(void)
 
 /**
  * @brief
- *    driver the reset gpio in high level 
+ *    driver the reset gpio in high level
  * @retval
  */
 void wm_sc_rst_high(void)
 {
-#ifdef WM_SC_RST_PIN    
+#ifdef WM_SC_RST_PIN
     tls_gpio_cfg(WM_SC_RST_PIN, WM_GPIO_DIR_OUTPUT, WM_GPIO_ATTR_PULLHIGH);
     tls_gpio_write(WM_SC_RST_PIN, 1);
-#endif    
+#endif
 }
 
 /**
@@ -232,11 +228,11 @@ void wm_sc_rst_high(void)
 void wm_sc_hotreset(void)
 {
     uint32_t delay = 0xffff;
-    
+
     /* set the rst pin to low */
-    wm_sc_rst_low();    
+    wm_sc_rst_low();
     /* delay */
-    while(delay--);
+    while (delay--);
     /* set f/d to default 372 */
     wm_sc_set_etu(WM_SC_DEFAULT_FD);
     /* set the rst pin to high */
@@ -249,7 +245,7 @@ void wm_sc_hotreset(void)
  * @retval
  */
 void wm_sc_colreset(void)
-{    
+{
     /* power down */
     wm_sc_poweroff();
     /* select the clk io in gpio mode */
@@ -266,9 +262,9 @@ void wm_sc_colreset(void)
     wm_sc_7816_mode(1);
     /* select the clk io pin in 7816 mode */
     wm_sc_io_clk_config(0);
-    /* config the output clock freq*/
+    /* config the output clock freq */
     wm_sc_set_frequency(5000000);
-    /* set the F/D to default (372)*/
+    /* set the F/D to default (372) */
     wm_sc_set_etu(WM_SC_DEFAULT_FD);
     /* set the rst pin to high */
     wm_sc_rst_high();
@@ -280,8 +276,8 @@ void wm_sc_colreset(void)
  * @retval
  */
 void wm_sc_deactive(void)
-{    
-    /* set the rst pin in low level*/
+{
+    /* set the rst pin in low level */
     wm_sc_rst_low();
     /* select the clk and io pin to 7816 mode */
     wm_sc_io_clk_config(0);
@@ -296,4 +292,3 @@ void wm_sc_deactive(void)
     /* set the power pin to low */
     wm_sc_poweroff();
 }
-
