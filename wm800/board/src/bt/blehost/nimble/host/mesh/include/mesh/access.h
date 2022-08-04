@@ -33,8 +33,8 @@ extern "C" {
 #define BT_MESH_KEY_DEV_REMOTE    0xfffd
 #define BT_MESH_KEY_DEV_ANY       0xfffc
 
-#define BT_MESH_IS_DEV_KEY(key) (key == BT_MESH_KEY_DEV_LOCAL || \
-                 key == BT_MESH_KEY_DEV_REMOTE)
+#define BT_MESH_IS_DEV_KEY(key) ((key) == BT_MESH_KEY_DEV_LOCAL || \
+                 (key) == BT_MESH_KEY_DEV_REMOTE)
 
 /** Helper to define a mesh element within an array.
  *
@@ -178,7 +178,7 @@ struct bt_mesh_model_op {
                   { BT_MESH_MODEL_OP_END })
 
 /** Helper to define an empty model array */
-#define BT_MESH_MODEL_NONE ((struct bt_mesh_model []){})
+#define BT_MESH_MODEL_NONE ((struct bt_mesh_model []) {})
 
 /** Length of a short Mesh MIC. */
 #define BT_MESH_MIC_SHORT 4
@@ -242,14 +242,14 @@ struct bt_mesh_model_op {
 #define BT_MESH_MODEL_CB(_id, _op, _pub, _user_data, _cb)                    \
 {                                                                            \
     .id = (_id),                                                         \
-    .op = _op,                                                           \
+    .op = (_op),                                                           \
     .keys = { [0 ... (CONFIG_BT_MESH_MODEL_KEY_COUNT - 1)] =             \
             BT_MESH_KEY_UNUSED },                                \
-    .pub = _pub,                                                         \
+    .pub = (_pub),                                                         \
     .groups = { [0 ... (CONFIG_BT_MESH_MODEL_GROUP_COUNT - 1)] =         \
             BT_MESH_ADDR_UNASSIGNED },                           \
-    .user_data = _user_data,                                             \
-    .cb = _cb,                                                           \
+    .user_data = (_user_data),                                             \
+    .cb = (_cb),                                                           \
 }
 
 /** @def BT_MESH_MODEL_VND_CB
@@ -267,14 +267,14 @@ struct bt_mesh_model_op {
 {                                                                            \
     .vnd.company = (_company),                                           \
     .vnd.id = (_id),                                                     \
-    .op = _op,                                                           \
-    .pub = _pub,                                                         \
+    .op = (_op),                                                           \
+    .pub = (_pub),                                                         \
     .keys = { [0 ... (CONFIG_BT_MESH_MODEL_KEY_COUNT - 1)] =             \
             BT_MESH_KEY_UNUSED },                                \
     .groups = { [0 ... (CONFIG_BT_MESH_MODEL_GROUP_COUNT - 1)] =         \
             BT_MESH_ADDR_UNASSIGNED },                           \
-    .user_data = _user_data,                                             \
-    .cb = _cb,                                                           \
+    .user_data = (_user_data),                                             \
+    .cb = (_cb),                                                           \
 }
 
 /** @def BT_MESH_MODEL
@@ -313,7 +313,7 @@ struct bt_mesh_model_op {
  *  @return Mesh transmit value that can be used e.g. for the default
  *          values of the configuration model data.
  */
-#define BT_MESH_TRANSMIT(count, int_ms) ((count) | (((int_ms / 10) - 1) << 3))
+#define BT_MESH_TRANSMIT(count, int_ms) ((count) | ((((int_ms) / 10) - 1) << 3))
 
 /** @def BT_MESH_TRANSMIT_COUNT
  *
@@ -380,10 +380,10 @@ struct bt_mesh_model_pub {
     u8_t  ttl;          /**< Publish Time to Live. */
     u8_t  retransmit;   /**< Retransmit Count & Interval Steps. */
     u8_t  period;       /**< Publish Period. */
-    u8_t  period_div: 4, /**< Divisor for the Period. */
-          cred: 1,      /**< Friendship Credentials Flag. */
-          fast_period: 1, /**< Use FastPeriodDivisor */
-          count: 3;     /**< Retransmissions left. */
+    u8_t  period_div : 4, /**< Divisor for the Period. */
+          cred : 1,      /**< Friendship Credentials Flag. */
+          fast_period : 1, /**< Use FastPeriodDivisor */
+          count : 3;     /**< Retransmissions left. */
 
     u32_t period_start; /**< Start of the current period. */
 
@@ -573,7 +573,7 @@ struct bt_mesh_elem *bt_mesh_model_elem(struct bt_mesh_model *mod);
  * if no SIG model with the given ID exists in the given element.
  */
 struct bt_mesh_model *bt_mesh_model_find(const struct bt_mesh_elem *elem,
-        u16_t id);
+                                         u16_t id);
 
 /** @brief Find a vendor model.
  *
@@ -585,7 +585,7 @@ struct bt_mesh_model *bt_mesh_model_find(const struct bt_mesh_elem *elem,
  * if no vendor model with the given ID exists in the given element.
  */
 struct bt_mesh_model *bt_mesh_model_find_vnd(const struct bt_mesh_elem *elem,
-        u16_t company, u16_t id);
+                                             u16_t company, u16_t id);
 
 /** @brief Get whether the model is in the primary element of the device.
  *

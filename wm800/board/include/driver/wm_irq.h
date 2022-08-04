@@ -33,8 +33,7 @@ typedef void (*intr_handler_func) (void *);
 /**
  * @typedef struct tls_irq_handler
  */
-typedef struct tls_irq_handler
-{
+typedef struct tls_irq_handler {
     void (*handler) (void *);
     void *data;
     u32 counter;

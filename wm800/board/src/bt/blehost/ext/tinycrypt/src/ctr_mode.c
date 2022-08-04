@@ -56,18 +56,19 @@ int tc_ctr_mode(uint8_t *out, unsigned int outlen, const uint8_t *in,
     /* copy the ctr to the nonce */
     (void)_copy(nonce, sizeof(nonce), ctr, sizeof(nonce));
     /* select the last 4 bytes of the nonce to be incremented */
+    // 12:array element, 24:byte alignment, 13:array element, 16:byte alignment
     block_num = (nonce[12] << 24) | (nonce[13] << 16) |
-                (nonce[14] << 8) | (nonce[15]);
+                (nonce[14] << 8) | (nonce[15]); // 14:array element, 8:byte alignment, 15:array element
 
-    for(i = 0; i < inlen; ++i) {
+    for (i = 0; i < inlen; ++i) {
         if ((i % (TC_AES_BLOCK_SIZE)) == 0) {
             /* encrypt data using the current nonce */
             if (tc_aes_encrypt(buffer, nonce, sched)) {
                 block_num++;
-                nonce[12] = (uint8_t)(block_num >> 24);
-                nonce[13] = (uint8_t)(block_num >> 16);
-                nonce[14] = (uint8_t)(block_num >> 8);
-                nonce[15] = (uint8_t)(block_num);
+                nonce[12] = (uint8_t)(block_num >> 24); // 24:byte alignment, 12:array element
+                nonce[13] = (uint8_t)(block_num >> 16); // 16:byte alignment, 13:array element
+                nonce[14] = (uint8_t)(block_num >> 8); // 8:byte alignment, 14:array element
+                nonce[15] = (uint8_t)(block_num); // 15:array element
             } else {
                 return TC_CRYPTO_FAIL;
             }
@@ -78,9 +79,9 @@ int tc_ctr_mode(uint8_t *out, unsigned int outlen, const uint8_t *in,
     }
 
     /* update the counter */
-    ctr[12] = nonce[12];
-    ctr[13] = nonce[13];
-    ctr[14] = nonce[14];
-    ctr[15] = nonce[15];
+    ctr[12] = nonce[12]; // 12:array element
+    ctr[13] = nonce[13]; // 13:array element
+    ctr[14] = nonce[14]; // 14:array element
+    ctr[15] = nonce[15]; // 15:array element
     return TC_CRYPTO_SUCCESS;
 }

@@ -32,7 +32,8 @@
 #include <core_802.h>
 #elif defined(__E803__) || defined(__S803__)
 #include <core_803.h>
-#elif defined(__CK803__) || defined(__CK804__) || defined(__E804__) || defined(__E804D__) || defined(__E804F__) || defined (__E804DF__)
+#elif defined(__CK803__) || defined(__CK804__) || defined(__E804__) || \
+      defined(__E804D__) || defined(__E804F__) || defined (__E804DF__)
 #include <core_804.h>
 #elif defined(__CK805__) || defined(__I805__) || defined(__I805F__)
 #include <core_805.h>

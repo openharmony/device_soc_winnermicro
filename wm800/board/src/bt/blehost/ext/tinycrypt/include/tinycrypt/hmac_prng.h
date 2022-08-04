@@ -75,7 +75,7 @@
 extern "C" {
 #endif
 
-#define TC_HMAC_PRNG_RESEED_REQ -1
+#define TC_HMAC_PRNG_RESEED_REQ  (-1)
 
 struct tc_hmac_prng_struct {
     /* the HMAC instance for this PRNG */

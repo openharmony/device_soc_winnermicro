@@ -16,8 +16,7 @@
 #ifndef __LITEPOINT_H
 #define __LITEPOINT_H
 #include "wm_type_def.h"
-typedef struct _ltpt_rx_info
-{
+typedef struct _ltpt_rx_info {
     volatile int cnt_total;
     volatile int cnt_good;
     volatile int cnt_bad;
@@ -30,24 +29,22 @@ typedef struct _ltpt_rx_info
     volatile unsigned char bprocess;
 }ltpt_rx_info;
 
-typedef struct _ltpt_tx_info
-{
+typedef struct _ltpt_tx_info {
     volatile int cnt_total;
-    volatile int packetcount;    
-    volatile int psdulen;        
+    volatile int packetcount;
+    volatile int psdulen;
     /* input parameters */
-    volatile unsigned char txgain;      
+    volatile unsigned char txgain;
     volatile unsigned char datarate;
     volatile unsigned char gimode;
     volatile unsigned char greenfield;
     volatile unsigned char rifs;
-    volatile unsigned char bprocess;    
+    volatile unsigned char bprocess;
     volatile unsigned char channel;
     volatile unsigned char longpreamble;
 }ltpt_tx_info;
 
-enum Rate 
-{
+enum Rate {
     S2M = 0x0000,
     S5M5 = 0x0001,
     S11M = 0x0002,
@@ -91,7 +88,8 @@ extern const unsigned int hed_bbp_value[];
 void tls_litepoint_start(void);
 void tls_tx_send_litepoint(void);
 void tls_set_test_channel(u8 channel, u8 bandwidth);
-void tls_tx_litepoint_test_start(u32 tempcomp,u32 Packetcnt, u16 Psdulen, u32 Gain, u32 TxRate, u8 GiMode, u8 Gf, u8 Rifs);
+void tls_tx_litepoint_test_start(u32 tempcomp, u32 Packetcnt, u16 Psdulen,
+                                 u32 Gain, u32 TxRate, u8 GiMode, u8 Gf, u8 Rifs);
 void tls_txrx_litepoint_test_stop(void);
 void tls_txrx_litepoint_clear_data(void);
 int  tls_tx_litepoint_test_get_totalsnd(void);

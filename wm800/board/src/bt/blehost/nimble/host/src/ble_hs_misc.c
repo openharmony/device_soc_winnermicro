@@ -24,22 +24,19 @@
 
 const uint8_t ble_hs_misc_null_addr[6];
 
-int
-ble_hs_misc_conn_chan_find(uint16_t conn_handle, uint16_t cid,
-                           struct ble_hs_conn **out_conn,
-                           struct ble_l2cap_chan **out_chan)
+int ble_hs_misc_conn_chan_find(uint16_t conn_handle, uint16_t cid,
+                               struct ble_hs_conn **out_conn,
+                               struct ble_l2cap_chan **out_chan)
 {
     struct ble_l2cap_chan *chan;
     struct ble_hs_conn *conn;
     int rc;
     conn = ble_hs_conn_find(conn_handle);
-
     if (conn == NULL) {
         chan = NULL;
         rc = BLE_HS_ENOTCONN;
     } else {
         chan = ble_hs_conn_chan_find_by_scid(conn, cid);
-
         if (chan == NULL) {
             rc = BLE_HS_ENOTCONN;
         } else {
@@ -58,10 +55,9 @@ ble_hs_misc_conn_chan_find(uint16_t conn_handle, uint16_t cid,
     return rc;
 }
 
-void
-ble_hs_misc_conn_chan_find_reqd(uint16_t conn_handle, uint16_t cid,
-                                struct ble_hs_conn **out_conn,
-                                struct ble_l2cap_chan **out_chan)
+void ble_hs_misc_conn_chan_find_reqd(uint16_t conn_handle, uint16_t cid,
+                                     struct ble_hs_conn **out_conn,
+                                     struct ble_l2cap_chan **out_chan)
 {
     struct ble_l2cap_chan *chan;
     struct ble_hs_conn *conn;
@@ -78,10 +74,9 @@ ble_hs_misc_conn_chan_find_reqd(uint16_t conn_handle, uint16_t cid,
     }
 }
 
-uint8_t
-ble_hs_misc_own_addr_type_to_id(uint8_t own_addr_type)
+uint8_t ble_hs_misc_own_addr_type_to_id(uint8_t own_addr_type)
 {
-    switch(own_addr_type) {
+    switch (own_addr_type) {
         case BLE_OWN_ADDR_PUBLIC:
         case BLE_OWN_ADDR_RPA_PUBLIC_DEFAULT:
             return BLE_ADDR_PUBLIC;
@@ -96,10 +91,9 @@ ble_hs_misc_own_addr_type_to_id(uint8_t own_addr_type)
     }
 }
 
-uint8_t
-ble_hs_misc_peer_addr_type_to_id(uint8_t peer_addr_type)
+uint8_t ble_hs_misc_peer_addr_type_to_id(uint8_t peer_addr_type)
 {
-    switch(peer_addr_type) {
+    switch (peer_addr_type) {
         case BLE_ADDR_PUBLIC:
         case BLE_ADDR_PUBLIC_ID:
             return BLE_ADDR_PUBLIC;
@@ -114,28 +108,21 @@ ble_hs_misc_peer_addr_type_to_id(uint8_t peer_addr_type)
     }
 }
 
-static int
-ble_hs_misc_restore_one_irk(int obj_type, union ble_store_value *val,
-                            void *cookie)
+static int ble_hs_misc_restore_one_irk(int obj_type, union ble_store_value *val, void *cookie)
 {
     const struct ble_store_value_sec *sec;
     BLE_HS_DBG_ASSERT(obj_type == BLE_STORE_OBJ_TYPE_PEER_SEC);
     sec = &val->sec;
-
     if (sec->irk_present) {
-        int rc = ble_hs_pvcy_add_entry(sec->peer_addr.val, sec->peer_addr.type,
-                                   sec->irk);
-
+        int rc = ble_hs_pvcy_add_entry(sec->peer_addr.val, sec->peer_addr.type, sec->irk);
         if (rc != 0) {
             BLE_HS_LOG(ERROR, "failed to configure restored IRK\n");
         }
     }
-
     return 0;
 }
 
-int
-ble_hs_misc_restore_irks(void)
+int ble_hs_misc_restore_irks(void)
 {
     int rc;
     rc = ble_store_iterate(BLE_STORE_OBJ_TYPE_PEER_SEC,

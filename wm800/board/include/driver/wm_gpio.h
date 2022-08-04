@@ -82,7 +82,7 @@ enum tls_gpio_irq_trig {
  *
  * @return         None
  *
- * @note			None	
+ * @note			None
  */
 void tls_gpio_cfg(enum tls_io_name gpio_pin, enum tls_gpio_dir dir, enum tls_gpio_attr attr);
 

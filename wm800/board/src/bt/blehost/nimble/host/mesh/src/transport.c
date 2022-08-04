@@ -67,8 +67,8 @@ static struct seg_tx {
     struct os_mbuf          *seg[CONFIG_BT_MESH_TX_SEG_MAX];
     u64_t                    seq_auth;
     u16_t                    dst;
-    u8_t                     seg_n: 5,      /* Last segment index */
-                             new_key: 1;    /* New/old key */
+    u8_t                     seg_n : 5,      /* Last segment index */
+                             new_key : 1;    /* New/old key */
     u8_t                     nack_count;    /* Number of unacked segs */
     u8_t                     ttl;
     const struct bt_mesh_send_cb *cb;
@@ -79,10 +79,10 @@ static struct seg_tx {
 static struct seg_rx {
     struct bt_mesh_subnet   *sub;
     u64_t                    seq_auth;
-    u8_t                     seg_n: 5,
-                             ctl: 1,
-                             in_use: 1,
-                             obo: 1;
+    u8_t                     seg_n : 5,
+                             ctl : 1,
+                             in_use : 1,
+                             obo : 1;
     u8_t                     hdr;
     u8_t                     ttl;
     u16_t                    src;
@@ -109,7 +109,6 @@ static int send_unseg(struct bt_mesh_net_tx *tx, struct os_mbuf *sdu,
     BT_DBG("src 0x%04x dst 0x%04x app_idx 0x%04x sdu_len %u",
            tx->src, tx->ctx->addr, tx->ctx->app_idx, sdu->om_len);
     buf = bt_mesh_adv_create(BT_MESH_ADV_DATA, tx->xmit, BUF_TIMEOUT);
-
     if (!buf) {
         BT_ERR("Out of network buffers");
         return -ENOBUFS;
@@ -127,8 +126,8 @@ static int send_unseg(struct bt_mesh_net_tx *tx, struct os_mbuf *sdu,
 
     if (IS_ENABLED(CONFIG_BT_MESH_FRIEND)) {
         if (!bt_mesh_friend_queue_has_space(tx->sub->net_idx,
-                                           tx->src, tx->ctx->addr,
-                                           NULL, 1)) {
+            tx->src, tx->ctx->addr,
+            NULL, 1)) {
             if (BT_MESH_ADDR_IS_UNICAST(tx->ctx->addr)) {
                 BT_ERR("Not enough space in Friend Queue");
                 net_buf_unref(buf);
@@ -140,8 +139,7 @@ static int send_unseg(struct bt_mesh_net_tx *tx, struct os_mbuf *sdu,
         }
 
         if (bt_mesh_friend_enqueue_tx(tx, BT_MESH_FRIEND_PDU_SINGLE,
-                                     NULL, 1, buf) &&
-                BT_MESH_ADDR_IS_UNICAST(tx->ctx->addr)) {
+                NULL, 1, buf) && BT_MESH_ADDR_IS_UNICAST(tx->ctx->addr)) {
             /* PDUs for a specific Friend should only go
              * out through the Friend Queue.
              */
@@ -159,7 +157,7 @@ bool bt_mesh_tx_in_progress(void)
 {
     int i;
 
-    for(i = 0; i < ARRAY_SIZE(seg_tx); i++) {
+    for (i = 0; i < ARRAY_SIZE(seg_tx); i++) {
         if (seg_tx[i].nack_count) {
             return true;
         }
@@ -182,7 +180,7 @@ static void seg_tx_reset(struct seg_tx *tx)
         return;
     }
 
-    for(i = 0; i <= tx->seg_n; i++) {
+    for (i = 0; i <= tx->seg_n; i++) {
         if (!tx->seg[i]) {
             continue;
         }
@@ -258,7 +256,7 @@ static void seg_tx_send_unacked(struct seg_tx *tx)
 {
     int i, err;
 
-    for(i = 0; i <= tx->seg_n; i++) {
+    for (i = 0; i <= tx->seg_n; i++) {
         struct os_mbuf *seg = tx->seg[i];
 
         if (!seg) {
@@ -279,7 +277,6 @@ static void seg_tx_send_unacked(struct seg_tx *tx)
         BT_DBG("resending %u/%u", i, tx->seg_n);
         err = bt_mesh_net_resend(tx->sub, seg, tx->new_key,
                                  &seg_sent_cb, tx);
-
         if (err) {
             BT_ERR("Sending segment failed");
             seg_tx_complete(tx, -EIO);
@@ -315,7 +312,7 @@ static int send_seg(struct bt_mesh_net_tx *net_tx, struct os_mbuf *sdu,
         return -EMSGSIZE;
     }
 
-    for(tx = NULL, i = 0; i < ARRAY_SIZE(seg_tx); i++) {
+    for (tx = NULL, i = 0; i < ARRAY_SIZE(seg_tx); i++) {
         if (!seg_tx[i].nack_count) {
             tx = &seg_tx[i];
             break;
@@ -335,7 +332,7 @@ static int send_seg(struct bt_mesh_net_tx *net_tx, struct os_mbuf *sdu,
 
     seg_o = 0;
     tx->dst = net_tx->ctx->addr;
-    tx->seg_n = (sdu->om_len - 1) / 12;
+    tx->seg_n = (sdu->om_len - 1) / 12; // 12:byte alignment
     tx->nack_count = tx->seg_n + 1;
     tx->seq_auth = SEQ_AUTH(BT_MESH_NET_IVI_TX, bt_mesh.seq);
     tx->sub = net_tx->sub;
@@ -356,20 +353,19 @@ static int send_seg(struct bt_mesh_net_tx *net_tx, struct os_mbuf *sdu,
             !bt_mesh_friend_queue_has_space(tx->sub->net_idx, net_tx->src,
                                             tx->dst, &tx->seq_auth,
                                             tx->seg_n + 1) &&
-            BT_MESH_ADDR_IS_UNICAST(tx->dst)) {
+                                            BT_MESH_ADDR_IS_UNICAST(tx->dst)) {
         BT_ERR("Not enough space in Friend Queue for %u segments",
                tx->seg_n + 1);
         seg_tx_reset(tx);
         return -ENOBUFS;
     }
 
-    for(seg_o = 0; sdu->om_len; seg_o++) {
+    for (seg_o = 0; sdu->om_len; seg_o++) {
         struct os_mbuf *seg;
         u16_t len;
         int err;
         seg = bt_mesh_adv_create(BT_MESH_ADV_DATA, net_tx->xmit,
                                  BUF_TIMEOUT);
-
         if (!seg) {
             BT_ERR("Out of segment buffers");
             seg_tx_reset(tx);
@@ -379,11 +375,11 @@ static int send_seg(struct bt_mesh_net_tx *net_tx, struct os_mbuf *sdu,
         BT_MESH_ADV(seg)->seg.attempts = SEG_RETRANSMIT_ATTEMPTS;
         net_buf_reserve(seg, BT_MESH_NET_HDR_LEN);
         net_buf_add_u8(seg, seg_hdr);
-        net_buf_add_u8(seg, (net_tx->aszmic << 7) | seq_zero >> 6);
-        net_buf_add_u8(seg, (((seq_zero & 0x3f) << 2) |
-                             (seg_o >> 3)));
-        net_buf_add_u8(seg, ((seg_o & 0x07) << 5) | tx->seg_n);
-        len = min(sdu->om_len, 12);
+        net_buf_add_u8(seg, (net_tx->aszmic << 7) | seq_zero >> 6); // 7:byte alignment, 6:byte alignment
+        net_buf_add_u8(seg, (((seq_zero & 0x3f) << 2) | // 2:byte alignment
+                             (seg_o >> 3))); // 3:byte alignment
+        net_buf_add_u8(seg, ((seg_o & 0x07) << 5) | tx->seg_n); // 12:byte alignment
+        len = min(sdu->om_len, 12); // 12:byte alignment
         net_buf_add_mem(seg, sdu->om_data, len);
         net_buf_simple_pull(sdu, len);
 
@@ -397,10 +393,10 @@ static int send_seg(struct bt_mesh_net_tx *net_tx, struct os_mbuf *sdu,
             }
 
             if (bt_mesh_friend_enqueue_tx(net_tx, type,
-                                         &tx->seq_auth,
-                                         tx->seg_n + 1,
-                                         seg) &&
-                    BT_MESH_ADDR_IS_UNICAST(net_tx->ctx->addr)) {
+                &tx->seq_auth,
+                tx->seg_n + 1,
+                seg) &&
+                BT_MESH_ADDR_IS_UNICAST(net_tx->ctx->addr)) {
                 /* PDUs for a specific Friend should only go
                  * out through the Friend Queue.
                  */
@@ -414,7 +410,6 @@ static int send_seg(struct bt_mesh_net_tx *net_tx, struct os_mbuf *sdu,
         err = bt_mesh_net_send(net_tx, seg,
                                seg_o ? &seg_sent_cb : &first_sent_cb,
                                tx);
-
         if (err) {
             BT_ERR("Sending segment failed");
             seg_tx_reset(tx);
@@ -444,7 +439,7 @@ struct bt_mesh_app_key *bt_mesh_app_key_find(u16_t app_idx)
 {
     int i;
 
-    for(i = 0; i < ARRAY_SIZE(bt_mesh.app_keys); i++) {
+    for (i = 0; i < ARRAY_SIZE(bt_mesh.app_keys); i++) {
         struct bt_mesh_app_key *key = &bt_mesh.app_keys[i];
 
         if (key->net_idx != BT_MESH_KEY_UNUSED &&
@@ -470,7 +465,6 @@ int bt_mesh_trans_send(struct bt_mesh_net_tx *tx, struct os_mbuf *msg,
     }
 
     if (msg->om_len > 11) {
-        // tx->ctx->send_rel = 1;
         tx->ctx->send_rel = true;
     }
 
@@ -479,7 +473,6 @@ int bt_mesh_trans_send(struct bt_mesh_net_tx *tx, struct os_mbuf *msg,
     BT_DBG("len %u: %s", msg->om_len, bt_hex(msg->om_data, msg->om_len));
     err = bt_mesh_app_key_get(tx->sub, tx->ctx->app_idx,
                               tx->ctx->addr, &key, &aid);
-
     if (err) {
         return err;
     }
@@ -501,7 +494,6 @@ int bt_mesh_trans_send(struct bt_mesh_net_tx *tx, struct os_mbuf *msg,
     err = bt_mesh_app_encrypt(key, BT_MESH_IS_DEV_KEY(tx->ctx->app_idx),
                               tx->aszmic, msg, ad, tx->src, tx->ctx->addr,
                               bt_mesh.seq, BT_MESH_NET_IVI_TX);
-
     if (err) {
         return err;
     }
@@ -545,7 +537,7 @@ static bool is_replay(struct bt_mesh_net_rx *rx, struct bt_mesh_rpl **match)
         return false;
     }
 
-    for(i = 0; i < ARRAY_SIZE(bt_mesh.rpl); i++) {
+    for (i = 0; i < ARRAY_SIZE(bt_mesh.rpl); i++) {
         struct bt_mesh_rpl *rpl = &bt_mesh.rpl[i];
 
         /* Empty slot */
@@ -622,7 +614,6 @@ static int sdu_recv(struct bt_mesh_net_rx *rx, u32_t seq, u8_t hdr,
                                   sdu, ad, rx->ctx.addr,
                                   rx->ctx.recv_dst, seq,
                                   BT_MESH_NET_IVI_RX(rx));
-
         if (err) {
             BT_WARN("Unable to decrypt with local DevKey");
         } else {
@@ -639,7 +630,6 @@ static int sdu_recv(struct bt_mesh_net_rx *rx, u32_t seq, u8_t hdr,
              * message so we must try both.
              */
             node = bt_mesh_node_find(rx->ctx.addr);
-
             if (node == NULL) {
                 BT_ERR("No node found for addr 0x%04x",
                        rx->ctx.addr);
@@ -651,7 +641,6 @@ static int sdu_recv(struct bt_mesh_net_rx *rx, u32_t seq, u8_t hdr,
                                       buf, sdu, ad, rx->ctx.addr,
                                       rx->ctx.recv_dst, seq,
                                       BT_MESH_NET_IVI_RX(rx));
-
             if (err) {
                 BT_ERR("Unable to decrypt with node DevKey");
                 return -EINVAL;
@@ -665,7 +654,7 @@ static int sdu_recv(struct bt_mesh_net_rx *rx, u32_t seq, u8_t hdr,
         return -EINVAL;
     }
 
-    for(i = 0; i < ARRAY_SIZE(bt_mesh.app_keys); i++) {
+    for (i = 0; i < ARRAY_SIZE(bt_mesh.app_keys); i++) {
         struct bt_mesh_app_key *key = &bt_mesh.app_keys[i];
         struct bt_mesh_app_keys *keys;
 
@@ -690,7 +679,6 @@ static int sdu_recv(struct bt_mesh_net_rx *rx, u32_t seq, u8_t hdr,
                                   sdu, ad, rx->ctx.addr,
                                   rx->ctx.recv_dst, seq,
                                   BT_MESH_NET_IVI_RX(rx));
-
         if (err) {
             BT_WARN("Unable to decrypt with AppKey 0x%03x",
                     key->app_idx);
@@ -714,7 +702,7 @@ static struct seg_tx *seg_tx_lookup(u16_t seq_zero, u8_t obo, u16_t addr)
 
     int i;
 
-    for(i = 0; i < ARRAY_SIZE(seg_tx); i++) {
+    for (i = 0; i < ARRAY_SIZE(seg_tx); i++) {
         struct seg_tx *tx;
         tx = &seg_tx[i];
 
@@ -769,7 +757,6 @@ static int trans_ack(struct bt_mesh_net_rx *rx, u8_t hdr,
     BT_DBG("OBO %u seq_zero 0x%04x ack 0x%08x", obo, seq_zero,
            (unsigned) ack);
     tx = seg_tx_lookup(seq_zero, obo, rx->ctx.addr);
-
     if (!tx) {
         BT_WARN("No matching TX context for ack");
         return -EINVAL;
@@ -790,7 +777,7 @@ static int trans_ack(struct bt_mesh_net_rx *rx, u8_t hdr,
 
     k_delayed_work_cancel(&tx->retransmit);
 
-    while((bit = find_lsb_set(ack))) {
+    while ((bit = find_lsb_set(ack))) {
         if (tx->seg[bit - 1]) {
             BT_DBG("seg %u/%u acked", bit - 1, tx->seg_n);
             net_buf_unref(tx->seg[bit - 1]);
@@ -843,7 +830,7 @@ static int ctl_recv(struct bt_mesh_net_rx *rx, u8_t hdr,
     u8_t ctl_op = TRANS_CTL_OP(&hdr);
     BT_DBG("OpCode 0x%02x len %u", ctl_op, buf->om_len);
 
-    switch(ctl_op) {
+    switch (ctl_op) {
         case TRANS_CTL_OP_ACK:
             return trans_ack(rx, hdr, buf, seq_auth);
 
@@ -857,7 +844,7 @@ static int ctl_recv(struct bt_mesh_net_rx *rx, u8_t hdr,
     }
 
     if (IS_ENABLED(CONFIG_BT_MESH_FRIEND) && !bt_mesh_lpn_established()) {
-        switch(ctl_op) {
+        switch (ctl_op) {
             case TRANS_CTL_OP_FRIEND_POLL:
                 return bt_mesh_friend_poll(rx, buf);
 
@@ -894,7 +881,7 @@ static int ctl_recv(struct bt_mesh_net_rx *rx, u8_t hdr,
             return -EINVAL;
         }
 
-        switch(ctl_op) {
+        switch (ctl_op) {
             case TRANS_CTL_OP_FRIEND_UPDATE:
                 return bt_mesh_lpn_friend_update(rx, buf);
 
@@ -971,7 +958,6 @@ int bt_mesh_ctl_send(struct bt_mesh_net_tx *tx, u8_t ctl_op, void *data,
            tx->ctx->addr, tx->ctx->send_ttl, ctl_op);
     BT_DBG("len %zu: %s", data_len, bt_hex(data, data_len));
     buf = bt_mesh_adv_create(BT_MESH_ADV_DATA, tx->xmit, BUF_TIMEOUT);
-
     if (!buf) {
         BT_ERR("Out of transport buffers");
         return -ENOBUFS;
@@ -983,8 +969,7 @@ int bt_mesh_ctl_send(struct bt_mesh_net_tx *tx, u8_t ctl_op, void *data,
 
     if (IS_ENABLED(CONFIG_BT_MESH_FRIEND)) {
         if (bt_mesh_friend_enqueue_tx(tx, BT_MESH_FRIEND_PDU_SINGLE,
-                                     seq_auth, 1, buf) &&
-                BT_MESH_ADDR_IS_UNICAST(tx->ctx->addr)) {
+                                    seq_auth, 1, buf) && BT_MESH_ADDR_IS_UNICAST(tx->ctx->addr)) {
             /* PDUs for a specific Friend should only go
              * out through the Friend Queue.
              */
@@ -1029,8 +1014,8 @@ static int send_ack(struct bt_mesh_subnet *sub, u16_t src, u16_t dst,
         return 0;
     }
 
-    sys_put_be16(((seq_zero << 2) & 0x7ffc) | (obo << 15), buf);
-    sys_put_be32(block, &buf[2]);
+    sys_put_be16(((seq_zero << 2) & 0x7ffc) | (obo << 15), buf); // 15:byte alignment, 2:byte alignment
+    sys_put_be32(block, &buf[2]); // 2:array element
     return bt_mesh_ctl_send(&tx, TRANS_CTL_OP_ACK, buf, sizeof(buf),
                             NULL, NULL, NULL);
 }
@@ -1066,8 +1051,7 @@ static void seg_ack(struct ble_npl_event *work)
     struct seg_rx *rx = ble_npl_event_get_arg(work);
     BT_DBG("rx %p", rx);
 
-    if (k_uptime_get_32() - rx->last > K_SECONDS(60)) {
-        BT_WARN("Incomplete timer expired");
+    if (k_uptime_get_32() - rx->last > K_SECONDS(60)) { // 60:60s
         seg_rx_reset(rx, false);
 
         if (IS_ENABLED(CONFIG_BT_TESTING)) {
@@ -1085,9 +1069,9 @@ static void seg_ack(struct ble_npl_event *work)
 static inline u8_t seg_len(bool ctl)
 {
     if (ctl) {
-        return 8;
+        return 8; // 8:byte alignment
     } else {
-        return 12;
+        return 12; // 12:byte alignment
     }
 }
 
@@ -1101,7 +1085,7 @@ static struct seg_rx *seg_rx_find(struct bt_mesh_net_rx *net_rx,
 {
     int i;
 
-    for(i = 0; i < ARRAY_SIZE(seg_rx); i++) {
+    for (i = 0; i < ARRAY_SIZE(seg_rx); i++) {
         struct seg_rx *rx = &seg_rx[i];
 
         if (rx->src != net_rx->ctx.addr ||
@@ -1158,7 +1142,7 @@ static struct seg_rx *seg_rx_alloc(struct bt_mesh_net_rx *net_rx,
 {
     int i;
 
-    for(i = 0; i < ARRAY_SIZE(seg_rx); i++) {
+    for (i = 0; i < ARRAY_SIZE(seg_rx); i++) {
         struct seg_rx *rx = &seg_rx[i];
 
         if (rx->in_use) {
@@ -1242,7 +1226,6 @@ static int trans_seg(struct os_mbuf *buf, struct bt_mesh_net_rx *net_rx,
     *seg_count = seg_n + 1;
     /* Look for old RX sessions */
     rx = seg_rx_find(net_rx, seq_auth);
-
     if (rx) {
         /* Discard old SeqAuth packet */
         if (rx->seq_auth > *seq_auth) {
@@ -1308,7 +1291,6 @@ static int trans_seg(struct os_mbuf *buf, struct bt_mesh_net_rx *net_rx,
 
     /* Look for free slot for a new RX session */
     rx = seg_rx_alloc(net_rx, hdr, seq_auth, seg_n);
-
     if (!rx) {
         /* Warn but don't cancel since the existing slots willl
          * eventually be freed up and we'll be able to process
@@ -1486,7 +1468,7 @@ void bt_mesh_rx_reset(void)
     int i;
     BT_DBG("");
 
-    for(i = 0; i < ARRAY_SIZE(seg_rx); i++) {
+    for (i = 0; i < ARRAY_SIZE(seg_rx); i++) {
         seg_rx_reset(&seg_rx[i], true);
     }
 
@@ -1502,7 +1484,7 @@ void bt_mesh_tx_reset(void)
     int i;
     BT_DBG("");
 
-    for(i = 0; i < ARRAY_SIZE(seg_tx); i++) {
+    for (i = 0; i < ARRAY_SIZE(seg_tx); i++) {
         seg_tx_reset(&seg_tx[i]);
     }
 }
@@ -1511,7 +1493,7 @@ void bt_mesh_trans_init(void)
 {
     int i;
 
-    for(i = 0; i < ARRAY_SIZE(seg_tx); i++) {
+    for (i = 0; i < ARRAY_SIZE(seg_tx); i++) {
         k_delayed_work_init(&seg_tx[i].retransmit, seg_retransmit);
         k_delayed_work_add_arg(&seg_tx[i].retransmit, &seg_tx[i]);
     }
@@ -1519,7 +1501,7 @@ void bt_mesh_trans_init(void)
     /* XXX Probably we need mempool for that.
      *  For now we increase MSYS_1_BLOCK_COUNT
      */
-    for(i = 0; i < ARRAY_SIZE(seg_rx); i++) {
+    for (i = 0; i < ARRAY_SIZE(seg_rx); i++) {
         seg_rx[i].buf = NET_BUF_SIMPLE(MYNEWT_VAL(BLE_MESH_RX_SDU_MAX));
         k_delayed_work_init(&seg_rx[i].ack, seg_ack);
         k_delayed_work_add_arg(&seg_rx[i].ack, &seg_rx[i]);
@@ -1614,7 +1596,6 @@ int bt_mesh_app_key_get(const struct bt_mesh_subnet *subnet, u16_t app_idx,
     }
 
     app_key = bt_mesh_app_key_find(app_idx);
-
     if (!app_key) {
         return -ENOENT;
     }

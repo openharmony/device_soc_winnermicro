@@ -24,15 +24,15 @@
 #ifndef WM_7816_H_
 #define WM_7816_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include <string.h>
 #include <stdbool.h>
 #include "wm_regs.h"
 #include "wm_type_def.h"
 #include "wm_io.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define WM_SC_DEFAULT_FD    (372)
 
@@ -85,28 +85,28 @@ void wm_sc_powerInit(void);
 
 /**
  * @brief
- * power on the 7816 device if power is controled by GPIO 
+ * power on the 7816 device if power is controled by GPIO
  * @retval
  */
 void wm_sc_poweron(void);
 
 /**
  * @brief
- * power off the 7816 device if power is controled by GPIO 
+ * power off the 7816 device if power is controled by GPIO
  * @retval
  */
 void wm_sc_poweroff(void);
 
 /**
  * @brief
- * driver the reset gpio in low level 
+ * driver the reset gpio in low level
  * @retval
  */
 void wm_sc_rst_low(void);
 
 /**
  * @brief
- * driver the reset gpio in high level 
+ * driver the reset gpio in high level
  * @retval
  */
 void wm_sc_rst_high(void);
@@ -174,8 +174,8 @@ void wm_sc_set_frequency(uint32_t freq);
 
 /**
  * @brief
- * config recv or not when parity error 
- * @param[in] bl : 1--- recv 
+ * config recv or not when parity error
+ * @param[in] bl : 1--- recv
  *                 0--- don't recv
  * @retval
  */
@@ -186,8 +186,8 @@ static inline void wm_sc_parity_recv(bool bl)
 
 /**
  * @brief
- * select the model in 7816 or uart function 
- * @param[in] bl : 1---7816 mode 
+ * select the model in 7816 or uart function
+ * @param[in] bl : 1---7816 mode
  *                 0---uart mode
  * @retval
  */
@@ -221,8 +221,8 @@ static inline void wm_sc_set_bcwt(uint32_t bwt)
 
 /**
  * @brief
- * module errsignal int enable or disable 
- * @param[in] bl : 1---enable 
+ * module errsignal int enable or disable
+ * @param[in] bl : 1---enable
  *                0---disable
  * @retval
  */
@@ -233,19 +233,19 @@ static inline void wm_sc_tx_errsignal_mask(bool bl)
 
 /**
  * @brief
- * config the module protol 
+ * config the module protol
  * @param[in] bl : 1--- T1 protocol
  *                0--- T0 protocol
  * @retval
  */
 static inline void wm_sc_set_protocol(bool bl)
 {
-    tls_bitband_write(HR_UART2_LINE_CTRL, 8, bl); 
+    tls_bitband_write(HR_UART2_LINE_CTRL, 8, bl);
 }
 
 /**
  * @brief
- * get the module protol 
+ * get the module protol
  * @retval
  *  1--- T1 protocol
  *  0--- T0 protocol

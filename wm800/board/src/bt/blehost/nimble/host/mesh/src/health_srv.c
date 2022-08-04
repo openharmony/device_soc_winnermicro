@@ -43,7 +43,6 @@ static void health_get_registered(struct bt_mesh_model *mod,
         err = srv->cb->fault_get_reg(mod, company_id, test_id,
                                      net_buf_simple_tail(msg),
                                      &fault_count);
-
         if (err) {
             BT_ERR("Failed to get faults (err %d)", err);
             *test_id = HEALTH_TEST_STANDARD;
@@ -73,9 +72,8 @@ static size_t health_get_current(struct bt_mesh_model *mod,
     if (srv->cb && srv->cb->fault_get_cur) {
         fault_count = net_buf_simple_tailroom(msg);
         int err = srv->cb->fault_get_cur(mod, test_id, &company_id,
-                                     net_buf_simple_tail(msg),
-                                     &fault_count);
-
+            net_buf_simple_tail(msg),
+            &fault_count);
         if (err) {
             BT_ERR("Failed to get faults (err %d)", err);
             sys_put_le16(comp->cid, company_ptr);
@@ -181,7 +179,6 @@ static void health_fault_test(struct bt_mesh_model *model,
     if (srv->cb && srv->cb->fault_test) {
         int err;
         err = srv->cb->fault_test(model, test_id, company_id);
-
         if (err) {
             BT_WARN("Running fault test failed with err %d", err);
             goto done;
@@ -204,7 +201,7 @@ static void send_attention_status(struct bt_mesh_model *model,
     struct os_mbuf *msg = BT_MESH_MODEL_BUF(OP_ATTENTION_STATUS, 1);
     struct bt_mesh_health_srv *srv = model->user_data;
     u8_t time;
-    time = k_delayed_work_remaining_get(&srv->attn_timer) / 1000;
+    time = k_delayed_work_remaining_get(&srv->attn_timer) / 1000; // 1000:time unit
     BT_DBG("%u second%s", time, (time == 1) ? "" : "s");
     bt_mesh_model_msg_init(msg, OP_ATTENTION_STATUS);
     net_buf_simple_add_u8(msg, time);
@@ -271,8 +268,7 @@ static void health_period_set_unrel(struct bt_mesh_model *model,
 {
     u8_t period;
     period = net_buf_simple_pull_u8(buf);
-
-    if (period > 15) {
+    if (period > 15) { // 15:Analyzing conditions
         BT_WARN("Prohibited period value %u", period);
         return;
     }
@@ -311,7 +307,6 @@ static int health_pub_update(struct bt_mesh_model *mod)
     size_t count;
     BT_DBG("");
     count = health_get_current(mod, pub->msg);
-
     if (count) {
         pub->fast_period = 1U;
     } else {
@@ -325,7 +320,6 @@ int bt_mesh_fault_update(struct bt_mesh_elem *elem)
 {
     struct bt_mesh_model *mod;
     mod = bt_mesh_model_find(elem, BT_MESH_MODEL_ID_HEALTH_SRV);
-
     if (!mod) {
         return -EINVAL;
     }
@@ -408,7 +402,7 @@ void bt_mesh_attention(struct bt_mesh_model *model, u8_t time)
             srv->cb->attn_on(model);
         }
 
-        k_delayed_work_submit(&srv->attn_timer, time * 1000);
+        k_delayed_work_submit(&srv->attn_timer, time * 1000); // 1000:time unit
     } else {
         k_delayed_work_cancel(&srv->attn_timer);
 

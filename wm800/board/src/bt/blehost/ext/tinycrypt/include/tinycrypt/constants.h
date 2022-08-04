@@ -42,9 +42,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#include <stdbool.h>
-
 #define TC_CRYPTO_SUCCESS 1
 #define TC_CRYPTO_FAIL 0
 

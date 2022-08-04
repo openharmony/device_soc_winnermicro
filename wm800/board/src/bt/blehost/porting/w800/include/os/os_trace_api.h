@@ -35,48 +35,39 @@
 #define OS_TRACE_ID_SEM_RELEASE                 (61)
 #define OS_TRACE_ID_SEM_PEND                    (62)
 
-static inline void
-os_trace_isr_enter(void)
+static inline void os_trace_isr_enter(void)
 {
 }
 
-static inline void
-os_trace_isr_exit(void)
+static inline void os_trace_isr_exit(void)
 {
 }
 
-static inline void
-os_trace_idle(void)
+static inline void os_trace_idle(void)
 {
 }
 
-static inline void
-os_trace_api_void(unsigned id)
+static inline void os_trace_api_void(unsigned id)
 {
 }
 
-static inline void
-os_trace_api_u32(unsigned id, uint32_t p0)
+static inline void os_trace_api_u32(unsigned id, uint32_t p0)
 {
 }
 
-static inline void
-os_trace_api_u32x2(unsigned id, uint32_t p0, uint32_t p1)
+static inline void os_trace_api_u32x2(unsigned id, uint32_t p0, uint32_t p1)
 {
 }
 
-static inline void
-os_trace_api_u32x3(unsigned id, uint32_t p0, uint32_t p1, uint32_t p2)
+static inline void os_trace_api_u32x3(unsigned id, uint32_t p0, uint32_t p1, uint32_t p2)
 {
 }
 
-static inline void
-os_trace_api_ret(unsigned id)
+static inline void os_trace_api_ret(unsigned id)
 {
 }
 
-static inline void
-os_trace_api_ret_u32(unsigned id, uint32_t return_value)
+static inline void os_trace_api_ret_u32(unsigned id, uint32_t return_value)
 {
 }
 

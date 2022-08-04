@@ -44,12 +44,11 @@ typedef struct {
 
 #define SDIO_HOST     ((SDIO_HOST_Type *)HR_SDIO_HOST_BASE_ADDR)
 
-typedef struct
-{
-  long long CardCapacity;
-  u32 CardBlockSize;
-  u16 RCA;
-  u8 CardType;
+typedef struct {
+    long long CardCapacity;
+    u32 CardBlockSize;
+    u16 RCA;
+    u8 CardType;
 } SD_CardInfo_t;
 extern SD_CardInfo_t SDCardInfo;
 /**
@@ -153,5 +152,5 @@ int wm_sd_card_blocks_write(uint32_t rca, uint32_t sd_addr, char *buf, uint32_t 
  * @}
  */
 
-#endif //__WM_SDIO_HOST_H_
+#endif // __WM_SDIO_HOST_H_
 
