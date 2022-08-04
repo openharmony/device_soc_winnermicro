@@ -33,12 +33,11 @@ static struct os_mempool ble_hs_conn_pool;
 static os_membuf_t ble_hs_conn_elem_mem[
                  OS_MEMPOOL_SIZE(MYNEWT_VAL(BLE_MAX_CONNECTIONS),
                                  sizeof(struct ble_hs_conn))
- ];
+];
 
 static const uint8_t ble_hs_conn_null_addr[6];
 
-int
-ble_hs_conn_can_alloc(void)
+int ble_hs_conn_can_alloc(void)
 {
 #if !NIMBLE_BLE_CONNECT
     return 0;
@@ -48,8 +47,7 @@ ble_hs_conn_can_alloc(void)
            ble_gatts_conn_can_alloc();
 }
 
-struct ble_l2cap_chan *
-ble_hs_conn_chan_find_by_scid(struct ble_hs_conn *conn, uint16_t cid)
+struct ble_l2cap_chan *ble_hs_conn_chan_find_by_scid(struct ble_hs_conn *conn, uint16_t cid)
 {
 #if !NIMBLE_BLE_CONNECT
     return NULL;
@@ -67,8 +65,7 @@ ble_hs_conn_chan_find_by_scid(struct ble_hs_conn *conn, uint16_t cid)
     return NULL;
 }
 
-struct ble_l2cap_chan *
-ble_hs_conn_chan_find_by_dcid(struct ble_hs_conn *conn, uint16_t cid)
+struct ble_l2cap_chan *ble_hs_conn_chan_find_by_dcid(struct ble_hs_conn *conn, uint16_t cid)
 {
 #if !NIMBLE_BLE_CONNECT
     return NULL;
@@ -82,8 +79,7 @@ ble_hs_conn_chan_find_by_dcid(struct ble_hs_conn *conn, uint16_t cid)
     return NULL;
 }
 
-bool
-ble_hs_conn_chan_exist(struct ble_hs_conn *conn, struct ble_l2cap_chan *chan)
+bool ble_hs_conn_chan_exist(struct ble_hs_conn *conn, struct ble_l2cap_chan *chan)
 {
 #if !NIMBLE_BLE_CONNECT
     return NULL;
@@ -97,8 +93,7 @@ ble_hs_conn_chan_exist(struct ble_hs_conn *conn, struct ble_l2cap_chan *chan)
     return false;
 }
 
-int
-ble_hs_conn_chan_insert(struct ble_hs_conn *conn, struct ble_l2cap_chan *chan)
+int ble_hs_conn_chan_insert(struct ble_hs_conn *conn, struct ble_l2cap_chan *chan)
 {
 #if !NIMBLE_BLE_CONNECT
     return BLE_HS_ENOTSUP;
@@ -127,8 +122,7 @@ ble_hs_conn_chan_insert(struct ble_hs_conn *conn, struct ble_l2cap_chan *chan)
     return 0;
 }
 
-struct ble_hs_conn *
-ble_hs_conn_alloc(uint16_t conn_handle)
+struct ble_hs_conn *ble_hs_conn_alloc(uint16_t conn_handle)
 {
 #if !NIMBLE_BLE_CONNECT
     return NULL;
@@ -137,35 +131,30 @@ ble_hs_conn_alloc(uint16_t conn_handle)
     struct ble_hs_conn *conn;
     int rc;
     conn = os_memblock_get(&ble_hs_conn_pool);
-
     if (conn == NULL) {
         goto err;
     }
 
-    memset(conn, 0, sizeof * conn);
+    memset_s(conn, sizeof * conn, 0, sizeof * conn);
     conn->bhc_handle = conn_handle;
     conn->tx_ll_mtu = MYNEWT_VAL(BLE_LL_CONN_INIT_MAX_TX_BYTES);
     SLIST_INIT(&conn->bhc_channels);
     chan = ble_att_create_chan(conn_handle);
-
     if (chan == NULL) {
         goto err;
     }
 
     rc = ble_hs_conn_chan_insert(conn, chan);
-
     if (rc != 0) {
         goto err;
     }
 
     chan = ble_l2cap_sig_create_chan(conn_handle);
-
     if (chan == NULL) {
         goto err;
     }
 
     rc = ble_hs_conn_chan_insert(conn, chan);
-
     if (rc != 0) {
         goto err;
     }
@@ -174,19 +163,16 @@ ble_hs_conn_alloc(uint16_t conn_handle)
      * messages.
      */
     chan = ble_sm_create_chan(conn_handle);
-
     if (chan == NULL) {
         goto err;
     }
 
     rc = ble_hs_conn_chan_insert(conn, chan);
-
     if (rc != 0) {
         goto err;
     }
 
     rc = ble_gatts_conn_init(&conn->bhc_gatt_svr);
-
     if (rc != 0) {
         goto err;
     }
@@ -199,8 +185,7 @@ err:
     return NULL;
 }
 
-void
-ble_hs_conn_delete_chan(struct ble_hs_conn *conn, struct ble_l2cap_chan *chan)
+void ble_hs_conn_delete_chan(struct ble_hs_conn *conn, struct ble_l2cap_chan *chan)
 {
     if (conn->bhc_rx_chan == chan) {
         conn->bhc_rx_chan = NULL;
@@ -210,8 +195,7 @@ ble_hs_conn_delete_chan(struct ble_hs_conn *conn, struct ble_l2cap_chan *chan)
     ble_l2cap_chan_free(conn, chan);
 }
 
-void
-ble_hs_conn_foreach(ble_hs_conn_foreach_fn *cb, void *arg)
+void ble_hs_conn_foreach(ble_hs_conn_foreach_fn *cb, void *arg)
 {
     struct ble_hs_conn *conn;
     BLE_HS_DBG_ASSERT(ble_hs_locked_by_cur_task());
@@ -222,8 +206,7 @@ ble_hs_conn_foreach(ble_hs_conn_foreach_fn *cb, void *arg)
     }
 }
 
-void
-ble_hs_conn_free(struct ble_hs_conn *conn)
+void ble_hs_conn_free(struct ble_hs_conn *conn)
 {
 #if !NIMBLE_BLE_CONNECT
     return;
@@ -238,25 +221,24 @@ ble_hs_conn_free(struct ble_hs_conn *conn)
 
     ble_att_svr_prep_clear(&conn->bhc_att_svr.basc_prep_list);
 
-    while((chan = SLIST_FIRST(&conn->bhc_channels)) != NULL) {
+    while ((chan = SLIST_FIRST(&conn->bhc_channels)) != NULL) {
         ble_hs_conn_delete_chan(conn, chan);
     }
 
-    while((omp = STAILQ_FIRST(&conn->bhc_tx_q)) != NULL) {
+    while ((omp = STAILQ_FIRST(&conn->bhc_tx_q)) != NULL) {
         STAILQ_REMOVE_HEAD(&conn->bhc_tx_q, omp_next);
         os_mbuf_free_chain(OS_MBUF_PKTHDR_TO_MBUF(omp));
     }
 
 #if MYNEWT_VAL(BLE_HS_DEBUG)
-    memset(conn, 0xff, sizeof * conn);
+    memset_s(conn, sizeof * conn, 0xff, sizeof * conn);
 #endif
     rc = os_memblock_put(&ble_hs_conn_pool, conn);
     BLE_HS_DBG_ASSERT_EVAL(rc == 0);
     STATS_INC(ble_hs_stats, conn_delete);
 }
 
-void
-ble_hs_conn_insert(struct ble_hs_conn *conn)
+void ble_hs_conn_insert(struct ble_hs_conn *conn)
 {
 #if !NIMBLE_BLE_CONNECT
     return;
@@ -266,8 +248,7 @@ ble_hs_conn_insert(struct ble_hs_conn *conn)
     SLIST_INSERT_HEAD(&ble_hs_conns, conn, bhc_next);
 }
 
-void
-ble_hs_conn_remove(struct ble_hs_conn *conn)
+void ble_hs_conn_remove(struct ble_hs_conn *conn)
 {
 #if !NIMBLE_BLE_CONNECT
     return;
@@ -276,8 +257,7 @@ ble_hs_conn_remove(struct ble_hs_conn *conn)
     SLIST_REMOVE(&ble_hs_conns, conn, ble_hs_conn, bhc_next);
 }
 
-struct ble_hs_conn *
-ble_hs_conn_find(uint16_t conn_handle)
+struct ble_hs_conn *ble_hs_conn_find(uint16_t conn_handle)
 {
 #if !NIMBLE_BLE_CONNECT
     return NULL;
@@ -292,8 +272,7 @@ ble_hs_conn_find(uint16_t conn_handle)
     return NULL;
 }
 
-struct ble_hs_conn *
-ble_hs_conn_find_assert(uint16_t conn_handle)
+struct ble_hs_conn *ble_hs_conn_find_assert(uint16_t conn_handle)
 {
     struct ble_hs_conn *conn;
     conn = ble_hs_conn_find(conn_handle);
@@ -301,8 +280,7 @@ ble_hs_conn_find_assert(uint16_t conn_handle)
     return conn;
 }
 
-struct ble_hs_conn *
-ble_hs_conn_find_by_addr(const ble_addr_t *addr)
+struct ble_hs_conn *ble_hs_conn_find_by_addr(const ble_addr_t *addr)
 {
 #if !NIMBLE_BLE_CONNECT
     return NULL;
@@ -328,8 +306,7 @@ ble_hs_conn_find_by_addr(const ble_addr_t *addr)
     return NULL;
 }
 
-struct ble_hs_conn *
-ble_hs_conn_find_by_idx(int idx)
+struct ble_hs_conn *ble_hs_conn_find_by_idx(int idx)
 {
 #if !NIMBLE_BLE_CONNECT
     return NULL;
@@ -348,8 +325,7 @@ ble_hs_conn_find_by_idx(int idx)
     return NULL;
 }
 
-int
-ble_hs_conn_exists(uint16_t conn_handle)
+int ble_hs_conn_exists(uint16_t conn_handle)
 {
 #if !NIMBLE_BLE_CONNECT
     return 0;
@@ -360,8 +336,7 @@ ble_hs_conn_exists(uint16_t conn_handle)
 /**
  * Retrieves the first connection in the list.
  */
-struct ble_hs_conn *
-ble_hs_conn_first(void)
+struct ble_hs_conn *ble_hs_conn_first(void)
 {
 #if !NIMBLE_BLE_CONNECT
     return NULL;
@@ -370,15 +345,12 @@ ble_hs_conn_first(void)
     return SLIST_FIRST(&ble_hs_conns);
 }
 
-void
-ble_hs_conn_addrs(const struct ble_hs_conn *conn,
-                  struct ble_hs_conn_addrs *addrs)
+void ble_hs_conn_addrs(const struct ble_hs_conn *conn, struct ble_hs_conn_addrs *addrs)
 {
     const uint8_t *our_id_addr_val;
     int rc;
     /* Determine our address information. */
-    addrs->our_id_addr.type =
-                    ble_hs_misc_own_addr_type_to_id(conn->bhc_our_addr_type);
+    addrs->our_id_addr.type = ble_hs_misc_own_addr_type_to_id(conn->bhc_our_addr_type);
 #if MYNEWT_VAL(BLE_EXT_ADV)
     /* With EA enabled random address for slave connection is per advertising
      * instance and requires special handling here.
@@ -396,9 +368,9 @@ ble_hs_conn_addrs(const struct ble_hs_conn *conn,
     rc = ble_hs_id_addr(addrs->our_id_addr.type, &our_id_addr_val, NULL);
     assert(rc == 0);
 #endif
-    memcpy(addrs->our_id_addr.val, our_id_addr_val, 6);
+    memcpy_s(addrs->our_id_addr.val, sizeof(addrs->our_id_addr.val), our_id_addr_val, 6); // 6:size
 
-    if (memcmp(conn->bhc_our_rpa_addr.val, ble_hs_conn_null_addr, 6) == 0) {
+    if (memcmp(conn->bhc_our_rpa_addr.val, ble_hs_conn_null_addr, 6) == 0) { // 6:size
         addrs->our_ota_addr = addrs->our_id_addr;
     } else {
         addrs->our_ota_addr = conn->bhc_our_rpa_addr;
@@ -408,7 +380,7 @@ ble_hs_conn_addrs(const struct ble_hs_conn *conn,
     addrs->peer_id_addr = conn->bhc_peer_addr;
     addrs->peer_ota_addr = conn->bhc_peer_addr;
 
-    switch(conn->bhc_peer_addr.type) {
+    switch (conn->bhc_peer_addr.type) {
         case BLE_ADDR_PUBLIC:
         case BLE_ADDR_RANDOM:
             break;
@@ -429,8 +401,7 @@ ble_hs_conn_addrs(const struct ble_hs_conn *conn,
     }
 }
 
-int32_t
-ble_hs_conn_timer(void)
+int32_t ble_hs_conn_timer(void)
 {
     /* If there are no timeouts configured, then there is nothing to check. */
 #if MYNEWT_VAL(BLE_L2CAP_RX_FRAG_TIMEOUT) == 0 && \
@@ -462,7 +433,6 @@ ble_hs_conn_timer(void)
              */
             if (conn->bhc_rx_chan != NULL) {
                 time_diff = conn->bhc_rx_timeout - now;
-
                 if (time_diff <= 0) {
                     /* ACL reassembly has timed out.  Remember the connection
                      * handle so it can be terminated after the mutex is
@@ -485,7 +455,6 @@ ble_hs_conn_timer(void)
              * cleared.
              */
             time_diff = ble_att_svr_ticks_until_tmo(&conn->bhc_att_svr, now);
-
             if (time_diff <= 0) {
                 /* ACL reassembly has timed out.  Remember the connection
                  * handle so it can be terminated after the mutex is
@@ -518,14 +487,12 @@ ble_hs_conn_timer(void)
     return next_exp_in;
 }
 
-int
-ble_hs_conn_init(void)
+int ble_hs_conn_init(void)
 {
     int rc;
     rc = os_mempool_init(&ble_hs_conn_pool, MYNEWT_VAL(BLE_MAX_CONNECTIONS),
                          sizeof(struct ble_hs_conn),
                          ble_hs_conn_elem_mem, "ble_hs_conn_pool");
-
     if (rc != 0) {
         return BLE_HS_EOS;
     }

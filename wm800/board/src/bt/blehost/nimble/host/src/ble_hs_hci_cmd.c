@@ -21,6 +21,7 @@
 #include <string.h>
 #include <errno.h>
 #include <stdio.h>
+#include "securec.h"
 #include "os/os.h"
 #include "nimble/hci_common.h"
 #include "nimble/ble_hci_trans.h"
@@ -28,8 +29,7 @@
 #include "ble_hs_priv.h"
 #include "ble_monitor_priv.h"
 
-static int
-ble_hs_hci_cmd_transport(struct ble_hci_cmd *cmd)
+static int ble_hs_hci_cmd_transport(struct ble_hci_cmd *cmd)
 {
     int rc;
 #if BLE_MONITOR
@@ -37,8 +37,7 @@ ble_hs_hci_cmd_transport(struct ble_hci_cmd *cmd)
                      cmd->length + sizeof(*cmd));
 #endif
     rc = ble_hci_trans_hs_cmd_tx((uint8_t *) cmd);
-
-    switch(rc) {
+    switch (rc) {
         case 0:
             return 0;
 
@@ -50,8 +49,7 @@ ble_hs_hci_cmd_transport(struct ble_hci_cmd *cmd)
     }
 }
 
-static int
-ble_hs_hci_cmd_send(uint16_t opcode, uint8_t len, const void *cmddata)
+static int ble_hs_hci_cmd_send(uint16_t opcode, uint8_t len, const void *cmddata)
 {
     struct ble_hci_cmd *cmd;
     int rc;
@@ -61,11 +59,10 @@ ble_hs_hci_cmd_send(uint16_t opcode, uint8_t len, const void *cmddata)
     cmd->length = len;
 
     if (len != 0) {
-        memcpy(cmd->data, cmddata, len);
+        memcpy_s(cmd->data, sizeof(cmd->data), cmddata, len);
     }
 
     rc = ble_hs_hci_cmd_transport(cmd);
-
     if (rc == 0) {
         STATS_INC(ble_hs_stats, hci_cmd);
     } else {
@@ -75,10 +72,9 @@ ble_hs_hci_cmd_send(uint16_t opcode, uint8_t len, const void *cmddata)
     return rc;
 }
 
-int
-ble_hs_hci_cmd_send_buf(uint16_t opcode, const void *buf, uint8_t buf_len)
+int ble_hs_hci_cmd_send_buf(uint16_t opcode, const void *buf, uint8_t buf_len)
 {
-    switch(ble_hs_sync_state) {
+    switch (ble_hs_sync_state) {
         case BLE_HS_SYNC_STATE_BAD:
             return BLE_HS_ENOTSYNCED;
 

@@ -18,6 +18,7 @@
  */
 
 #include <assert.h>
+#include "securec.h"
 #include "sysinit/sysinit.h"
 #include "nimble/hci_common.h"
 #include "host/ble_hs.h"
@@ -52,9 +53,8 @@ static os_membuf_t *ble_hci_vuart_evt_hi_buf = NULL;
 
 #else
 static os_membuf_t ble_hci_vuart_evt_hi_buf[
-                 OS_MEMPOOL_SIZE(MYNEWT_VAL(BLE_HCI_EVT_HI_BUF_COUNT),
-                                 MYNEWT_VAL(BLE_HCI_EVT_BUF_SIZE))
- ];
+    OS_MEMPOOL_SIZE(MYNEWT_VAL(BLE_HCI_EVT_HI_BUF_COUNT), MYNEWT_VAL(BLE_HCI_EVT_BUF_SIZE))
+];
 #endif
 
 static struct os_mempool ble_hci_vuart_evt_lo_pool;
@@ -63,9 +63,8 @@ static struct os_mempool ble_hci_vuart_evt_lo_pool;
 static os_membuf_t *ble_hci_vuart_evt_lo_buf = NULL;
 #else
 static os_membuf_t ble_hci_vuart_evt_lo_buf[
-                 OS_MEMPOOL_SIZE(MYNEWT_VAL(BLE_HCI_EVT_LO_BUF_COUNT),
-                                 MYNEWT_VAL(BLE_HCI_EVT_BUF_SIZE))
- ];
+    OS_MEMPOOL_SIZE(MYNEWT_VAL(BLE_HCI_EVT_LO_BUF_COUNT), MYNEWT_VAL(BLE_HCI_EVT_BUF_SIZE))
+];
 #endif
 
 static struct os_mempool ble_hci_vuart_cmd_pool;
@@ -73,9 +72,7 @@ static struct os_mempool ble_hci_vuart_cmd_pool;
 #if MYNEWT_VAL(SYS_MEM_DYNAMIC)
 static os_membuf_t *ble_hci_vuart_cmd_buf = NULL;
 #else
-static os_membuf_t ble_hci_vuart_cmd_buf[
-                 OS_MEMPOOL_SIZE(1, BLE_HCI_TRANS_CMD_SZ)
- ];
+static os_membuf_t ble_hci_vuart_cmd_buf[OS_MEMPOOL_SIZE(1, BLE_HCI_TRANS_CMD_SZ)];
 #endif
 
 static struct os_mbuf_pool ble_hci_vuart_acl_mbuf_pool;
@@ -93,10 +90,8 @@ static struct os_mempool_ext ble_hci_vuart_acl_pool;
 #if MYNEWT_VAL(SYS_MEM_DYNAMIC)
 static os_membuf_t *ble_hci_vuart_acl_buf = NULL;
 #else
-static os_membuf_t ble_hci_vuart_acl_buf[
-                 OS_MEMPOOL_SIZE(MYNEWT_VAL(BLE_ACL_BUF_COUNT),
-                                 ACL_BLOCK_SIZE)
- ];
+static os_membuf_t ble_hci_vuart_acl_buf[OS_MEMPOOL_SIZE(MYNEWT_VAL(BLE_ACL_BUF_COUNT), ACL_BLOCK_SIZE)
+];
 #endif
 
 #define HCI_VUART_RX_QUEUE 0
@@ -129,10 +124,10 @@ static struct ble_npl_eventq hci_evt_rx_tx_queue;
 
 #if (HCI_DBG == TRUE)
 #define HCIDBG(fmt, ...)  \
-    do{\
+    do { \
         if (1) \
             printf("%s(L%d): " fmt, __FUNCTION__, __LINE__,  ## __VA_ARGS__); \
-    }while(0)
+    } while (0)
 #else
 #define HCIDBG(param, ...)
 #endif
@@ -156,14 +151,11 @@ static void  hci_dbg_hexstring(const char *msg, const uint8_t *ptr, int a_length
     if (a_length <= 0 || ptr == NULL) {
         return;
     }
-
-    // length = MIN(40, a_length);
     length = a_length;
 
     do {
-        for(; i < length; i++) {
-            offset += sprintf(sbuffer + offset, "%02X ", (uint8_t)ptr[i]);
-
+        for (; i < length; i++) {
+            offset += sprintf_s(sbuffer + offset, sizeof(sbuffer + offset), "%02X ", (uint8_t)ptr[i]);
             if (offset > DBG_TRACE_WARNING_MAX_SIZE_W) {
                 break;
             }
@@ -174,13 +166,13 @@ static void  hci_dbg_hexstring(const char *msg, const uint8_t *ptr, int a_length
         sbuffer[offset + 1] = 0;
 
         if (offset > DBG_TRACE_WARNING_MAX_SIZE_W) {
-            sbuffer[offset - 2] = '.';
-            sbuffer[offset - 3] = '.';
+            sbuffer[offset - 2] = '.'; // 2:byte alignment
+            sbuffer[offset - 3] = '.'; // 3:byte alignment
         }
 
         printf("%s", sbuffer);
         offset = 0;
-    } while(i < length);
+    } while (i < length);
 }
 #endif
 
@@ -199,13 +191,11 @@ int ble_hci_trans_hs_cmd_tx(uint8_t *cmd)
     uint16_t len;
     assert(cmd != NULL);
     *cmd = BLE_HCI_UART_H4_CMD;
-    len = BLE_HCI_CMD_HDR_LEN + cmd[3] + 1;
+    len = BLE_HCI_CMD_HDR_LEN + cmd[3] + 1; // 3:array element
 
-    while(ble_hci_cmd_pkts <= 0) {
-        tls_os_time_delay(1000 / /*configTICK_RATE_HZ*/HZ);
+    while (ble_hci_cmd_pkts <= 0) {
+        tls_os_time_delay(1000 / HZ); // 1000:byte alignment
     }
-
-    // hci_dbg_hexstring(">>>[CMD]", cmd, len);
     tls_bt_vuart_host_send_packet(cmd, len);
     ble_hci_trans_buf_free(cmd);
     return 0;
@@ -236,14 +226,13 @@ int ble_hci_trans_hs_acl_tx(struct os_mbuf *om)
     data[0] = BLE_HCI_UART_H4_ACL;
     len++;
 
-    while(ble_hci_cmd_pkts <= 0) {
-        tls_os_time_delay(1000 / /*configTICK_RATE_HZ*/HZ);
+    while (ble_hci_cmd_pkts <= 0) {
+        tls_os_time_delay(1000 / HZ); // 1000:byte alignment
     }
 
     os_mbuf_copydata(om, 0, OS_MBUF_PKTLEN(om), &data[1]);
     len += OS_MBUF_PKTLEN(om);
     tls_bt_vuart_host_send_packet(data, len);
-    // hci_dbg_hexstring(">>>[ACL]", data, len);
     os_mbuf_free_chain(om);
     return 0;
 }
@@ -252,14 +241,13 @@ uint8_t *ble_hci_trans_buf_alloc(int type)
 {
     uint8_t *buf;
 
-    switch(type) {
+    switch (type) {
         case BLE_HCI_TRANS_BUF_CMD:
             buf = os_memblock_get(&ble_hci_vuart_cmd_pool);
             break;
 
         case BLE_HCI_TRANS_BUF_EVT_HI:
             buf = os_memblock_get(&ble_hci_vuart_evt_hi_pool);
-
             if (buf == NULL) {
                 /* If no high-priority event buffers remain, try to grab a
                  * low-priority one.
@@ -355,7 +343,6 @@ static void ble_hci_rx_acl(uint8_t *data, uint16_t len)
     }
 
     m = ble_hci_trans_acl_buf_alloc();
-
     if (!m) {
         assert(0);
         return;
@@ -387,7 +374,7 @@ static int ble_hci_trans_hs_rx(uint8_t *data, uint16_t len)
         uint8_t *evbuf;
         int totlen;
         int rc;
-        totlen = BLE_HCI_EVENT_HDR_LEN + data[2];
+        totlen = BLE_HCI_EVENT_HDR_LEN + data[2]; // 2:byte alignment
         assert(totlen <= UINT8_MAX + BLE_HCI_EVENT_HDR_LEN);
 
         if (data[1] == BLE_HCI_EVCODE_HW_ERROR) {
@@ -395,9 +382,8 @@ static int ble_hci_trans_hs_rx(uint8_t *data, uint16_t len)
         }
 
         /* Allocate LE Advertising Report Event from lo pool only */
-        if ((data[1] == BLE_HCI_EVCODE_LE_META) && (data[3] == BLE_HCI_LE_SUBEV_ADV_RPT)) {
+        if ((data[1] == BLE_HCI_EVCODE_LE_META) && (data[3] == BLE_HCI_LE_SUBEV_ADV_RPT)) { // 3:byte alignment
             evbuf = ble_hci_trans_buf_alloc(BLE_HCI_TRANS_BUF_EVT_LO);
-
             /* Skip advertising report if we're out of memory */
             if (!evbuf) {
                 return 0;
@@ -407,7 +393,7 @@ static int ble_hci_trans_hs_rx(uint8_t *data, uint16_t len)
             assert(evbuf != NULL);
         }
 
-        memcpy(evbuf, &data[1], totlen);
+        memcpy_s(evbuf, sizeof(*evbuf), &data[1], totlen);
         rc = ble_hci_trans_ll_evt_tx(evbuf);
         assert(rc == 0);
     } else if (data[0] == BLE_HCI_UART_H4_ACL) {
@@ -425,7 +411,6 @@ static void ble_hs_event_hci_rx_func(void *arg)
     struct QUEUE_ITEM *item_next = NULL;
     ble_npl_mutex_pend(&hci_resp_queue_mutex, 0);
     item = TAILQ_FIRST(&hci_resp_queue);
-
     if (item) {
         TAILQ_REMOVE(&hci_resp_queue, item, entries);
         item_next = TAILQ_FIRST(&hci_resp_queue);
@@ -443,7 +428,7 @@ static void ble_hs_event_hci_rx_func(void *arg)
         tls_mem_free(item);
     }
 
-    /*More hci response available, notify the host statck for reading again*/
+    /* More hci response available, notify the host statck for reading again */
 
     if (item_next) {
         ble_npl_eventq_put(&hci_evt_rx_tx_queue, &ble_hs_ev_hci_rx);
@@ -467,11 +452,10 @@ static void notify_host_recv(uint8_t *data, uint16_t len)
 
 #if (HCI_DBG == TRUE)
     hci_dbg_hexstring("<<<", data, len);
-    // HCIDBG("%s, pending_counter=%d\r\n", __func__, hci_resp_queue_counter);
 #endif
 
     if (data[0] == HCI_EVENT_PKT && data[1] == BT_HCI_EVT_LE_META_EVENT
-            && data[3] == BT_HCI_EVT_LE_ADVERTISING_REPORT) {
+            && data[3] == BT_HCI_EVT_LE_ADVERTISING_REPORT) { // 3:byte alignment
         if (hci_resp_queue_counter > HCI_RESP_QUEUE_HALF_FULL) {
             HCIDBG("Too much hci_adv_report_evt, discard it");
             ble_npl_eventq_put(&hci_evt_rx_tx_queue, &ble_hs_ev_hci_rx);
@@ -493,14 +477,13 @@ static void notify_host_recv(uint8_t *data, uint16_t len)
     }
 
     item->payload = tls_mem_alloc(len);
-
     if (item->payload == NULL) {
         MODLOG_DFLT(INFO,  "Alloc queue item payload failed, no memory available");
         tls_mem_free(item);
         return;
     }
 
-    memcpy(item->payload, data, len);
+    memcpy_s(item->payload, sizeof(*item->payload), data, len);
     item->size = len;
     ble_npl_mutex_pend(&hci_resp_queue_mutex, 0);
     TAILQ_INSERT_TAIL(&hci_resp_queue, item, entries);
@@ -508,7 +491,6 @@ static void notify_host_recv(uint8_t *data, uint16_t len)
     ble_npl_mutex_release(&hci_resp_queue_mutex);
     ble_npl_eventq_put(&hci_evt_rx_tx_queue, &ble_hs_ev_hci_rx);
 #else
-    // hci_dbg_hexstring("<<<", data, len);
     ble_hci_trans_hs_rx(data, len);
 #endif
     return;
@@ -525,20 +507,18 @@ static int wm_ble_controller_init(uint8_t uart_idx)
     tls_bt_status_t status;
     hci_if.uart_index = uart_idx;
     status = tls_bt_ctrl_enable(&hci_if, 0);
-
     if ((status != TLS_BT_STATUS_SUCCESS) && (status != TLS_BT_STATUS_DONE)) {
         return TLS_BT_STATUS_CTRL_ENABLE_FAILED;
     }
 
     status = tls_bt_ctrl_if_register(&vuart_hci_cb);
-
     if (status != TLS_BT_STATUS_SUCCESS) {
         return TLS_BT_STATUS_CTRL_ENABLE_FAILED;
     }
 
     return 0;
 }
-static int wm_ble_controller_deinit()
+static int wm_ble_controller_deinit(void)
 {
     return tls_bt_ctrl_disable();
 }
@@ -557,18 +537,14 @@ static void nimble_vhci_task(void)
     struct ble_npl_event *ev;
     int arg;
 
-    while(1) {
+    while (1) {
         ev = ble_npl_eventq_get(&hci_evt_rx_tx_queue, BLE_NPL_TIME_FOREVER);
         ble_npl_event_run(ev);
         arg = (int)ble_npl_event_get_arg(ev);
-        // if (arg == HCI_EXIT_EV_ARG) {
-        //    ;// break;
-        // }
     }
 }
 #endif
-int
-ble_hci_vuart_init(uint8_t uart_idx)
+int ble_hci_vuart_init(uint8_t uart_idx)
 {
     int rc;
     /* Ensure this function only gets called by sysinit. */
@@ -582,7 +558,7 @@ ble_hci_vuart_init(uint8_t uart_idx)
     TAILQ_INIT(&hci_resp_queue);
     hci_resp_queue_counter = 0;
     tls_host_vuart_task_stack_ptr = (void *)tls_mem_alloc(MYNEWT_VAL(OS_HS_VUART_STACK_SIZE) * sizeof(
-            uint32_t));
+        uint32_t));
     assert(tls_host_vuart_task_stack_ptr != NULL);
     tls_os_task_create(NULL, "btv",
                        nimble_vhci_task,
@@ -596,8 +572,8 @@ ble_hci_vuart_init(uint8_t uart_idx)
     assert(rc == 0);
 #if MYNEWT_VAL(SYS_MEM_DYNAMIC)
     ble_hci_vuart_acl_buf = (os_membuf_t *)tls_mem_alloc(
-                                            sizeof(os_membuf_t) *
-                                            OS_MEMPOOL_SIZE(MYNEWT_VAL(BLE_ACL_BUF_COUNT), ACL_BLOCK_SIZE));
+        sizeof(os_membuf_t) *
+        OS_MEMPOOL_SIZE(MYNEWT_VAL(BLE_ACL_BUF_COUNT), ACL_BLOCK_SIZE));
     assert(ble_hci_vuart_acl_buf != NULL);
 #endif
     rc = os_mempool_ext_init(&ble_hci_vuart_acl_pool,
@@ -619,8 +595,8 @@ ble_hci_vuart_init(uint8_t uart_idx)
      */
 #if MYNEWT_VAL(SYS_MEM_DYNAMIC)
     ble_hci_vuart_cmd_buf = (os_membuf_t *)tls_mem_alloc(
-                                            sizeof(os_membuf_t) *
-                                            OS_MEMPOOL_SIZE(1, BLE_HCI_TRANS_CMD_SZ));
+        sizeof(os_membuf_t) *
+        OS_MEMPOOL_SIZE(1, BLE_HCI_TRANS_CMD_SZ));
     assert(ble_hci_vuart_cmd_buf != NULL);
 #endif
     rc = os_mempool_init(&ble_hci_vuart_cmd_pool,
@@ -631,9 +607,9 @@ ble_hci_vuart_init(uint8_t uart_idx)
     SYSINIT_PANIC_ASSERT(rc == 0);
 #if MYNEWT_VAL(SYS_MEM_DYNAMIC)
     ble_hci_vuart_evt_hi_buf = (os_membuf_t *)tls_mem_alloc(
-            sizeof(os_membuf_t) *
-            OS_MEMPOOL_SIZE(MYNEWT_VAL(BLE_HCI_EVT_HI_BUF_COUNT),
-                            MYNEWT_VAL(BLE_HCI_EVT_BUF_SIZE)));
+        sizeof(os_membuf_t) *
+        OS_MEMPOOL_SIZE(MYNEWT_VAL(BLE_HCI_EVT_HI_BUF_COUNT),
+                        MYNEWT_VAL(BLE_HCI_EVT_BUF_SIZE)));
     assert(ble_hci_vuart_evt_hi_buf != NULL);
 #endif
     rc = os_mempool_init(&ble_hci_vuart_evt_hi_pool,
@@ -644,9 +620,9 @@ ble_hci_vuart_init(uint8_t uart_idx)
     SYSINIT_PANIC_ASSERT(rc == 0);
 #if MYNEWT_VAL(SYS_MEM_DYNAMIC)
     ble_hci_vuart_evt_lo_buf = (os_membuf_t *)tls_mem_alloc(
-            sizeof(os_membuf_t) *
-            OS_MEMPOOL_SIZE(MYNEWT_VAL(BLE_HCI_EVT_LO_BUF_COUNT),
-                            MYNEWT_VAL(BLE_HCI_EVT_BUF_SIZE)));
+        sizeof(os_membuf_t) *
+        OS_MEMPOOL_SIZE(MYNEWT_VAL(BLE_HCI_EVT_LO_BUF_COUNT),
+                        MYNEWT_VAL(BLE_HCI_EVT_BUF_SIZE)));
     assert(ble_hci_vuart_evt_lo_buf != NULL);
 #endif
     rc = os_mempool_init(&ble_hci_vuart_evt_lo_pool,
@@ -659,17 +635,11 @@ ble_hci_vuart_init(uint8_t uart_idx)
     return rc;
 }
 
-int ble_hci_vuart_deinit()
+int ble_hci_vuart_deinit(void)
 {
     int rc;
     rc = wm_ble_controller_deinit();
     assert(rc == 0);
-#if 0
-    os_mempool_clear(&ble_hci_vuart_evt_lo_pool);
-    os_mempool_clear(&ble_hci_vuart_evt_hi_pool);
-    os_mempool_clear(&ble_hci_vuart_cmd_pool);
-    os_mempool_clear(&ble_hci_vuart_acl_pool);
-#endif
 #if MYNEWT_VAL(SYS_MEM_DYNAMIC)
 
     if (ble_hci_vuart_acl_buf) {
@@ -695,4 +665,3 @@ int ble_hci_vuart_deinit()
 #endif
     return rc;
 }
-

@@ -25,9 +25,9 @@
 
 #include "core_804.h"
 #include "wm_regs.h"
-#include "wm_irq.h"
 #include "wm_config.h"
 #include "wm_mem.h"
+#include "wm_irq.h"
 
 /* irq functions declare */
 extern ATTRIBUTE_ISR void i2s_I2S_IRQHandler(void);
@@ -48,7 +48,6 @@ extern ATTRIBUTE_ISR void DMA_Channel2_IRQHandler(void);
 extern ATTRIBUTE_ISR void DMA_Channel3_IRQHandler(void);
 extern ATTRIBUTE_ISR void DMA_Channel4_7_IRQHandler(void);
 extern ATTRIBUTE_ISR void ADC_IRQHandler(void);
-// extern ATTRIBUTE_ISR void tls_touchsensor_irq_handler(void);
 extern ATTRIBUTE_ISR void GPSEC_IRQ_Handler(void);
 extern ATTRIBUTE_ISR void RSA_IRQ_Handler(void);
 extern ATTRIBUTE_ISR void TIM0_5_IRQ_Handler(void);
@@ -71,10 +70,10 @@ static u32 irqen_status = 0;
  */
 void tls_irq_init(void)
 {
-    /*clear bt mask*/
-    tls_reg_write32(0x40002A10,0xFFFFFFFF);
+    /* clear bt mask */
+    tls_reg_write32(0x40002A10, 0xFFFFFFFF);
     NVIC_ClearPendingIRQ(BT_IRQn);
-    
+
     csi_vic_set_vector(I2S_IRQn, (uint32_t)i2s_I2S_IRQHandler);
     csi_vic_set_vector(I2C_IRQn, (uint32_t)i2c_I2C_IRQHandler);
     csi_vic_set_vector(GPIOA_IRQn, (uint32_t)GPIOA_IRQHandler);
@@ -94,7 +93,6 @@ void tls_irq_init(void)
     csi_vic_set_vector(DMA_Channel2_IRQn, (uint32_t)DMA_Channel2_IRQHandler);
     csi_vic_set_vector(DMA_Channel3_IRQn, (uint32_t)DMA_Channel3_IRQHandler);
     csi_vic_set_vector(DMA_Channel4_7_IRQn, (uint32_t)DMA_Channel4_7_IRQHandler);
-    // csi_vic_set_vector(TOUCH_IRQn, (uint32_t)tls_touchsensor_irq_handler);
     csi_vic_set_vector(RSA_IRQn, (uint32_t)RSA_IRQ_Handler);
     csi_vic_set_vector(CRYPTION_IRQn, (uint32_t)GPSEC_IRQ_Handler);
     csi_vic_set_vector(TIMER_IRQn, (uint32_t)TIM0_5_IRQ_Handler);
@@ -102,7 +100,6 @@ void tls_irq_init(void)
     csi_vic_set_vector(MAC_IRQn, (uint32_t)MAC_IRQ_Handler);
     csi_vic_set_vector(SEC_IRQn, (uint32_t)SEC_IRQ_Handler);
     csi_vic_set_vector(PMU_IRQn, (uint32_t)PMU_IRQ_Handler);
-    // csi_vic_set_vector(WDG_IRQn, (uint32_t)WDG_IRQHandler);
 }
 
 /**
@@ -131,8 +128,7 @@ void tls_irq_register_handler(u8 vec_no, intr_handler_func handler, void *data)
  */
 void tls_irq_enable(u8 vec_no)
 {
-    if ((irqen_status & (1<<vec_no)) == 0)
-    {
+    if ((irqen_status & (1<<vec_no)) == 0) {
         irqen_status |= 1<<vec_no;
         NVIC_ClearPendingIRQ((IRQn_Type)vec_no);
         NVIC_EnableIRQ((IRQn_Type)vec_no);
@@ -150,8 +146,7 @@ void tls_irq_enable(u8 vec_no)
  */
 void tls_irq_disable(u8 vec_no)
 {
-    if (irqen_status & (1<<vec_no))
-    {
+    if (irqen_status & (1<<vec_no)) {
         irqen_status &= ~(1<<vec_no);
         NVIC_DisableIRQ((IRQn_Type)vec_no);
     }

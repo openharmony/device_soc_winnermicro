@@ -19,23 +19,20 @@
 
 #include "ble_hs_priv.h"
 
-int
-ble_mqueue_init(struct ble_mqueue *mq, ble_npl_event_fn *ev_fn, void *ev_arg)
+int ble_mqueue_init(struct ble_mqueue *mq, ble_npl_event_fn *ev_fn, void *ev_arg)
 {
     STAILQ_INIT(&mq->head);
     ble_npl_event_init(&mq->ev, ev_fn, ev_arg);
     return (0);
 }
 
-struct os_mbuf *
-ble_mqueue_get(struct ble_mqueue *mq)
+struct os_mbuf *ble_mqueue_get(struct ble_mqueue *mq)
 {
     struct os_mbuf_pkthdr *mp;
     struct os_mbuf *om;
     os_sr_t sr;
     OS_ENTER_CRITICAL(sr);
     mp = STAILQ_FIRST(&mq->head);
-
     if (mp) {
         STAILQ_REMOVE_HEAD(&mq->head, omp_next);
     }
@@ -51,8 +48,7 @@ ble_mqueue_get(struct ble_mqueue *mq)
     return (om);
 }
 
-int
-ble_mqueue_put(struct ble_mqueue *mq, struct ble_npl_eventq *evq, struct os_mbuf *om)
+int ble_mqueue_put(struct ble_mqueue *mq, struct ble_npl_eventq *evq, struct os_mbuf *om)
 {
     struct os_mbuf_pkthdr *mp;
     os_sr_t sr;

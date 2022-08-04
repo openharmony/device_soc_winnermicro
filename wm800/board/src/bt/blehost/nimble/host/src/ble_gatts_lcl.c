@@ -19,8 +19,8 @@
 
 #include <stddef.h>
 #include <string.h>
+#include "securec.h"
 #include "host/ble_uuid.h"
-// #include "console/console.h"
 #include "nimble/ble.h"
 #include "ble_hs_priv.h"
 
@@ -60,36 +60,33 @@ static const char *const ble_gatt_dsc_f_names[] = {
 
 #define BLE_CHR_FLAGS_STR_LEN 180
 
-static char *
-ble_gatts_flags_to_str(uint16_t flags, char *buf,
-                       const char *const *names)
+static char *ble_gatts_flags_to_str(uint16_t flags, char *buf, const char *const *names)
 {
     int bit;
     bool non_empty = false;
     size_t length = 0;
     buf[0] = '\0';
-    strcpy(buf, "[");
+    strcpy_s(buf, sizeof(buf), "[");
     length += 1;
 
-    for(bit = 0; names[bit]; ++bit) {
+    for (bit = 0; names[bit]; ++bit) {
         if (flags & (1 << bit)) {
             length += strlen(names[bit]);
-
             if (length + 1 >= BLE_CHR_FLAGS_STR_LEN) {
                 return buf;
             }
 
             if (non_empty) {
-                strcat(buf, "|");
+                strcat_s(buf, sizeof(buf), "|");
                 length += 1;
             }
 
-            strcat(buf, names[bit]);
+            strcat_s(buf,  sizeof(buf), names[bit]);
             non_empty = true;
         }
     }
 
-    strcat(buf, "]");
+    strcat_s(buf, sizeof(buf), "]");
     return buf;
 }
 
@@ -97,14 +94,13 @@ ble_gatts_flags_to_str(uint16_t flags, char *buf,
 #define FIELD_NAME_LEN STRINGIFY(12)
 #define FIELD_INDENT STRINGIFY(2)
 
-static void
-ble_gatt_show_local_chr(const struct ble_gatt_svc_def *svc,
-                        uint16_t handle, char *uuid_buf, char *flags_buf)
+static void ble_gatt_show_local_chr(const struct ble_gatt_svc_def *svc,
+                                    uint16_t handle, char *uuid_buf, char *flags_buf)
 {
     const struct ble_gatt_chr_def *chr;
     const struct ble_gatt_dsc_def *dsc;
 
-    for(chr = svc->characteristics; chr && chr->uuid; ++chr) {
+    for (chr = svc->characteristics; chr && chr->uuid; ++chr) {
         printf("characteristic\n");
         printf("%" FIELD_INDENT "s %" FIELD_NAME_LEN "s "
                "%s\n", " ", "uuid",
@@ -138,7 +134,7 @@ ble_gatt_show_local_chr(const struct ble_gatt_svc_def *svc,
             handle++;
         }
 
-        for(dsc = chr->descriptors; dsc && dsc->uuid; ++dsc) {
+        for (dsc = chr->descriptors; dsc && dsc->uuid; ++dsc) {
             printf("descriptor\n");
             printf("%" FIELD_INDENT "s %" FIELD_NAME_LEN "s "
                    "%s\n", " ", "uuid",
@@ -156,14 +152,13 @@ ble_gatt_show_local_chr(const struct ble_gatt_svc_def *svc,
     }
 }
 
-static int
-ble_gatt_show_local_inc_svc(const struct ble_gatt_svc_def *svc,
-                            uint16_t handle, char *uuid_buf)
+static int ble_gatt_show_local_inc_svc(const struct ble_gatt_svc_def *svc,
+                                       uint16_t handle, char *uuid_buf)
 {
     const struct ble_gatt_svc_def **includes;
     int num = 0;
 
-    for(includes = &svc->includes[0]; *includes != NULL; ++includes) {
+    for (includes = &svc->includes[0]; *includes != NULL; ++includes) {
         printf("included service\n");
         printf("%" FIELD_INDENT "s %" FIELD_NAME_LEN "s "
                "%s\n", " ", "uuid",
@@ -176,11 +171,11 @@ ble_gatt_show_local_inc_svc(const struct ble_gatt_svc_def *svc,
     return num;
 }
 
-static void
-ble_gatt_show_local_svc(const struct ble_gatt_svc_def *svc,
-                        uint16_t handle, uint16_t end_group_handle,
-                        void *arg)
+static void ble_gatt_show_local_svc(const struct ble_gatt_svc_def *svc,
+                                    uint16_t handle, uint16_t end_group_handle,
+                                    void *arg)
 {
+    uint16_t handle_tmp = handle;
     char uuid_buf[BLE_UUID_STR_LEN];
     char flags_buf[BLE_CHR_FLAGS_STR_LEN];
     printf("%s service\n",
@@ -191,23 +186,21 @@ ble_gatt_show_local_svc(const struct ble_gatt_svc_def *svc,
            ble_uuid_to_str(svc->uuid, uuid_buf));
     printf("%" FIELD_INDENT "s %" FIELD_NAME_LEN "s "
            "%d\n", " ", "handle",
-           handle);
+           handle_tmp);
     printf("%" FIELD_INDENT "s %" FIELD_NAME_LEN "s "
            "%d\n", " ", "end_handle",
            end_group_handle);
-    handle++;
+    handle_tmp++;
 
     if (svc->includes) {
-        handle += ble_gatt_show_local_inc_svc(svc, handle, uuid_buf);
+        handle_tmp += ble_gatt_show_local_inc_svc(svc, handle_tmp, uuid_buf);
     }
 
-    ble_gatt_show_local_chr(svc, handle,
+    ble_gatt_show_local_chr(svc, handle_tmp,
                             uuid_buf, flags_buf);
 }
 
-void
-ble_gatts_show_local(void)
+void ble_gatts_show_local(void)
 {
     ble_gatts_lcl_svc_foreach(ble_gatt_show_local_svc, NULL);
 }
-

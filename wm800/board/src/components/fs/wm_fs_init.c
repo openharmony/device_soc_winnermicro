@@ -43,24 +43,29 @@ static uint32_t FsGetResource(struct fs_cfg *fs, const struct DeviceResourceNode
         return HDF_FAILURE;
     }
     for (int32_t i = 0; i < num; i++) {
-        if (resource->GetStringArrayElem(resourceNode, "mount_points", i, &fs[i].mount_point, NULL) != HDF_SUCCESS) {
+        if (resource->GetStringArrayElem(resourceNode, "mount_points", i,
+            &fs[i].mount_point, NULL) != HDF_SUCCESS) {
             HDF_LOGE("%s: failed to get mount_points", __func__);
             return HDF_FAILURE;
         }
-        if (resource->GetUint32ArrayElem(resourceNode, "block_start_positions", i, (uint32_t *)&fs[i].lfs_cfg.context, 0) != HDF_SUCCESS) {
+        if (resource->GetUint32ArrayElem(resourceNode, "block_start_positions", i,
+            (uint32_t *)&fs[i].lfs_cfg.context, 0) != HDF_SUCCESS) {
             HDF_LOGE("%s: failed to get partitions", __func__);
             return HDF_FAILURE;
         }
-        if (resource->GetUint32ArrayElem(resourceNode, "block_size", i, &fs[i].lfs_cfg.block_size, 0) != HDF_SUCCESS) {
+        if (resource->GetUint32ArrayElem(resourceNode, "block_size", i,
+            &fs[i].lfs_cfg.block_size, 0) != HDF_SUCCESS) {
             HDF_LOGE("%s: failed to get block_size", __func__);
             return HDF_FAILURE;
         }
-        if (resource->GetUint32ArrayElem(resourceNode, "block_count", i, &fs[i].lfs_cfg.block_count, 0) != HDF_SUCCESS) {
+        if (resource->GetUint32ArrayElem(resourceNode, "block_count", i,
+            &fs[i].lfs_cfg.block_count, 0) != HDF_SUCCESS) {
             HDF_LOGE("%s: failed to get block_count", __func__);
             return HDF_FAILURE;
         }
         HDF_LOGD("%s: fs[%d] mount_point=%s, partition=%u, block_size=%u, block_count=%u", __func__, i,
-                 fs[i].mount_point, (uint32_t)fs[i].lfs_cfg.context, fs[i].lfs_cfg.block_size, fs[i].lfs_cfg.block_count);
+                 fs[i].mount_point, (uint32_t)fs[i].lfs_cfg.context,
+                 fs[i].lfs_cfg.block_size, fs[i].lfs_cfg.block_count);
     }
     return HDF_SUCCESS;
 }
@@ -86,20 +91,18 @@ static int32_t FsDriverInit(struct HdfDeviceObject *object)
         fs[i].lfs_cfg.erase = littlefs_block_erase;
         fs[i].lfs_cfg.sync = littlefs_block_sync;
 
-        fs[i].lfs_cfg.read_size = 256;
-        fs[i].lfs_cfg.prog_size = 256;
-        fs[i].lfs_cfg.cache_size = 256;
-        fs[i].lfs_cfg.lookahead_size = 16;
-        fs[i].lfs_cfg.block_cycles = 1000;
+        fs[i].lfs_cfg.read_size = 256; // 256:value of read_size
+        fs[i].lfs_cfg.prog_size = 256; // 256:value of prog_size
+        fs[i].lfs_cfg.cache_size = 256; // 256:value of cache_size
+        fs[i].lfs_cfg.lookahead_size = 16; // 16:value of lookahead_size
+        fs[i].lfs_cfg.block_cycles = 1000; // 1000:value of block_cycles
 
         ret = mount(NULL, fs[i].mount_point, "littlefs", 0, &fs[i].lfs_cfg);
-        if (!ret)
-        {
+        if (!ret) {
             ret = mkdir(fs[i].mount_point, S_IRUSR | S_IWUSR | S_IXUSR);
             HDF_LOGI("%s: mkdir %s %s\n", __func__, fs[i].mount_point, (ret == 0) ? "succeed" : "failed");
         }
-        if (ret)
-        {
+        if (ret) {
             break;
         }
     }

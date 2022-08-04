@@ -203,7 +203,7 @@ typedef unsigned int mem_ptr_t;
 #endif
 
 #define WM_SUCCESS               0
-#define WM_FAILED               -1
+#define WM_FAILED               (-1)
 
 #ifndef IGNORE_PARAMETER
 #define IGNORE_PARAMETER(x)     ((x) = (x))

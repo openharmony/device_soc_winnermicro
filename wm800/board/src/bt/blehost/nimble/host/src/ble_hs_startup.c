@@ -24,15 +24,13 @@
 #include "ble_hs_priv.h"
 
 #if !MYNEWT_VAL(BLE_CONTROLLER)
-static int
-ble_hs_startup_read_sup_f_tx(void)
+static int ble_hs_startup_read_sup_f_tx(void)
 {
     struct ble_hci_ip_rd_loc_supp_feat_rp rsp;
     int rc;
     rc = ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_INFO_PARAMS,
                                       BLE_HCI_OCF_IP_RD_LOC_SUPP_FEAT),
                            NULL, 0, &rsp, sizeof(rsp));
-
     if (rc != 0) {
         return rc;
     }
@@ -49,15 +47,13 @@ ble_hs_startup_read_sup_f_tx(void)
 }
 #endif
 
-static int
-ble_hs_startup_read_local_ver_tx(void)
+static int ble_hs_startup_read_local_ver_tx(void)
 {
     struct ble_hci_ip_rd_local_ver_rp rsp;
     int rc;
     rc = ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_INFO_PARAMS,
                                       BLE_HCI_OCF_IP_RD_LOCAL_VER),
                            NULL, 0, &rsp, sizeof(rsp));
-
     if (rc != 0) {
         return rc;
     }
@@ -67,15 +63,13 @@ ble_hs_startup_read_local_ver_tx(void)
     return 0;
 }
 
-static int
-ble_hs_startup_le_read_sup_f_tx(void)
+static int ble_hs_startup_le_read_sup_f_tx(void)
 {
     struct ble_hci_le_rd_loc_supp_feat_rp rsp;
     int rc;
     rc = ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_LE,
                                       BLE_HCI_OCF_LE_RD_LOC_SUPP_FEAT),
                            NULL, 0, &rsp, sizeof(rsp));
-
     if (rc != 0) {
         return rc;
     }
@@ -84,15 +78,13 @@ ble_hs_startup_le_read_sup_f_tx(void)
     return 0;
 }
 
-static int
-ble_hs_startup_le_read_buf_sz_tx(uint16_t *out_pktlen, uint8_t *out_max_pkts)
+static int ble_hs_startup_le_read_buf_sz_tx(uint16_t *out_pktlen, uint8_t *out_max_pkts)
 {
     struct ble_hci_le_rd_buf_size_rp rsp;
     int rc;
     rc = ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_LE,
                                       BLE_HCI_OCF_LE_RD_BUF_SIZE), NULL, 0,
                            &rsp, sizeof(rsp));
-
     if (rc != 0) {
         return rc;
     }
@@ -102,15 +94,13 @@ ble_hs_startup_le_read_buf_sz_tx(uint16_t *out_pktlen, uint8_t *out_max_pkts)
     return 0;
 }
 
-static int
-ble_hs_startup_read_buf_sz_tx(uint16_t *out_pktlen, uint16_t *out_max_pkts)
+static int ble_hs_startup_read_buf_sz_tx(uint16_t *out_pktlen, uint16_t *out_max_pkts)
 {
     struct ble_hci_ip_rd_buf_size_rp rsp;
     int rc;
     rc = ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_INFO_PARAMS,
                                       BLE_HCI_OCF_IP_RD_BUF_SIZE), NULL, 0,
                            &rsp, sizeof(rsp));
-
     if (rc != 0) {
         return rc;
     }
@@ -120,8 +110,7 @@ ble_hs_startup_read_buf_sz_tx(uint16_t *out_pktlen, uint16_t *out_max_pkts)
     return 0;
 }
 
-static int
-ble_hs_startup_read_buf_sz(void)
+static int ble_hs_startup_read_buf_sz(void)
 {
     uint16_t le_pktlen = 0;
     uint16_t max_pkts = 0;
@@ -129,7 +118,6 @@ ble_hs_startup_read_buf_sz(void)
     uint8_t le_max_pkts = 0;
     int rc;
     rc = ble_hs_startup_le_read_buf_sz_tx(&le_pktlen, &le_max_pkts);
-
     if (rc != 0) {
         return rc;
     }
@@ -139,14 +127,12 @@ ble_hs_startup_read_buf_sz(void)
         max_pkts = le_max_pkts;
     } else {
         rc = ble_hs_startup_read_buf_sz_tx(&pktlen, &max_pkts);
-
         if (rc != 0) {
             return rc;
         }
     }
 
     rc = ble_hs_hci_set_buf_sz(pktlen, max_pkts);
-
     if (rc != 0) {
         return rc;
     }
@@ -154,15 +140,13 @@ ble_hs_startup_read_buf_sz(void)
     return 0;
 }
 
-static int
-ble_hs_startup_read_bd_addr(void)
+static int ble_hs_startup_read_bd_addr(void)
 {
     struct ble_hci_ip_rd_bd_addr_rp rsp;
     int rc;
     rc = ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_INFO_PARAMS,
                                       BLE_HCI_OCF_IP_RD_BD_ADDR),
                            NULL, 0, &rsp, sizeof(rsp));
-
     if (rc != 0) {
         return rc;
     }
@@ -171,15 +155,14 @@ ble_hs_startup_read_bd_addr(void)
     return 0;
 }
 
-static int
-ble_hs_startup_le_set_evmask_tx(void)
+static int ble_hs_startup_le_set_evmask_tx(void)
 {
     struct ble_hci_le_set_event_mask_cp cmd;
     uint8_t version;
     uint64_t mask;
     int rc;
     version = ble_hs_hci_get_hci_version();
-    /* TODO should we also check for supported commands when setting this? */
+    /* should we also check for supported commands when setting this? */
     /**
      * Enable the following LE events:
      *     0x0000000000000001 LE Connection Complete Event
@@ -238,7 +221,6 @@ ble_hs_startup_le_set_evmask_tx(void)
     rc = ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_LE,
                                       BLE_HCI_OCF_LE_SET_EVENT_MASK),
                            &cmd, sizeof(cmd), NULL, 0);
-
     if (rc != 0) {
         return rc;
     }
@@ -246,8 +228,7 @@ ble_hs_startup_le_set_evmask_tx(void)
     return 0;
 }
 
-static int
-ble_hs_startup_set_evmask_tx(void)
+static int ble_hs_startup_set_evmask_tx(void)
 {
     struct ble_hci_cb_set_event_mask_cp cmd;
     struct ble_hci_cb_set_event_mask2_cp cmd2;
@@ -267,7 +248,6 @@ ble_hs_startup_set_evmask_tx(void)
     rc = ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_CTLR_BASEBAND,
                                       BLE_HCI_OCF_CB_SET_EVENT_MASK),
                            &cmd, sizeof(cmd), NULL, 0);
-
     if (rc != 0) {
         return rc;
     }
@@ -281,7 +261,6 @@ ble_hs_startup_set_evmask_tx(void)
         rc = ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_CTLR_BASEBAND,
                                           BLE_HCI_OCF_CB_SET_EVENT_MASK2),
                                &cmd2, sizeof(cmd2), NULL, 0);
-
         if (rc != 0) {
             return rc;
         }
@@ -290,26 +269,22 @@ ble_hs_startup_set_evmask_tx(void)
     return 0;
 }
 
-static int
-ble_hs_startup_reset_tx(void)
+static int ble_hs_startup_reset_tx(void)
 {
     return ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_CTLR_BASEBAND,
                                         BLE_HCI_OCF_CB_RESET),
                              NULL, 0, NULL, 0);
 }
 
-int
-ble_hs_startup_go(void)
+int ble_hs_startup_go(void)
 {
     int rc;
     rc = ble_hs_startup_reset_tx();
-
     if (rc != 0) {
         return rc;
     }
 
     rc = ble_hs_startup_read_local_ver_tx();
-
     if (rc != 0) {
         return rc;
     }
@@ -324,44 +299,37 @@ ble_hs_startup_go(void)
     }
 
     rc = ble_hs_startup_read_sup_f_tx();
-
     if (rc != 0) {
         return rc;
     }
 
 #endif
     rc = ble_hs_startup_set_evmask_tx();
-
     if (rc != 0) {
         return rc;
     }
 
     rc = ble_hs_startup_le_set_evmask_tx();
-
     if (rc != 0) {
         return rc;
     }
 
     rc = ble_hs_startup_read_buf_sz();
-
     if (rc != 0) {
         return rc;
     }
 
     rc = ble_hs_startup_le_read_sup_f_tx();
-
     if (rc != 0) {
         return rc;
     }
 
     rc = ble_hs_startup_read_bd_addr();
-
     if (rc != 0) {
         return rc;
     }
 
     rc = ble_hs_pvcy_set_our_irk(NULL);
-
     if (rc != 0) {
         assert(0);
         return rc;

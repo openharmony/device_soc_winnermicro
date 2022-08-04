@@ -26,8 +26,7 @@
 #include "host/ble_uuid.h"
 #include "ble_hs_priv.h"
 
-void *
-ble_att_cmd_prepare(uint8_t opcode, size_t len, struct os_mbuf *txom)
+void *ble_att_cmd_prepare(uint8_t opcode, size_t len, struct os_mbuf *txom)
 {
     struct ble_att_hdr *hdr;
 
@@ -41,11 +40,9 @@ ble_att_cmd_prepare(uint8_t opcode, size_t len, struct os_mbuf *txom)
     return hdr->data;
 }
 
-void *
-ble_att_cmd_get(uint8_t opcode, size_t len, struct os_mbuf **txom)
+void *ble_att_cmd_get(uint8_t opcode, size_t len, struct os_mbuf **txom)
 {
     *txom = ble_hs_mbuf_l2cap_pkt();
-
     if (*txom == NULL) {
         return NULL;
     }
@@ -53,8 +50,7 @@ ble_att_cmd_get(uint8_t opcode, size_t len, struct os_mbuf **txom)
     return ble_att_cmd_prepare(opcode, len, *txom);
 }
 
-int
-ble_att_tx(uint16_t conn_handle, struct os_mbuf *txom)
+int ble_att_tx(uint16_t conn_handle, struct os_mbuf *txom)
 {
     struct ble_l2cap_chan *chan;
     struct ble_hs_conn *conn;
@@ -77,9 +73,7 @@ ble_att_tx(uint16_t conn_handle, struct os_mbuf *txom)
     return rc;
 }
 
-static const void *
-ble_att_init_parse(uint8_t op, const void *payload,
-                   int min_len, int actual_len)
+static const void *ble_att_init_parse(uint8_t op, const void *payload, int min_len, int actual_len)
 {
     const uint8_t *u8ptr;
     BLE_HS_DBG_ASSERT(actual_len >= min_len);
@@ -88,8 +82,7 @@ ble_att_init_parse(uint8_t op, const void *payload,
     return u8ptr + 1;
 }
 
-static void *
-ble_att_init_write(uint8_t op, void *payload, int min_len, int actual_len)
+static void *ble_att_init_write(uint8_t op, void *payload, int min_len, int actual_len)
 {
     uint8_t *u8ptr;
     BLE_HS_DBG_ASSERT(actual_len >= min_len);
@@ -98,9 +91,7 @@ ble_att_init_write(uint8_t op, void *payload, int min_len, int actual_len)
     return u8ptr + 1;
 }
 
-void
-ble_att_error_rsp_parse(const void *payload, int len,
-                        struct ble_att_error_rsp *dst)
+void ble_att_error_rsp_parse(const void *payload, int len, struct ble_att_error_rsp *dst)
 {
     const struct ble_att_error_rsp *src;
     src = ble_att_init_parse(BLE_ATT_OP_ERROR_RSP, payload,
@@ -110,9 +101,7 @@ ble_att_error_rsp_parse(const void *payload, int len,
     dst->baep_error_code = src->baep_error_code;
 }
 
-void
-ble_att_error_rsp_write(void *payload, int len,
-                        const struct ble_att_error_rsp *src)
+void ble_att_error_rsp_write(void *payload, int len, const struct ble_att_error_rsp *src)
 {
     struct ble_att_error_rsp *dst;
     dst = ble_att_init_write(BLE_ATT_OP_ERROR_RSP, payload,
@@ -122,29 +111,21 @@ ble_att_error_rsp_write(void *payload, int len,
     dst->baep_error_code = src->baep_error_code;
 }
 
-void
-ble_att_mtu_req_parse(const void *payload, int len,
-                      struct ble_att_mtu_cmd *dst)
+void ble_att_mtu_req_parse(const void *payload, int len, struct ble_att_mtu_cmd *dst)
 {
     const struct ble_att_mtu_cmd *src;
-    src = ble_att_init_parse(BLE_ATT_OP_MTU_REQ, payload, BLE_ATT_MTU_CMD_SZ,
-                             len);
+    src = ble_att_init_parse(BLE_ATT_OP_MTU_REQ, payload, BLE_ATT_MTU_CMD_SZ, len);
     dst->bamc_mtu = le16toh(src->bamc_mtu);
 }
 
-void
-ble_att_mtu_rsp_parse(const void *payload, int len,
-                      struct ble_att_mtu_cmd *dst)
+void ble_att_mtu_rsp_parse(const void *payload, int len, struct ble_att_mtu_cmd *dst)
 {
     const struct ble_att_mtu_cmd *src;
-    src = ble_att_init_parse(BLE_ATT_OP_MTU_RSP, payload, BLE_ATT_MTU_CMD_SZ,
-                             len);
+    src = ble_att_init_parse(BLE_ATT_OP_MTU_RSP, payload, BLE_ATT_MTU_CMD_SZ, len);
     dst->bamc_mtu = le16toh(src->bamc_mtu);
 }
 
-void
-ble_att_mtu_req_write(void *payload, int len,
-                      const struct ble_att_mtu_cmd *src)
+void ble_att_mtu_req_write(void *payload, int len, const struct ble_att_mtu_cmd *src)
 {
     struct ble_att_mtu_cmd *dst;
     dst = ble_att_init_write(BLE_ATT_OP_MTU_REQ, payload,
@@ -152,9 +133,7 @@ ble_att_mtu_req_write(void *payload, int len,
     dst->bamc_mtu = htole16(src->bamc_mtu);
 }
 
-void
-ble_att_mtu_rsp_write(void *payload, int len,
-                      const struct ble_att_mtu_cmd *src)
+void ble_att_mtu_rsp_write(void *payload, int len, const struct ble_att_mtu_cmd *src)
 {
     struct ble_att_mtu_cmd *dst;
     dst = ble_att_init_write(BLE_ATT_OP_MTU_RSP, payload,
@@ -162,9 +141,7 @@ ble_att_mtu_rsp_write(void *payload, int len,
     dst->bamc_mtu = htole16(src->bamc_mtu);
 }
 
-void
-ble_att_find_info_req_parse(const void *payload, int len,
-                            struct ble_att_find_info_req *dst)
+void ble_att_find_info_req_parse(const void *payload, int len, struct ble_att_find_info_req *dst)
 {
     const struct ble_att_find_info_req *src;
     src = ble_att_init_parse(BLE_ATT_OP_FIND_INFO_REQ, payload,
@@ -173,9 +150,7 @@ ble_att_find_info_req_parse(const void *payload, int len,
     dst->bafq_end_handle = le16toh(src->bafq_end_handle);
 }
 
-void
-ble_att_find_info_req_write(void *payload, int len,
-                            const struct ble_att_find_info_req *src)
+void ble_att_find_info_req_write(void *payload, int len, const struct ble_att_find_info_req *src)
 {
     struct ble_att_find_info_req *dst;
     dst = ble_att_init_write(BLE_ATT_OP_FIND_INFO_REQ, payload,
@@ -184,9 +159,7 @@ ble_att_find_info_req_write(void *payload, int len,
     dst->bafq_end_handle = htole16(src->bafq_end_handle);
 }
 
-void
-ble_att_find_info_rsp_parse(const void *payload, int len,
-                            struct ble_att_find_info_rsp *dst)
+void ble_att_find_info_rsp_parse(const void *payload, int len, struct ble_att_find_info_rsp *dst)
 {
     const struct ble_att_find_info_rsp *src;
     src = ble_att_init_parse(BLE_ATT_OP_FIND_INFO_RSP, payload,
@@ -194,9 +167,7 @@ ble_att_find_info_rsp_parse(const void *payload, int len,
     dst->bafp_format = src->bafp_format;
 }
 
-void
-ble_att_find_info_rsp_write(void *payload, int len,
-                            const struct ble_att_find_info_rsp *src)
+void ble_att_find_info_rsp_write(void *payload, int len, const struct ble_att_find_info_rsp *src)
 {
     struct ble_att_find_info_rsp *dst;
     dst = ble_att_init_write(BLE_ATT_OP_FIND_INFO_RSP, payload,
@@ -204,9 +175,7 @@ ble_att_find_info_rsp_write(void *payload, int len,
     dst->bafp_format = src->bafp_format;
 }
 
-void
-ble_att_find_type_value_req_parse(const void *payload, int len,
-                                  struct ble_att_find_type_value_req *dst)
+void ble_att_find_type_value_req_parse(const void *payload, int len, struct ble_att_find_type_value_req *dst)
 {
     const struct ble_att_find_type_value_req *src;
     src = ble_att_init_parse(BLE_ATT_OP_FIND_TYPE_VALUE_REQ, payload,
@@ -216,9 +185,7 @@ ble_att_find_type_value_req_parse(const void *payload, int len,
     dst->bavq_attr_type = le16toh(src->bavq_attr_type);
 }
 
-void
-ble_att_find_type_value_req_write(
-                void *payload, int len, const struct ble_att_find_type_value_req *src)
+void ble_att_find_type_value_req_write(void *payload, int len, const struct ble_att_find_type_value_req *src)
 {
     struct ble_att_find_type_value_req *dst;
     dst = ble_att_init_write(BLE_ATT_OP_FIND_TYPE_VALUE_REQ, payload,
@@ -228,9 +195,7 @@ ble_att_find_type_value_req_write(
     dst->bavq_attr_type = htole16(src->bavq_attr_type);
 }
 
-void
-ble_att_read_type_req_parse(const void *payload, int len,
-                            struct ble_att_read_type_req *dst)
+void ble_att_read_type_req_parse(const void *payload, int len, struct ble_att_read_type_req *dst)
 {
     const struct ble_att_read_type_req *src;
     src = ble_att_init_parse(BLE_ATT_OP_READ_TYPE_REQ, payload,
@@ -239,9 +204,7 @@ ble_att_read_type_req_parse(const void *payload, int len,
     dst->batq_end_handle = le16toh(src->batq_end_handle);
 }
 
-void
-ble_att_read_type_req_write(void *payload, int len,
-                            const struct ble_att_read_type_req *src)
+void ble_att_read_type_req_write(void *payload, int len, const struct ble_att_read_type_req *src)
 {
     struct ble_att_read_type_req *dst;
     dst = ble_att_init_write(BLE_ATT_OP_READ_TYPE_REQ, payload,
@@ -250,9 +213,7 @@ ble_att_read_type_req_write(void *payload, int len,
     dst->batq_end_handle = htole16(src->batq_end_handle);
 }
 
-void
-ble_att_read_type_rsp_parse(const void *payload, int len,
-                            struct ble_att_read_type_rsp *dst)
+void ble_att_read_type_rsp_parse(const void *payload, int len, struct ble_att_read_type_rsp *dst)
 {
     const struct ble_att_read_type_rsp *src;
     src = ble_att_init_parse(BLE_ATT_OP_READ_TYPE_RSP, payload,
@@ -260,9 +221,7 @@ ble_att_read_type_rsp_parse(const void *payload, int len,
     dst->batp_length = src->batp_length;
 }
 
-void
-ble_att_read_type_rsp_write(void *payload, int len,
-                            const struct ble_att_read_type_rsp *src)
+void ble_att_read_type_rsp_write(void *payload, int len, const struct ble_att_read_type_rsp *src)
 {
     struct ble_att_read_type_rsp *dst;
     dst = ble_att_init_write(BLE_ATT_OP_READ_TYPE_RSP, payload,
@@ -270,9 +229,7 @@ ble_att_read_type_rsp_write(void *payload, int len,
     dst->batp_length = src->batp_length;
 }
 
-void
-ble_att_read_req_parse(const void *payload, int len,
-                       struct ble_att_read_req *dst)
+void ble_att_read_req_parse(const void *payload, int len, struct ble_att_read_req *dst)
 {
     const struct ble_att_read_req *src;
     src = ble_att_init_parse(BLE_ATT_OP_READ_REQ, payload,
@@ -280,9 +237,7 @@ ble_att_read_req_parse(const void *payload, int len,
     dst->barq_handle = le16toh(src->barq_handle);
 }
 
-void
-ble_att_read_req_write(void *payload, int len,
-                       const struct ble_att_read_req *src)
+void ble_att_read_req_write(void *payload, int len, const struct ble_att_read_req *src)
 {
     struct ble_att_read_req *dst;
     dst = ble_att_init_write(BLE_ATT_OP_READ_REQ, payload,
@@ -290,9 +245,7 @@ ble_att_read_req_write(void *payload, int len,
     dst->barq_handle = htole16(src->barq_handle);
 }
 
-void
-ble_att_read_blob_req_parse(const void *payload, int len,
-                            struct ble_att_read_blob_req *dst)
+void ble_att_read_blob_req_parse(const void *payload, int len, struct ble_att_read_blob_req *dst)
 {
     const struct ble_att_read_blob_req *src;
     src = ble_att_init_parse(BLE_ATT_OP_READ_BLOB_REQ, payload,
@@ -301,9 +254,7 @@ ble_att_read_blob_req_parse(const void *payload, int len,
     dst->babq_offset = le16toh(src->babq_offset);
 }
 
-void
-ble_att_read_blob_req_write(void *payload, int len,
-                            const struct ble_att_read_blob_req *src)
+void ble_att_read_blob_req_write(void *payload, int len, const struct ble_att_read_blob_req *src)
 {
     struct ble_att_read_blob_req *dst;
     dst = ble_att_init_write(BLE_ATT_OP_READ_BLOB_REQ, payload,
@@ -312,37 +263,31 @@ ble_att_read_blob_req_write(void *payload, int len,
     dst->babq_offset = htole16(src->babq_offset);
 }
 
-void
-ble_att_read_mult_req_parse(const void *payload, int len)
+void ble_att_read_mult_req_parse(const void *payload, int len)
 {
     ble_att_init_parse(BLE_ATT_OP_READ_MULT_REQ, payload,
                        BLE_ATT_READ_MULT_REQ_BASE_SZ, len);
 }
 
-void
-ble_att_read_mult_req_write(void *payload, int len)
+void ble_att_read_mult_req_write(void *payload, int len)
 {
     ble_att_init_write(BLE_ATT_OP_READ_MULT_REQ, payload,
                        BLE_ATT_READ_MULT_REQ_BASE_SZ, len);
 }
 
-void
-ble_att_read_mult_rsp_parse(const void *payload, int len)
+void ble_att_read_mult_rsp_parse(const void *payload, int len)
 {
     ble_att_init_parse(BLE_ATT_OP_READ_MULT_RSP, payload,
                        BLE_ATT_READ_MULT_RSP_BASE_SZ, len);
 }
 
-void
-ble_att_read_mult_rsp_write(void *payload, int len)
+void ble_att_read_mult_rsp_write(void *payload, int len)
 {
     ble_att_init_write(BLE_ATT_OP_READ_MULT_RSP, payload,
                        BLE_ATT_READ_MULT_RSP_BASE_SZ, len);
 }
 
-void
-ble_att_read_group_type_req_parse(const void *payload, int len,
-                                  struct ble_att_read_group_type_req *dst)
+void ble_att_read_group_type_req_parse(const void *payload, int len, struct ble_att_read_group_type_req *dst)
 {
     const struct ble_att_read_group_type_req *src;
     src = ble_att_init_parse(BLE_ATT_OP_READ_GROUP_TYPE_REQ, payload,
@@ -351,9 +296,7 @@ ble_att_read_group_type_req_parse(const void *payload, int len,
     dst->bagq_end_handle = le16toh(src->bagq_end_handle);
 }
 
-void
-ble_att_read_group_type_req_write(
-                void *payload, int len, const struct ble_att_read_group_type_req *src)
+void ble_att_read_group_type_req_write(void *payload, int len, const struct ble_att_read_group_type_req *src)
 {
     struct ble_att_read_group_type_req *dst;
     dst = ble_att_init_write(BLE_ATT_OP_READ_GROUP_TYPE_REQ, payload,
@@ -362,9 +305,7 @@ ble_att_read_group_type_req_write(
     dst->bagq_end_handle = htole16(src->bagq_end_handle);
 }
 
-void
-ble_att_read_group_type_rsp_parse(const void *payload, int len,
-                                  struct ble_att_read_group_type_rsp *dst)
+void ble_att_read_group_type_rsp_parse(const void *payload, int len, struct ble_att_read_group_type_rsp *dst)
 {
     const struct ble_att_read_group_type_rsp *src;
     src = ble_att_init_parse(BLE_ATT_OP_READ_GROUP_TYPE_RSP, payload,
@@ -372,9 +313,7 @@ ble_att_read_group_type_rsp_parse(const void *payload, int len,
     dst->bagp_length = src->bagp_length;
 }
 
-void
-ble_att_read_group_type_rsp_write(
-                void *payload, int len, const struct ble_att_read_group_type_rsp *src)
+void ble_att_read_group_type_rsp_write(void *payload, int len, const struct ble_att_read_group_type_rsp *src)
 {
     struct ble_att_read_group_type_rsp *dst;
     dst = ble_att_init_write(BLE_ATT_OP_READ_GROUP_TYPE_RSP, payload,
@@ -382,9 +321,7 @@ ble_att_read_group_type_rsp_write(
     dst->bagp_length = src->bagp_length;
 }
 
-void
-ble_att_write_req_parse(const void *payload, int len,
-                        struct ble_att_write_req *dst)
+void ble_att_write_req_parse(const void *payload, int len, struct ble_att_write_req *dst)
 {
     const struct ble_att_write_req *src;
     src = ble_att_init_parse(BLE_ATT_OP_WRITE_REQ, payload,
@@ -392,9 +329,7 @@ ble_att_write_req_parse(const void *payload, int len,
     dst->bawq_handle = le16toh(src->bawq_handle);
 }
 
-void
-ble_att_write_cmd_parse(const void *payload, int len,
-                        struct ble_att_write_req *dst)
+void ble_att_write_cmd_parse(const void *payload, int len, struct ble_att_write_req *dst)
 {
     const struct ble_att_write_req *src;
     src = ble_att_init_parse(BLE_ATT_OP_WRITE_CMD, payload,
@@ -402,9 +337,7 @@ ble_att_write_cmd_parse(const void *payload, int len,
     dst->bawq_handle = le16toh(src->bawq_handle);
 }
 
-void
-ble_att_write_req_write(void *payload, int len,
-                        const struct ble_att_write_req *src)
+void ble_att_write_req_write(void *payload, int len, const struct ble_att_write_req *src)
 {
     struct ble_att_write_req *dst;
     dst = ble_att_init_write(BLE_ATT_OP_WRITE_REQ, payload,
@@ -412,9 +345,8 @@ ble_att_write_req_write(void *payload, int len,
     dst->bawq_handle = htole16(src->bawq_handle);
 }
 
-void
-ble_att_write_cmd_write(void *payload, int len,
-                        const struct ble_att_write_req *src)
+void ble_att_write_cmd_write(void *payload, int len,
+                             const struct ble_att_write_req *src)
 {
     struct ble_att_write_req *dst;
     dst = ble_att_init_write(BLE_ATT_OP_WRITE_CMD, payload,
@@ -422,9 +354,7 @@ ble_att_write_cmd_write(void *payload, int len,
     dst->bawq_handle = htole16(src->bawq_handle);
 }
 
-void
-ble_att_prep_write_req_parse(const void *payload, int len,
-                             struct ble_att_prep_write_cmd *dst)
+void ble_att_prep_write_req_parse(const void *payload, int len, struct ble_att_prep_write_cmd *dst)
 {
     const struct ble_att_prep_write_cmd *src;
     src = ble_att_init_parse(BLE_ATT_OP_PREP_WRITE_REQ, payload,
@@ -433,9 +363,7 @@ ble_att_prep_write_req_parse(const void *payload, int len,
     dst->bapc_offset = le16toh(src->bapc_offset);
 }
 
-void
-ble_att_prep_write_req_write(void *payload, int len,
-                             const struct ble_att_prep_write_cmd *src)
+void ble_att_prep_write_req_write(void *payload, int len, const struct ble_att_prep_write_cmd *src)
 {
     struct ble_att_prep_write_cmd *dst;
     dst = ble_att_init_write(BLE_ATT_OP_PREP_WRITE_REQ, payload,
@@ -444,9 +372,7 @@ ble_att_prep_write_req_write(void *payload, int len,
     dst->bapc_offset = htole16(src->bapc_offset);
 }
 
-void
-ble_att_prep_write_rsp_parse(const void *payload, int len,
-                             struct ble_att_prep_write_cmd *dst)
+void ble_att_prep_write_rsp_parse(const void *payload, int len, struct ble_att_prep_write_cmd *dst)
 {
     const struct ble_att_prep_write_cmd *src;
     src = ble_att_init_parse(BLE_ATT_OP_PREP_WRITE_RSP, payload,
@@ -455,9 +381,7 @@ ble_att_prep_write_rsp_parse(const void *payload, int len,
     dst->bapc_offset = le16toh(src->bapc_offset);
 }
 
-void
-ble_att_prep_write_rsp_write(void *payload, int len,
-                             const struct ble_att_prep_write_cmd *src)
+void ble_att_prep_write_rsp_write(void *payload, int len, const struct ble_att_prep_write_cmd *src)
 {
     struct ble_att_prep_write_cmd *dst;
     dst = ble_att_init_write(BLE_ATT_OP_PREP_WRITE_RSP, payload,
@@ -466,9 +390,7 @@ ble_att_prep_write_rsp_write(void *payload, int len,
     dst->bapc_offset = htole16(src->bapc_offset);
 }
 
-void
-ble_att_exec_write_req_parse(const void *payload, int len,
-                             struct ble_att_exec_write_req *dst)
+void ble_att_exec_write_req_parse(const void *payload, int len, struct ble_att_exec_write_req *dst)
 {
     const struct ble_att_exec_write_req *src;
     src = ble_att_init_parse(BLE_ATT_OP_EXEC_WRITE_REQ, payload,
@@ -476,9 +398,7 @@ ble_att_exec_write_req_parse(const void *payload, int len,
     dst->baeq_flags = src->baeq_flags;
 }
 
-void
-ble_att_exec_write_req_write(void *payload, int len,
-                             const struct ble_att_exec_write_req *src)
+void ble_att_exec_write_req_write(void *payload, int len, const struct ble_att_exec_write_req *src)
 {
     struct ble_att_exec_write_req *dst;
     dst = ble_att_init_write(BLE_ATT_OP_EXEC_WRITE_REQ, payload,
@@ -486,23 +406,19 @@ ble_att_exec_write_req_write(void *payload, int len,
     dst->baeq_flags = src->baeq_flags;
 }
 
-void
-ble_att_exec_write_rsp_parse(const void *payload, int len)
+void ble_att_exec_write_rsp_parse(const void *payload, int len)
 {
     ble_att_init_parse(BLE_ATT_OP_EXEC_WRITE_RSP, payload,
                        BLE_ATT_EXEC_WRITE_RSP_SZ, len);
 }
 
-void
-ble_att_exec_write_rsp_write(void *payload, int len)
+void ble_att_exec_write_rsp_write(void *payload, int len)
 {
     ble_att_init_write(BLE_ATT_OP_EXEC_WRITE_RSP, payload,
                        BLE_ATT_EXEC_WRITE_RSP_SZ, len);
 }
 
-void
-ble_att_notify_req_parse(const void *payload, int len,
-                         struct ble_att_notify_req *dst)
+void ble_att_notify_req_parse(const void *payload, int len, struct ble_att_notify_req *dst)
 {
     const struct ble_att_notify_req *src;
     src = ble_att_init_parse(BLE_ATT_OP_NOTIFY_REQ, payload,
@@ -510,9 +426,7 @@ ble_att_notify_req_parse(const void *payload, int len,
     dst->banq_handle = le16toh(src->banq_handle);
 }
 
-void
-ble_att_notify_req_write(void *payload, int len,
-                         const struct ble_att_notify_req *src)
+void ble_att_notify_req_write(void *payload, int len, const struct ble_att_notify_req *src)
 {
     struct ble_att_notify_req *dst;
     dst = ble_att_init_write(BLE_ATT_OP_NOTIFY_REQ, payload,
@@ -520,9 +434,7 @@ ble_att_notify_req_write(void *payload, int len,
     dst->banq_handle = htole16(src->banq_handle);
 }
 
-void
-ble_att_indicate_req_parse(const void *payload, int len,
-                           struct ble_att_indicate_req *dst)
+void ble_att_indicate_req_parse(const void *payload, int len, struct ble_att_indicate_req *dst)
 {
     const struct ble_att_indicate_req *src;
     src = ble_att_init_parse(BLE_ATT_OP_INDICATE_REQ, payload,
@@ -530,9 +442,7 @@ ble_att_indicate_req_parse(const void *payload, int len,
     dst->baiq_handle = le16toh(src->baiq_handle);
 }
 
-void
-ble_att_indicate_req_write(void *payload, int len,
-                           const struct ble_att_indicate_req *src)
+void ble_att_indicate_req_write(void *payload, int len, const struct ble_att_indicate_req *src)
 {
     struct ble_att_indicate_req *dst;
     dst = ble_att_init_write(BLE_ATT_OP_INDICATE_REQ, payload,
@@ -540,15 +450,13 @@ ble_att_indicate_req_write(void *payload, int len,
     dst->baiq_handle = htole16(src->baiq_handle);
 }
 
-void
-ble_att_indicate_rsp_parse(const void *payload, int len)
+void ble_att_indicate_rsp_parse(const void *payload, int len)
 {
     ble_att_init_parse(BLE_ATT_OP_INDICATE_RSP, payload,
                        BLE_ATT_INDICATE_RSP_SZ, len);
 }
 
-void
-ble_att_indicate_rsp_write(void *payload, int len)
+void ble_att_indicate_rsp_write(void *payload, int len)
 {
     ble_att_init_write(BLE_ATT_OP_INDICATE_RSP, payload,
                        BLE_ATT_INDICATE_RSP_SZ, len);

@@ -43,7 +43,6 @@ static void _mdelay(void)
 
     while (1) {
         uint32_t cur = csi_coret_get_value();
-
         if (start > cur) {
             if (start - cur >= cnt) {
                 return;
@@ -92,7 +91,7 @@ void SystemInit(void)
     __enable_excp_irq();
 #endif
 
-    //csi_coret_config(g_system_clock / CONFIG_SYSTICK_HZ, SYS_TICK_IRQn);    //10ms
-//#ifndef CONFIG_KERNEL_NONE
-//#endif
+// csi_coret_config(g_system_clock / CONFIG_SYSTICK_HZ, SYS_TICK_IRQn);    // 10ms
+// #ifndef CONFIG_KERNEL_NONE
+// #endif
 }

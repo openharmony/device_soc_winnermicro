@@ -117,9 +117,9 @@ extern "C" {
 #define BT_LE_AD_GENERAL                0x02 /* General Discoverable */
 #define BT_LE_AD_NO_BREDR               0x04 /* BR/EDR not supported */
 
-#define sys_put_be16(a,b) put_be16(b, a)
-#define sys_put_le16(a,b) put_le16(b, a)
-#define sys_put_be32(a,b) put_be32(b, a)
+#define sys_put_be16(a, b) put_be16(b, a)
+#define sys_put_le16(a, b) put_le16(b, a)
+#define sys_put_be32(a, b) put_be32(b, a)
 #define sys_get_be16(a) get_be16(a)
 #define sys_get_le16(a) get_le16(a)
 #define sys_get_be32(a) get_be32(a)
@@ -190,7 +190,7 @@ typedef ble_addr_t bt_addr_le_t;
 #define k_fifo_init(queue) ble_npl_eventq_init(queue)
 #define net_buf_simple_tailroom(buf) OS_MBUF_TRAILINGSPACE(buf)
 #define net_buf_tailroom(buf) net_buf_simple_tailroom(buf)
-#define net_buf_headroom(buf) ((buf)->om_data - &(buf)->om_databuf[buf->om_pkthdr_len])
+#define net_buf_headroom(buf) ((buf)->om_data - &(buf)->om_databuf[(buf)->om_pkthdr_len])
 #define net_buf_simple_headroom(buf) net_buf_headroom(buf)
 #define net_buf_simple_tail(buf) ((buf)->om_data + (buf)->om_len)
 
@@ -231,7 +231,8 @@ static inline void net_buf_simple_init(struct os_mbuf *buf,
                                        size_t reserve_head)
 {
     /* This is called in Zephyr after init.
-     * Note in Mynewt case we don't care abour reserved head*/
+     * Note in Mynewt case we don't care abour reserved head
+     */
     buf->om_data = &buf->om_databuf[buf->om_pkthdr_len] + reserve_head;
     buf->om_len = 0;
 }
@@ -261,10 +262,10 @@ void *net_buf_get(struct ble_npl_eventq *fifo, s32_t t);
 uint8_t *net_buf_simple_push(struct os_mbuf *om, uint8_t len);
 void net_buf_reserve(struct os_mbuf *om, size_t reserve);
 
-#define net_buf_add_mem(a,b,c) os_mbuf_append(a,b,c)
-#define net_buf_simple_add_mem(a,b,c) os_mbuf_append(a,b,c)
-#define net_buf_add_u8(a,b) net_buf_simple_add_u8(a,b)
-#define net_buf_add(a,b) net_buf_simple_add(a,b)
+#define net_buf_add_mem(a, b, c) os_mbuf_append(a, b, c)
+#define net_buf_simple_add_mem(a, b, c) os_mbuf_append(a, b, c)
+#define net_buf_add_u8(a, b) net_buf_simple_add_u8(a, b)
+#define net_buf_add(a, b) net_buf_simple_add(a, b)
 
 #define net_buf_clone(a, b) os_mbuf_dup(a)
 #define net_buf_add_be32(a, b) net_buf_simple_add_be32(a, b)
@@ -338,7 +339,7 @@ static inline void net_buf_simple_save(struct os_mbuf *buf,
 }
 
 static inline void net_buf_simple_restore(struct os_mbuf *buf,
-        struct net_buf_simple_state *state)
+                                          struct net_buf_simple_state *state)
 {
     buf->om_data = &buf->om_databuf[buf->om_pkthdr_len] + state->offset;
     buf->om_len = state->len;
@@ -346,12 +347,13 @@ static inline void net_buf_simple_restore(struct os_mbuf *buf,
 
 static inline void sys_memcpy_swap(void *dst, const void *src, size_t length)
 {
-    __ASSERT(((src < dst && (src + length) <= dst) ||
-              (src > dst && (dst + length) <= src)),
+    size_t Length = length;
+    __ASSERT(((src < dst && (src + Length) <= dst) ||
+              (src > dst && (dst + Length) <= src)),
              "Source and destination buffers must not overlap");
-    src += length - 1;
+    src += Length - 1;
 
-    for(; length > 0; length--) {
+    for (; Length > 0; Length--) {
         *((u8_t *)dst++) = *((u8_t *)src--);
     }
 }
@@ -365,8 +367,9 @@ static inline unsigned int find_lsb_set(u32_t op)
 
 static inline unsigned int find_msb_set(u32_t op)
 {
-    if (!op)
-    { return 0; }
+    if (!op) {
+        return 0;
+    }
 
     return 32 - __builtin_clz(op);
 }
@@ -438,7 +441,7 @@ static inline void k_sem_give(struct k_sem *sem)
  * type at this point anymore.
  */
 
-#define BUF_SIZE(pool) (pool->omp_pool->mp_block_size)
+#define BUF_SIZE(pool) ((pool)->omp_pool->mp_block_size)
 
 static inline int net_buf_id(struct os_mbuf *buf)
 {
@@ -479,8 +482,7 @@ char *settings_str_from_bytes(const void *vp, int vp_len,
 
 #else
 
-static inline int
-settings_load(void)
+static inline int settings_load(void)
 {
     return 0;
 }

@@ -75,7 +75,7 @@ static void gen_level_status(struct bt_mesh_model *model,
     struct os_mbuf *msg = NET_BUF_SIMPLE(4);
     s16_t *level;
     bt_mesh_model_msg_init(msg, OP_GEN_LEVEL_STATUS);
-    level = net_buf_simple_add(msg, 2);
+    level = net_buf_simple_add(msg, 2); // 2:len
 
     if (cb && cb->get) {
         cb->get(model, level);
@@ -127,7 +127,7 @@ static void light_lightness_status(struct bt_mesh_model *model,
     struct os_mbuf *msg = NET_BUF_SIMPLE(4);
     s16_t *lightness;
     bt_mesh_model_msg_init(msg, OP_LIGHT_LIGHTNESS_STATUS);
-    lightness = net_buf_simple_add(msg, 2);
+    lightness = net_buf_simple_add(msg, 2); // 2:len
 
     if (cb && cb->get) {
         cb->get(model, lightness);

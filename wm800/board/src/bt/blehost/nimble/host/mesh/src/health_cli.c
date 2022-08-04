@@ -51,14 +51,12 @@ static void health_fault_status(struct bt_mesh_model *model,
 
     param = health_cli->op_param;
     test_id = net_buf_simple_pull_u8(buf);
-
     if (param->expect_test_id && test_id != *param->expect_test_id) {
         BT_WARN("Health fault with unexpected Test ID");
         return;
     }
 
     cid = net_buf_simple_pull_le16(buf);
-
     if (cid != param->cid) {
         BT_WARN("Health fault with unexpected Company ID");
         return;
@@ -74,7 +72,7 @@ static void health_fault_status(struct bt_mesh_model *model,
         *param->fault_count = buf->om_len;
     }
 
-    memcpy(param->faults, buf->om_data, *param->fault_count);
+    memcpy_s(param->faults, sizeof(param->faults), buf->om_data, *param->fault_count);
     k_sem_give(&health_cli->op_sync);
 }
 
@@ -205,14 +203,12 @@ int bt_mesh_health_attention_get(u16_t net_idx, u16_t addr, u16_t app_idx,
     };
     int err;
     err = cli_prepare(&param, OP_ATTENTION_STATUS);
-
     if (err) {
         goto done;
     }
 
     bt_mesh_model_msg_init(msg, OP_ATTENTION_GET);
     err = bt_mesh_model_send(health_cli->model, &ctx, msg, NULL, NULL);
-
     if (err) {
         BT_ERR("model_send() failed (err %d)", err);
         cli_reset();
@@ -240,7 +236,6 @@ int bt_mesh_health_attention_set(u16_t net_idx, u16_t addr, u16_t app_idx,
     };
     int err;
     err = cli_prepare(&param, OP_ATTENTION_STATUS);
-
     if (err) {
         goto done;
     }
@@ -253,7 +248,6 @@ int bt_mesh_health_attention_set(u16_t net_idx, u16_t addr, u16_t app_idx,
 
     net_buf_simple_add_u8(msg, attention);
     err = bt_mesh_model_send(health_cli->model, &ctx, msg, NULL, NULL);
-
     if (err) {
         BT_ERR("model_send() failed (err %d)", err);
         cli_reset();
@@ -286,14 +280,12 @@ int bt_mesh_health_period_get(u16_t net_idx, u16_t addr, u16_t app_idx,
     };
     int err;
     err = cli_prepare(&param, OP_HEALTH_PERIOD_STATUS);
-
     if (err) {
         goto done;
     }
 
     bt_mesh_model_msg_init(msg, OP_HEALTH_PERIOD_GET);
     err = bt_mesh_model_send(health_cli->model, &ctx, msg, NULL, NULL);
-
     if (err) {
         BT_ERR("model_send() failed (err %d)", err);
         cli_reset();
@@ -321,7 +313,6 @@ int bt_mesh_health_period_set(u16_t net_idx, u16_t addr, u16_t app_idx,
     };
     int err;
     err = cli_prepare(&param, OP_HEALTH_PERIOD_STATUS);
-
     if (err) {
         goto done;
     }
@@ -334,7 +325,6 @@ int bt_mesh_health_period_set(u16_t net_idx, u16_t addr, u16_t app_idx,
 
     net_buf_simple_add_u8(msg, divisor);
     err = bt_mesh_model_send(health_cli->model, &ctx, msg, NULL, NULL);
-
     if (err) {
         BT_ERR("model_send() failed (err %d)", err);
         cli_reset();
@@ -371,7 +361,6 @@ int bt_mesh_health_fault_test(u16_t net_idx, u16_t addr, u16_t app_idx,
     };
     int err;
     err = cli_prepare(&param, OP_HEALTH_FAULT_STATUS);
-
     if (err) {
         goto done;
     }
@@ -385,7 +374,6 @@ int bt_mesh_health_fault_test(u16_t net_idx, u16_t addr, u16_t app_idx,
     net_buf_simple_add_u8(msg, test_id);
     net_buf_simple_add_le16(msg, cid);
     err = bt_mesh_model_send(health_cli->model, &ctx, msg, NULL, NULL);
-
     if (err) {
         BT_ERR("model_send() failed (err %d)", err);
         cli_reset();
@@ -422,7 +410,6 @@ int bt_mesh_health_fault_clear(u16_t net_idx, u16_t addr, u16_t app_idx,
     };
     int err;
     err = cli_prepare(&param, OP_HEALTH_FAULT_STATUS);
-
     if (err) {
         goto done;
     }
@@ -435,7 +422,6 @@ int bt_mesh_health_fault_clear(u16_t net_idx, u16_t addr, u16_t app_idx,
 
     net_buf_simple_add_le16(msg, cid);
     err = bt_mesh_model_send(health_cli->model, &ctx, msg, NULL, NULL);
-
     if (err) {
         BT_ERR("model_send() failed (err %d)", err);
         cli_reset();
@@ -472,7 +458,6 @@ int bt_mesh_health_fault_get(u16_t net_idx, u16_t addr, u16_t app_idx,
     };
     int err;
     err = cli_prepare(&param, OP_HEALTH_FAULT_STATUS);
-
     if (err) {
         goto done;
     }
@@ -480,7 +465,6 @@ int bt_mesh_health_fault_get(u16_t net_idx, u16_t addr, u16_t app_idx,
     bt_mesh_model_msg_init(msg, OP_HEALTH_FAULT_GET);
     net_buf_simple_add_le16(msg, cid);
     err = bt_mesh_model_send(health_cli->model, &ctx, msg, NULL, NULL);
-
     if (err) {
         BT_ERR("model_send() failed (err %d)", err);
         cli_reset();

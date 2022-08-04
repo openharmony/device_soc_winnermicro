@@ -45,7 +45,7 @@ static void ble_hs_timer_sched(int32_t ticks_from_now);
 struct os_mempool ble_hs_hci_ev_pool;
 static os_membuf_t ble_hs_hci_os_event_buf[
                  OS_MEMPOOL_SIZE(BLE_HS_HCI_EVT_COUNT, sizeof(struct ble_npl_event))
- ];
+];
 
 /** OS event - triggers tx of pending notifications and indications. */
 static struct ble_npl_event ble_hs_ev_tx_notifications;
@@ -104,21 +104,18 @@ STATS_NAME(ble_hs_stats, pvcy_add_entry)
 STATS_NAME(ble_hs_stats, pvcy_add_entry_fail)
 STATS_NAME_END(ble_hs_stats)
 
-struct ble_npl_eventq *
-ble_hs_evq_get(void)
+struct ble_npl_eventq *ble_hs_evq_get(void)
 {
     return ble_hs_evq;
 }
 
-void
-ble_hs_evq_set(struct ble_npl_eventq *evq)
+void ble_hs_evq_set(struct ble_npl_eventq *evq)
 {
     ble_hs_evq = evq;
 }
 
 #if MYNEWT_VAL(BLE_HS_DEBUG)
-int
-ble_hs_locked_by_cur_task(void)
+int ble_hs_locked_by_cur_task(void)
 {
 #if MYNEWT
     struct os_task *owner;
@@ -138,8 +135,7 @@ ble_hs_locked_by_cur_task(void)
 /**
  * Indicates whether the host's parent task is currently running.
  */
-int
-ble_hs_is_parent_task(void)
+int ble_hs_is_parent_task(void)
 {
     return !ble_npl_os_started() ||
            ble_npl_get_current_task_id() == ble_hs_parent_task;
@@ -148,8 +144,7 @@ ble_hs_is_parent_task(void)
 /**
  * Locks the BLE host mutex.  Nested locks allowed.
  */
-void
-ble_hs_lock_nested(void)
+void ble_hs_lock_nested(void)
 {
     int rc;
 #if MYNEWT_VAL(BLE_HS_DEBUG)
@@ -167,8 +162,7 @@ ble_hs_lock_nested(void)
 /**
  * Unlocks the BLE host mutex.  Nested locks allowed.
  */
-void
-ble_hs_unlock_nested(void)
+void ble_hs_unlock_nested(void)
 {
     int rc;
 #if MYNEWT_VAL(BLE_HS_DEBUG)
@@ -186,8 +180,7 @@ ble_hs_unlock_nested(void)
 /**
  * Locks the BLE host mutex.  Nested locks not allowed.
  */
-void
-ble_hs_lock(void)
+void ble_hs_lock(void)
 {
     BLE_HS_DBG_ASSERT(!ble_hs_locked_by_cur_task());
 #if MYNEWT_VAL(BLE_HS_DEBUG)
@@ -203,8 +196,7 @@ ble_hs_lock(void)
 /**
  * Unlocks the BLE host mutex.  Nested locks not allowed.
  */
-void
-ble_hs_unlock(void)
+void ble_hs_unlock(void)
 {
 #if MYNEWT_VAL(BLE_HS_DEBUG)
 
@@ -216,12 +208,10 @@ ble_hs_unlock(void)
     ble_hs_unlock_nested();
 }
 
-void
-ble_hs_process_rx_data_queue(void)
+void ble_hs_process_rx_data_queue(void)
 {
     struct os_mbuf *om;
-
-    while((om = ble_mqueue_get(&ble_hs_rx_q)) != NULL) {
+    while ((om = ble_mqueue_get(&ble_hs_rx_q)) != NULL) {
 #if BLE_MONITOR
         ble_monitor_send_om(BLE_MONITOR_OPCODE_ACL_RX_PKT, om);
 #endif
@@ -229,17 +219,15 @@ ble_hs_process_rx_data_queue(void)
     }
 }
 
-static int
-ble_hs_wakeup_tx_conn(struct ble_hs_conn *conn)
+static int ble_hs_wakeup_tx_conn(struct ble_hs_conn *conn)
 {
     struct os_mbuf_pkthdr *omp;
     struct os_mbuf *om;
 
-    while((omp = STAILQ_FIRST(&conn->bhc_tx_q)) != NULL) {
+    while ((omp = STAILQ_FIRST(&conn->bhc_tx_q)) != NULL) {
         STAILQ_REMOVE_HEAD(&conn->bhc_tx_q, omp_next);
         om = OS_MBUF_PKTHDR_TO_MBUF(omp);
         int rc = ble_hs_hci_acl_tx_now(conn, &om);
-
         if (rc == BLE_HS_EAGAIN) {
             /* Controller is at capacity.  This packet will be the first to
              * get transmitted next time around.
@@ -255,8 +243,7 @@ ble_hs_wakeup_tx_conn(struct ble_hs_conn *conn)
 /**
  * Schedules the transmission of all queued ACL data packets to the controller.
  */
-void
-ble_hs_wakeup_tx(void)
+void ble_hs_wakeup_tx(void)
 {
     struct ble_hs_conn *conn;
     int rc;
@@ -266,12 +253,11 @@ ble_hs_wakeup_tx(void)
      * be serviced first.  The controller is waiting for the remainder so it
      * can reassemble it.
      */
-    for(conn = ble_hs_conn_first();
+    for (conn = ble_hs_conn_first();
             conn != NULL;
             conn = SLIST_NEXT(conn, bhc_next)) {
         if (conn->bhc_flags & BLE_HS_CONN_F_TX_FRAG) {
             rc = ble_hs_wakeup_tx_conn(conn);
-
             if (rc != 0) {
                 goto done;
             }
@@ -283,11 +269,10 @@ ble_hs_wakeup_tx(void)
     /* For each connection, transmit queued packets until there are no more
      * packets to send or the controller's buffers are exhausted.
      */
-    for(conn = ble_hs_conn_first();
+    for (conn = ble_hs_conn_first();
             conn != NULL;
             conn = SLIST_NEXT(conn, bhc_next)) {
         rc = ble_hs_wakeup_tx_conn(conn);
-
         if (rc != 0) {
             goto done;
         }
@@ -297,30 +282,25 @@ done:
     ble_hs_unlock();
 }
 
-static void
-ble_hs_clear_rx_queue(void)
+static void ble_hs_clear_rx_queue(void)
 {
     struct os_mbuf *om;
-
-    while((om = ble_mqueue_get(&ble_hs_rx_q)) != NULL) {
+    while ((om = ble_mqueue_get(&ble_hs_rx_q)) != NULL) {
         os_mbuf_free_chain(om);
     }
 }
 
-int
-ble_hs_is_enabled(void)
+int ble_hs_is_enabled(void)
 {
     return ble_hs_enabled_state == BLE_HS_ENABLED_STATE_ON;
 }
 
-int
-ble_hs_synced(void)
+int ble_hs_synced(void)
 {
     return ble_hs_sync_state == BLE_HS_SYNC_STATE_GOOD;
 }
 
-static int
-ble_hs_sync(void)
+static int ble_hs_sync(void)
 {
     ble_npl_time_t retry_tmo_ticks;
     int rc;
@@ -330,7 +310,6 @@ ble_hs_sync(void)
      */
     ble_hs_sync_state = BLE_HS_SYNC_STATE_BRINGUP;
     rc = ble_hs_startup_go();
-
     if (rc == 0) {
         ble_hs_sync_state = BLE_HS_SYNC_STATE_GOOD;
     } else {
@@ -342,7 +321,6 @@ ble_hs_sync(void)
 
     if (rc == 0) {
         rc = ble_hs_misc_restore_irks();
-
         if (rc != 0) {
             BLE_HS_LOG(INFO, "Failed to restore IRKs from store; status=%d\n",
                        rc);
@@ -358,8 +336,7 @@ ble_hs_sync(void)
     return rc;
 }
 
-static int
-ble_hs_reset(void)
+static int ble_hs_reset(void)
 {
     int rc;
     STATS_INC(ble_hs_stats, reset);
@@ -371,9 +348,8 @@ ble_hs_reset(void)
     (void)ble_hci_trans_reset();
     ble_hs_clear_rx_queue();
 
-    while(1) {
+    while (1) {
         uint16_t conn_handle = ble_hs_atomic_first_conn_handle();
-
         if (conn_handle == BLE_HS_CONN_HANDLE_NONE) {
             break;
         }
@@ -397,12 +373,11 @@ ble_hs_reset(void)
  * Called when the host timer expires.  Handles unresponsive timeouts and
  * periodic retries in case of resource shortage.
  */
-static void
-ble_hs_timer_exp(struct ble_npl_event *ev)
+static void ble_hs_timer_exp(struct ble_npl_event *ev)
 {
     int32_t ticks_until_next;
 
-    switch(ble_hs_sync_state) {
+    switch (ble_hs_sync_state) {
         case BLE_HS_SYNC_STATE_GOOD:
             ticks_until_next = ble_gattc_timer();
             ble_hs_timer_sched(ticks_until_next);
@@ -428,10 +403,8 @@ ble_hs_timer_exp(struct ble_npl_event *ev)
     }
 }
 
-static void
-ble_hs_timer_reset(uint32_t ticks)
+static void ble_hs_timer_reset(uint32_t ticks)
 {
-
     if (!ble_hs_is_enabled()) {
         ble_npl_callout_stop(&ble_hs_timer);
     } else {
@@ -440,8 +413,7 @@ ble_hs_timer_reset(uint32_t ticks)
     }
 }
 
-static void
-ble_hs_timer_sched(int32_t ticks_from_now)
+static void ble_hs_timer_sched(int32_t ticks_from_now)
 {
     ble_npl_time_t abs_time;
 
@@ -453,7 +425,6 @@ ble_hs_timer_sched(int32_t ticks_from_now)
      * sooner than the previous expiration time.
      */
     abs_time = ble_npl_time_get() + ticks_from_now;
-
     if (!ble_npl_callout_is_active(&ble_hs_timer) ||
             ((ble_npl_stime_t)(abs_time -
                                ble_npl_callout_get_ticks(&ble_hs_timer))) < 0) {
@@ -461,8 +432,7 @@ ble_hs_timer_sched(int32_t ticks_from_now)
     }
 }
 
-void
-ble_hs_timer_resched(void)
+void ble_hs_timer_resched(void)
 {
     /* Reschedule the timer to run immediately.  The timer callback will query
      * each module for an up-to-date expiration time.
@@ -470,15 +440,13 @@ ble_hs_timer_resched(void)
     ble_hs_timer_reset(0);
 }
 
-static void
-ble_hs_sched_start_stage2(void)
+static void ble_hs_sched_start_stage2(void)
 {
     ble_npl_eventq_put((struct ble_npl_eventq *)ble_hs_evq_get(),
                        &ble_hs_ev_start_stage2);
 }
 
-void
-ble_hs_sched_start(void)
+void ble_hs_sched_start(void)
 {
 #ifdef MYNEWT
     ble_npl_eventq_put((struct ble_npl_eventq *)os_eventq_dflt_get(),
@@ -488,8 +456,7 @@ ble_hs_sched_start(void)
 #endif
 }
 
-static void
-ble_hs_event_rx_hci_ev(struct ble_npl_event *ev)
+static void ble_hs_event_rx_hci_ev(struct ble_npl_event *ev)
 {
     const struct ble_hci_ev *hci_ev;
     int rc;
@@ -503,20 +470,17 @@ ble_hs_event_rx_hci_ev(struct ble_npl_event *ev)
     ble_hs_hci_evt_process(hci_ev);
 }
 
-static void
-ble_hs_event_tx_notify(struct ble_npl_event *ev)
+static void ble_hs_event_tx_notify(struct ble_npl_event *ev)
 {
     ble_gatts_tx_notifications();
 }
 
-static void
-ble_hs_event_rx_data(struct ble_npl_event *ev)
+static void ble_hs_event_rx_data(struct ble_npl_event *ev)
 {
     ble_hs_process_rx_data_queue();
 }
 
-static void
-ble_hs_event_reset(struct ble_npl_event *ev)
+static void ble_hs_event_reset(struct ble_npl_event *ev)
 {
     ble_hs_reset();
 }
@@ -529,8 +493,7 @@ ble_hs_event_reset(struct ble_npl_event *ev)
  * the event queue to use after system initialization but before the host
  * starts.
  */
-static void
-ble_hs_event_start_stage1(struct ble_npl_event *ev)
+static void ble_hs_event_start_stage1(struct ble_npl_event *ev)
 {
     ble_hs_sched_start_stage2();
 }
@@ -543,20 +506,17 @@ ble_hs_event_start_stage1(struct ble_npl_event *ev)
  * the event queue to use after system initialization but before the host
  * starts.
  */
-static void
-ble_hs_event_start_stage2(struct ble_npl_event *ev)
+static void ble_hs_event_start_stage2(struct ble_npl_event *ev)
 {
     int rc;
     rc = ble_hs_start();
     assert(rc == 0);
 }
 
-void
-ble_hs_enqueue_hci_event(uint8_t *hci_evt)
+void ble_hs_enqueue_hci_event(uint8_t *hci_evt)
 {
     struct ble_npl_event *ev;
     ev = os_memblock_get(&ble_hs_hci_ev_pool);
-
     if (ev == NULL) {
         ble_hci_trans_buf_free(hci_evt);
     } else {
@@ -569,8 +529,7 @@ ble_hs_enqueue_hci_event(uint8_t *hci_evt)
  * Schedules for all pending notifications and indications to be sent in the
  * host parent task.
  */
-void
-ble_hs_notifications_sched(void)
+void ble_hs_notifications_sched(void)
 {
 #if !MYNEWT_VAL(BLE_HS_REQUIRE_OS)
 
@@ -583,27 +542,24 @@ ble_hs_notifications_sched(void)
     ble_npl_eventq_put(ble_hs_evq, &ble_hs_ev_tx_notifications);
 }
 
-void
-ble_hs_sched_reset(int reason)
+void ble_hs_sched_reset(int reason)
 {
     BLE_HS_DBG_ASSERT(ble_hs_reset_reason == 0);
     ble_hs_reset_reason = reason;
     ble_npl_eventq_put(ble_hs_evq, &ble_hs_ev_reset);
 }
 
-void
-ble_hs_hw_error(uint8_t hw_code)
+void ble_hs_hw_error(uint8_t hw_code)
 {
     ble_hs_sched_reset(BLE_HS_HW_ERR(hw_code));
 }
 
-int
-ble_hs_start(void)
+int ble_hs_start(void)
 {
     int rc;
     ble_hs_lock();
 
-    switch(ble_hs_enabled_state) {
+    switch (ble_hs_enabled_state) {
         case BLE_HS_ENABLED_STATE_ON:
             rc = BLE_HS_EALREADY;
             break;
@@ -637,14 +593,6 @@ ble_hs_start(void)
     ble_npl_callout_stop(&ble_hs_timer);
 #endif
     ble_npl_callout_init(&ble_hs_timer, ble_hs_evq, ble_hs_timer_exp, NULL);
-#if 0
-    rc = ble_gatts_start();
-
-    if (rc != 0) {
-        return rc;
-    }
-
-#endif
     ble_hs_sync();
     return 0;
 }
@@ -658,8 +606,7 @@ ble_hs_start(void)
  *
  * @return                      0 on success; nonzero on failure.
  */
-static int
-ble_hs_rx_data(struct os_mbuf *om, void *arg)
+static int ble_hs_rx_data(struct os_mbuf *om, void *arg)
 {
     int rc;
     /* If flow control is enabled, mark this packet with its corresponding
@@ -667,7 +614,6 @@ ble_hs_rx_data(struct os_mbuf *om, void *arg)
      */
     ble_hs_flow_fill_acl_usrhdr(om);
     rc = ble_mqueue_put(&ble_hs_rx_q, ble_hs_evq, om);
-
     if (rc != 0) {
         os_mbuf_free_chain(om);
         return BLE_HS_EOS;
@@ -685,8 +631,7 @@ ble_hs_rx_data(struct os_mbuf *om, void *arg)
  *
  * @return                      0 on success; nonzero on failure.
  */
-int
-ble_hs_tx_data(struct os_mbuf *om)
+int ble_hs_tx_data(struct os_mbuf *om)
 {
 #if BLE_MONITOR
     ble_monitor_send_om(BLE_MONITOR_OPCODE_ACL_TX_PKT, om);
@@ -694,8 +639,7 @@ ble_hs_tx_data(struct os_mbuf *om)
     return ble_hci_trans_hs_acl_tx(om);
 }
 
-void
-ble_hs_init(void)
+void ble_hs_init(void)
 {
     int rc;
     /* Ensure this function only gets called by sysinit. */
@@ -738,9 +682,8 @@ ble_hs_init(void)
     SYSINIT_PANIC_ASSERT(rc == 0);
     ble_hs_stop_init();
     ble_mqueue_init(&ble_hs_rx_q, ble_hs_event_rx_data, NULL);
-    rc = stats_init_and_reg(
-                         STATS_HDR(ble_hs_stats), STATS_SIZE_INIT_PARMS(ble_hs_stats,
-                                 STATS_SIZE_32), STATS_NAME_INIT_PARMS(ble_hs_stats), "ble_hs");
+    rc = stats_init_and_reg(STATS_HDR(ble_hs_stats), STATS_SIZE_INIT_PARMS(ble_hs_stats,
+                            STATS_SIZE_32), STATS_NAME_INIT_PARMS(ble_hs_stats), "ble_hs");
     SYSINIT_PANIC_ASSERT(rc == 0);
     rc = ble_npl_mutex_init(&ble_hs_mutex);
     SYSINIT_PANIC_ASSERT(rc == 0);
@@ -774,8 +717,8 @@ ble_hs_init(void)
     ble_monitor_new_index(0, (uint8_t[6]) { }, "nimble0");
 #endif
 }
-void
-ble_hs_deinit(void)
+
+void ble_hs_deinit(void)
 {
     ble_gatts_stop();
     ble_npl_callout_deinit(&ble_hs_timer);

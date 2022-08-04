@@ -13,19 +13,19 @@
  * limitations under the License.
  */
 
-/***************************************************************************** 
-* 
+/*****************************************************************************
+*
 * File Name : main.c
-* 
-* Description: main 
-* 
-* Copyright (c) 2014 Winner Micro Electronic Design Co., Ltd. 
-* All rights reserved. 
-* 
+*
+* Description: main
+*
+* Copyright (c) 2014 Winner Micro Electronic Design Co., Ltd.
+* All rights reserved.
+*
 * Author : dave
-* 
+*
 * Date : 2014-6-14
-*****************************************************************************/ 
+*****************************************************************************/
 
 #include "devmgr_service_start.h"
 
@@ -38,12 +38,10 @@ void UserMain(void)
 #endif
 
 #if defined(LOSCFG_KERNEL_TEST_FULL) || defined(LOSCFG_KERNEL_TEST)
-    LosAppInit(); 
+    LosAppInit();
 #else
     if (DeviceManagerStart()) {
-        printf("[%s] No drivers need load by hdf manager!",__func__);
+        printf("[%s] No drivers need load by hdf manager!", __func__);
     }
 #endif
-
 }
-

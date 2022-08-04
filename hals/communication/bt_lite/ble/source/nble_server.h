@@ -16,21 +16,21 @@
 #ifndef __NBLE_SERVER_H__
 #define __NBLE_SERVER_H__
 
-/*Initialize the list for ble server*/
-extern void ble_server_init();
+/* Initialize the list for ble server */
+extern void ble_server_init(void);
 
-/*Enable the all service stored in the servcie list one by one*/
-extern void ble_server_start_service();
+/* Enable the all service stored in the servcie list one by one */
+extern void ble_server_start_service(void);
 
-/*Free servcie by server id*/
+/* Free servcie by server id */
 extern int ble_server_free(int server_id);
 
-/*Register one service, and return server if*/
+/* Register one service, and return server if */
 extern int ble_server_alloc(BleGattService *srvcinfo);
 
 extern void ble_server_gap_event(struct ble_gap_event *event, void *arg);
 
-/*Internal function*/
+/* Internal function */
 extern void ble_server_update_svc_handle(ble_uuid_t *uuid, uint16_t attr_handle);
 extern void ble_server_retrieve_id_by_service_id(uint16_t svc_handle, uint16_t *server_id);
 extern void ble_server_retrieve_id_by_uuid(ble_uuid_t *uuid, uint16_t *server_id);

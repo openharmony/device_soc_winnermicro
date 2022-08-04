@@ -33,51 +33,49 @@ typedef volatile unsigned long        vu32;
 #define M16(adr)    (*((vu16*) (adr)))
 #define M32(adr)    (*((vu32*) (adr)))
 
-#define  ATTRIBUTE_ISR  //__attribute__((isr))
+#define  ATTRIBUTE_ISR  // __attribute__((isr))
 
-typedef enum IRQn
-{
+typedef enum IRQn {
 /******  W800 specific Interrupt Numbers *********************************************************/
-  SDIO_IRQn                   = 0,      /*!< SDIO Receiver/Transmit/Command Receiver/SDIO Command Transmit Interrupt */
-  MAC_IRQn                       = 1,      /*!< MAC Interrupt                                        */
-  RF_CFG_IRQn                 = 2,      /*!< RF_CFG Interrupt                                        */
-  SEC_IRQn                     = 3,      /*!< SEC RX/TX_MNGT/TX_DATA Interrupt                     */
-  DMA_Channel0_IRQn           = 4,      /*!< DMA  Channel 0 global Interrupt                      */
-  DMA_Channel1_IRQn           = 5,      /*!< DMA  Channel 1 global Interrupt                      */
-  DMA_Channel2_IRQn           = 6,      /*!< DMA  Channel 2 global Interrupt                      */
-  DMA_Channel3_IRQn           = 7,      /*!< DMA  Channel 3 global Interrupt                      */
-  DMA_Channel4_7_IRQn         = 8,      /*!< DMA  Channel 4~7 global Interrupt                    */
-  DMA_BRUST_IRQn              = 9,      /*!< DMA Burst global Interrupt                           */
-  I2C_IRQn                       = 10,     /*!< I2C Interrupts                                       */
-  ADC_IRQn                      = 11,     /*!< ADC Convert Interrupts                               */
-  SPI_LS_IRQn                 = 12,     /*!< Low Speed SPI Interrupt                              */
-  SPI_HS_IRQn                 = 13,     /*!< High Speed SPI Interrupt                             */
-  GPIOA_IRQn                  = 14,     /*!< GPIO A Interrupt                                     */
-  GPIOB_IRQn                  = 15,     /*!< GPIO B Interrupt                                     */
-  UART0_IRQn                  = 16,     /*!< UART0 Interrupts                                     */
-  UART1_IRQn                     = 17,     /*!< UART1 Interrupt                                      */
-  TOUCH_IRQn                  = 18,     /*!< Touch Sensor Iterrupt                                */
-  UART24_IRQn                 = 19,     /*!< UART2/3/4/5 Interrupt                                  */
-  BLE_IRQn                    = 20,     /*!< BLE Interrupt                                        */
-  BT_IRQn                     = 21,     /*!< BT Interrupt                                         */
-  PWM_IRQn                       = 22,     /*!< PWM Interrupt                                        */
-  I2S_IRQn                    = 23,     /*!< I2S  Interrupts                                      */
-  SIDO_HOST_IRQn              = 24,     /*!< SDIO Host Interrupts                                 */
-  SYS_TICK_IRQn               = 25,     /*!< SYS Tick Interrupts                                  */
-  RSA_IRQn                    = 26,     /*!< RSA Interrupts                                       */
-  CRYPTION_IRQn               = 27,     /*!< GPSEC Interrupts                                     */
-  FLASH_IRQn                  = 28,     /*!< Flash Interrupt                                      */
-  PMU_IRQn                    = 29,     /*!< PMU Interrupt                                        */
-  TIMER_IRQn                  = 30,     /*!< Timer0~5 Trigger                                     */
-  WDG_IRQn                      = 31,     /*!< Watch Dog Interrupt                                  */
+    SDIO_IRQn                 = 0,      /*!< SDIO Receiver/Transmit/Command Receiver/SDIO Command Transmit Interrupt */
+    MAC_IRQn                  = 1,      /*!< MAC Interrupt                                        */
+    RF_CFG_IRQn               = 2,      /*!< RF_CFG Interrupt                                     */
+    SEC_IRQn                  = 3,      /*!< SEC RX/TX_MNGT/TX_DATA Interrupt                     */
+    DMA_Channel0_IRQn         = 4,      /*!< DMA  Channel 0 global Interrupt                      */
+    DMA_Channel1_IRQn         = 5,      /*!< DMA  Channel 1 global Interrupt                      */
+    DMA_Channel2_IRQn         = 6,      /*!< DMA  Channel 2 global Interrupt                      */
+    DMA_Channel3_IRQn         = 7,      /*!< DMA  Channel 3 global Interrupt                      */
+    DMA_Channel4_7_IRQn       = 8,      /*!< DMA  Channel 4~7 global Interrupt                    */
+    DMA_BRUST_IRQn            = 9,      /*!< DMA Burst global Interrupt                           */
+    I2C_IRQn                  = 10,     /*!< I2C Interrupts                                       */
+    ADC_IRQn                  = 11,     /*!< ADC Convert Interrupts                               */
+    SPI_LS_IRQn               = 12,     /*!< Low Speed SPI Interrupt                              */
+    SPI_HS_IRQn               = 13,     /*!< High Speed SPI Interrupt                             */
+    GPIOA_IRQn                = 14,     /*!< GPIO A Interrupt                                     */
+    GPIOB_IRQn                = 15,     /*!< GPIO B Interrupt                                     */
+    UART0_IRQn                = 16,     /*!< UART0 Interrupts                                     */
+    UART1_IRQn                = 17,     /*!< UART1 Interrupt                                      */
+    TOUCH_IRQn                = 18,     /*!< Touch Sensor Iterrupt                                */
+    UART24_IRQn               = 19,     /*!< UART2/3/4/5 Interrupt                                */
+    BLE_IRQn                  = 20,     /*!< BLE Interrupt                                        */
+    BT_IRQn                   = 21,     /*!< BT Interrupt                                         */
+    PWM_IRQn                  = 22,     /*!< PWM Interrupt                                        */
+    I2S_IRQn                  = 23,     /*!< I2S  Interrupts                                      */
+    SIDO_HOST_IRQn            = 24,     /*!< SDIO Host Interrupts                                 */
+    SYS_TICK_IRQn             = 25,     /*!< SYS Tick Interrupts                                  */
+    RSA_IRQn                  = 26,     /*!< RSA Interrupts                                       */
+    CRYPTION_IRQn             = 27,     /*!< GPSEC Interrupts                                     */
+    FLASH_IRQn                = 28,     /*!< Flash Interrupt                                      */
+    PMU_IRQn                  = 29,     /*!< PMU Interrupt                                        */
+    TIMER_IRQn                = 30,     /*!< Timer0~5 Trigger                                     */
+    WDG_IRQn                  = 31,     /*!< Watch Dog Interrupt                                  */
 } IRQn_Type;
 
-//#include "core_cm3.h"
 #include "wm_type_def.h"
 #ifdef __cplusplus
-  #define   __I     volatile             /*!< Defines 'read only' permissions                 */
+#define   __I     volatile             /*!< Defines 'read only' permissions                 */
 #else
-  #define   __I     volatile const       /*!< Defines 'read only' permissions                 */
+#define   __I     volatile const       /*!< Defines 'read only' permissions                 */
 #endif
 #define     __O     volatile             /*!< Defines 'write only' permissions                */
 #define     __IO    volatile             /*!< Defines 'read / write' permissions              */
@@ -177,21 +175,21 @@ typedef volatile unsigned int TLS_REG;    /* Hardware register definition */
 #define HR_DMA_CHNL0_CURRENT_DEST_ADDR  (HR_DMA_BASE_ADDR + 0x38)
 
 #define DMA_STARTADDRESS                    HR_DMA_BASE_ADDR
-#define DMA_INTMASK_REG                        (*(volatile unsigned int*)(DMA_STARTADDRESS+0x000))
-#define DMA_INTSRC_REG                        (*(volatile unsigned int*)(DMA_STARTADDRESS+0x004))
-#define DMA_CHANNEL_SEL                        (*(volatile unsigned int*)(DMA_STARTADDRESS+0x008))
-#define DMA_CHNL_REG_BASE                     (DMA_STARTADDRESS+0x010)
-#define DMA_SRCADDR_REG(ch)                    (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /*- 1*/) +0x00))
-#define DMA_DESTADDR_REG(ch)                    (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /*- 1*/) +0x04))
-#define DMA_SRCWRAPADDR_REG(ch)                (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /*- 1*/) +0x08))
-#define DMA_DESTWRAPADDR_REG(ch)            (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /*- 1*/) +0x0C))
-#define DMA_WRAPSIZE_REG(ch)                (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /*- 1*/) +0x10))
-#define DMA_CHNLCTRL_REG(ch)                    (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /*- 1*/) +0x14))
-#define DMA_MODE_REG(ch)                        (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /*- 1*/) +0x18))
-#define DMA_CTRL_REG(ch)                        (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /*- 1*/) +0x1C))
-#define DMA_STATUS_REG(ch)                    (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /*- 1*/) +0x20))
-#define DMA_DESC_ADDR_REG(ch)                  (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /*- 1*/) +0x24))
-#define DMA_CURRDESTADDR_REG(ch)              (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /*- 1*/) +0x28))
+#define DMA_INTMASK_REG                  (*(volatile unsigned int*)(DMA_STARTADDRESS+0x000))
+#define DMA_INTSRC_REG                   (*(volatile unsigned int*)(DMA_STARTADDRESS+0x004))
+#define DMA_CHANNEL_SEL                  (*(volatile unsigned int*)(DMA_STARTADDRESS+0x008))
+#define DMA_CHNL_REG_BASE                (DMA_STARTADDRESS+0x010)
+#define DMA_SRCADDR_REG(ch)              (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /* - 1 */) +0x00))
+#define DMA_DESTADDR_REG(ch)             (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /* - 1 */) +0x04))
+#define DMA_SRCWRAPADDR_REG(ch)          (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /* - 1 */) +0x08))
+#define DMA_DESTWRAPADDR_REG(ch)         (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /* - 1 */) +0x0C))
+#define DMA_WRAPSIZE_REG(ch)             (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /* - 1 */) +0x10))
+#define DMA_CHNLCTRL_REG(ch)             (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /* - 1 */) +0x14))
+#define DMA_MODE_REG(ch)                 (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /* - 1 */) +0x18))
+#define DMA_CTRL_REG(ch)                 (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /* - 1 */) +0x1C))
+#define DMA_STATUS_REG(ch)               (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /* - 1 */) +0x20))
+#define DMA_DESC_ADDR_REG(ch)            (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /* - 1 */) +0x24))
+#define DMA_CURRDESTADDR_REG(ch)         (*(volatile unsigned int*)(DMA_CHNL_REG_BASE + 0x30 * (ch /* - 1 */) +0x28))
 
 #define DMA_CHNL_CTRL_CHNL_ON           (1<<0)
 #define DMA_CHNL_CTRL_CHNL_OFF          (1<<1)
@@ -228,7 +226,7 @@ typedef volatile unsigned int TLS_REG;    /* Hardware register definition */
 #define DMA_CTRL_BURST_SIZE4                   (1<<7)
 
 #define DMA_CTRL_TOTAL_MASK                                     (0xFFF<<8)
-#define DMA_CTRL_TOTAL_SIZE(n)               (n<<8)
+#define DMA_CTRL_TOTAL_SIZE(n)               ((n)<<8)
 
 /***************************************************************
  * PMU Reg
@@ -253,7 +251,7 @@ typedef volatile unsigned int TLS_REG;    /* Hardware register definition */
  ***************************************************************/
 #define HR_CLK_BASE_ADDR        (DEVICE_BASE_ADDR + 0xE00)
 #define HR_CLK_GATE_EN           HR_CLK_BASE_ADDR
-#define HR_CLK_SOFT_CLK_MASK    (HR_CLK_BASE_ADDR + 0x04) 
+#define HR_CLK_SOFT_CLK_MASK    (HR_CLK_BASE_ADDR + 0x04)
 #define HR_CLK_BBP_CLT_CTRL     (HR_CLK_BASE_ADDR + 0x08)
 #define HR_CLK_RST_CTL             (HR_CLK_BASE_ADDR + 0x0c)
 #define HR_CLK_DIV_CTL            (HR_CLK_BASE_ADDR + 0x10)
@@ -280,7 +278,7 @@ typedef volatile unsigned int TLS_REG;    /* Hardware register definition */
 #define HR_PSRAM_CTRL_ADDR       (HR_PSRRAM_BASE_ADDR+ 0x00)
 #define HR_PSRAM_OVERTIMER_ADDR  (HR_PSRRAM_BASE_ADDR+ 0x04)
 
-/* APB BaseAddr*/
+/* APB BaseAddr */
 #define HR_APB_BASE_ADDR 0x40010000
 
 /***************************************************************
@@ -323,7 +321,7 @@ typedef volatile unsigned int TLS_REG;    /* Hardware register definition */
 #define HR_SD_ADC_CMP_VALUE           ((HR_SD_ADC_BASE_ADDR+0x018))
 
 /***************************************************************
- *Low Speed SPI Reg
+ * Low Speed SPI Reg
  ***************************************************************/
 #define HR_SPI_BASE_ADDR            (HR_APB_BASE_ADDR + 0x400)
 #define HR_SPI_CHCFG_REG                   (HR_SPI_BASE_ADDR + 0x000)
@@ -352,15 +350,15 @@ typedef volatile unsigned int TLS_REG;    /* Hardware register definition */
 #define SPIM_TRANSLEN_REG                   (*(volatile unsigned int*)(SPIM_STARTADDRESS+0x024))
 #define SPIM_RXDATA_REG                   (*(volatile unsigned int*)(SPIM_STARTADDRESS+0x030))
 
-/*RSA Reg*/
-#define RSA_BASE_ADDRESS       0x40000000
-#define  RSAXBUF               (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x0 )))
-#define  RSAYBUF               (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x100 )))
-#define  RSAMBUF               (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x200 )))
-#define  RSADBUF               (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x300 )))
-#define  RSACON                (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x400 )))
-#define  RSAMC                 (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x404 )))
-#define  RSAN                  (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x408 )))/* Bits Definitions of "CH_CFG" */
+/* RSA Reg */
+#define RSA_BASE_ADDRESS      0x40000000
+#define  RSAXBUF          (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x0)))
+#define  RSAYBUF          (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x100)))
+#define  RSAMBUF          (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x200)))
+#define  RSADBUF          (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x300)))
+#define  RSACON           (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x400)))
+#define  RSAMC            (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x404)))
+#define  RSAN             (*((volatile unsigned long *) (RSA_BASE_ADDRESS + 0x408))) /* Bits Definitions of "CH_CFG" */
 #define SPI_RX_INVALID_BITS(n)      ((n) << 23)
 #define SPI_CLEAR_FIFOS      (1U << 22)
 #define SPI_CONTINUE_MODE      (1U << 21)
@@ -420,7 +418,7 @@ typedef volatile unsigned int TLS_REG;    /* Hardware register definition */
 #define SPI_SET_CPOL(n)      ((n) << 0)
 
 /* Bits Definitions of "CLK_CFG" */
-#define SPI_GET_SCLK_DIVIDER(clk)      ((APB_CLK)/((clk) * 2) - 1)/*In HZ*/
+#define SPI_GET_SCLK_DIVIDER(clk)      ((APB_CLK)/((clk) * 2) - 1) /* In HZ */
 #define SPI_SCLK_DIVIDER(n)      ((n) << 0)
 
 /* Bits Definitions of "MODE_CFG" */
@@ -684,11 +682,11 @@ typedef volatile unsigned int TLS_REG;    /* Hardware register definition */
 #define HR_TIMER5_CNT                (HR_TIMER_BASE_ADDR + 0x34)
 
 /* timer csr bits defintion */
-#define TLS_TIMER_MS_UNIT(n)               (1UL<<(0+5*n))
-#define TLS_TIMER_ONE_TIME(n)              (1UL<<(1+5*n))
-#define TLS_TIMER_EN(n)                    (1UL<<(2+5*n))
-#define TLS_TIMER_INT_EN(n)                (1UL<<(3+5*n))
-#define TLS_TIMER_INT_CLR(n)            (1UL<<(4+5*n))
+#define TLS_TIMER_MS_UNIT(n)               (1UL<<(0+5*(n)))
+#define TLS_TIMER_ONE_TIME(n)              (1UL<<(1+5*(n)))
+#define TLS_TIMER_EN(n)                    (1UL<<(2+5*(n)))
+#define TLS_TIMER_INT_EN(n)                (1UL<<(3+5*(n)))
+#define TLS_TIMER_INT_CLR(n)            (1UL<<(4+5*(n)))
 
 /***************************************************************
  * WATCH DOG Reg
@@ -709,7 +707,7 @@ typedef volatile unsigned int TLS_REG;    /* Hardware register definition */
  * LCD Reg
  ***************************************************************/
 
-#define HR_LCD_REG_BASE              (HR_APB_BASE_ADDR + 0x1C00) //(0x4001 1C00)
+#define HR_LCD_REG_BASE              (HR_APB_BASE_ADDR + 0x1C00) // (0x4001 1C00)
 #define HR_LCD_CR                     (HR_LCD_REG_BASE+0x000)
 #define HR_LCD_FRAME_CNT              (HR_LCD_REG_BASE+0x004)
 #define HR_LCD_COM0_SEG              (HR_LCD_REG_BASE+0x008)
@@ -860,8 +858,8 @@ typedef volatile unsigned int TLS_REG;    /* Hardware register definition */
 #define HR_TC16_TRESHOLD_REG             (HR_TC_REG_BASE+0x0040)
 #define HR_TC16_COUNT_REG                (HR_TC_REG_BASE+0x0040)
 
-#define HR_TC_INT_EN                     (HR_TC_REG_BASE+0x0044) /*bit 31:16*/
-#define HR_TC_INT_STATUS                 (HR_TC_REG_BASE+0x0044) /*bit 15:0*/ 
+#define HR_TC_INT_EN                     (HR_TC_REG_BASE+0x0044) /* bit 31:16 */
+#define HR_TC_INT_STATUS                 (HR_TC_REG_BASE+0x0044) /* bit 15:0 */
 
 /**
  * @defgroup System_APIs System APIs
@@ -931,7 +929,7 @@ static __inline void tls_bitband_write(volatile unsigned int addr, unsigned int 
 
     temp = (M32(addr) & ~(1 << bit)) | (val << bit);
 
-    *((volatile unsigned int * )addr) = temp;
+    *((volatile unsigned int *)addr) = temp;
 }
 
 /**
@@ -963,4 +961,3 @@ static __inline unsigned int tls_bitband_read(volatile unsigned int addr, unsign
  */
 
 #endif /* WM_REGS_H */
-

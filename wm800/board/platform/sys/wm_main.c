@@ -22,8 +22,6 @@
 * Copyright (c) 2014 Winner Micro Electronic Design Co., Ltd.
 * All rights reserved.
 *
-* Author :
-*
 * Date : 2014-6-14
 *****************************************************************************/
 #include <string.h>
@@ -56,7 +54,7 @@
 #include "los_task.h"
 
 #define     TASK_START_STK_SIZE         640     /* Size of each task's stacks (# of WORDs)  */
-/*If you want to delete main task after it works, you can open this MACRO below*/
+/* If you want to delete main task after it works, you can open this MACRO below */
 #define MAIN_TASK_DELETE_AFTER_START_FTR  0
 #if !TLS_OS_LITEOS
 u8 *TaskStartStk = NULL;
@@ -67,15 +65,14 @@ tls_os_task_t tststarthdl = NULL;
 #define FW_MINOR_VER           0x0
 #define FW_PATCH_VER           0x4
 
-const char FirmWareVer[4] =
-{
+const char FirmWareVer[4] = {
     'v',
     FW_MAJOR_VER,  /* Main version */
     FW_MINOR_VER, /* Subversion */
     FW_PATCH_VER  /* Internal version */
 };
-const char HwVer[6] =
-{
+
+const char HwVer[6] = {
     'H',
     0x1,
     0x0,
@@ -83,6 +80,7 @@ const char HwVer[6] =
     0x0,
     0x0
 };
+
 extern const char WiFiVer[];
 extern u8 tx_gain_group[];
 extern void *tls_wl_init(u8 *tx_gain, u8 *mac_addr, u8 *hwver);
@@ -93,17 +91,15 @@ extern void tls_bt_entry();
 
 void task_start (void *data);
 
-/****************/
 /* main program */
-/****************/
 
-void vApplicationIdleHook( void )
+void vApplicationIdleHook(void)
 {
     __WAIT();
     return;
 }
 
-void wm_gpio_config()
+void wm_gpio_config(void)
 {
     /* must call first */
     wm_gpio_af_disable();
@@ -111,7 +107,7 @@ void wm_gpio_config()
     wm_uart0_tx_config(WM_IO_PB_19);
     wm_uart0_rx_config(WM_IO_PB_20);
 
-#if (TLS_CONFIG_LS_SPI)    
+#if (TLS_CONFIG_LS_SPI)
     wm_spi_cs_config(WM_IO_PB_04);
     wm_spi_ck_config(WM_IO_PB_02);
     wm_spi_di_config(WM_IO_PB_03);
@@ -121,26 +117,20 @@ void wm_gpio_config()
 int main(void)
 {
     u32 value = 0;
-    /*32K switch to use RC circuit & calibration*/
+    /* 32K switch to use RC circuit & calibration */
     tls_pmu_clk_select(0);
-    /*Switch to DBG*/
+    /* Switch to DBG */
     value = tls_reg_read32(HR_PMU_BK_REG);
-    value &= ~(BIT(19));
+    value &= ~(BIT(19)); // 19:byte alignment
     tls_reg_write32(HR_PMU_BK_REG, value);
     value = tls_reg_read32(HR_PMU_PS_CR);
-    value &= ~(BIT(5));
+    value &= ~(BIT(5)); // 5:byte alignment
     tls_reg_write32(HR_PMU_PS_CR, value);
-    
-    /*Close those not initialized clk except uart0,sdadc,gpio,rfcfg
-    value = tls_reg_read32(HR_CLK_BASE_ADDR);
-    value &= ~0x3fffff;
-    value |= 0x1a02;
-    tls_reg_write32(HR_CLK_BASE_ADDR, value);*/
 
     tls_sys_clk_set(CPU_CLK_80M);
     tls_os_init(NULL);
 
-    /*configure wake up source begin*/
+    /* configure wake up source begin */
     csi_vic_set_wakeup_irq(SDIO_IRQn);
     csi_vic_set_wakeup_irq(MAC_IRQn);
     csi_vic_set_wakeup_irq(SEC_IRQn);
@@ -170,41 +160,37 @@ int main(void)
     csi_vic_set_wakeup_irq(PMU_IRQn);
     csi_vic_set_wakeup_irq(TIMER_IRQn);
     csi_vic_set_wakeup_irq(WDG_IRQn);
-    /*configure wake up source end*/
+    /* configure wake up source end */
 #if TLS_OS_LITEOS
     tls_os_task_create(&tststarthdl, "firstThr",
                        task_start,
                        (void *)0,
                        (void *)NULL,
-                       TASK_START_STK_SIZE * sizeof(u32), /* 任务栈的大小     */
+                       TASK_START_STK_SIZE * sizeof(u32), /* 任务栈的大小 */
                        1,
                        0);
-   tls_os_start_scheduler();
+    tls_os_start_scheduler();
 #else
     TaskStartStk = tls_mem_alloc(sizeof(u32)*TASK_START_STK_SIZE);
-    if (TaskStartStk)
-    {
+    if (TaskStartStk) {
         tls_os_task_create(&tststarthdl, NULL,
                            task_start,
                            (void *)0,
                            (void *)TaskStartStk,          /* 任务栈的起始地址 */
-                           TASK_START_STK_SIZE * sizeof(u32), /* 任务栈的大小     */
+                           TASK_START_STK_SIZE * sizeof(u32), /* 任务栈的大小 */
                            1,
                            0);
-       tls_os_start_scheduler();
+        tls_os_start_scheduler();
+    } else {
+        while (1);
     }
-    else
-    {
-        while(1);
-    }    
 #endif
-
     return 0;
 }
 
 unsigned int tls_get_wifi_ver(void)
 {
-    return (WiFiVer[0]<<16)|(WiFiVer[1]<<8)|WiFiVer[2];
+    return (WiFiVer[0]<<16)|(WiFiVer[1]<<8)|WiFiVer[2]; // 16:byte alignment, 8:byte alignment, 2:byte alignment
 }
 
 void disp_version_info(void)
@@ -215,21 +201,21 @@ void disp_version_info(void)
     TLS_DBGPRT_INFO("* Copyright (C) 2014 WinnerMicro Co. Ltd.                      *\n");
     TLS_DBGPRT_INFO("* All rights reserved.                                         *\n");
     TLS_DBGPRT_INFO("* WinnerMicro Firmware Version: %x.%x.%X                         *\n",
-                    FirmWareVer[1], FirmWareVer[2], FirmWareVer[3]);
+                    FirmWareVer[1], FirmWareVer[2], FirmWareVer[3]); // 2:array element, 3:array element
     TLS_DBGPRT_INFO("* WinnerMicro Hardware Version: %x.%x.%x.%x.%x                      *\n",
-                    HwVer[1], HwVer[2], HwVer[3], HwVer[4], HwVer[5]);
+                    HwVer[1], HwVer[2], HwVer[3], // 2:array element, 3:array element
+                    HwVer[4], HwVer[5]); // 4:array element, 5:array element
     TLS_DBGPRT_INFO("*                                                              *\n");
     TLS_DBGPRT_INFO("* WinnerMicro Wi-Fi Lib Version: %x.%x.%x                         *\n",
-                    WiFiVer[0], WiFiVer[1], WiFiVer[2]);
+                    WiFiVer[0], WiFiVer[1], WiFiVer[2]); // 2:array element
     TLS_DBGPRT_INFO("****************************************************************\n");
 }
 
 void tls_pmu_chipsleep_callback(int sleeptime)
 {
-    // wm_printf("c:%d\r\n", sleeptime);
-    /*set wakeup time*/
+    /* set wakeup time */
     tls_pmu_timer1_start(sleeptime);
-    /*enter chip sleep*/
+    /* enter chip sleep */
     tls_pmu_sleep_start();
 }
 
@@ -244,7 +230,7 @@ void tls_pmu_chipsleep_callback(int sleeptime)
 void task_start (void *data)
 {
 #if defined(LOSCFG_KERNEL_TEST_FULL) || defined(LOSCFG_KERNEL_TEST)
-    /*nothing to do when kernel test is running*/
+    /* nothing to do when kernel test is running */
 #else
     u8 enable = 0;
 
@@ -269,35 +255,31 @@ void task_start (void *data)
     tls_fls_init();
     tls_fls_sys_param_postion_init();
 
-    /*PARAM GAIN,MAC default*/
+    /* PARAM GAIN,MAC default */
     tls_ft_param_init();
     tls_param_load_factory_default();
-    tls_param_init(); /*add param to init sysparam_lock sem*/
+    tls_param_init(); /* add param to init sysparam_lock sem */
 
-    tls_wifi_netif_event_init();    
+    tls_wifi_netif_event_init();
 
-    tls_param_get(TLS_PARAM_ID_PSM, &enable, TRUE);    
-    if (enable != TRUE)
-    {
+    tls_param_get(TLS_PARAM_ID_PSM, &enable, TRUE);
+    if (enable != TRUE) {
         enable = TRUE;
-        tls_param_set(TLS_PARAM_ID_PSM, &enable, TRUE);      
+        tls_param_set(TLS_PARAM_ID_PSM, &enable, TRUE);
     }
 #endif
-    UserMain();
+    UserMain(void);
 
-    extern void OHOS_SystemInit();
-    OHOS_SystemInit();
+    extern void OHOS_SystemInit(void);
+    OHOS_SystemInit(void);
 
-    for (;;)
-    {
+    for (;;) {
 #if 1
         tls_os_time_delay(0x10000000);
 #else
-        // printf("start up\n");
         extern void tls_os_disp_task_stat_info(void);
         tls_os_disp_task_stat_info();
-        tls_os_time_delay(1000);
-#endif        
+        tls_os_time_delay(1000); // 1000:time unit
+#endif
     }
 }
-

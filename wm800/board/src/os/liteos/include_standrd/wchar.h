@@ -16,19 +16,15 @@
 #ifndef _WCHAR_H
 #define _WCHAR_H
 
+#include <features.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <bits/alltypes.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include <features.h>
-#include <stddef.h>
-#include <stdio.h>
-
-/* Do not need this  --chengjinsong*/
-#if 0
-#define __NEED_FILE
-#define __NEED_wchar_t
-#endif
 #define __NEED___isoc_va_list
 #define __NEED_size_t
 #define __NEED_wint_t
@@ -47,8 +43,6 @@ extern "C" {
 #if defined(_XOPEN_SOURCE) || defined(_GNU_SOURCE) || defined(_BSD_SOURCE)
 #define __NEED_wctype_t
 #endif
-
-#include <bits/alltypes.h>
 
 #if L'\0'-1 > 0
 #define WCHAR_MAX (0xffffffffu+L'\0')
