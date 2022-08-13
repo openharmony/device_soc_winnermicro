@@ -35,7 +35,7 @@ int bt_mesh_k1(const u8_t *ikm, size_t ikm_len, const u8_t salt[16],
                const char *info, u8_t okm[16]);
 
 #define bt_mesh_k1_str(ikm, ikm_len, salt_str, info, okm) \
-({ \
+( { \
     const u8_t salt[16] = salt_str; \
     bt_mesh_k1(ikm, ikm_len, salt, info, okm); \
 })

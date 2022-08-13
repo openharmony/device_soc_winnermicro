@@ -167,7 +167,7 @@ void tls_adc_start_with_dma(int Channel, int Length)
         adc_dma_buffer = NULL;
     }
 
-    adc_dma_buffer = tls_mem_alloc(len * 4);
+    adc_dma_buffer = tls_mem_alloc(len * 4); // 4:byte alignment
     if (adc_dma_buffer == NULL) {
         wm_printf("adc dma buffer alloc failed\r\n");
         return;
@@ -183,7 +183,7 @@ void tls_adc_start_with_dma(int Channel, int Length)
 
     /* Stop dma if necessary */
     while (DMA_CHNLCTRL_REG(gst_adc.dmachannel) & 1) {
-        DMA_CHNLCTRL_REG(gst_adc.dmachannel) = 2;
+        DMA_CHNLCTRL_REG(gst_adc.dmachannel) = 2; // 2:byte alignment
     }
 
     DMA_SRCADDR_REG(gst_adc.dmachannel) = HR_SD_ADC_RESULT_REG;
@@ -441,7 +441,7 @@ int adc_get_inputVolt(u8 channel)
         voltage = 1.196 + voltage*(126363/1000.0)/1000000;
     }
 
-    average = (int)(voltage*1000);
+    average = (int)(voltage * 1000); // 1000:byte alignment
     return average;
 }
 
@@ -457,18 +457,19 @@ u32 adc_get_interVolt(void)
     tls_adc_set_clk(0x28);
     tls_adc_start_with_cpu(CONFIG_ADC_CHL_VOLT);
     voltValue = 0;
-    for (int i = 0;i < 10; i++) {
+    for (int i = 0;i < 10; i++) { // 10:loop cap
         waitForAdcDone();
         value = tls_read_adc_result();
         signedToUnsignedData(&value);
         voltValue += value;
     }
-    voltValue = voltValue/10;
+    voltValue = voltValue / 10; // 10:byte alignment
     tls_adc_stop(0);
-    voltValue = ((voltValue - adc_offset)*685/20+1200000)*2;
-    value = voltValue - voltValue*10/100;
+    voltValue =
+        ((voltValue - adc_offset) * 685 / 20 + 1200000) * 2; // 685:byte alignment, 20:byte alignment, 2:byte alignment
+    value = voltValue - voltValue * 10 / 100; // 10:byte alignment, 100:byte alignment
 
-    return value/1000;
+    return value / 1000; // 1000:byte alignment
 }
 
 /**
@@ -486,7 +487,7 @@ int adc_temp(void)
 
     tls_adc_init(0, 0);
     tls_adc_reference_sel(ADC_REFERENCE_INTERNAL);
-    tls_adc_set_pga(1, 4);
+    tls_adc_set_pga(1, 4); // 4:value of gain2
     tls_adc_start_with_cpu(CONFIG_ADC_CHL_TEMP);
     tls_adc_set_clk(0x28);
     val = tls_reg_read32(HR_SD_ADC_TEMP_CTRL);

@@ -22,8 +22,8 @@
 
 #include "sysinit/sysinit.h"
 #include "host/ble_hs.h"
-#include "services/gap/ble_svc_gap.h"
 #include "os/endian.h"
+#include "services/gap/ble_svc_gap.h"
 
 #define PPCP_ENABLED \
     MYNEWT_VAL(BLE_ROLE_PERIPHERAL) && \

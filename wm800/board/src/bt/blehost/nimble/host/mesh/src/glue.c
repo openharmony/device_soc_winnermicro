@@ -94,7 +94,6 @@ void net_buf_unref(struct os_mbuf *om)
     }
 
     adv = BT_MESH_ADV(om);
-
     if (--adv->ref_cnt > 0) {
         return;
     }

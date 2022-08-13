@@ -420,9 +420,9 @@ void ble_sm_sc_random_rx(struct ble_sm_proc *proc, struct ble_sm_result *res)
     uint8_t rat;
     int rc;
 
-    if (proc->pair_alg != BLE_SM_PAIR_ALG_OOB && (
-                            proc->flags & BLE_SM_PROC_F_INITIATOR ||
-                            ble_sm_sc_responder_verifies_random(proc))) {
+    if ((proc->pair_alg != BLE_SM_PAIR_ALG_OOB) && (
+        (proc->flags & BLE_SM_PROC_F_INITIATOR) ||
+        ble_sm_sc_responder_verifies_random(proc))) {
         BLE_HS_LOG(DEBUG, "tk=");
         ble_hs_log_flat_buf(proc->tk, 16); // 16:len
         BLE_HS_LOG(DEBUG, "\n");

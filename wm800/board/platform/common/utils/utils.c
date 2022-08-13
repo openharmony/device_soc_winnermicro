@@ -252,18 +252,19 @@ int strtodec(int *dec, char *str)
     int i;
     int dd;
     int sign;
+    char *strs_tmp = str;
 
     i = -1;
     dd = 0;
     sign = 1;
 
-    if (*str == '-') {
-        str++;
+    if (*strs_tmp == '-') {
+        strs_tmp++;
         sign = -1;
     }
 
-    while (*str) {
-        i = atodec(*str++);
+    while (*strs_tmp) {
+        i = atodec(*strs_tmp++);
         if (i < 0) {return -1;}
         dd = dd*10 + i;
     }
@@ -316,10 +317,10 @@ int strtohexarray(u8 array[], int cnt, char *str)
 {
     u8 tmp;
     u8 *des;
-
+    int cnt_tmp = cnt;
     des = array;
 
-    while (cnt-- > 0) {
+    while (cnt_tmp-- > 0) {
         int hex = atohex(*str++);
         if (hex < 0) {
             return -1;
@@ -378,15 +379,21 @@ int strtoip(u32 *ipadr, char * str)
 
 void iptostr(u32 ip, char *str)
 {
-    sprintf(str, "%d.%d.%d.%d",
+    int sret = sprintf(str, "%d.%d.%d.%d",
         ((ip >> 24) & 0xff),((ip >> 16) & 0xff),\
         ((ip >>  8) & 0xff), ((ip >>  0) & 0xff));
+    if (sret < 0) {
+        printf("sprintf error.\n");
+    }
 }
 
 void mactostr(u8 mac[], char *str)
 {
-    sprintf(str, "%02x%02x%02x%02x%02x%02x",
+    int sret = sprintf(str, "%02x%02x%02x%02x%02x%02x",
         mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+    if (sret < 0) {
+        printf("sprintf error.\n");
+    }
 }
 
 int hex_to_digit(int c)
@@ -456,11 +463,11 @@ int string_to_ipaddr(const char *buf, u8 *addr)
 
     rc = sscanf(buf, "%u.%u.%u.%u%c",
                 &in[0], &in[1], &in[2], &in[3], &c);
-    if (rc != 4 && (rc != 5 || c != '\n')) {  // 4:sscanf的返回值不等于4
+    if (rc != 4 && (rc != 5 || c != '\n')) { // 4:sscanf的返回值不等于4, 5:sscanf的返回值不等于5
         return -1;
     }
     for (count = 0; count < 4; count++) {
-        if (in[count] > 255) {    // 255:数组值大于255
+        if (in[count] > 255) { // 255:数组值大于255
             return -1;
         }
         addr[count] = in[count];

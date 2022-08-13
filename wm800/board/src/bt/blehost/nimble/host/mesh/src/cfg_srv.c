@@ -50,12 +50,12 @@ static int comp_add_elem(struct os_mbuf *buf, struct bt_mesh_elem *elem,
     net_buf_simple_add_u8(buf, elem->model_count);
     net_buf_simple_add_u8(buf, elem->vnd_model_count);
 
-    for(i = 0; i < elem->model_count; i++) {
+    for (i = 0; i < elem->model_count; i++) {
         mod = &elem->models[i];
         net_buf_simple_add_le16(buf, mod->id);
     }
 
-    for(i = 0; i < elem->vnd_model_count; i++) {
+    for (i = 0; i < elem->vnd_model_count; i++) {
         mod = &elem->vnd_models[i];
         net_buf_simple_add_le16(buf, mod->vnd.company);
         net_buf_simple_add_le16(buf, mod->vnd.id);
@@ -89,10 +89,9 @@ static int comp_get_page_0(struct os_mbuf *buf)
     net_buf_simple_add_le16(buf, MYNEWT_VAL(BLE_MESH_CRPL));
     net_buf_simple_add_le16(buf, feat);
 
-    for(i = 0; i < comp->elem_count; i++) {
+    for (i = 0; i < comp->elem_count; i++) {
         int err;
         err = comp_add_elem(buf, &comp->elem[i], i == 0);
-
         if (err) {
             return err;
         }
@@ -361,7 +360,6 @@ static u8_t app_key_set(u16_t net_idx, u16_t app_idx, const u8_t val[16],
         }
 
         key = bt_mesh_app_key_alloc(app_idx);
-
         if (!key) {
             return STATUS_INSUFF_RESOURCES;
         }
@@ -1784,7 +1782,6 @@ static void mod_sub_va_overwrite(struct bt_mesh_model *model,
         bt_mesh_model_tree_walk(bt_mesh_model_root(mod),
                                 mod_sub_clear_visitor, NULL);
         status = va_add(label_uuid, &sub_addr);
-
         if (status == STATUS_SUCCESS) {
             mod->groups[0] = sub_addr;
 
@@ -2365,10 +2362,11 @@ static void mod_app_get(struct bt_mesh_model *model,
                         struct bt_mesh_msg_ctx *ctx,
                         struct os_mbuf *buf)
 {
-    struct os_mbuf *msg = NET_BUF_SIMPLE(max(BT_MESH_MODEL_BUF_LEN(OP_VND_MOD_APP_LIST,
-                                             9 + KEY_LIST_LEN),
-                                             BT_MESH_MODEL_BUF_LEN(OP_SIG_MOD_APP_LIST,
-                                             9 + KEY_LIST_LEN)));
+    struct os_mbuf *msg = NET_BUF_SIMPLE(max(BT_MESH_MODEL_BUF_LEN(
+        OP_VND_MOD_APP_LIST,
+        9 + KEY_LIST_LEN),
+        BT_MESH_MODEL_BUF_LEN(OP_SIG_MOD_APP_LIST,
+        9 + KEY_LIST_LEN)));
     struct bt_mesh_model *mod;
     struct bt_mesh_elem *elem;
     u8_t *mod_id, status;
@@ -2735,7 +2733,6 @@ static void heartbeat_pub_set(struct bt_mesh_model *model,
     u8_t status;
     BT_DBG("src 0x%04x", ctx->addr);
     dst = sys_le16_to_cpu(param->dst);
-
     /* All other address types but virtual are valid */
     if (BT_MESH_ADDR_IS_VIRTUAL(dst)) {
         status = STATUS_INVALID_ADDRESS;

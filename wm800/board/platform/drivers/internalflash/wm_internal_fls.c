@@ -250,7 +250,7 @@ static int programSR(unsigned int  cmd, unsigned long addr, unsigned char *buf, 
 {
     unsigned long base_addr = 0;
     unsigned int size = 0;
-
+    unsigned char *buf_tmp = buf;
     if (sz > INSIDE_FLS_PAGE_SIZE) {
         sz = INSIDE_FLS_PAGE_SIZE;
     }
@@ -258,14 +258,14 @@ static int programSR(unsigned int  cmd, unsigned long addr, unsigned char *buf, 
     base_addr = RSA_BASE_ADDRESS;
     size = sz;
     while (size) {
-        M32(base_addr) = *((unsigned long *)buf);
-        base_addr += 4;
-        buf += 4;
-        size -= 4;
+        M32(base_addr) = *((unsigned long *)buf_tmp);
+        base_addr += 4; // 4:byte alignment
+        buf_tmp += 4; // 4:byte alignment
+        size -= 4; // 4:byte alignment
     }
 
     writeEnable();
-    M32(HR_FLASH_CMD_ADDR) = cmd | ((sz - 1) << 16);
+    M32(HR_FLASH_CMD_ADDR) = cmd | ((sz - 1) << 16); // 16:byte alignment
     M32(HR_FLASH_ADDR) = (addr & 0x1FFFFFF);
     M32(HR_FLASH_CMD_START) = CMD_START_Msk;
 
@@ -321,38 +321,40 @@ static unsigned int getFlashDensity(void)
 int __readByCMD(unsigned char cmd, unsigned long addr, unsigned char *buf, unsigned long sz)
 {
     int i = 0;
-    int word = sz / 4;
-    int byte = sz % 4;
+    int word = sz / 4; // 4:byte alignment
+    int byte = sz % 4; // 4:byte alignment
+    unsigned char cmd_tmp = cmd;
+    unsigned char *buf_tmp = buf;
     unsigned long addr_read;
     if (!(M32(HR_FLASH_CR)&0x1)) { /* non-QIO mode, only single line command can be used */
-        if (cmd > 0x0B) {
-            cmd = 0x0B;
+        if (cmd_tmp > 0x0B) {
+            cmd_tmp = 0x0B;
         }
     }
 
-    switch (cmd) {
+    switch (cmd_tmp) {
         case 0x03:
-            M32(HR_FLASH_CMD_ADDR) = 0x8000C003 | (((sz - 1) & 0x3FF) << 16);
+            M32(HR_FLASH_CMD_ADDR) = 0x8000C003 | (((sz - 1) & 0x3FF) << 16); // 16:byte alignment
             M32(HR_FLASH_ADDR) = addr & 0x1FFFFFF;
             M32(HR_FLASH_CMD_START) = CMD_START_Msk;
             break;
         case 0x0B:
             if ((M32(HR_FLASH_CR) & 0x2) == 0x2) {
-                M32(HR_FLASH_CMD_ADDR) = 0xB400C00B | (((sz - 1) & 0x3FF) << 16);
+                M32(HR_FLASH_CMD_ADDR) = 0xB400C00B | (((sz - 1) & 0x3FF) << 16); // 16:byte alignment
             } else {
-                M32(HR_FLASH_CMD_ADDR) = 0xBC00C00B | (((sz - 1) & 0x3FF) << 16);
+                M32(HR_FLASH_CMD_ADDR) = 0xBC00C00B | (((sz - 1) & 0x3FF) << 16); // 16:byte alignment
             }
             M32(HR_FLASH_ADDR) = addr & 0x1FFFFFF;
             M32(HR_FLASH_CMD_START) = CMD_START_Msk;
             break;
         case 0xBB:
-            M32(HR_FLASH_CMD_ADDR) = 0xE400C0BB | (((sz - 1) & 0x3FF) << 16);
+            M32(HR_FLASH_CMD_ADDR) = 0xE400C0BB | (((sz - 1) & 0x3FF) << 16); // 16:byte alignment
             M32(HR_FLASH_ADDR) = addr & 0x1FFFFFF;
             M32(HR_FLASH_CMD_START) = CMD_START_Msk;
             break;
 
         case 0xEB:
-            M32(HR_FLASH_CMD_ADDR) = 0xEC00C0EB | (((sz - 1) & 0x3FF) << 16);
+            M32(HR_FLASH_CMD_ADDR) = 0xEC00C0EB | (((sz - 1) & 0x3FF) << 16); // 16:byte alignment
             M32(HR_FLASH_ADDR) = addr & 0x1FFFFFF;
             M32(HR_FLASH_CMD_START) = CMD_START_Msk;
             break;
@@ -362,18 +364,18 @@ int __readByCMD(unsigned char cmd, unsigned long addr, unsigned char *buf, unsig
     }
     addr_read = RSA_BASE_ADDRESS;
     for (i = 0; i < word; i ++) {
-        M32(buf) = M32(addr_read);
-        buf += 4;
-        addr_read += 4;
+        M32(buf_tmp) = M32(addr_read);
+        buf_tmp += 4; // 4:byte alignment
+        addr_read += 4; // 4:byte alignment
     }
 
     if (byte > 0) {
-        M32(buf) = M32(addr_read);
-        buf += 3;                            // point last byte
-        byte = 4 - byte;
+        M32(buf_tmp) = M32(addr_read);
+        buf_tmp += 3;                            // 3:point last byte
+        byte = 4 - byte; // 4:byte alignment
         while (byte) {
-            *buf = 0;
-            buf --;
+            *buf_tmp = 0;
+            buf_tmp --;
             byte --;
         }
     }
@@ -414,9 +416,10 @@ int flashRead(unsigned long addr, unsigned char *buf, unsigned long sz)
     unsigned int sz_remain = 0;
     int i = 0;
     int page_offset = addr & (INSIDE_FLS_PAGE_SIZE - 1);
+    unsigned char *buf_tmp = buf;
 
     if ((page_offset == 0)
-        && (((unsigned int)buf&0x3) == 0)
+        && (((unsigned int)buf_tmp&0x3) == 0)
         && ((sz&0x3) == 0)) { /* Use 4-bytes aligned and buf must be 4 times, sz must be 4 times */
         flash_addr = addr;
         unsigned int max_size = 0;
@@ -429,13 +432,13 @@ int flashRead(unsigned long addr, unsigned char *buf, unsigned long sz)
         sz_pagenum = sz / max_size;
         sz_remain = sz % max_size;
         for (i = 0; i < sz_pagenum; i++) {
-            __readByCMD(0xEB, flash_addr, (unsigned char *)buf, max_size);
-            buf         += max_size;
+            __readByCMD(0xEB, flash_addr, (unsigned char *)buf_tmp, max_size);
+            buf_tmp         += max_size;
             flash_addr    += max_size;
         }
 
         if (sz_remain) {
-            __readByCMD(0xEB, flash_addr, (unsigned char *)buf, sz_remain);
+            __readByCMD(0xEB, flash_addr, (unsigned char *)buf_tmp, sz_remain);
         }
     } else {
         char *cache = tls_mem_alloc(INSIDE_FLS_PAGE_SIZE);
@@ -446,25 +449,25 @@ int flashRead(unsigned long addr, unsigned char *buf, unsigned long sz)
         flash_addr = addr & ~(INSIDE_FLS_PAGE_SIZE - 1);
         __readByCMD(0xEB, flash_addr, (unsigned char *)cache, INSIDE_FLS_PAGE_SIZE);
         if (sz > INSIDE_FLS_PAGE_SIZE - page_offset) {
-            MEMCPY(buf, cache + page_offset, INSIDE_FLS_PAGE_SIZE - page_offset);
-            buf += INSIDE_FLS_PAGE_SIZE - page_offset;
+            MEMCPY(buf_tmp, cache + page_offset, INSIDE_FLS_PAGE_SIZE - page_offset);
+            buf_tmp += INSIDE_FLS_PAGE_SIZE - page_offset;
             flash_addr     += INSIDE_FLS_PAGE_SIZE;
 
             sz_pagenum = (sz - (INSIDE_FLS_PAGE_SIZE - page_offset)) / INSIDE_FLS_PAGE_SIZE;
             sz_remain = (sz - (INSIDE_FLS_PAGE_SIZE - page_offset)) % INSIDE_FLS_PAGE_SIZE;
             for (i = 0; i < sz_pagenum; i++) {
                 __readByCMD(0xEB, flash_addr, (unsigned char *)cache, INSIDE_FLS_PAGE_SIZE);
-                MEMCPY(buf, cache, INSIDE_FLS_PAGE_SIZE);
-                buf         += INSIDE_FLS_PAGE_SIZE;
+                MEMCPY(buf_tmp, cache, INSIDE_FLS_PAGE_SIZE);
+                buf_tmp         += INSIDE_FLS_PAGE_SIZE;
                 flash_addr     += INSIDE_FLS_PAGE_SIZE;
             }
 
             if (sz_remain) {
                 __readByCMD(0xEB, flash_addr, (unsigned char *)cache, sz_remain + (4- sz_remain%4));
-                MEMCPY(buf, cache, sz_remain);
+                MEMCPY(buf_tmp, cache, sz_remain);
             }
         } else {
-            MEMCPY(buf, cache + page_offset, sz);
+            MEMCPY(buf_tmp, cache + page_offset, sz);
         }
         tls_mem_free(cache);
     }

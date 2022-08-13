@@ -516,19 +516,19 @@ int BleSetSecurityAuthReq(BleAuthReqMode mode)
 {
     BLE_IF_DEBUG("BleSetSecurityAuthReq, BleAuthReqMode=%d\r\n", mode);
 
-    if (mode&OHOS_BLE_AUTH_BOND || mode&OHOS_BLE_AUTH_REQ_SC_BOND || mode&OHOS_BLE_AUTH_REQ_SC_MITM_BOND) {
+    if ((mode&OHOS_BLE_AUTH_BOND) || (mode&OHOS_BLE_AUTH_REQ_SC_BOND) || (mode&OHOS_BLE_AUTH_REQ_SC_MITM_BOND)) {
         ble_hs_cfg.sm_bonding = 1;
     } else {
     }
 
-    if (mode&OHOS_BLE_AUTH_REQ_MITM || mode&OHOS_BLE_AUTH_REQ_SC_MITM || mode&OHOS_BLE_AUTH_REQ_SC_MITM_BOND) {
+    if ((mode&OHOS_BLE_AUTH_REQ_MITM) || (mode&OHOS_BLE_AUTH_REQ_SC_MITM) || (mode&OHOS_BLE_AUTH_REQ_SC_MITM_BOND)) {
         ble_hs_cfg.sm_mitm = 1;
     } else {
         ble_hs_cfg.sm_mitm = 0;
     }
 
-    if (mode&OHOS_BLE_AUTH_REQ_SC_ONLY || mode&OHOS_BLE_AUTH_REQ_SC_BOND || mode&OHOS_BLE_AUTH_REQ_SC_MITM || \
-        mode&OHOS_BLE_AUTH_REQ_SC_MITM_BOND) {
+    if ((mode&OHOS_BLE_AUTH_REQ_SC_ONLY) || (mode&OHOS_BLE_AUTH_REQ_SC_BOND) || (mode&OHOS_BLE_AUTH_REQ_SC_MITM) || \
+        (mode&OHOS_BLE_AUTH_REQ_SC_MITM_BOND)) {
         ble_hs_cfg.sm_sc = 1;
     } else {
     }

@@ -1140,7 +1140,7 @@ int ble_gatts_start(void)
 
     if (ble_hs_max_client_configs > 0) {
         ble_gatts_clt_cfg_mem = tls_mem_alloc(OS_MEMPOOL_BYTES(ble_hs_max_client_configs,
-                                              sizeof(struct ble_gatts_clt_cfg)));
+            sizeof(struct ble_gatts_clt_cfg)));
         if (ble_gatts_clt_cfg_mem == NULL) {
             rc = BLE_HS_ENOMEM;
             goto done;
@@ -1699,7 +1699,6 @@ void ble_gatts_bonding_restored(uint16_t conn_handle)
 
 static struct ble_gatts_svc_entry *ble_gatts_find_svc_entry(const ble_uuid_t *uuid)
 {
-
     for (int i = 0; i < ble_gatts_num_svc_entries; i++) {
         struct ble_gatts_svc_entry *entry = ble_gatts_svc_entries + i;
 
@@ -1972,8 +1971,8 @@ static int ble_gatts_count_resources(const struct ble_gatt_svc_def *svcs,
                 /* If the characteristic permits notifications or indications,
                  * it has a CCCD.
                  */
-                if (chr->flags & BLE_GATT_CHR_F_NOTIFY ||
-                        chr->flags & BLE_GATT_CHR_F_INDICATE) {
+                if ((chr->flags & BLE_GATT_CHR_F_NOTIFY) ||
+                        (chr->flags & BLE_GATT_CHR_F_INDICATE)) {
                     /* Each CCCD requires:
                      *     o 1 descriptor
                      *     o 1 CCCD

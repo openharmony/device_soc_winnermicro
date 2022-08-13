@@ -127,7 +127,7 @@ static const struct ble_att_rx_dispatch_entry *ble_att_rx_dispatch_entry_find(ui
     const struct ble_att_rx_dispatch_entry *entry;
     int i;
 
-    for(i = 0; i < BLE_ATT_RX_DISPATCH_SZ; i++) {
+    for (i = 0; i < BLE_ATT_RX_DISPATCH_SZ; i++) {
         entry = ble_att_rx_dispatch + i;
         if (entry->bde_op == op) {
             return entry;

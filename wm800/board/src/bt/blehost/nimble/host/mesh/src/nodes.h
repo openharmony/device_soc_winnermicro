@@ -4,7 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+#ifndef NODES_H
+#define NODES_H
 struct bt_mesh_node *bt_mesh_node_find(u16_t addr);
 struct bt_mesh_node *bt_mesh_node_alloc(u16_t addr, u8_t num_elem,
                                         u16_t net_idx);
 void bt_mesh_node_del(struct bt_mesh_node *node, bool store);
+#endif
