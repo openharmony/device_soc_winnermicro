@@ -3857,7 +3857,6 @@ int ble_gattc_notify(uint16_t conn_handle, uint16_t chr_val_handle)
  */
 static void ble_gattc_indicate_err(struct ble_gattc_proc *proc, int status, uint16_t att_handle)
 {
-
     ble_gattc_dbg_assert_proc_not_inserted(proc);
 
     if (status != BLE_HS_ENOTCONN) {

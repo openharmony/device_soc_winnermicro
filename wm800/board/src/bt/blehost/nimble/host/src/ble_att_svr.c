@@ -55,7 +55,7 @@ static struct os_mempool ble_att_svr_entry_pool;
 
 static os_membuf_t ble_att_svr_prep_entry_mem[OS_MEMPOOL_SIZE(MYNEWT_VAL(BLE_ATT_SVR_MAX_PREP_ENTRIES),
     sizeof(struct ble_att_prep_entry))
- ];
+];
 
 static struct os_mempool ble_att_svr_prep_entry_pool;
 
@@ -98,10 +98,9 @@ static uint16_t ble_att_svr_next_id(void)
  *
  * @return 0 on success, non-zero error code on failure.
  */
-int
-ble_att_svr_register(const ble_uuid_t *uuid, uint8_t flags,
-                     uint8_t min_key_size, uint16_t *handle_id,
-                     ble_att_svr_access_fn *cb, void *cb_arg)
+int ble_att_svr_register(const ble_uuid_t *uuid, uint8_t flags,
+    uint8_t min_key_size, uint16_t *handle_id,
+    ble_att_svr_access_fn *cb, void *cb_arg)
 {
     struct ble_att_svr_entry *entry;
     entry = ble_att_svr_entry_alloc();
@@ -184,7 +183,7 @@ struct ble_att_svr_entry *ble_att_svr_find_by_uuid(struct ble_att_svr_entry *pre
         entry = STAILQ_NEXT(prev, ha_next);
     }
 
-    for(;
+    for (;
         entry != NULL && entry->ha_handle_id <= end_handle;
         entry = STAILQ_NEXT(entry, ha_next)) {
         if (uuid == NULL || ble_uuid_cmp(entry->ha_uuid, uuid) == 0) {
@@ -562,15 +561,15 @@ int ble_att_svr_tx_error_rsp(uint16_t conn_handle, struct os_mbuf *txom,
  *                                  of the error message's attribute handle
  *                                  field.
  */
-static int
-ble_att_svr_tx_rsp(uint16_t conn_handle, int hs_status, struct os_mbuf *om,
-                   uint8_t att_op, uint8_t err_status, uint16_t err_handle)
+static int ble_att_svr_tx_rsp(uint16_t conn_handle, int hs_status, struct os_mbuf *om,
+    uint8_t att_op, uint8_t err_status, uint16_t err_handle)
 {
     struct ble_l2cap_chan *chan;
     struct ble_hs_conn *conn;
     int do_tx;
 
-    if (hs_status != 0 && err_status == 0) {
+    int hs_status_tmp = hs_status;
+    if (hs_status_tmp != 0 && err_status == 0) {
         /* Processing failed, but err_status of 0 means don't send error. */
         do_tx = 0;
     } else {
@@ -582,16 +581,16 @@ ble_att_svr_tx_rsp(uint16_t conn_handle, int hs_status, struct os_mbuf *om,
         int rc = ble_att_conn_chan_find(conn_handle, &conn, &chan);
         if (rc != 0) {
             /* No longer connected. */
-            hs_status = rc;
+            hs_status_tmp = rc;
         } else {
-            if (hs_status == 0) {
+            if (hs_status_tmp == 0) {
                 BLE_HS_DBG_ASSERT(om != NULL);
                 ble_att_inc_tx_stat(om->om_data[0]);
                 ble_att_truncate_to_mtu(chan, om);
-                hs_status = ble_l2cap_tx(conn, chan, om);
+                hs_status_tmp = ble_l2cap_tx(conn, chan, om);
                 om = NULL;
 
-                if (hs_status != 0) {
+                if (hs_status_tmp != 0) {
                     err_status = BLE_ATT_ERR_UNLIKELY;
                 }
             }
@@ -599,7 +598,7 @@ ble_att_svr_tx_rsp(uint16_t conn_handle, int hs_status, struct os_mbuf *om,
 
         ble_hs_unlock();
 
-        if (hs_status != 0) {
+        if (hs_status_tmp != 0) {
             STATS_INC(ble_att_stats, error_rsp_tx);
 
             /* Reuse om for error response. */
@@ -619,7 +618,7 @@ ble_att_svr_tx_rsp(uint16_t conn_handle, int hs_status, struct os_mbuf *om,
 
     /* Free mbuf if it was not consumed (i.e., if the send failed). */
     os_mbuf_free_chain(om);
-    return hs_status;
+    return hs_status_tmp;
 }
 
 static int ble_att_svr_build_mtu_rsp(uint16_t conn_handle, struct os_mbuf **rxom,
@@ -852,7 +851,6 @@ int ble_att_svr_rx_find_info(uint16_t conn_handle, struct os_mbuf **rxom)
     req = (struct ble_att_find_info_req *)(*rxom)->om_data;
     start_handle = le16toh(req->bafq_start_handle);
     end_handle = le16toh(req->bafq_end_handle);
-
     /* Tx error response if start handle is greater than end handle or is equal
      * to 0 (Vol. 3, Part F, 3.4.3.1).
      */
@@ -1156,8 +1154,8 @@ int ble_att_svr_rx_find_type_value(uint16_t conn_handle, struct os_mbuf **rxom)
     }
 
     rc = ble_att_svr_build_find_type_value_rsp(conn_handle, start_handle,
-            end_handle, attr_type, rxom,
-            &txom, &att_err);
+        end_handle, attr_type, rxom,
+        &txom, &att_err);
     if (rc != 0) {
         err_handle = start_handle;
         goto done;
@@ -1619,8 +1617,8 @@ static int ble_att_svr_build_read_group_type_rsp(uint16_t conn_handle,
                  * representing the group to the response.
                  */
                 rc = ble_att_svr_read_group_type_entry_write(
-                                     txom, mtu, start_group_handle, end_group_handle,
-                                     &service_uuid.u);
+                    txom, mtu, start_group_handle, end_group_handle,
+                    &service_uuid.u);
                 start_group_handle = 0;
                 end_group_handle = 0;
 
@@ -1705,9 +1703,9 @@ done:
             }
 
             rc = ble_att_svr_read_group_type_entry_write(txom, mtu,
-                    start_group_handle,
-                    end_group_handle,
-                    &service_uuid.u);
+                start_group_handle,
+                end_group_handle,
+                &service_uuid.u);
             if (rc == BLE_HS_ENOMEM) {
                 *att_err = BLE_ATT_ERR_INSUFFICIENT_RES;
             }
@@ -1745,7 +1743,6 @@ int ble_att_svr_rx_read_group_type(uint16_t conn_handle, struct os_mbuf **rxom)
     err_handle = 0;
     att_err = 0;
     pktlen = OS_MBUF_PKTLEN(*rxom);
-
     if (pktlen != sizeof(*req) + 2 && pktlen != sizeof(*req) + 16) { // 2:byte alignment, 16:byte alignment
         /* Malformed packet */
         rc = BLE_HS_EBADDATA;
@@ -1784,9 +1781,9 @@ int ble_att_svr_rx_read_group_type(uint16_t conn_handle, struct os_mbuf **rxom)
     }
 
     rc = ble_att_svr_build_read_group_type_rsp(conn_handle, start_handle,
-            end_handle, &uuid.u,
-            rxom, &txom, &att_err,
-            &err_handle);
+        end_handle, &uuid.u,
+        rxom, &txom, &att_err,
+        &err_handle);
     if (rc != 0) {
         goto done;
     }
@@ -2086,10 +2083,10 @@ static int ble_att_svr_insert_prep_entry(uint16_t conn_handle,
     prep_entry->bape_offset = offset;
     /* Append attribute value from request onto prep mbuf. */
     rc = os_mbuf_appendfrom(
-                         prep_entry->bape_value,
-                         rxom,
-                         sizeof(struct ble_att_prep_write_cmd),
-                         OS_MBUF_PKTLEN(rxom) - sizeof(struct ble_att_prep_write_cmd));
+        prep_entry->bape_value,
+        rxom,
+        sizeof(struct ble_att_prep_write_cmd),
+        OS_MBUF_PKTLEN(rxom) - sizeof(struct ble_att_prep_write_cmd));
     if (rc != 0) {
         /* Failed to allocate an mbuf to hold the additional data. */
         ble_att_svr_prep_free(prep_entry);
@@ -2141,7 +2138,6 @@ int ble_att_svr_rx_prep_write(uint16_t conn_handle, struct os_mbuf **rxom)
     req = (struct ble_att_prep_write_cmd *)(*rxom)->om_data;
     err_handle = le16toh(req->bapc_handle);
     attr_entry = ble_att_svr_find_by_handle(le16toh(req->bapc_handle));
-
     /* A prepare write request gets rejected for the following reasons:
      * 1. Insufficient authorization.
      * 2. Insufficient authentication.
@@ -2468,7 +2464,6 @@ int ble_att_svr_start(void)
 
     if (ble_hs_max_attrs > 0) {
         ble_att_svr_entry_mem = tls_mem_alloc(OS_MEMPOOL_BYTES(ble_hs_max_attrs, sizeof(struct ble_att_svr_entry)));
-
         if (ble_att_svr_entry_mem == NULL) {
             rc = BLE_HS_ENOMEM;
             goto err;

@@ -11,11 +11,11 @@
 #include "mesh/access.h"
 
 #include "net.h"
-#include "testing.h"
 #include "access.h"
 #include "foundation.h"
 #include "lpn.h"
 #include "transport.h"
+#include "testing.h"
 
 static sys_slist_t cb_slist;
 

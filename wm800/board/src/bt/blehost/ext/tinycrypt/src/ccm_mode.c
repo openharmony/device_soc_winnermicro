@@ -181,8 +181,7 @@ int tc_ccm_generation_encryption(uint8_t *out, unsigned int olen,
     b[14] = b[15] = TC_ZERO_BYTE; // 14:array element, 15:array element
     /* encrypting payload using ctr mode: */
     ccm_ctr_mode(out, plen, payload, plen, b, c->sched);
-    b[14] = b[15] = TC_ZERO_BYTE; /* restoring initial counter for ctr_mode (0): */
-    // 14:array element, 15:array element
+    b[14] = b[15] = TC_ZERO_BYTE; // 14:array element, 15:array element
     /* encrypting b and adding the tag to the output: */
     (void)tc_aes_encrypt(b, b, c->sched);
     out += plen;

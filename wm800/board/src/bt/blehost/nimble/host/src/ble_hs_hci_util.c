@@ -82,8 +82,7 @@ int ble_hs_hci_util_read_rssi(uint16_t conn_handle, int8_t *out_rssi)
     struct ble_hci_rd_rssi_rp rsp;
     int rc;
     cmd.handle = htole16(conn_handle);
-    rc = ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_STATUS_PARAMS,
-                                      BLE_HCI_OCF_RD_RSSI), &cmd, sizeof(cmd),
+    rc = ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_STATUS_PARAMS, BLE_HCI_OCF_RD_RSSI), &cmd, sizeof(cmd),
                            &rsp, sizeof(rsp));
     if (rc != 0) {
         return rc;

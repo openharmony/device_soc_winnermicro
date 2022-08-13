@@ -403,8 +403,10 @@ typedef struct {
 
 #if defined(__NEED_pthread_cond_t) && !defined(__DEFINED_pthread_cond_t)
 typedef struct {
-    union { int __i[12]; volatile int __vi[12];
-    void *__p[12 * sizeof(int) / sizeof(void*)];
+    union {
+        int __i[12];
+        volatile int __vi[12];
+        void *__p[12 * sizeof(int) / sizeof(void*)];
     } __u;
 } pthread_cond_t;
 #define __DEFINED_pthread_cond_t

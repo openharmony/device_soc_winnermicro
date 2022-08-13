@@ -466,7 +466,6 @@ struct os_mbuf *os_mbuf_off(const struct os_mbuf *om, int off, uint16_t *out_off
         }
 
         next = SLIST_NEXT(cur, om_next);
-
         if (cur->om_len > off ||
                 (cur->om_len == off && next == NULL)) {
             *out_off = off;

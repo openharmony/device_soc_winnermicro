@@ -127,13 +127,13 @@ static int __ip2str(unsigned char v4v6, unsigned int *inuint, char *outtxt)
     unsigned char l;
 
     if (4 == v4v6) {
-        for (unsigned char i = 0; i < 4; i++) {
-            unsigned char bit = (*inuint >> (8 * i)) & 0xff;
-            h = bit / 100;
+        for (unsigned char i = 0; i < 4; i++) { // 4:loop cap
+            unsigned char bit = (*inuint >> (8 * i)) & 0xff; // 8:byte alignment
+            h = bit / 100; // 100:byte alignment
             if (h) {
                 outtxt[j++] = '0' + h;
             }
-            m = (bit % 100) / 10;
+            m = (bit % 100) / 10; // 100:byte alignment, 10:byte alignment
             if (m) {
                 outtxt[j++] = '0' + m;
             } else {
@@ -141,23 +141,23 @@ static int __ip2str(unsigned char v4v6, unsigned int *inuint, char *outtxt)
                     outtxt[j++] = '0';
                 }
             }
-            l = (bit % 100) % 10;
+            l = (bit % 100) % 10; // 100:byte alignment, 10:byte alignment
             outtxt[j++] = '0' + l;
             outtxt[j++] = '.';
         }
     } else {
-        for (unsigned char k = 0; k < 4; k++) {
-            for (unsigned char i = 0; i < 4; i++) {
-                m = (*inuint >> (8 * i)) & 0xff;
-                h = m >> 4;
+        for (unsigned char k = 0; k < 4; k++) { // 4:loop cap
+            for (unsigned char i = 0; i < 4; i++) { // 4:loop cap
+                m = (*inuint >> (8 * i)) & 0xff; // 8:byte alignment
+                h = m >> 4; // 4:byte alignment
                 l = m & 0xf;
-                if (h > 9) {
-                    outtxt[j++] = 'A' + h - 10;
+                if (h > 9) { // 9:byte alignment
+                    outtxt[j++] = 'A' + h - 10; // 10:byte alignment
                 } else {
                     outtxt[j++]= '0' + h;
                 }
-                if (l > 9) {
-                    outtxt[j++] = 'A' + l - 10;
+                if (l > 9) { // 9:byte alignment
+                    outtxt[j++] = 'A' + l - 10; // 10:byte alignment
                 } else {
                     outtxt[j++] = '0' + l;
                 }
@@ -176,23 +176,23 @@ static int __ip2str(unsigned char v4v6, unsigned int *inuint, char *outtxt)
 static int __mac2str(unsigned char *inchar, char *outtxt)
 {
     unsigned int i;
-    for (i = 0; i < 6; i++) {   /* mac length */
-        unsigned char hbit = (*(inchar + i) & 0xf0) >> 4;
+    for (i = 0; i < 6; i++) { // 6:loop cap
+        unsigned char hbit = (*(inchar + i) & 0xf0) >> 4; // 4:byte alignment
         unsigned char lbit = *(inchar + i) & 0x0f;
-        if (hbit > 9) {
-            outtxt[3 * i] = 'A' + hbit - 10;
+        if (hbit > 9) { // 9:byte alignment
+            outtxt[3 * i] = 'A' + hbit - 10; // 10:byte alignment, 3:byte alignment
         } else {
-            outtxt[3 * i]= '0' + hbit;
+            outtxt[3 * i]= '0' + hbit; // 3:byte alignment
         }
-        if (lbit > 9) {
-            outtxt[3 * i + 1] = 'A' + lbit - 10;
+        if (lbit > 9) { // 9:byte alignment
+            outtxt[3 * i + 1] = 'A' + lbit - 10; // 10:byte alignment, 3:byte alignment
         } else {
-            outtxt[3 * i + 1] = '0' + lbit;
+            outtxt[3 * i + 1] = '0' + lbit; // 3:byte alignment
         }
-        outtxt[3 * i + 2] = '-';
+        outtxt[3 * i + 2] = '-'; // 2:byte alignment, 3:byte alignment
     }
 
-    outtxt[3 * (i - 1) + 2] = 0;
+    outtxt[3 * (i - 1) + 2] = 0; // 2:byte alignment, 3:byte alignment
 
     return 3 * (i - 1) + 2; // 2:byte alignment, 3:byte alignment
 }
@@ -215,45 +215,47 @@ uintmax_t strntoumax(const char *nptr, char **endptr, int base, size_t n)
     int minus = 0;
     uintmax_t v = 0;
     int d;
+    int base_tmp = base;
+    size_t n_tmp = n;
 
-    while (n && isspace((unsigned char)*nptr)) {
+    while (n_tmp && isspace((unsigned char)*nptr)) {
         nptr++;
-        n--;
+        n_tmp--;
     }
 
     /* Single optional + or - */
-    if (n && *nptr == '-') {
+    if (n_tmp && *nptr == '-') {
         minus = 1;
         nptr++;
-        n--;
-    } else if (n && *nptr == '+') {
+        n_tmp--;
+    } else if (n_tmp && *nptr == '+') {
         nptr++;
     }
 
-    if (base == 0) {
-        if (n >= 2 && nptr[0] == '0' &&
+    if (base_tmp == 0) {
+        if (n_tmp >= 2 && nptr[0] == '0' && // 2:byte alignment
             (nptr[1] == 'x' || nptr[1] == 'X')) {
-                n -= 2;
-                nptr += 2;
-                base = 16;
-        } else if (n >= 1 && nptr[0] == '0') {
-            n--;
+                n_tmp -= 2; // 2:byte alignment
+                nptr += 2; // 2:byte alignment
+                base_tmp = 16; // 16:byte alignment
+        } else if (n_tmp >= 1 && nptr[0] == '0') {
+            n_tmp--;
             nptr++;
-            base = 8;
+            base_tmp = 8; // 8:byte alignment
         } else {
-            base = 10;
+            base_tmp = 10; // 10:byte alignment
         }
-    } else if (base == 16) {
-        if (n >= 2 && nptr[0] == '0' &&
+    } else if (base_tmp == 16) { // 16:byte alignment
+        if (n_tmp >= 2 && nptr[0] == '0' &&
             (nptr[1] == 'x' || nptr[1] == 'X')) {
-                n -= 2;
-                nptr += 2;
+                n_tmp -= 2; // 2:byte alignment
+                nptr += 2; // 2:byte alignment
         }
     }
 
-    while (n && (d = digitval(*nptr)) >= 0 && d < base) {
-        v = v*base + d;
-        n--;
+    while (n_tmp && (d = digitval(*nptr)) >= 0 && d < base_tmp) {
+        v = v*base_tmp + d;
+        n_tmp--;
         nptr++;
     }
 
@@ -740,50 +742,52 @@ static size_t _ntoa_format(out_fct_type out, char* buffer, size_t idx, size_t ma
                            char* buf, size_t len, bool negative, unsigned int base,
                            unsigned int prec, unsigned int width, unsigned int flags)
 {
+    size_t len_tmp = len;
+    unsigned int width_tmp = width;
   // pad leading zeros
     if (!(flags & FLAGS_LEFT)) {
-        if (width && (flags & FLAGS_ZEROPAD) && (negative || (flags & (FLAGS_PLUS | FLAGS_SPACE)))) {
-            width--;
+        if (width_tmp && (flags & FLAGS_ZEROPAD) && (negative || (flags & (FLAGS_PLUS | FLAGS_SPACE)))) {
+            width_tmp--;
         }
-        while ((len < prec) && (len < PRINTF_NTOA_BUFFER_SIZE)) {
-            buf[len++] = '0';
+        while ((len_tmp < prec) && (len_tmp < PRINTF_NTOA_BUFFER_SIZE)) {
+            buf[len_tmp++] = '0';
         }
-        while ((flags & FLAGS_ZEROPAD) && (len < width) && (len < PRINTF_NTOA_BUFFER_SIZE)) {
-            buf[len++] = '0';
+        while ((flags & FLAGS_ZEROPAD) && (len_tmp < width_tmp) && (len_tmp < PRINTF_NTOA_BUFFER_SIZE)) {
+            buf[len_tmp++] = '0';
         }
     }
 
   // handle hash
     if (flags & FLAGS_HASH) {
-        if (!(flags & FLAGS_PRECISION) && len && ((len == prec) || (len == width))) {
-            len--;
-        if (len && (base == 16U)) {
-            len--;
+        if (!(flags & FLAGS_PRECISION) && len_tmp && ((len_tmp == prec) || (len_tmp == width_tmp))) {
+            len_tmp--;
+        if (len_tmp && (base == 16U)) {
+            len_tmp--;
         }
         }
-        if ((base == 16U) && !(flags & FLAGS_UPPERCASE) && (len < PRINTF_NTOA_BUFFER_SIZE)) {
-            buf[len++] = 'x';
-        } else if ((base == 16U) && (flags & FLAGS_UPPERCASE) && (len < PRINTF_NTOA_BUFFER_SIZE)) {
-            buf[len++] = 'X';
-        } else if ((base == 2U) && (len < PRINTF_NTOA_BUFFER_SIZE)) {
-            buf[len++] = 'b';
+        if ((base == 16U) && !(flags & FLAGS_UPPERCASE) && (len_tmp < PRINTF_NTOA_BUFFER_SIZE)) {
+            buf[len_tmp++] = 'x';
+        } else if ((base == 16U) && (flags & FLAGS_UPPERCASE) && (len_tmp < PRINTF_NTOA_BUFFER_SIZE)) {
+            buf[len_tmp++] = 'X';
+        } else if ((base == 2U) && (len_tmp < PRINTF_NTOA_BUFFER_SIZE)) {
+            buf[len_tmp++] = 'b';
         }
-        if (len < PRINTF_NTOA_BUFFER_SIZE) {
-            buf[len++] = '0';
+        if (len_tmp < PRINTF_NTOA_BUFFER_SIZE) {
+            buf[len_tmp++] = '0';
         }
     }
 
-    if (len < PRINTF_NTOA_BUFFER_SIZE) {
+    if (len_tmp < PRINTF_NTOA_BUFFER_SIZE) {
         if (negative) {
-            buf[len++] = '-';
+            buf[len_tmp++] = '-';
         } else if (flags & FLAGS_PLUS) {
-            buf[len++] = '+';  // ignore the space if the '+' exists
+            buf[len_tmp++] = '+';  // ignore the space if the '+' exists
         } else if (flags & FLAGS_SPACE) {
-            buf[len++] = ' ';
+            buf[len_tmp++] = ' ';
         }
     }
 
-    return _out_rev(out, buffer, idx, maxlen, buf, len, width, flags);
+    return _out_rev(out, buffer, idx, maxlen, buf, len_tmp, width_tmp, flags);
 }
 
 // internal itoa for 'long' type
@@ -791,28 +795,30 @@ static size_t _ntoa_long(out_fct_type out, char* buffer, size_t idx, size_t maxl
                          unsigned long value, bool negative, unsigned long base,
                          unsigned int prec, unsigned int width, unsigned int flags)
 {
+    unsigned int flags_tmp = flags;
+    unsigned long value_tmp = value;
     char buf[PRINTF_NTOA_BUFFER_SIZE];
     size_t len = 0U;
 
     // no hash for 0 values
-    if (!value) {
-        flags &= ~FLAGS_HASH;
+    if (!value_tmp) {
+        flags_tmp &= ~FLAGS_HASH;
     }
 
     // write if precision != 0 and value is != 0
-    if (!(flags & FLAGS_PRECISION) || value) {
+    if (!(flags_tmp & FLAGS_PRECISION) || value_tmp) {
         do {
             if (base == 0) {
             }
-            const char digit = (char)(value % base);
-            buf[len++] = digit < 10 ? '0' + digit : ((flags & FLAGS_UPPERCASE) ? 'A' : 'a') + digit - 10;
-            if (value == 0) {
+            const char digit = (char)(value_tmp % base);
+            buf[len++] = digit < 10 ? '0' + digit : ((flags_tmp & FLAGS_UPPERCASE) ? 'A' : 'a') + digit - 10;
+            if (value_tmp == 0) {
             }
-            value /= base;
-        } while (value && (len < PRINTF_NTOA_BUFFER_SIZE));
+            value_tmp /= base;
+        } while (value_tmp && (len < PRINTF_NTOA_BUFFER_SIZE));
     }
 
-    return _ntoa_format(out, buffer, idx, maxlen, buf, len, negative, (unsigned int)base, prec, width, flags);
+    return _ntoa_format(out, buffer, idx, maxlen, buf, len, negative, (unsigned int)base, prec, width, flags_tmp);
 }
 
 // internal itoa for 'long long' type
@@ -821,28 +827,30 @@ static size_t _ntoa_long_long(out_fct_type out, char* buffer, size_t idx, size_t
                               unsigned long long value, bool negative, unsigned long long base,
                               unsigned int prec, unsigned int width, unsigned int flags)
 {
+    unsigned int flags_tmp = flags;
+    unsigned long value_tmp = value;
     char buf[PRINTF_NTOA_BUFFER_SIZE];
     size_t len = 0U;
 
     // no hash for 0 values
-    if (!value) {
-        flags &= ~FLAGS_HASH;
+    if (!value_tmp) {
+        flags_tmp &= ~FLAGS_HASH;
     }
 
     // write if precision != 0 and value is != 0
-    if (!(flags & FLAGS_PRECISION) || value) {
+    if (!(flags_tmp & FLAGS_PRECISION) || value_tmp) {
         do {
             if (base == 0) {
             }
-            const char digit = (char)(value % base);
-            buf[len++] = (digit < 10) ? ('0' + digit) : (((flags & FLAGS_UPPERCASE) ? 'A' : 'a') + digit - 10);
-            if (value == 0) {
+            const char digit = (char)(value_tmp % base);
+            buf[len++] = (digit < 10) ? ('0' + digit) : (((flags_tmp & FLAGS_UPPERCASE) ? 'A' : 'a') + digit - 10);
+            if (value_tmp == 0) {
             }
-            value /= base;
-        } while (value && (len < PRINTF_NTOA_BUFFER_SIZE));
+            value_tmp /= base;
+        } while (value_tmp && (len < PRINTF_NTOA_BUFFER_SIZE));
     }
 
-    return _ntoa_format(out, buffer, idx, maxlen, buf, len, negative, (unsigned int)base, prec, width, flags);
+    return _ntoa_format(out, buffer, idx, maxlen, buf, len, negative, (unsigned int)base, prec, width, flags_tmp);
 }
 #endif  // PRINTF_SUPPORT_LONG_LONG
 
@@ -858,6 +866,7 @@ static size_t _etoa(out_fct_type out, char* buffer, size_t idx, size_t maxlen,
 static size_t _ftoa(out_fct_type out, char* buffer, size_t idx, size_t maxlen,
                     double value, unsigned int prec, unsigned int width, unsigned int flags)
 {
+    unsigned int prec_tmp = prec;
     char buf[PRINTF_FTOA_BUFFER_SIZE];
     size_t len  = 0U;
     double diff = 0.0;
@@ -882,7 +891,7 @@ static size_t _ftoa(out_fct_type out, char* buffer, size_t idx, size_t maxlen,
     // which could be 100s of characters overflowing your buffers == bad
     if ((value > PRINTF_MAX_FLOAT) || (value < -PRINTF_MAX_FLOAT)) {
 #if defined(PRINTF_SUPPORT_EXPONENTIAL)
-        return _etoa(out, buffer, idx, maxlen, value, prec, width, flags);
+        return _etoa(out, buffer, idx, maxlen, value, prec_tmp, width, flags);
 #else
         return 0U;
 #endif
@@ -896,23 +905,23 @@ static size_t _ftoa(out_fct_type out, char* buffer, size_t idx, size_t maxlen,
 
     // set default precision, if not set explicitly
     if (!(flags & FLAGS_PRECISION)) {
-        prec = PRINTF_DEFAULT_FLOAT_PRECISION;
+        prec_tmp = PRINTF_DEFAULT_FLOAT_PRECISION;
     }
     // limit precision to 9, cause a prec >= 10 can lead to overflow errors
-    while ((len < PRINTF_FTOA_BUFFER_SIZE) && (prec > 9U)) {
+    while ((len < PRINTF_FTOA_BUFFER_SIZE) && (prec_tmp > 9U)) {
         buf[len++] = '0';
-        prec--;
+        prec_tmp--;
     }
 
     int whole = (int)value;
-    double tmp = (value - whole) * pow10[prec];
+    double tmp = (value - whole) * pow10[prec_tmp];
     unsigned long frac = (unsigned long)tmp;
     diff = tmp - frac;
 
     if (diff > 0.5) {
         ++frac;
         // handle rollover, e.g. case 0.99 with prec 1 is 1.0
-        if (frac >= pow10[prec]) {
+        if (frac >= pow10[prec_tmp]) {
             frac = 0;
             ++whole;
         }
@@ -922,7 +931,7 @@ static size_t _ftoa(out_fct_type out, char* buffer, size_t idx, size_t maxlen,
         ++frac;
     }
 
-    if (prec == 0U) {
+    if (prec_tmp == 0U) {
         diff = value - (double)whole;
         if ((diff > 0.5) && (whole & 1)) {
             // exactly 0.5 and ODD, then round up
@@ -930,7 +939,7 @@ static size_t _ftoa(out_fct_type out, char* buffer, size_t idx, size_t maxlen,
             ++whole;
         }
     } else {
-        unsigned int count = prec;
+        unsigned int count = prec_tmp;
         // now do fractional part, as an unsigned number
         while (len < PRINTF_FTOA_BUFFER_SIZE) {
             --count;
@@ -985,9 +994,10 @@ static size_t _ftoa(out_fct_type out, char* buffer, size_t idx, size_t maxlen,
 static size_t _etoa(out_fct_type out, char* buffer, size_t idx, size_t maxlen, double value,
                     unsigned int prec, unsigned int width, unsigned int flags)
 {
+    unsigned int prec_tmp = prec;
     // check for NaN and special values
     if ((value != value) || (value > DBL_MAX) || (value < -DBL_MAX)) {
-        return _ftoa(out, buffer, idx, maxlen, value, prec, width, flags);
+        return _ftoa(out, buffer, idx, maxlen, value, prec_tmp, width, flags);
     }
 
     // determine the sign
@@ -998,7 +1008,7 @@ static size_t _etoa(out_fct_type out, char* buffer, size_t idx, size_t maxlen, d
 
     // default precision
     if (!(flags & FLAGS_PRECISION)) {
-        prec = PRINTF_DEFAULT_FLOAT_PRECISION;
+        prec_tmp = PRINTF_DEFAULT_FLOAT_PRECISION;
     }
 
     // determine the decimal exponent
@@ -1021,11 +1031,12 @@ static size_t _etoa(out_fct_type out, char* buffer, size_t idx, size_t maxlen, d
     /* compute exp(z) using continued fractions,
      * see https:// en.wikipedia.org/wiki/Exponential_function#Continued_fractions_for_ex
      */
-    conv.F *= 1 + 2 * z / (2 - z + (z2 / (6 + (z2 / (10 + z2 / 14)))));
+    conv.F *= 1 + 2 * z / (2 - z + (z2 / (6 + // 2:byte alignment, 6:byte alignment
+        (z2 / (10 + z2 / 14))))); // 10:byte alignment, 14:byte alignment
     // correct for rounding errors
     if (value < conv.F) {
         expval--;
-        conv.F /= 10;
+        conv.F /= 10; // 10:byte alignment
     }
 
     // the exponent format is "%+03d" and largest value is "307", so set aside 4-5 characters
@@ -1035,10 +1046,10 @@ static size_t _etoa(out_fct_type out, char* buffer, size_t idx, size_t maxlen, d
     if (flags & FLAGS_ADAPT_EXP) {
       // do we want to fall-back to "%f" mode?
         if ((value >= 1e-4) && (value < 1e6)) {
-            if ((int)prec > expval) {
-                prec = (unsigned)((int)prec - expval - 1);
+            if ((int)prec_tmp > expval) {
+                prec_tmp = (unsigned)((int)prec_tmp - expval - 1);
             } else {
-                prec = 0;
+                prec_tmp = 0;
             }
             flags |= FLAGS_PRECISION;   // make sure _ftoa respects precision
             // no characters in exponent
@@ -1046,8 +1057,8 @@ static size_t _etoa(out_fct_type out, char* buffer, size_t idx, size_t maxlen, d
             expval   = 0;
         } else {
           // we use one sigfig for the whole part
-            if ((prec > 0) && (flags & FLAGS_PRECISION)) {
-                --prec;
+            if ((prec_tmp > 0) && (flags & FLAGS_PRECISION)) {
+                --prec_tmp;
             }
         }
     }
@@ -1073,10 +1084,10 @@ static size_t _etoa(out_fct_type out, char* buffer, size_t idx, size_t maxlen, d
 
     // output the floating part
     const size_t start_idx = idx;
-    idx = _ftoa(out, buffer, idx, maxlen, negative ? -value : value, prec, fwidth, flags & ~FLAGS_ADAPT_EXP);
+    idx = _ftoa(out, buffer, idx, maxlen, negative ? -value : value, prec_tmp, fwidth, flags & ~FLAGS_ADAPT_EXP);
 
     // output the exponent part
-    if (!prec && minwidth) {
+    if (!prec_tmp && minwidth) {
         // output the exponential symbol
         out((flags & FLAGS_UPPERCASE) ? 'E' : 'e', buffer, idx++, maxlen);
         // output the exponent value

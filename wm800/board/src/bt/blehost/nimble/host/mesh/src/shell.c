@@ -910,7 +910,6 @@ int cmd_timeout(int argc, char *argv[])
     }
 
     timeout = strtol(argv[1], NULL, 0);
-
     if (timeout < 0 || timeout > (INT32_MAX / 1000)) { // 1000:time unit
         timeout = K_FOREVER;
     } else {
@@ -1430,7 +1429,7 @@ static int cmd_mod_sub_del_va(int argc, char *argv[])
     size_t len;
     int err;
 
-    if (argc < 4) { // 3:Number of parameters
+    if (argc < 4) { // 4:Number of parameters
         return -EINVAL;
     }
 
@@ -1522,14 +1521,12 @@ static int mod_pub_set(u16_t addr, u16_t mod_id, u16_t cid, char *argv[])
     pub.ttl = strtoul(argv[3], NULL, 0); // 3:parameters 3
     pub.period = strtoul(argv[4], NULL, 0); // 4:parameters 4
     count = strtoul(argv[5], NULL, 0); // 5:parameters 5
-
     if (count > 7) { // 7:Analyzing conditions
         printk("Invalid retransmit count\n");
         return -EINVAL;
     }
 
     interval = strtoul(argv[6], NULL, 0); // 6:parameters 6
-
     if (interval > (31 * 50) || (interval % 50)) { // 31:byte alignment, 50:byte alignment
         printk("Invalid retransmit interval %u\n", interval);
         return -EINVAL;
@@ -1593,7 +1590,7 @@ static int cmd_mod_pub(int argc, char *argv[])
 }
 
 struct shell_cmd_help cmd_mod_pub_help = {
-    NULL, "<addr> <mod id> [cid] [<PubAddr> "
+    NULL, "<addr> <mod id> [cid] [<PubAddr> " \
     "<AppKeyIndex> <cred> <ttl> <period> <count> <interval>]", NULL
 };
 
@@ -1871,7 +1868,6 @@ static int cmd_fault_get(int argc, char *argv[])
     fault_count = sizeof(faults);
     err = bt_mesh_health_fault_get(net.net_idx, net.dst, net.app_idx, cid,
                                    &test_id, faults, &fault_count);
-
     if (err) {
         printk("Failed to send Health Fault Get (err %d)\n", err);
     } else {

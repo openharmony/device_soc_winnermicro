@@ -399,7 +399,10 @@ int ble_monitor_log(int level, const char *fmt, ...)
     monitor_write(&ulog, sizeof(ulog));
     monitor_write(id, sizeof(id));
     va_start(va, fmt);
-    vfprintf(btmon, fmt, va);
+    int ret = vfprintf(btmon, fmt, va);
+    if (ret == -1) {
+        return -1;
+    }
     va_end(va);
     /* null-terminate string */
     monitor_write("", 1);

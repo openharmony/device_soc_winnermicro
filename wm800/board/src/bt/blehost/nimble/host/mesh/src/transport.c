@@ -23,9 +23,9 @@
 #include "access.h"
 #include "foundation.h"
 #include "settings.h"
-#include "transport.h"
 #include "testing.h"
 #include "nodes.h"
+#include "transport.h"
 
 /* The transport layer needs at least three buffers for itself to avoid
  * deadlocks. Ensure that there are a sufficient number of advertising
@@ -43,12 +43,12 @@ BUILD_ASSERT(CONFIG_BT_MESH_ADV_BUF_COUNT >= (CONFIG_BT_MESH_TX_SEG_MAX + 3));
 
 #define APP_MIC_LEN(aszmic)         ((aszmic) ? 8 : 4)
 
-#define UNSEG_HDR(akf, aid)         ((akf << 6) | (aid & AID_MASK))
-#define SEG_HDR(akf, aid)           (UNSEG_HDR(akf, aid) | 0x80)
+#define UNSEG_HDR(akf, aid)         (((akf) << 6) | ((aid) & AID_MASK))
+#define SEG_HDR(akf, aid)           (UNSEG_HDR((akf), (aid)) | 0x80)
 
-#define BLOCK_COMPLETE(seg_n)       (u32_t)(((u64_t)1 << (seg_n + 1)) - 1)
+#define BLOCK_COMPLETE(seg_n)       (u32_t)(((u64_t)1 << ((seg_n) + 1)) - 1)
 
-#define SEQ_AUTH(iv_index, seq)     (((u64_t)iv_index) << 24 | (u64_t)seq)
+#define SEQ_AUTH(iv_index, seq)     (((u64_t)(iv_index)) << 24 | (u64_t)(seq))
 
 /* Number of retransmit attempts (after the initial transmit) per segment */
 #define SEG_RETRANSMIT_ATTEMPTS     (MYNEWT_VAL(BLE_MESH_SEG_RETRANSMIT_ATTEMPTS))
@@ -699,7 +699,6 @@ done:
 
 static struct seg_tx *seg_tx_lookup(u16_t seq_zero, u8_t obo, u16_t addr)
 {
-
     int i;
 
     for (i = 0; i < ARRAY_SIZE(seg_tx); i++) {

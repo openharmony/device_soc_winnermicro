@@ -17,8 +17,8 @@
 #define BT_MESH_KR_PHASE_2        0x02
 #define BT_MESH_KR_PHASE_3        0x03
 
-#define BT_MESH_IV_UPDATE(flags)   ((flags >> 1) & 0x01)
-#define BT_MESH_KEY_REFRESH(flags) (flags & 0x01)
+#define BT_MESH_IV_UPDATE(flags)   (((flags) >> 1) & 0x01)
+#define BT_MESH_KEY_REFRESH(flags) ((flags) & 0x01)
 
 #include <stdbool.h>
 #include "atomic.h"

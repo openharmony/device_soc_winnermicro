@@ -134,7 +134,7 @@ struct ble_gap_master_state {
         struct {
             uint8_t limited : 1;
         } disc;
-#endif   
+#endif
     };
 #endif
 };
@@ -3641,9 +3641,7 @@ static int ble_gap_ext_disc_tx_params(uint8_t own_addr_type, uint8_t filter_poli
         return BLE_ERR_INV_HCI_CMD_PARMS;
     }
 
-    return ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_LE,
-                                        BLE_HCI_OCF_LE_SET_EXT_SCAN_PARAM),
-                                        cmd, len, NULL, 0);
+    return ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_LE, BLE_HCI_OCF_LE_SET_EXT_SCAN_PARAM), cmd, len, NULL, 0);
 }
 
 static int ble_gap_ext_disc_enable_tx(uint8_t enable, uint8_t filter_duplicates,
@@ -3655,8 +3653,7 @@ static int ble_gap_ext_disc_enable_tx(uint8_t enable, uint8_t filter_duplicates,
     cmd.duration = htole16(duration);
     cmd.period = htole16(period);
     return ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_LE,
-                                        BLE_HCI_OCF_LE_SET_EXT_SCAN_ENABLE),
-                                        &cmd, sizeof(cmd), NULL, 0);
+        BLE_HCI_OCF_LE_SET_EXT_SCAN_ENABLE), &cmd, sizeof(cmd), NULL, 0);
 }
 #endif
 #endif
@@ -4732,9 +4729,7 @@ static int ble_gap_tx_param_pos_reply(uint16_t conn_handle, struct ble_gap_upd_p
     cmd.supervision_timeout = htole16(params->supervision_timeout);
     cmd.min_ce = htole16(params->min_ce_len);
     cmd.max_ce = htole16(params->max_ce_len);
-    return ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_LE,
-                                        BLE_HCI_OCF_LE_REM_CONN_PARAM_RR),
-                                        &cmd, sizeof(cmd), NULL, 0);
+    return ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_LE, BLE_HCI_OCF_LE_REM_CONN_PARAM_RR), &cmd, sizeof(cmd), NULL, 0);
 }
 
 static int ble_gap_tx_param_neg_reply(uint16_t conn_handle, uint8_t reject_reason)
@@ -4743,8 +4738,7 @@ static int ble_gap_tx_param_neg_reply(uint16_t conn_handle, uint8_t reject_reaso
     cmd.conn_handle = htole16(conn_handle);
     cmd.reason = reject_reason;
     return ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_LE,
-                                        BLE_HCI_OCF_LE_REM_CONN_PARAM_NRR),
-                                        &cmd, sizeof(cmd), NULL, 0);
+        BLE_HCI_OCF_LE_REM_CONN_PARAM_NRR), &cmd, sizeof(cmd), NULL, 0);
 }
 #endif
 
@@ -4798,9 +4792,7 @@ static int ble_gap_update_tx(uint16_t conn_handle, const struct ble_gap_upd_para
     cmd.supervision_timeout = htole16(params->supervision_timeout);
     cmd.min_ce_len = htole16(params->min_ce_len);
     cmd.max_ce_len = htole16(params->max_ce_len);
-    return ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_LE,
-                                        BLE_HCI_OCF_LE_CONN_UPDATE),
-                                        &cmd, sizeof(cmd), NULL, 0);
+    return ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_LE, BLE_HCI_OCF_LE_CONN_UPDATE), &cmd, sizeof(cmd), NULL, 0);
 }
 
 static bool ble_gap_validate_conn_params(const struct ble_gap_upd_params *params)

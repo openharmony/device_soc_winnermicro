@@ -435,7 +435,7 @@ int tls_param_init(void)
                 is_damage[i] = TRUE;
                 damaged++;
                 continue;
-            } else if ((~crcvalue) != *(u32*)((u8*)flash + flash->length - 4)) {
+            } else if ((~crcvalue) != *(u32*)((u8*)flash + flash->length - 4)) { // 4:byte alignment
                 is_damage[i] = TRUE;
                 damaged++;
                 continue;
@@ -626,7 +626,7 @@ void tls_param_load_factory_default(void)
     param->remote_socket_cfg.protocol = TLS_PARAM_SOCKET_TCP;
     param->remote_socket_cfg.client_or_server = TLS_PARAM_SOCKET_SERVER;
     param->remote_socket_cfg.port_num = TLS_PARAM_SOCKET_DEFAULT_PORT;
-    memset_s(param->remote_socket_cfg.host, sizeof(param->remote_socket_cfg.host), 0, 32);
+    memset_s(param->remote_socket_cfg.host, sizeof(param->remote_socket_cfg.host), 0, 32); // 32:size
 
     param->EscapeChar = 0x2b;
     param->EscapePeriod = 200;
@@ -637,7 +637,7 @@ void tls_param_load_factory_default(void)
     param->debug_mode = 0;
     memset_s(param->PassWord, sizeof(param->PassWord), '0', 6);
 
-    param->channel4softap = 11;
+    param->channel4softap = 11; // 11:byte alignment
     param->encry4softap = TLS_PARAM_ENCRY_OPEN;
     param->ipcfg4softap.dhcp_enable = TLS_PARAM_DHCP_ENABLE;
     param->ipcfg4softap.ip[0] = 192;
