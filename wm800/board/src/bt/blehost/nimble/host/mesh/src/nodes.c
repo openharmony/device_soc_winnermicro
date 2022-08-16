@@ -33,8 +33,7 @@ static int addr_is_free(u16_t addr_start, u8_t num_elem, u16_t *next)
     }
 
     if (!BT_MESH_ADDR_IS_UNICAST(addr_start) ||
-            !BT_MESH_ADDR_IS_UNICAST(addr_end) ||
-            num_elem == 0 || next == NULL) {
+            !BT_MESH_ADDR_IS_UNICAST(addr_end) || num_elem == 0 || next == NULL) {
         return -EINVAL;
     }
 

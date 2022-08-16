@@ -800,7 +800,7 @@ int tls_pwm_init(u8 channel, u32 freq, u8 duty, u8 pnum)
     tls_sys_clk_get(&sysclk);
 
     memset_s(&pwm_param, sizeof(pwm_param), 0, sizeof(pwm_init_param));
-    pwm_param.period = 255;
+    pwm_param.period = 255; // 255:byte alignment
     pwm_param.cnt_type = WM_PWM_CNT_TYPE_EDGE_ALIGN_OUT;
     pwm_param.loop_type = WM_PWM_LOOP_TYPE_LOOP;
     pwm_param.mode = WM_PWM_OUT_MODE_INDPT;

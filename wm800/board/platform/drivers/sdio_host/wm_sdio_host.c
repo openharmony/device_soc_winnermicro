@@ -60,7 +60,7 @@ void wm_sdh_get_response(uint32_t * respbuf, uint32_t buflen)
     for (i = 0; i < buflen; i++) {
         respbuf[i] = (SDIO_HOST->CMD_BUF[i * 4 + 3] << 24) | // 4:byte alignment, 3:byte alignment, 24:byte alignment
                      (SDIO_HOST->CMD_BUF[i * 4 + 2] << 16) | // 4:byte alignment, 2:byte alignment, 16:byte alignment
-                     (SDIO_HOST->CMD_BUF[i * 4 + 1] << 8) | // 4:byte alignment
+                     (SDIO_HOST->CMD_BUF[i * 4 + 1] << 8) | // 4:byte alignment, 8:byte alignment
                      (SDIO_HOST->CMD_BUF[i * 4]); // 4:byte alignment
     }
 }
@@ -164,7 +164,7 @@ begin:
     sm_sdh_wait_interrupt(3, 1000); // 3:srcbit, 1000:time
     wm_sdh_get_response(respCmd, 4); // 4:buflen
     sh_dumpBuffer("CMD2 respCmd", (char *)respCmd, 16); // 16:len
-    if (((respCmd[3] >> 24) & 0xFF) != 0x3F) // 24:byte alignment
+    if (((respCmd[3] >> 24) & 0xFF) != 0x3F) // 24:byte alignment, 3:byte alignment
         goto end;
     wm_sdh_send_cmd(3, 0, 0x44); // 3:Send CMD3
     sm_sdh_wait_interrupt(0, -1);
@@ -213,10 +213,10 @@ int wm_sd_card_query_csd(uint32_t rca)
     sm_sdh_wait_interrupt(0, -1);
     sm_sdh_wait_interrupt(3, 1000); // 3:srcbit, 1000:time
     wm_sdh_get_response(respCmd, 4); // 4:buflen
-    for (i = 0; i < 16; i++) adjustResp[15 - i] = SDIO_HOST->CMD_BUF[i]; // 16:byte alignment
+    for (i = 0; i < 16; i++) adjustResp[15 - i] = SDIO_HOST->CMD_BUF[i]; // 16:byte alignment, 15:byte alignment
     SD_GetCapacity((uint8_t*)&adjustResp[1], &SDCardInfo);
-    sh_dumpBuffer("CMD9 respCmd", adjustResp, 16);
-    if (((respCmd[3] >> 24) & 0xFF) != 0x3F) // 24:byte alignment
+    sh_dumpBuffer("CMD9 respCmd", adjustResp, 16); // 16:len
+    if (((respCmd[3] >> 24) & 0xFF) != 0x3F) // 24:byte alignment, 3:array element
         goto end;
     ret = 0;
 end:
@@ -242,7 +242,7 @@ int wm_sd_card_select(uint32_t rca)
 {
     int ret = -1;
     uint32_t respCmd[2];
-    wm_sdh_send_cmd(7, rca << 16, 0x44); // 7:Send CMD7
+    wm_sdh_send_cmd(7, rca << 16, 0x44); // 7:Send CMD7, 16:byte alignment
     sm_sdh_wait_interrupt(0, -1);
     wm_sdh_get_response(respCmd, 2); // 2:buflen
     sh_dumpBuffer("CMD7 respCmd", (char *)respCmd, 5); // 5:len
@@ -298,8 +298,8 @@ int wm_sd_card_switch_func(uint8_t speed_mode)
 
     wm_sdh_send_cmd(6, 0x00fffff1, 0x44); // 6:Send CMD6
     sm_sdh_wait_interrupt(0, -1);
-    wm_sdh_get_response(respCmd, 2); // 7:byte alignment
-    sh_dumpBuffer("CMD6 respCmd", (char *)respCmd, 5); // 5:buflen
+    wm_sdh_get_response(respCmd, 2); // 2:buflen
+    sh_dumpBuffer("CMD6 respCmd", (char *)respCmd, 5); // 5:len
     if ((respCmd[1] & 0xFF) != 6) // 6:byte alignment
         goto end;
     SDIO_HOST->BUF_CTL = 0x4020; // disable dma, read sd card

@@ -28,4 +28,3 @@ int access(const char *filename, int amode)
     }
     return 0;
 }
-

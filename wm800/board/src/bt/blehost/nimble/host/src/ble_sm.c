@@ -655,10 +655,10 @@ static void ble_sm_rx_noop(uint16_t conn_handle, struct os_mbuf **om,
 
 static uint8_t ble_sm_build_authreq(void)
 {
-    return ble_hs_cfg.sm_bonding << 0  |
-           ble_hs_cfg.sm_mitm << 2     | // 2:byte alignment
-           ble_hs_cfg.sm_sc << 3       | // 3:byte alignment
-           ble_hs_cfg.sm_keypress << 4; // 4:byte alignment
+    return (ble_hs_cfg.sm_bonding << 0)  |
+           (ble_hs_cfg.sm_mitm << 2)     | // 2:byte alignment
+           (ble_hs_cfg.sm_sc << 3)       | // 3:byte alignment
+           (ble_hs_cfg.sm_keypress << 4); // 4:byte alignment
 }
 
 static int ble_sm_io_action(struct ble_sm_proc *proc, uint8_t *action)
@@ -706,8 +706,8 @@ int ble_sm_proc_can_advance(struct ble_sm_proc *proc)
         return 1;
     }
 
-    if (proc->flags & BLE_SM_PROC_F_IO_INJECTED &&
-            proc->flags & BLE_SM_PROC_F_ADVANCE_ON_IO) {
+    if ((proc->flags & BLE_SM_PROC_F_IO_INJECTED) &&
+            (proc->flags & BLE_SM_PROC_F_ADVANCE_ON_IO)) {
         return 1;
     }
 
@@ -865,9 +865,9 @@ void ble_sm_process_result(uint16_t conn_handle, struct ble_sm_result *res)
         }
 
         /* Persist keys if bonding has successfully completed. */
-        if (res->app_status == 0    &&
+        if ((res->app_status == 0)    &&
                 rm                      &&
-                proc->flags & BLE_SM_PROC_F_BONDING) {
+                (proc->flags & BLE_SM_PROC_F_BONDING)) {
             ble_sm_persist_keys(proc);
         }
 
@@ -1421,8 +1421,8 @@ static void ble_sm_pair_cfg(struct ble_sm_proc *proc)
     pair_req = (struct ble_sm_pair_cmd *) &proc->pair_req[1];
     pair_rsp = (struct ble_sm_pair_cmd *) &proc->pair_rsp[1];
 
-    if (pair_req->authreq & BLE_SM_PAIR_AUTHREQ_SC &&
-            pair_rsp->authreq & BLE_SM_PAIR_AUTHREQ_SC) {
+    if ((pair_req->authreq & BLE_SM_PAIR_AUTHREQ_SC) &&
+            (pair_rsp->authreq & BLE_SM_PAIR_AUTHREQ_SC)) {
         proc->flags |= BLE_SM_PROC_F_SC;
     }
 
@@ -1434,8 +1434,8 @@ static void ble_sm_pair_cfg(struct ble_sm_proc *proc)
         rx_key_dist = init_key_dist;
     }
 
-    if (pair_req->authreq & BLE_SM_PAIR_AUTHREQ_BOND &&
-            pair_rsp->authreq & BLE_SM_PAIR_AUTHREQ_BOND) {
+    if ((pair_req->authreq & BLE_SM_PAIR_AUTHREQ_BOND) &&
+            (pair_rsp->authreq & BLE_SM_PAIR_AUTHREQ_BOND)) {
         proc->flags |= BLE_SM_PROC_F_BONDING;
     }
 
@@ -1976,7 +1976,7 @@ static void ble_sm_key_exch_exec(struct ble_sm_proc *proc, struct ble_sm_result 
         }
     }
 
-    if (proc->flags & BLE_SM_PROC_F_INITIATOR || proc->rx_key_flags == 0) {
+    if ((proc->flags & BLE_SM_PROC_F_INITIATOR) || (proc->rx_key_flags == 0)) {
         /* The procedure is now complete. */
         ble_sm_key_exch_success(proc, res);
     }
@@ -2417,8 +2417,8 @@ int ble_sm_inject_io(uint16_t conn_handle, struct ble_sm_io *pkey)
                 } else {
                     proc->flags |= BLE_SM_PROC_F_IO_INJECTED;
 
-                    if (proc->flags & BLE_SM_PROC_F_INITIATOR ||
-                            proc->flags & BLE_SM_PROC_F_ADVANCE_ON_IO) {
+                    if ((proc->flags & BLE_SM_PROC_F_INITIATOR) ||
+                            (proc->flags & BLE_SM_PROC_F_ADVANCE_ON_IO)) {
                         res.execute = 1;
                     }
                 }

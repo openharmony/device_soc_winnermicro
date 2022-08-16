@@ -82,8 +82,7 @@ static int ble_hs_startup_le_read_buf_sz_tx(uint16_t *out_pktlen, uint8_t *out_m
 {
     struct ble_hci_le_rd_buf_size_rp rsp;
     int rc;
-    rc = ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_LE,
-                                      BLE_HCI_OCF_LE_RD_BUF_SIZE), NULL, 0,
+    rc = ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_LE, BLE_HCI_OCF_LE_RD_BUF_SIZE), NULL, 0,
                            &rsp, sizeof(rsp));
     if (rc != 0) {
         return rc;
@@ -98,8 +97,7 @@ static int ble_hs_startup_read_buf_sz_tx(uint16_t *out_pktlen, uint16_t *out_max
 {
     struct ble_hci_ip_rd_buf_size_rp rsp;
     int rc;
-    rc = ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_INFO_PARAMS,
-                                      BLE_HCI_OCF_IP_RD_BUF_SIZE), NULL, 0,
+    rc = ble_hs_hci_cmd_tx(BLE_HCI_OP(BLE_HCI_OGF_INFO_PARAMS, BLE_HCI_OCF_IP_RD_BUF_SIZE), NULL, 0,
                            &rsp, sizeof(rsp));
     if (rc != 0) {
         return rc;

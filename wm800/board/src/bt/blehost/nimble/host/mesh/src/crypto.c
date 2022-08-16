@@ -27,14 +27,16 @@
 int bt_mesh_aes_cmac(const u8_t key[16], struct bt_mesh_sg *sg,
                      size_t sg_len, u8_t mac[16])
 {
-    struct tc_aes_key_sched_struct sched;
+    size_t sg_len_tmp = sg_len;
+    struct tc_aes_
+    key_sched_struct sched;
     struct tc_cmac_struct state;
 
     if (tc_cmac_setup(&state, key, &sched) == TC_CRYPTO_FAIL) {
         return -EIO;
     }
 
-    for (; sg_len; sg_len--, sg++) {
+    for (; sg_len_tmp; sg_len_tmp--, sg++) {
         if (tc_cmac_update(&state, sg->data, sg->len) == TC_CRYPTO_FAIL) {
             return -EIO;
         }
@@ -185,7 +187,8 @@ static int bt_mesh_ccm_decrypt(const u8_t key[16], u8_t nonce[13],
     size_t i, j;
     int err;
 
-    if (msg_len < 1 || aad_len >= 0xff00) {
+    size_t aad_len_tmp = aad_len;
+    if (msg_len < 1 || aad_len_tmp >= 0xff00) {
         return -EINVAL;
     }
 
@@ -200,9 +203,9 @@ static int bt_mesh_ccm_decrypt(const u8_t key[16], u8_t nonce[13],
 
     /* X_0 = e(AppKey, 0x09 || nonce || length) */
     if (mic_size == sizeof(u64_t)) {
-        pmsg[0] = 0x19 | (aad_len ? 0x40 : 0x00);
+        pmsg[0] = 0x19 | (aad_len_tmp ? 0x40 : 0x00);
     } else {
-        pmsg[0] = 0x09 | (aad_len ? 0x40 : 0x00);
+        pmsg[0] = 0x09 | (aad_len_tmp ? 0x40 : 0x00);
     }
 
     memcpy(pmsg + 1, nonce, 13); // 13:len
@@ -213,23 +216,23 @@ static int bt_mesh_ccm_decrypt(const u8_t key[16], u8_t nonce[13],
     }
 
     /* If AAD is being used to authenticate, include it here */
-    if (aad_len) {
-        sys_put_be16(aad_len, pmsg);
+    if (aad_len_tmp) {
+        sys_put_be16(aad_len_tmp, pmsg);
 
         for (i = 0; i < sizeof(u16_t); i++) {
             pmsg[i] = Xn[i] ^ pmsg[i];
         }
 
         j = 0;
-        aad_len += sizeof(u16_t);
+        aad_len_tmp += sizeof(u16_t);
 
-        while (aad_len > 16) { // 16:Analyzing conditions
+        while (aad_len_tmp > 16) { // 16:Analyzing conditions
             do {
                 pmsg[i] = Xn[i] ^ aad[j];
                 i++, j++;
             } while (i < 16); // 16:Analyzing conditions
 
-            aad_len -= 16; // 16:byte alignment
+            aad_len_tmp -= 16; // 16:byte alignment
             i = 0;
             err = bt_encrypt_be(key, pmsg, Xn);
             if (err) {
@@ -237,11 +240,11 @@ static int bt_mesh_ccm_decrypt(const u8_t key[16], u8_t nonce[13],
             }
         }
 
-        for (; i < aad_len; i++, j++) {
+        for (; i < aad_len_tmp; i++, j++) {
             pmsg[i] = Xn[i] ^ aad[j];
         }
 
-        for (i = aad_len; i < 16; i++) { // 16:Analyzing conditions
+        for (i = aad_len_tmp; i < 16; i++) { // 16:Analyzing conditions
             pmsg[i] = Xn[i];
         }
 
@@ -336,13 +339,14 @@ static int bt_mesh_ccm_encrypt(const u8_t key[16], u8_t nonce[13],
     u16_t blk_cnt, last_blk;
     size_t i, j;
     int err;
+    size_t aad_len_tmp = aad_len;
     BT_DBG("key %s", bt_hex(key, 16)); // 16:len
     BT_DBG("nonce %s", bt_hex(nonce, 13)); // 13:len
     BT_DBG("msg (len %zu) %s", msg_len, bt_hex(msg, msg_len));
-    BT_DBG("aad_len %zu mic_size %zu", aad_len, mic_size);
+    BT_DBG("aad_len %zu mic_size %zu", aad_len_tmp, mic_size);
 
     /* Unsupported AAD size */
-    if (aad_len >= 0xff00) {
+    if (aad_len_tmp >= 0xff00) {
         return -EINVAL;
     }
     pmsg[0] = 0x01;
@@ -353,9 +357,9 @@ static int bt_mesh_ccm_encrypt(const u8_t key[16], u8_t nonce[13],
         return err;
     }
     if (mic_size == sizeof(u64_t)) {
-        pmsg[0] = 0x19 | (aad_len ? 0x40 : 0x00);
+        pmsg[0] = 0x19 | (aad_len_tmp ? 0x40 : 0x00);
     } else {
-        pmsg[0] = 0x09 | (aad_len ? 0x40 : 0x00);
+        pmsg[0] = 0x09 | (aad_len_tmp ? 0x40 : 0x00);
     }
 
     memcpy(pmsg + 1, nonce, 13); // 13:len
@@ -366,23 +370,23 @@ static int bt_mesh_ccm_encrypt(const u8_t key[16], u8_t nonce[13],
     }
 
     /* If AAD is being used to authenticate, include it here */
-    if (aad_len) {
-        sys_put_be16(aad_len, pmsg);
+    if (aad_len_tmp) {
+        sys_put_be16(aad_len_tmp, pmsg);
 
         for (i = 0; i < sizeof(u16_t); i++) {
             pmsg[i] = Xn[i] ^ pmsg[i];
         }
 
         j = 0;
-        aad_len += sizeof(u16_t);
+        aad_len_tmp += sizeof(u16_t);
 
-        while (aad_len > 16) { // 16:Analyzing conditions
+        while (aad_len_tmp > 16) { // 16:Analyzing conditions
             do {
                 pmsg[i] = Xn[i] ^ aad[j];
                 i++, j++;
             } while (i < 16); // 16:Analyzing conditions
 
-            aad_len -= 16; // 16:byte alignment
+            aad_len_tmp -= 16; // 16:byte alignment
             i = 0;
             err = bt_encrypt_be(key, pmsg, Xn);
             if (err) {
@@ -390,11 +394,11 @@ static int bt_mesh_ccm_encrypt(const u8_t key[16], u8_t nonce[13],
             }
         }
 
-        for (; i < aad_len; i++, j++) {
+        for (; i < aad_len_tmp; i++, j++) {
             pmsg[i] = Xn[i] ^ aad[j];
         }
 
-        for (i = aad_len; i < 16; i++) { // 16:Analyzing conditions
+        for (i = aad_len_tmp; i < 16; i++) { // 16:Analyzing conditions
             pmsg[i] = Xn[i];
         }
 

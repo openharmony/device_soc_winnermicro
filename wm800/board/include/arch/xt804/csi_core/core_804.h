@@ -20,10 +20,8 @@
  * @version  V1.0
  * @date     02. June 2017
  ******************************************************************************/
-
 #ifndef __CORE_804_H_GENERIC
 #define __CORE_804_H_GENERIC
-
 #include <stdint.h>
 #include "csi_config.h"
 
@@ -61,8 +59,6 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* __CORE_CK804_H_GENERIC */
 
 #ifndef __CSI_GENERIC
 
@@ -709,11 +705,12 @@ __STATIC_INLINE void csi_icache_invalid (void);
  */
 __STATIC_INLINE void csi_vic_enable_irq(int32_t IRQn)
 {
-    IRQn &= 0x7FUL;
+    int32_t IRQn_tmp = IRQn;
+    IRQn_tmp &= 0x7FUL;
 
-    VIC->ISER[_IR_IDX(IRQn)] = (uint32_t)(1UL << ((uint32_t)(int32_t)IRQn % 32));
+    VIC->ISER[_IR_IDX(IRQn_tmp)] = (uint32_t)(1UL << ((uint32_t)(int32_t)IRQn_tmp % 32)); // 32:byte alignment
 #ifdef CONFIG_SYSTEM_SECURE
-    VIC->ISSR[_IR_IDX(IRQn)] = (uint32_t)(1UL << ((uint32_t)(int32_t)IRQn % 32));
+    VIC->ISSR[_IR_IDX(IRQn_tmp)] = (uint32_t)(1UL << ((uint32_t)(int32_t)IRQn_tmp % 32)); // 32:byte alignment
 #endif
 }
 
@@ -724,9 +721,10 @@ __STATIC_INLINE void csi_vic_enable_irq(int32_t IRQn)
  */
 __STATIC_INLINE void csi_vic_disable_irq(int32_t IRQn)
 {
-    IRQn &= 0x7FUL;
+    int32_t IRQn_tmp = IRQn;
+    IRQn_tmp &= 0x7FUL;
 
-    VIC->ICER[_IR_IDX(IRQn)] = (uint32_t)(1UL << ((uint32_t)(int32_t)IRQn % 32));
+    VIC->ICER[_IR_IDX(IRQn_tmp)] = (uint32_t)(1UL << ((uint32_t)(int32_t)IRQn_tmp % 32)); // 32:byte alignment
 }
 
 /**
@@ -736,9 +734,10 @@ __STATIC_INLINE void csi_vic_disable_irq(int32_t IRQn)
  */
 __STATIC_INLINE void csi_vic_enable_sirq(int32_t IRQn)
 {
-    IRQn &= 0x7FUL;
+    int32_t IRQn_tmp = IRQn;
+    IRQn_tmp &= 0x7FUL;
 
-    VIC->ISSR[_IR_IDX(IRQn)] = (uint32_t)(1UL << ((uint32_t)(int32_t)IRQn % 32));
+    VIC->ISSR[_IR_IDX(IRQn_tmp)] = (uint32_t)(1UL << ((uint32_t)(int32_t)IRQn_tmp % 32)); // 32:byte alignment
 }
 
 /**
@@ -748,9 +747,10 @@ __STATIC_INLINE void csi_vic_enable_sirq(int32_t IRQn)
  */
 __STATIC_INLINE void csi_vic_disable_sirq(int32_t IRQn)
 {
-    IRQn &= 0x7FUL;
+    int32_t IRQn_tmp = IRQn;
+    IRQn_tmp &= 0x7FUL;
 
-    VIC->ICSR[_IR_IDX(IRQn)] = (uint32_t)(1UL << ((uint32_t)(int32_t)IRQn % 32));
+    VIC->ICSR[_IR_IDX(IRQn_tmp)] = (uint32_t)(1UL << ((uint32_t)(int32_t)IRQn_tmp % 32)); // 32:byte alignment
 }
 
 /**
@@ -762,10 +762,11 @@ __STATIC_INLINE void csi_vic_disable_sirq(int32_t IRQn)
  */
 __STATIC_INLINE uint32_t csi_vic_get_enabled_irq(int32_t IRQn)
 {
+    int32_t IRQn_tmp = IRQn;
     IRQn &= 0x7FUL;
 
-    return ((uint32_t)(((VIC->ISER[_IR_IDX(IRQn)] & (1UL << (((uint32_t)(int32_t)IRQn % 32) & 0x7FUL))) \
-            != 0UL) ? 1UL : 0UL));
+    return ((uint32_t)(((VIC->ISER[_IR_IDX(IRQn_tmp)] &
+      (1UL << (((uint32_t)(int32_t)IRQn_tmp % 32) & 0x7FUL))) != 0UL) ? 1UL : 0UL)); // 32:byte alignment
 }
 
 /**
@@ -777,10 +778,11 @@ __STATIC_INLINE uint32_t csi_vic_get_enabled_irq(int32_t IRQn)
  */
 __STATIC_INLINE uint32_t csi_vic_get_pending_irq(int32_t IRQn)
 {
-    IRQn &= 0x7FUL;
+    int32_t IRQn_tmp = IRQn;
+    IRQn_tmp &= 0x7FUL;
 
-    return ((uint32_t)(((VIC->ISPR[_IR_IDX(IRQn)] & (1UL << (((uint32_t)(int32_t)IRQn % 32) & 0x7FUL))) \
-            != 0UL) ? 1UL : 0UL));
+    return ((uint32_t)(((VIC->ISPR[_IR_IDX(IRQn_tmp)] &
+      (1UL << (((uint32_t)(int32_t)IRQn_tmp % 32) & 0x7FUL))) != 0UL) ? 1UL : 0UL)); // 32:byte alignment
 }
 
 /**
@@ -790,9 +792,10 @@ __STATIC_INLINE uint32_t csi_vic_get_pending_irq(int32_t IRQn)
  */
 __STATIC_INLINE void csi_vic_set_pending_irq(int32_t IRQn)
 {
-    IRQn &= 0x7FUL;
+    int32_t IRQn_tmp = IRQn;
+    IRQn_tmp &= 0x7FUL;
 
-    VIC->ISPR[_IR_IDX(IRQn)] = (uint32_t)(1UL << ((uint32_t)(int32_t)IRQn % 32));
+    VIC->ISPR[_IR_IDX(IRQn_tmp)] = (uint32_t)(1UL << ((uint32_t)(int32_t)IRQn_tmp % 32)); // 32:byte alignment
 }
 
 /**
@@ -802,9 +805,10 @@ __STATIC_INLINE void csi_vic_set_pending_irq(int32_t IRQn)
  */
 __STATIC_INLINE void csi_vic_clear_pending_irq(int32_t IRQn)
 {
-    IRQn &= 0x7FUL;
+    int32_t IRQn_tmp = IRQn;
+    IRQn_tmp &= 0x7FUL;
 
-    VIC->ICPR[_IR_IDX(IRQn)] = (uint32_t)(1UL << ((uint32_t)(int32_t)IRQn % 32));
+    VIC->ICPR[_IR_IDX(IRQn_tmp)] = (uint32_t)(1UL << ((uint32_t)(int32_t)IRQn_tmp % 32)); // 32:byte alignment
 }
 
 /**
@@ -816,10 +820,11 @@ __STATIC_INLINE void csi_vic_clear_pending_irq(int32_t IRQn)
  */
 __STATIC_INLINE uint32_t csi_vic_get_wakeup_irq(int32_t IRQn)
 {
-    IRQn &= 0x7FUL;
+    int32_t IRQn_tmp = IRQn;
+    IRQn_tmp &= 0x7FUL;
 
-    return ((uint32_t)(((VIC->IWER[_IR_IDX(IRQn)] & (1UL << (((uint32_t)(int32_t)IRQn % 32) & 0x7FUL))) \
-            != 0UL) ? 1UL : 0UL));
+    return ((uint32_t)(((VIC->IWER[_IR_IDX(IRQn_tmp)] &
+      (1UL << (((uint32_t)(int32_t)IRQn_tmp % 32) & 0x7FUL))) != 0UL) ? 1UL : 0UL)); // 32:byte alignment
 }
 
 /**
@@ -829,9 +834,10 @@ __STATIC_INLINE uint32_t csi_vic_get_wakeup_irq(int32_t IRQn)
  */
 __STATIC_INLINE void csi_vic_set_wakeup_irq(int32_t IRQn)
 {
-    IRQn &= 0x7FUL;
+    int32_t IRQn_tmp = IRQn;
+    IRQn_tmp &= 0x7FUL;
 
-    VIC->IWER[_IR_IDX(IRQn)] = (uint32_t)(1UL << ((uint32_t)(int32_t)IRQn % 32));
+    VIC->IWER[_IR_IDX(IRQn_tmp)] = (uint32_t)(1UL << ((uint32_t)(int32_t)IRQn_tmp % 32)); // 32:byte alignment
 }
 
 /**
@@ -841,9 +847,10 @@ __STATIC_INLINE void csi_vic_set_wakeup_irq(int32_t IRQn)
  */
 __STATIC_INLINE void csi_vic_clear_wakeup_irq(int32_t IRQn)
 {
-    IRQn &= 0x7FUL;
+    int32_t IRQn_tmp = IRQn;
+    IRQn_tmp &= 0x7FUL;
 
-    VIC->IWDR[_IR_IDX(IRQn)] = (uint32_t)(1UL << ((uint32_t)(int32_t)IRQn % 32));
+    VIC->IWDR[_IR_IDX(IRQn_tmp)] = (uint32_t)(1UL << ((uint32_t)(int32_t)IRQn_tmp % 32)); // 32:byte alignment
 }
 
 /**
@@ -856,10 +863,11 @@ __STATIC_INLINE void csi_vic_clear_wakeup_irq(int32_t IRQn)
  */
 __STATIC_INLINE uint32_t csi_vic_get_active(int32_t IRQn)
 {
-    IRQn &= 0x7FUL;
+    int32_t IRQn_tmp = IRQn;
+    IRQn_tmp &= 0x7FUL;
 
-    return ((uint32_t)(((VIC->IABR[_IR_IDX(IRQn)] & (1UL << (((uint32_t)(int32_t)IRQn % 32) & 0x7FUL))) \
-            != 0UL) ? 1UL : 0UL));
+    return ((uint32_t)(((VIC->IABR[_IR_IDX(IRQn_tmp)] &
+      (1UL << (((uint32_t)(int32_t)IRQn_tmp % 32) & 0x7FUL))) != 0UL) ? 1UL : 0UL)); // 32:byte alignment
 }
 
 /**
@@ -1446,13 +1454,15 @@ __STATIC_INLINE void csi_mpu_config_region(uint32_t idx, uint32_t base_addr, reg
     __set_PRSR(prsr.w);
 
     if (size != REGION_SIZE_4KB) {
-        pacr.w &= ~(((1u << (size -11)) - 1) << 12);
+        pacr.w &= ~(((1u << (size -11)) - 1) << 12); // 12:byte alignment
     }
 
     pacr.b.size = size;
 
-    capr.w &= ~((0x1 << idx) | (0x3 << (idx * 2 + 8)) | (0x1 << (idx + 24)));
-    capr.w = (capr.w | (attr.nx << idx) | (attr.ap << (idx * 2 + 8)) | (attr.s << (idx + 24)));
+    capr.w &= ~((0x1 << idx) | (0x3 << (idx * 2 + 8)) | (0x1 << (idx + 24))); // 12:byte alignment
+    capr.w = (capr.w | (attr.nx << idx) | (attr.ap << (idx * 2 + 8)) | // 2:byte , 8:byte alignment
+      (attr.s << (idx + 24))); // 24:byte alignment
+    pacr.w &= ~(((1u << (size -11)) - 1) << 12); // 12:byte alignment, 11:byte alignment
     __set_CAPR(capr.w);
 
     pacr.b.E = enable;
@@ -1597,3 +1607,5 @@ __STATIC_INLINE void csi_system_reset(void)
 #endif /* __CORE_804_H_DEPENDANT */
 
 #endif /* __CSI_GENERIC */
+
+#endif

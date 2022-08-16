@@ -19,7 +19,8 @@
 double scalbn(long double x, int n)
 {
     union {double f; uint64_t i;} u;
-    double_t y = x;
+    long double x_tmp = x;
+    double_t y = x_tmp;
     int z = n;
 
     if (z > 1023) { // 1023:byte alignment
@@ -45,7 +46,7 @@ double scalbn(long double x, int n)
             }
         }
     }
-    u.i = (uint64_t)(0x3ff + z) << 52;
-    x = y * u.f;
-    return x;
+    u.i = (uint64_t)(0x3ff + z) << 52; // 52:byte alignment
+    x_tmp = y * u.f;
+    return x_tmp;
 }

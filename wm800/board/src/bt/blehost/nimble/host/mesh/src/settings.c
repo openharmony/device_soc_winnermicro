@@ -903,7 +903,6 @@ static int mesh_commit(void)
 
     bt_mesh_model_foreach(commit_mod, NULL);
     hb_pub = bt_mesh_hb_pub_get();
-
     if (hb_pub && hb_pub->dst != BT_MESH_ADDR_UNASSIGNED &&
             hb_pub->count && hb_pub->period) {
         BT_DBG("Starting heartbeat publication");
@@ -955,7 +954,6 @@ static void schedule_store(int flag)
     }
 
     remaining = k_delayed_work_remaining_get(&pending_store);
-
     if (remaining && remaining < timeout) {
         BT_DBG("Not rescheduling due to existing earlier deadline");
         return;

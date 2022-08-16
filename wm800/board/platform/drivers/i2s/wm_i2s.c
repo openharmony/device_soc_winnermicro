@@ -233,7 +233,7 @@ ATTRIBUTE_ISR void i2s_I2S_IRQHandler(void)
                 if (wm_i2s_buf->txtail >= wm_i2s_buf->txlen) {
                     wm_i2s_buf->txtail = 0;
                     wm_i2s_buf->txdata_done = 1;
-                    tls_bitband_write(HR_I2S_INT_MASK, 6, 1);
+                    tls_bitband_write(HR_I2S_INT_MASK, 6, 1); // 6:value of bit
                     break;
                 }
             }
@@ -273,7 +273,7 @@ ATTRIBUTE_ISR void i2s_I2S_IRQHandler(void)
                 if (wm_i2s_buf->rxhead >= wm_i2s_buf->rxlen) {
                     wm_i2s_buf->rxhead = 0;
                     wm_i2s_buf->rxdata_ready = 1;
-                    tls_bitband_write(HR_I2S_INT_MASK, 2, 1);
+                    tls_bitband_write(HR_I2S_INT_MASK, 2, 1); // 2:value of bit
                     break;
                 }
             }

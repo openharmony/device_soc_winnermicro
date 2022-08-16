@@ -1114,7 +1114,6 @@ static struct bt_mesh_subnet *next_sub(void)
     for (i = 0; i < ARRAY_SIZE(bt_mesh.sub); i++) {
         struct bt_mesh_subnet *sub;
         sub = &bt_mesh.sub[(i + next_idx) % ARRAY_SIZE(bt_mesh.sub)];
-
         if (advertise_subnet(sub)) {
             next_idx = (next_idx + 1) % ARRAY_SIZE(bt_mesh.sub);
             return sub;
@@ -1184,7 +1183,6 @@ static s32_t gatt_proxy_advertise(struct bt_mesh_subnet *sub)
          */
         max_timeout = NODE_ID_TIMEOUT / max(subnet_count, 6); // 6:byte alignment
         max_timeout = max(max_timeout, K_SECONDS(1));
-
         if (remaining > max_timeout || remaining < 0) {
             remaining = max_timeout;
         }
@@ -1209,7 +1207,6 @@ static size_t gatt_prov_adv_create(struct bt_data prov_sd[2])
 
     if (prov->uri) {
         size_t uri_len = strlen(prov->uri);
-
         if (uri_len > 29) { // 29:Analyzing conditions
             /* There's no way to shorten an URI */
             BT_WARN("Too long URI to fit advertising packet");
@@ -1262,7 +1259,6 @@ s32_t bt_mesh_proxy_adv_start(void)
         }
 
         prov_sd_len = gatt_prov_adv_create(prov_sd);
-
         if (bt_le_adv_start(param, prov_ad, ARRAY_SIZE(prov_ad),
             prov_sd, prov_sd_len) == 0) {
             proxy_adv_enabled = true;
@@ -1377,9 +1373,9 @@ static const struct ble_gatt_svc_def svc_defs [] = {
         .uuid = BLE_UUID16_DECLARE(BT_UUID_MESH_PROXY_VAL),
         .characteristics = (struct ble_gatt_chr_def[])
         { {
-                .uuid = BLE_UUID16_DECLARE(BT_UUID_MESH_PROXY_DATA_IN_VAL),
-                .access_cb = proxy_recv,
-                .flags = BLE_GATT_CHR_F_WRITE_NO_RSP,
+            .uuid = BLE_UUID16_DECLARE(BT_UUID_MESH_PROXY_DATA_IN_VAL),
+            .access_cb = proxy_recv,
+            .flags = BLE_GATT_CHR_F_WRITE_NO_RSP,
             }, {
                 .uuid = BLE_UUID16_DECLARE(BT_UUID_MESH_PROXY_DATA_OUT_VAL),
                 .access_cb = dummy_access_cb,
