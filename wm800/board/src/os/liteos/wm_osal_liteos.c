@@ -933,17 +933,19 @@ tls_os_status_t tls_os_timer_start(tls_os_timer_t *timer)
 */
 extern LITE_OS_SEC_BSS SWTMR_CTRL_S     *g_swtmrCBArray;
 
-#define SET_PERIOD(usSwTmrID, uvIntSave, pstSwtmr, ticks) \
-{ \
-    uvIntSave = LOS_IntLock(); \
-    pstSwtmr = g_swtmrCBArray + usSwTmrID % LOSCFG_BASE_CORE_SWTMR_LIMIT; \
-    if (pstSwtmr->usTimerID % LOSCFG_BASE_CORE_SWTMR_LIMIT != usSwTmrID % LOSCFG_BASE_CORE_SWTMR_LIMIT)  \
-    {                                     \
-        LOS_IntRestore(uvIntSave);        \
-        printf("0x%x-%d-%d", (u32)pstSwtmr, pstSwtmr->usTimerID, usSwTmrID ); assert(0);                        \
-    }                                     \
-    pstSwtmr->uwInterval = ticks; \
-    LOS_IntRestore(uvIntSave); \
+#define SET_PERIOD(usSwTmrID, uvIntSave, pstSwtmr, ticks) { \
+    do { \
+        uvIntSave = LOS_IntLock(); \
+        (pstSwtmr) = g_swtmrCBArray + (usSwTmrID) % LOSCFG_BASE_CORE_SWTMR_LIMIT; \
+        if ((pstSwtmr)->usTimerID % LOSCFG_BASE_CORE_SWTMR_LIMIT != (usSwTmrID) % LOSCFG_BASE_CORE_SWTMR_LIMIT)  \
+        {                                     \
+            LOS_IntRestore((uvIntSave));        \
+            printf("0x%x-%d-%d", (u32)(pstSwtmr), (pstSwtmr)->usTimerID, (usSwTmrID) ); \
+            assert(0); \
+        }                                     \
+        (pstSwtmr)->uwInterval = (ticks); \
+        LOS_IntRestore(uvIntSave); \
+    } while (0)
 }
 
 tls_os_status_t tls_os_timer_change(tls_os_timer_t *timer, u32 ticks)

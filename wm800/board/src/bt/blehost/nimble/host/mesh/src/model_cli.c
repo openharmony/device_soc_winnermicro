@@ -8,8 +8,8 @@
 #define MESH_LOG_MODULE BLE_MESH_MODEL_LOG
 
 #include "mesh/mesh.h"
-#include "mesh/model_cli.h"
 #include "mesh_priv.h"
+#include "mesh/model_cli.h"
 
 static s32_t msg_timeout = K_SECONDS(5);
 

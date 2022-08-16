@@ -222,7 +222,7 @@ int ble_att_clt_rx_find_info(uint16_t conn_handle, struct os_mbuf **om)
     /* Strip the response base from the front of the mbuf. */
     os_mbuf_adj((*om), sizeof(*rsp));
 
-    while(OS_MBUF_PKTLEN(*om) > 0) {
+    while (OS_MBUF_PKTLEN(*om) > 0) {
         rc = ble_att_clt_parse_find_info_entry(om, rsp->bafp_format, &idata);
         if (rc != 0) {
             goto done;
@@ -300,7 +300,7 @@ int ble_att_clt_rx_find_type_value(uint16_t conn_handle, struct os_mbuf **rxom)
     /* Parse the Handles-Information-List field, passing each entry to GATT. */
     rc = 0;
 
-    while(OS_MBUF_PKTLEN(*rxom) > 0) {
+    while (OS_MBUF_PKTLEN(*rxom) > 0) {
         rc = ble_att_clt_parse_find_type_value_hinfo(rxom, &hinfo);
         if (rc != 0) {
             break;
@@ -496,7 +496,7 @@ int ble_att_clt_tx_read_mult(uint16_t conn_handle, const uint16_t *handles,
         return BLE_HS_ENOMEM;
     }
 
-    for(i = 0; i < num_handles; i++) {
+    for (i = 0; i < num_handles; i++) {
         req->handles[i] = htole16(handles[i]);
     }
 
@@ -544,8 +544,8 @@ int ble_att_clt_tx_read_group_type(uint16_t conn_handle,
 }
 
 static int ble_att_clt_parse_read_group_type_adata(
-                struct os_mbuf **om, int data_len,
-                struct ble_att_read_group_type_adata *adata)
+    struct os_mbuf **om, int data_len,
+    struct ble_att_read_group_type_adata *adata)
 {
     int rc;
 
@@ -636,7 +636,7 @@ int ble_att_clt_tx_write_cmd(uint16_t conn_handle, uint16_t handle,
     int i;
     BLE_HS_LOG(DEBUG, "ble_att_clt_tx_write_cmd(): ");
 
-    for(i = 0; i < OS_MBUF_PKTLEN(txom); i++) {
+    for (i = 0; i < OS_MBUF_PKTLEN(txom); i++) {
         if (i != 0) {
             BLE_HS_LOG(DEBUG, ":");
         }

@@ -6,6 +6,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+#ifndef TRANSPORT_H
+#define TRANSPORT_H
 #include "syscfg/syscfg.h"
 #include "mesh/mesh.h"
 
@@ -16,7 +18,7 @@
 #define TRANS_SEQ_ZERO_MASK            ((u16_t)BIT_MASK(13))
 #define TRANS_CTL_OP_MASK              ((u8_t)BIT_MASK(7))
 #define TRANS_CTL_OP(data)             ((data)[0] & TRANS_CTL_OP_MASK)
-#define TRANS_CTL_HDR(op, seg)         ((op & TRANS_CTL_OP_MASK) | (seg << 7))
+#define TRANS_CTL_HDR(op, seg)         (((op) & TRANS_CTL_OP_MASK) | ((seg) << 7))
 
 #define TRANS_CTL_OP_ACK               0x00
 #define TRANS_CTL_OP_FRIEND_POLL       0x01
@@ -103,3 +105,4 @@ void bt_mesh_heartbeat_send(void);
 
 int bt_mesh_app_key_get(const struct bt_mesh_subnet *subnet, u16_t app_idx,
                         u16_t addr, const u8_t **key, u8_t *aid);
+#endif

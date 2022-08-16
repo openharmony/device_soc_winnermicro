@@ -952,7 +952,7 @@ int btif_config_store_cccd(int idx, void *addr, int count, void *payload, int le
     tls_param_get(TLS_PARAM_ID_BT_REMOTE_DEVICE_1 + idx, (void *)&device, 0);
 
     if ((device.valid_tag == 0xdeadbeae)) {
-        device.valid_bit = (count) << 2 | (device.valid_bit & 0x03); // 2:bytes alignment
+        device.valid_bit = ((count) << 2) | (device.valid_bit & 0x03); // 2:bytes alignment
         ptr_offset += NVRAM_CCCD_SEC_PAYLOAD_OFFSET;
         memcpy_s(ptr_offset, sizeof(*ptr_offset), payload, length);
     } else {

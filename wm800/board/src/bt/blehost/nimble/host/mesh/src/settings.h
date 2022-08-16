@@ -4,6 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+#ifndef SETTINGS_H
+#define SETTINGS_H
+
 void bt_mesh_store_net(void);
 void bt_mesh_store_iv(bool only_duration);
 void bt_mesh_store_seq(void);
@@ -25,3 +28,4 @@ void bt_mesh_clear_rpl(void);
 void bt_mesh_clear_node(struct bt_mesh_node *node);
 
 void bt_mesh_settings_init(void);
+#endif

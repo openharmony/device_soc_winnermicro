@@ -19,7 +19,6 @@
 #include "crypto.h"
 #include "adv.h"
 #include "mesh_priv.h"
-#include "net.h"
 #include "lpn.h"
 #include "friend.h"
 #include "proxy.h"
@@ -29,6 +28,7 @@
 #include "beacon.h"
 #include "settings.h"
 #include "prov.h"
+#include "net.h"
 
 /* Minimum valid Mesh Network PDU length. The Network headers
  * themselves take up 9 bytes. After that there is a minumum of 1 byte
@@ -114,7 +114,7 @@ static u64_t msg_hash(struct bt_mesh_net_rx *rx, struct os_mbuf *pdu)
     hash1 = (BT_MESH_NET_IVI_RX(rx) << 8) | pdu->om_data[2]; // 8:byte alignment, 2:array element
     /* Two last bytes of SEQ + SRC */
     memcpy(&hash2, &pdu->om_data[3], 4); // 3:array element, 4:size
-    return (u64_t)hash1 << 32 | (u64_t)hash2; // 32:byte alignment
+    return ((u64_t)hash1 << 32) | (u64_t)hash2; // 32:byte alignment
 }
 
 static bool msg_cache_match(struct bt_mesh_net_rx *rx,
