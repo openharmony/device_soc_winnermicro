@@ -134,9 +134,12 @@ extern "C" {
  *
  * default max num of station.CNcomment:默认支持的station最大个数.CNend
  */
-#define WIFI_DEFAULT_MAX_NUM_STA         6#ifdef __cplusplus
+#define WIFI_DEFAULT_MAX_NUM_STA         6
+
+#ifdef __cplusplus
 #if __cplusplus
     }
+#endif
 #endif
 
 #endif /* end of hi_wifi_api.h */

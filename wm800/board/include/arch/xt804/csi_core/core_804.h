@@ -763,7 +763,7 @@ __STATIC_INLINE void csi_vic_disable_sirq(int32_t IRQn)
 __STATIC_INLINE uint32_t csi_vic_get_enabled_irq(int32_t IRQn)
 {
     int32_t IRQn_tmp = IRQn;
-    IRQn &= 0x7FUL;
+    IRQn_tmp &= 0x7FUL;
 
     return ((uint32_t)(((VIC->ISER[_IR_IDX(IRQn_tmp)] &
       (1UL << (((uint32_t)(int32_t)IRQn_tmp % 32) & 0x7FUL))) != 0UL) ? 1UL : 0UL)); // 32:byte alignment
@@ -1454,12 +1454,12 @@ __STATIC_INLINE void csi_mpu_config_region(uint32_t idx, uint32_t base_addr, reg
     __set_PRSR(prsr.w);
 
     if (size != REGION_SIZE_4KB) {
-        pacr.w &= ~(((1u << (size -11)) - 1) << 12); // 12:byte alignment
+        pacr.w &= ~(((1u << (size -11)) - 1) << 12); // 12:byte alignment, 11:byte alignment
     }
 
     pacr.b.size = size;
 
-    capr.w &= ~((0x1 << idx) | (0x3 << (idx * 2 + 8)) | (0x1 << (idx + 24))); // 12:byte alignment
+    capr.w &= ~((0x1 << idx) | (0x3 << (idx * 2 + 8)) | (0x1 << (idx + 24))); // 2:byte, 8:byte, 24:byte
     capr.w = (capr.w | (attr.nx << idx) | (attr.ap << (idx * 2 + 8)) | // 2:byte , 8:byte alignment
       (attr.s << (idx + 24))); // 24:byte alignment
     pacr.w &= ~(((1u << (size -11)) - 1) << 12); // 12:byte alignment, 11:byte alignment

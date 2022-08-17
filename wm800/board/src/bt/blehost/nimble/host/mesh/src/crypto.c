@@ -31,13 +31,14 @@ int bt_mesh_aes_cmac(const u8_t key[16], struct bt_mesh_sg *sg,
     struct tc_aes_
     key_sched_struct sched;
     struct tc_cmac_struct state;
+    struct bt_mesh_sg *sg_tmp = sg;
 
     if (tc_cmac_setup(&state, key, &sched) == TC_CRYPTO_FAIL) {
         return -EIO;
     }
 
-    for (; sg_len_tmp; sg_len_tmp--, sg++) {
-        if (tc_cmac_update(&state, sg->data, sg->len) == TC_CRYPTO_FAIL) {
+    for (; sg_len_tmp; sg_len_tmp--, sg_tmp++) {
+        if (tc_cmac_update(&state, sg_tmp->data, sg_tmp->len) == TC_CRYPTO_FAIL) {
             return -EIO;
         }
     }

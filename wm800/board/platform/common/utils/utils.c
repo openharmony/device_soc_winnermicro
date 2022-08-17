@@ -296,13 +296,14 @@ int strtohex(u32 *hex, char *str)
     int n;
     int i;
     u32 dd;
+    char *str_tmp = str;
 
     n = -1;
     i = 0;
     dd = 0;
 
-    while (*str) {
-        n = atohex(*str++);
+    while (*str_tmp) {
+        n = atohex(*str_tmp++);
         if (n < 0) {return -1;}
         dd = (dd<<4) + n;
         if (++i > 8) {return -1;}
@@ -318,15 +319,16 @@ int strtohexarray(u8 array[], int cnt, char *str)
     u8 tmp;
     u8 *des;
     int cnt_tmp = cnt;
+    char *str_tmp = str;
     des = array;
 
     while (cnt_tmp-- > 0) {
-        int hex = atohex(*str++);
+        int hex = atohex(*str_tmp++);
         if (hex < 0) {
             return -1;
         } else {tmp = (hex << 4) & 0xf0;}
 
-        hex = atohex(*str++);
+        hex = atohex(*str_tmp++);
         if (hex < 0) {
             return -1;
         } else {
@@ -336,7 +338,7 @@ int strtohexarray(u8 array[], int cnt, char *str)
         *des++ = (u8) tmp;
     }
 
-    return ((*str==0) ? 0 : -1);
+    return ((*str_tmp==0) ? 0 : -1);
 }
 
 int strtoip(u32 *ipadr, char * str)
@@ -542,9 +544,11 @@ void dumpUint32(char *name, uint32_t* buffer, int len)
 
 int strcasecmp(const char *s1, const char *s2)
 {
-    while (*s1 && *s2) {
-        char a = *s1++;
-        char b = *s2++;
+    const char *s1_tmp = s1;
+    const char *s2_tmp = s2;
+    while (*s1_tmp && *s2_tmp) {
+        char a = *s1_tmp++;
+        char b = *s2_tmp++;
 
         if (a == b) {
             continue;

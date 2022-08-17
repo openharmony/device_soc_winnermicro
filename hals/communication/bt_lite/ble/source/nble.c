@@ -74,7 +74,7 @@ static int gap_event(struct ble_gap_event *event, void *arg);
 
 static void app_adapter_state_changed_callback(tls_bt_state_t status)
 {
-    BLE_IF_DEBUG("adapter status = %s\r\n", status==WM_BT_STATE_ON?"bt_state_on":"bt_state_off");
+    BLE_IF_DEBUG("adapter status = %s\r\n", status == WM_BT_STATE_ON ? "bt_state_on" : "bt_state_off");
 
     bt_adapter_state = status;
 
@@ -92,7 +92,6 @@ static void app_adapter_state_changed_callback(tls_bt_state_t status)
 static void on_sync(void)
 {
     /* Make sure we have proper identity address set (public preferred) */
-
     app_adapter_state_changed_callback(WM_BT_STATE_ON);
 }
 static void on_reset(int reason)
@@ -118,10 +117,8 @@ static void on_svr_register_cb(struct ble_gatt_register_ctxt *ctxt, void *arg)
                 btuuid.uuidLen = ctxt->svc.svc_def->uuid->type;
                 ble_uuid_flat(ctxt->svc.svc_def->uuid, buf);
                 btuuid.uuid = buf;
-
                 if (gatts_struct_func_ptr_cb->serviceAddCb) {
-                    gatts_struct_func_ptr_cb->serviceAddCb(0 /* Always success */, server_if /* */, \
-                        &btuuid, ctxt->svc.handle);
+                    gatts_struct_func_ptr_cb->serviceAddCb(0, server_if, &btuuid, ctxt->svc.handle);
                 }
             }
             break;
@@ -141,8 +138,8 @@ static void on_svr_register_cb(struct ble_gatt_register_ctxt *ctxt, void *arg)
                 ble_uuid_flat(ctxt->chr.chr_def->uuid, buf);
                 btuuid.uuid = buf;
                 if (gatts_struct_func_ptr_cb->characteristicAddCb) {
-                    gatts_struct_func_ptr_cb->characteristicAddCb(0 /* Always success */, server_if /* */, &btuuid , \
-                        service_handle /* msg->ser_add_char.service_id */, ctxt->chr.val_handle);
+                    gatts_struct_func_ptr_cb->characteristicAddCb(0, server_if, &btuuid , \
+                        service_handle, ctxt->chr.val_handle);
                 }
             }
 
@@ -160,8 +157,8 @@ static void on_svr_register_cb(struct ble_gatt_register_ctxt *ctxt, void *arg)
                 ble_uuid_flat(ctxt->dsc.dsc_def->uuid, buf);
                 btuuid.uuid = buf;
                 if (gatts_struct_func_ptr_cb->descriptorAddCb) {
-                    gatts_struct_func_ptr_cb->descriptorAddCb(0 /* Always success */, server_if /* */, &btuuid , \
-                        service_handle /* msg->ser_add_char.service_id */, ctxt->dsc.handle);
+                    gatts_struct_func_ptr_cb->descriptorAddCb(0, server_if, &btuuid , \
+                        service_handle, ctxt->dsc.handle);
                 }
             }
             break;
@@ -179,10 +176,10 @@ static void ble_server_conn_param_update_slave(void)
     int rc;
     struct ble_l2cap_sig_update_params params;
 
-    params.itvl_min = 26;
-    params.itvl_max = 42;
+    params.itvl_min = 26; // 26:byte alignment
+    params.itvl_max = 42; // 42:byte alignment
     params.slave_latency = 0;
-    params.timeout_multiplier = 500;
+    params.timeout_multiplier = 500; // 500:byte alignment
     rc = ble_l2cap_sig_update(g_conn_handle, &params, conn_param_update_cb, NULL);
     BLE_IF_DEBUG("ble_l2cap_sig_update, rc=%d\n", rc);
 }
@@ -237,7 +234,7 @@ static int ble_server_start_adv(void)
     }
 
     peer_addr.type = g_adv_param.peerAddrType;
-    memcpy_s(&peer_addr.val[0], sizeof(&peer_addr.val), &g_adv_param.peerAddr.addr[0], 6);
+    memcpy_s(&peer_addr.val[0], sizeof(&peer_addr.val), &g_adv_param.peerAddr.addr[0], 6); // 6:size
 
     BLE_IF_DEBUG("Starting advertising\r\n");
 
@@ -269,12 +266,11 @@ static int gap_event(struct ble_gap_event *event, void *arg)
             if (event->connect.status == 0) {
                 rc = ble_gap_conn_find(event->connect.conn_handle, &desc);
                 assert(rc == 0);
-                memcpy_s(bdaddr.addr, sizeof(bdaddr.addr), desc.peer_id_addr.val, 6);
+                memcpy_s(bdaddr.addr, sizeof(bdaddr.addr), desc.peer_id_addr.val, 6); // 6:size
                 g_conn_handle = event->connect.conn_handle;
                 /* see nble_server.c ble_server_gap_event will handle this callback */
                 if (gatts_struct_func_ptr_cb->connectServerCb) {
-                    gatts_struct_func_ptr_cb->connectServerCb(event->connect.conn_handle, \
-                        0 /* Always 0,nimble does not care server if */, &bdaddr);
+                    gatts_struct_func_ptr_cb->connectServerCb(event->connect.conn_handle, 0, &bdaddr);
                 }
                 /* 200 ticks later, perform l2cap level connect param update */
             }
@@ -286,15 +282,14 @@ static int gap_event(struct ble_gap_event *event, void *arg)
         case BLE_GAP_EVENT_DISCONNECT:
             BLE_IF_DEBUG("disconnect reason=%d\r\n", event->disconnect.reason);
 
-            memcpy_s(bdaddr.addr, sizeof(bdaddr.addr), event->disconnect.conn.peer_id_addr.val, 6);
+            memcpy_s(bdaddr.addr, sizeof(bdaddr.addr), event->disconnect.conn.peer_id_addr.val, 6); // 6:size
             /* see nble_server.c ble_server_gap_event will handle this callback */
             if (gatts_struct_func_ptr_cb->disconnectServerCb) {
-                gatts_struct_func_ptr_cb->disconnectServerCb(event->disconnect.conn.conn_handle, \
-                    0 /* Always 0, nimble does not care server if */, &bdaddr);
+                gatts_struct_func_ptr_cb->disconnectServerCb(event->disconnect.conn.conn_handle, 0, &bdaddr);
             }
 
-            if (event->disconnect.reason == 534) {
-                // hci error code:  0x16 + 0x200 = 534; // local host terminate the connection;
+            if (event->disconnect.reason == 534) { // 534:hci error code:  0x16 + 0x200 = 534
+                // local host terminate the connection;
             } else {
                 ble_server_start_adv();
             }
@@ -303,8 +298,7 @@ static int gap_event(struct ble_gap_event *event, void *arg)
             if (event->notify_tx.status == BLE_HS_EDONE) {
                 // Note, the first param conn__handle, conn_id???  all servcie share one conn_id, so it is not proper
                 if (gatts_struct_func_ptr_cb->indicationSentCb) {
-                    gatts_struct_func_ptr_cb->indicationSentCb(event->notify_tx.conn_handle, \
-                        0 /* event->notify_tx.status */);
+                    gatts_struct_func_ptr_cb->indicationSentCb(event->notify_tx.conn_handle, 0);
                 }
             } else {
                 /* Application will handle other cases */
@@ -345,7 +339,7 @@ static int gap_event(struct ble_gap_event *event, void *arg)
             {
                 rc = ble_gap_conn_find(event->enc_change.conn_handle, &desc);
                 assert(rc == 0);
-                memcpy_s(bdaddr.addr, sizeof(bdaddr.addr), desc.peer_id_addr.val, 6);
+                memcpy_s(bdaddr.addr, sizeof(bdaddr.addr), desc.peer_id_addr.val, 6); // 6:size
                 if (gap_func_ptr_cb && gap_func_ptr_cb->securityRespondCb)gap_func_ptr_cb->securityRespondCb(&bdaddr);
                 return 0;
             }
@@ -407,7 +401,7 @@ int EnableBtStack(void)
     tls_nimble_start();
 
     while (bt_adapter_state != WM_BT_STATE_ON) {
-        tls_os_time_delay(100);
+        tls_os_time_delay(100); // 100:time unit
     }
 
     bt_system_action = WM_BT_SYSTEM_ACTION_IDLE;
@@ -447,7 +441,7 @@ int DisableBtStack(void)
 
     /* Application levels resource cleanup */
     while (bt_adapter_state == WM_BT_STATE_ON) {
-        tls_os_time_delay(10);
+        tls_os_time_delay(10); // 10:time unit
     }
 
     bt_system_action = WM_BT_SYSTEM_ACTION_IDLE;
@@ -685,7 +679,7 @@ int BleGattsSendIndication(int serverId, GattsSendIndParam *param)
 
 int ReadBtMacAddr(unsigned char *mac, unsigned int len)
 {
-    if (len != 6) {
+    if (len != 6) { // 6:byte alignment
         return OHOS_BT_STATUS_PARM_INVALID;
     }
 
@@ -861,4 +855,3 @@ int BleGattsStopServiceEx(int srvcHandle)
     }
     return OHOS_BT_STATUS_SUCCESS;
 }
-
