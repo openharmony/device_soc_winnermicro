@@ -567,6 +567,7 @@ static int ble_att_svr_tx_rsp(uint16_t conn_handle, int hs_status, struct os_mbu
     struct ble_l2cap_chan *chan;
     struct ble_hs_conn *conn;
     int do_tx;
+    struct os_mbuf *om_tmp = om;
 
     int hs_status_tmp = hs_status;
     if (hs_status_tmp != 0 && err_status == 0) {
@@ -584,11 +585,11 @@ static int ble_att_svr_tx_rsp(uint16_t conn_handle, int hs_status, struct os_mbu
             hs_status_tmp = rc;
         } else {
             if (hs_status_tmp == 0) {
-                BLE_HS_DBG_ASSERT(om != NULL);
-                ble_att_inc_tx_stat(om->om_data[0]);
-                ble_att_truncate_to_mtu(chan, om);
-                hs_status_tmp = ble_l2cap_tx(conn, chan, om);
-                om = NULL;
+                BLE_HS_DBG_ASSERT(om_tmp != NULL);
+                ble_att_inc_tx_stat(om_tmp->om_data[0]);
+                ble_att_truncate_to_mtu(chan, om_tmp);
+                hs_status_tmp = ble_l2cap_tx(conn, chan, om_tmp);
+                om_tmp = NULL;
 
                 if (hs_status_tmp != 0) {
                     err_status = BLE_ATT_ERR_UNLIKELY;
@@ -602,22 +603,22 @@ static int ble_att_svr_tx_rsp(uint16_t conn_handle, int hs_status, struct os_mbu
             STATS_INC(ble_att_stats, error_rsp_tx);
 
             /* Reuse om for error response. */
-            if (om == NULL) {
-                om = ble_hs_mbuf_l2cap_pkt();
+            if (om_tmp == NULL) {
+                om_tmp = ble_hs_mbuf_l2cap_pkt();
             } else {
-                os_mbuf_adj(om, OS_MBUF_PKTLEN(om));
+                os_mbuf_adj(om_tmp, OS_MBUF_PKTLEN(om_tmp));
             }
 
-            if (om != NULL) {
-                ble_att_svr_tx_error_rsp(conn_handle, om, att_op,
+            if (om_tmp != NULL) {
+                ble_att_svr_tx_error_rsp(conn_handle, om_tmp, att_op,
                                          err_handle, err_status);
-                om = NULL;
+                om_tmp = NULL;
             }
         }
     }
 
     /* Free mbuf if it was not consumed (i.e., if the send failed). */
-    os_mbuf_free_chain(om);
+    os_mbuf_free_chain(om_tmp);
     return hs_status_tmp;
 }
 
@@ -2146,7 +2147,6 @@ int ble_att_svr_rx_prep_write(uint16_t conn_handle, struct os_mbuf **rxom)
      * 5. Invalid handle.
      * 6. Write not permitted.
      */
-
     /* <5> */
     if (attr_entry == NULL) {
         rc = BLE_HS_ENOENT;

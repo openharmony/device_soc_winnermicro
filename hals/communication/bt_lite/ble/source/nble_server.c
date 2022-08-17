@@ -83,7 +83,7 @@ void ble_server_gap_event(struct ble_gap_event *event, void *arg)
             if (event->connect.status == 0) {
                 int rc = ble_gap_conn_find(event->connect.conn_handle, &desc);
                 assert(rc == 0);
-                memcpy(bdaddr.addr, desc.peer_id_addr.val, 6);
+                memcpy(bdaddr.addr, desc.peer_id_addr.val, 6); // 6:size
 
                 if (gatts_struct_func_ptr_cb && gatts_struct_func_ptr_cb->connectServerCb) {
                     dl_list_for_each(svr_item, &server_list.list, server_elem_t, list)
@@ -93,7 +93,7 @@ void ble_server_gap_event(struct ble_gap_event *event, void *arg)
             }
             break;
         case BLE_GAP_EVENT_DISCONNECT:
-            memcpy(bdaddr.addr, event->disconnect.conn.peer_id_addr.val, 6);
+            memcpy(bdaddr.addr, event->disconnect.conn.peer_id_addr.val, 6); // 6:size
             if (gatts_struct_func_ptr_cb && gatts_struct_func_ptr_cb->disconnectServerCb) {
                 dl_list_for_each(svr_item, &server_list.list, server_elem_t, list)
                 gatts_struct_func_ptr_cb->disconnectServerCb(event->disconnect.conn.conn_handle, \
@@ -213,14 +213,14 @@ static int ble_server_gatt_svc_access_func(uint16_t conn_handle, uint16_t attr_h
                     assert(offset <= sizeof(cache_buffer));
                     om = SLIST_NEXT(om, om_next);
                 }
-                if (offset>0)ble_server_func_by_attr_handle(attr_handle, ctxt->op, cache_buffer, &offset);
-
+                if (offset > 0)
+                    ble_server_func_by_attr_handle(attr_handle, ctxt->op, cache_buffer, &offset);
                 return 0;
             }
         case BLE_GATT_ACCESS_OP_READ_CHR:
             {
                 ble_server_func_by_attr_handle(attr_handle, ctxt->op, cache_buffer, &length);
-                if (length>0) {
+                if (length > 0) {
                     int rc = os_mbuf_append(ctxt->om, &cache_buffer[0], length);
                     return rc == 0 ? 0 : BLE_ATT_ERR_INSUFFICIENT_RES;
                 }
@@ -244,7 +244,7 @@ int ble_server_uuid_init_from_buf(ble_uuid_any_t *uuid, const void *buf, size_t 
             return 0;
         case OHOS_UUID_TYPE_128_BIT:
             uuid->u.type = BLE_UUID_TYPE_128;
-            memcpy_s(uuid->u128.value, sizeof(uuid->u128.value), buf, 16);
+            memcpy_s(uuid->u128.value, sizeof(uuid->u128.value), buf, 16); // 16:size
             return 0;
         default:
             return 0;
@@ -285,7 +285,7 @@ int ble_server_alloc(BleGattService *srvcinfo)
     serv_elem->srvc_count = 0;
 
     // presearch to get the counter of character and descriptor;
-    for (i = 0; i<srvcinfo->attrNum; i++) {
+    for (i = 0; i < srvcinfo->attrNum; i++) {
         if (srvcinfo->attrList[i].attrType == OHOS_BLE_ATTRIB_TYPE_SERVICE) {
             srvc_counter++;
         } else if (srvcinfo->attrList[i].attrType == OHOS_BLE_ATTRIB_TYPE_CHAR) {
@@ -304,14 +304,14 @@ int ble_server_alloc(BleGattService *srvcinfo)
     BLE_IF_DEBUG("Adding service srvc=%d, char=%d, dsc=%d\r\n", srvc_counter, char_counter, desc_counter);
 
     /* alloc service array */
-    gatt_svc_array = (struct ble_gatt_svc_def *)tls_mem_alloc(2*sizeof(struct ble_gatt_svc_def));
+    gatt_svc_array = (struct ble_gatt_svc_def *)tls_mem_alloc(2 * sizeof(struct ble_gatt_svc_def)); // 2:byte alignment
     assert(gatt_svc_array != NULL);
-    memset_s(gatt_svc_array, sizeof(gatt_svc_array), 0, 2*sizeof(struct ble_gatt_svc_def));
+    memset_s(gatt_svc_array, sizeof(gatt_svc_array), 0, 2 * sizeof(struct ble_gatt_svc_def)); // 2:byte alignment
 
     /* prealloc charactertistic array */
-    gatt_chr_array = (struct ble_gatt_chr_def *)tls_mem_alloc((1+char_counter) * sizeof(struct ble_gatt_chr_def));
+    gatt_chr_array = (struct ble_gatt_chr_def *)tls_mem_alloc((1 + char_counter) * sizeof(struct ble_gatt_chr_def));
     assert(gatt_chr_array != NULL);
-    memset_s(gatt_chr_array, sizeof(gatt_chr_array), 0, (1+char_counter) * sizeof(struct ble_gatt_chr_def));
+    memset_s(gatt_chr_array, sizeof(gatt_chr_array), 0, (1 + char_counter) * sizeof(struct ble_gatt_chr_def));
 
     /* preappending to character array */
     gatt_svc_array[0].characteristics = gatt_chr_array;
@@ -346,10 +346,8 @@ int ble_server_alloc(BleGattService *srvcinfo)
             /* process stack env */
             gatt_chr_array[serv_elem->srvc_count].uuid = &srvc_sub_elem->uuid;
             gatt_chr_array[serv_elem->srvc_count].access_cb = ble_server_gatt_svc_access_func;
-            // gatt_chr_array[serv_elem->srvc_count].flags = srvcinfo->attrList[i].properties \
-               |srvcinfo->attrList[i].permission<<8;
             gatt_chr_array[serv_elem->srvc_count].flags = srvcinfo->attrList[i].properties;
-            gatt_chr_array[serv_elem->srvc_count].min_key_size = 16;
+            gatt_chr_array[serv_elem->srvc_count].min_key_size = 16; // 16:byte alignment
             gatt_chr_array[serv_elem->srvc_count].val_handle = &srvc_sub_elem->attr_handle;
             gatt_chr_array[serv_elem->srvc_count].arg = (void*)&srvc_elem->attr_handle; \
             // give the service handle as arg, char added callback will handle it;
@@ -370,12 +368,15 @@ int ble_server_alloc(BleGattService *srvcinfo)
                 (gatt_chr_array[serv_elem->srvc_count].flags & BLE_GATT_CHR_F_INDICATE)) {
                // NimBLE stack will auto add the cccd.
             } else {
-                gatt_dsc_array = (struct ble_gatt_dsc_def *)tls_mem_alloc(2*sizeof(struct ble_gatt_dsc_def));
-                memset_s(gatt_dsc_array, sizeof(gatt_dsc_array), 0, 2*sizeof(struct ble_gatt_dsc_def));
+                gatt_dsc_array =
+                    (struct ble_gatt_dsc_def *)tls_mem_alloc(2 * sizeof(struct ble_gatt_dsc_def)); // 2:byte alignment
+                memset_s(gatt_dsc_array, sizeof(gatt_dsc_array), 0,
+                    2 * sizeof(struct ble_gatt_dsc_def)); // 2:byte alignment
                 gatt_dsc_array[0].uuid = &srvc_sub_elem->uuid;
                 gatt_dsc_array[0].access_cb = ble_server_gatt_svc_access_func;
-                gatt_dsc_array[0].att_flags = srvcinfo->attrList[i].properties |srvcinfo->attrList[i].permission<<8;
-                gatt_dsc_array[0].min_key_size = 16;
+                gatt_dsc_array[0].att_flags =
+                    srvcinfo->attrList[i].properties |srvcinfo->attrList[i].permission << 8; // 8:byte alignment
+                gatt_dsc_array[0].min_key_size = 16; // 16:byte alignment
                 gatt_dsc_array[0].arg = (void*)&srvc_elem->attr_handle;
                 // give the service handle as arg, char added callback will handle it;
                 gatt_chr_array[serv_elem->srvc_count].descriptors = gatt_dsc_array;
