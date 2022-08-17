@@ -62,15 +62,15 @@ static char *_path_convert(const char *path)
     int len;
     char *target_path;
 
-    len = strlen(path) + 8;
+    len = strlen(path) + 8; // 8:byte alignment
     target_path = (char *)malloc(len);
     if (target_path == NULL) {
         return NULL;
     }
     memset_s(target_path, len, 0, len);
     int i, j = 0;
-    memcpy_s(target_path, sizeof(target_path), "/data/", 6);
-    j += 6;
+    memcpy_s(target_path, sizeof(target_path), "/data/", 6); // 6:size
+    j += 6; // 6:byte alignment
     for (i = 0; i < strlen(path); i++) {
         if (path[i] != '/') {
             target_path[j++] = path[i];
@@ -113,7 +113,7 @@ int HalFileClose(int fd)
     if (fd < 0) {
         return -1;
     }
-    ret = close(fd-1);
+    ret = close(fd - 1);
     if (ret) {
         return -1;
     }
@@ -127,7 +127,7 @@ int HalFileRead(int fd, char* buf, unsigned int len)
     if (fd < 0 || (buf == NULL) || (len == 0)) {
         return -1;
     }
-    ret = read(fd-1, buf, len);
+    ret = read(fd - 1, buf, len);
     return ret;
 }
 

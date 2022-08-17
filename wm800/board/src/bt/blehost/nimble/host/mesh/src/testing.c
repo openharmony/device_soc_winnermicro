@@ -5,10 +5,10 @@
  */
 
 #include <stddef.h>
-#include "mesh/testing.h"
 #include "mesh/slist.h"
 #include "mesh/glue.h"
 #include "mesh/access.h"
+#include "mesh/testing.h"
 
 #include "net.h"
 #include "access.h"

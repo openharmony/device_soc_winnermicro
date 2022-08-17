@@ -316,23 +316,23 @@ static void wm_tool_stdin_to_uart(void);
 #define DO1(buf)  do {
     s1 += *buf++; \
     s2 += s1; \
-}while (0)
+} while (0)
 #define DO2(buf)  do {
     DO1(buf); \
     DO1(buf); \
-}while (0)
+} while (0)
 #define DO4(buf)  do {
     DO2(buf); \
     DO2(buf); \
-}while (0)
+} while (0)
 #define DO8(buf)  do {
     DO4(buf); \
     DO4(buf); \
-}while (0)
+} while (0)
 #define DO16(buf) do {
     DO8(buf); \
     DO8(buf); \
-}while (0)
+} while (0)
 
 #define Z_OK            0
 #define Z_STREAM_END    1
@@ -421,10 +421,10 @@ static void wm_tool_stdin_to_uart(void);
 #define put_short(s, w) do { \
     put_byte((s), (uch)((w) & 0xff)); \
     put_byte((s), (uch)((ush)(w) >> 8)); \
-}while (0)
+} while (0)
 
 #define INSERT_STRING(s, str, match_head) \
-    (UPDATE_HASH((s), (s)->ins_h, (s)->window[(str) + MIN_MATCH-1]), \
+    (UPDATE_HASH((s), (s)->ins_h, (s)->window[(str) + MIN_MATCH - 1]), \
     (s)->prev[(str) & (s)->w_mask] = (match_head) = (s)->head[(s)->ins_h], \
     (s)->head[(s)->ins_h] = (str))
 
@@ -433,7 +433,7 @@ static void wm_tool_stdin_to_uart(void);
 #define check_match(s, start, match, length)
 
 #define d_code(dist) \
-    ((dist) < 256 ? dist_code[dist] : dist_code[256+((dist)>>7)])
+    ((dist) < 256 ? dist_code[dist] : dist_code[256 + ((dist) >> 7)])
 
 #define FLUSH_BLOCK_ONLY(s, eof) do { \
     ct_flush_block((s), ((s)->block_start >= 0L ? \
@@ -940,7 +940,7 @@ local uLong crc32(crc, buf, len)
     crc = crc ^ 0xffffffffL;
     if (len) {
         do {
-            crc = wm_tool_crc32_tab[((int)crc ^ (*buf++)) & 0xff] ^ (crc >> 8);
+            crc = wm_tool_crc32_tab[((int)crc ^ (*buf++)) & 0xff] ^ (crc >> 8); // 8:byte alignment
         } while (--len);
     }
     return crc ^ 0xffffffffL;
@@ -977,7 +977,7 @@ local uLong adler32(adler, buf, len)
     uInt len;
 {
     unsigned long s1 = adler & 0xffff;
-    unsigned long s2 = (adler >> 16) & 0xffff;
+    unsigned long s2 = (adler >> 16) & 0xffff; // 16:byte alignment
     int k;
 
     if (buf == Z_NULL) {
@@ -987,9 +987,9 @@ local uLong adler32(adler, buf, len)
     while (len > 0) {
         k = len < NMAX ? len : NMAX;
         len -= k;
-        while (k >= 16) {
+        while (k >= 16) { // 16:byte alignment
             DO16(buf);
-            k -= 16;
+            k -= 16; // 16:byte alignment
         }
         if (k != 0) {
             do {
@@ -999,7 +999,7 @@ local uLong adler32(adler, buf, len)
         s1 %= BASE;
         s2 %= BASE;
     }
-    return (s2 << 16) | s1;
+    return (s2 << 16) | s1; // 16:byte alignment
 }
 
 local int read_buf(strm, buf, size)
@@ -1150,9 +1150,9 @@ local void putLong (file, x)
     uLong x;
 {
     int n;
-    for (n = 0; n < 4; n++) {
+    for (n = 0; n < 4; n++) { // 4:byte alignment
         fputc((int)(x & 0xff), file);
-        x >>= 8;
+        x >>= 8; // 8:byte alignment
     }
 }
 
@@ -1160,10 +1160,10 @@ local uLong getLong (buf)
     Byte *buf;
 {
     uLong x = 0;
-    Byte *p = buf+4;
+    Byte *p = buf + 4; // 4:byte alignment
 
     do {
-        x <<= 8;
+        x <<= 8; // 8:byte alignment
         x |= *--p;
     } while (p != buf);
     return x;
@@ -1195,12 +1195,12 @@ local void gen_codes (tree, max_code, bl_count)
      * without bit reversal.
      */
     for (bits = 1; bits <= MAX_BITS; bits++) {
-        next_code[bits] = code = (code + bl_count[bits-1]) << 1;
+        next_code[bits] = code = (code + bl_count[bits - 1]) << 1;
     }
     /* Check that the bit counts in bl_count are consistent. The last code
      * must be all ones.
      */
-    Assert (code + bl_count[MAX_BITS]-1 == (1<<MAX_BITS)-1,
+    Assert (code + bl_count[MAX_BITS] - 1 == (1 << MAX_BITS) - 1,
             "inconsistent bit counts");
 
     for (n = 0;  n <= max_code; n++) {
@@ -1227,7 +1227,7 @@ local void ct_static_init(void)
     length = 0;
     for (code = 0; code < LENGTH_CODES-1; code++) {
         base_length[code] = length;
-        for (n = 0; n < (1<<extra_lbits[code]); n++) {
+        for (n = 0; n < (1 << extra_lbits[code]); n++) {
             length_code[length++] = (uch)code;
         }
     }
@@ -1240,49 +1240,49 @@ local void ct_static_init(void)
 
     /* Initialize the mapping dist (0..32K) -> dist code (0..29) */
     dist = 0;
-    for (code = 0 ; code < 16; code++) {
+    for (code = 0 ; code < 16; code++) { // 16:byte alignment
         base_dist[code] = dist;
-        for (n = 0; n < (1<<extra_dbits[code]); n++) {
+        for (n = 0; n < (1 << extra_dbits[code]); n++) {
             dist_code[dist++] = (uch)code;
         }
     }
     Assert (dist == 256, "ct_static_init: dist != 256");
-    dist >>= 7; /* from now on, all distances are divided by 128 */
+    dist >>= 7; /* from now on, all distances are divided by 128 */ // 7:byte alignment
     for (; code < D_CODES; code++) {
-        base_dist[code] = dist << 7;
-        for (n = 0; n < (1<<(extra_dbits[code]-7)); n++) {
-            dist_code[256 + dist++] = (uch)code;
+        base_dist[code] = dist << 7; // 7:byte alignment
+        for (n = 0; n < (1 << (extra_dbits[code] - 7)); n++) { // 7:byte alignment
+            dist_code[256 + dist++] = (uch)code; // 256:byte alignment
         }
     }
-    Assert (dist == 256, "ct_static_init: 256+dist != 512");
+    Assert (dist == 256, "ct_static_init: 256+dist != 512"); // 256:byte alignment
 
     /* Construct the codes of the static literal tree */
     for (bits = 0; bits <= MAX_BITS; bits++) {
         bl_count[bits] = 0;
     }
     n = 0;
-    while (n <= 143) {
-        static_ltree[n++].Len = 8, bl_count[8]++;
+    while (n <= 143) { // 143:byte alignment
+        static_ltree[n++].Len = 8, bl_count[8]++; // 8:byte alignment
     }
-    while (n <= 255) {
-        static_ltree[n++].Len = 9, bl_count[9]++;
+    while (n <= 255) { // 255:byte alignment
+        static_ltree[n++].Len = 9, bl_count[9]++; // 9:byte alignment
     }
-    while (n <= 279) {
-        static_ltree[n++].Len = 7, bl_count[7]++;
+    while (n <= 279) { // 279:byte alignment
+        static_ltree[n++].Len = 7, bl_count[7]++; // 7:byte alignment
     }
-    while (n <= 287) {
-        static_ltree[n++].Len = 8, bl_count[8]++;
+    while (n <= 287) { // 287:byte alignment
+        static_ltree[n++].Len = 8, bl_count[8]++; // 8:byte alignment
     }
     /* Codes 286 and 287 do not exist, but we must include them in the
      * tree construction to get a canonical Huffman tree (longest code
      * all ones)
      */
-    gen_codes((ct_data *)static_ltree, L_CODES+1, bl_count);
+    gen_codes((ct_data *)static_ltree, L_CODES + 1, bl_count);
 
     /* The static distance tree is trivial: */
     for (n = 0; n < D_CODES; n++) {
-        static_dtree[n].Len = 5;
-        static_dtree[n].Code = bi_reverse(n, 5);
+        static_dtree[n].Len = 5; // 5:byte alignment
+        static_dtree[n].Code = bi_reverse(n, 5); // 5:byte alignment
     }
 }
 
@@ -1292,13 +1292,13 @@ local void init_block(s)
     int n; /* iterates over tree elements */
 
     /* Initialize the trees. */
-    for (n = 0; n < L_CODES;  n++) {
+    for (n = 0; n < L_CODES; n++) {
         s->dyn_ltree[n].Freq = 0;
     }
-    for (n = 0; n < D_CODES;  n++) {
+    for (n = 0; n < D_CODES; n++) {
         s->dyn_dtree[n].Freq = 0;
     }
-    for (n = 0; n < BL_CODES; n++) {
+    for (n = 0; n < BL_CODES;n++) {
         s->bl_tree[n].Freq = 0;
     }
 
@@ -1432,7 +1432,8 @@ local int deflateInit2 (strm, level, method, windowBits, memLevel, strategy)
         windowBits = -windowBits;
     }
     if (memLevel < 1 || memLevel > MAX_MEM_LEVEL || method != DEFLATED ||
-        windowBits < 8 || windowBits > 15 || level < 1 || level > 9) {
+        windowBits < 8 || windowBits > 15 || // 8:byte alignment, 15:byte alignment
+        level < 1 || level > 9) { // 9:byte alignment
         return Z_STREAM_ERROR;
     }
     s = (deflate_state *) ZALLOC(strm, 1, sizeof(deflate_state));
@@ -1447,27 +1448,26 @@ local int deflateInit2 (strm, level, method, windowBits, memLevel, strategy)
     s->w_size = 1 << s->w_bits;
     s->w_mask = s->w_size - 1;
 
-    s->hash_bits = memLevel + 7;
+    s->hash_bits = memLevel + 7; // 7:byte alignment
     s->hash_size = 1 << s->hash_bits;
     s->hash_mask = s->hash_size - 1;
     s->hash_shift =  ((s->hash_bits+MIN_MATCH-1)/MIN_MATCH);
 
-    s->window = (Byte*) ZALLOC(strm, s->w_size, 2*sizeof(Byte));
+    s->window = (Byte*) ZALLOC(strm, s->w_size, 2 * sizeof(Byte)); // 2:byte alignment
     s->prev   = (Pos*)  ZALLOC(strm, s->w_size, sizeof(Pos));
     s->head   = (Pos*)  ZALLOC(strm, s->hash_size, sizeof(Pos));
 
-    s->lit_bufsize = 1 << (memLevel + 6); /* 16K elements by default */
+    s->lit_bufsize = 1 << (memLevel + 6); /* 16K elements by default */ // 6:byte alignment
 
-    s->pending_buf = (uch*) ZALLOC(strm, s->lit_bufsize, 2*sizeof(ush));
+    s->pending_buf = (uch*) ZALLOC(strm, s->lit_bufsize, 2 * sizeof(ush)); // 2:byte alignment
 
-    if (s->window == Z_NULL || s->prev == Z_NULL || s->head == Z_NULL ||
-        s->pending_buf == Z_NULL) {
-    strm->msg = z_errmsg[1-Z_MEM_ERROR];
+    if (s->window == Z_NULL || s->prev == Z_NULL || s->head == Z_NULL || s->pending_buf == Z_NULL) {
+    strm->msg = z_errmsg[1 - Z_MEM_ERROR];
     deflateEnd (strm);
     return Z_MEM_ERROR;
     }
     s->d_buf = (ush*) &(s->pending_buf[s->lit_bufsize]);
-    s->l_buf = (uch*) &(s->pending_buf[3*s->lit_bufsize]);
+    s->l_buf = (uch*) &(s->pending_buf[3 * s->lit_bufsize]); // 3:byte alignment
     /* We overlay pending_buf and d_buf+l_buf. This works since the average
      * output size for (length,distance) codes is <= 32 bits (worst case
      * is 15+15+13=33).
@@ -1511,7 +1511,7 @@ int w;
     }
 
     /* set window size */
-    if (w < 8 || w > 15) {
+    if (w < 8 || w > 15) { // 8:window size, 15:window size
         inflateEnd(z);
         return Z_STREAM_ERROR;
     }
@@ -1523,7 +1523,7 @@ local void putShortMSB (s, b)
     deflate_state *s;
     uInt b;
 {
-    put_byte(s, (Byte)(b >> 8));
+    put_byte(s, (Byte)(b >> 8)); // 8:byte alignment
     put_byte(s, (Byte)(b & 0xff));
 }
 
@@ -1610,7 +1610,7 @@ local void fill_window(s)
          * Otherwise, window_size == 2*WSIZE so more >= 2.
          * If there was sliding, more >= WSIZE. So in all cases, more >= 2.
          */
-        Assert(more >= 2, "more < 2");
+        Assert(more >= 2, "more < 2"); // 2:byte alignment
 
         n = read_buf(s->strm, (char*)s->window + s->strstart + s->lookahead,
                      more);
@@ -1642,10 +1642,10 @@ local int longest_match(s, cur_match)
      */
     register Byte *strend = s->window + s->strstart + MAX_MATCH - 1;
     register ush scan_start = *(ush*)scan;
-    register ush scan_end   = *(ush*)(scan+best_len-1);
+    register ush scan_end   = *(ush*)(scan + best_len-1);
 #else
     register Byte *strend = s->window + s->strstart + MAX_MATCH;
-    register Byte scan_end1  = scan[best_len-1];
+    register Byte scan_end1  = scan[best_len - 1];
     register Byte scan_end   = scan[best_len];
 #endif
 
@@ -1656,7 +1656,7 @@ local int longest_match(s, cur_match)
 
     /* Do not waste too much time if we already have a good match: */
     if (s->prev_length >= s->good_match) {
-        chain_length >>= 2;
+        chain_length >>= 2; // 2:byte alignment
     }
     Assert(s->strstart <= s->window_size-MIN_LOOKAHEAD, "need lookahead");
 
@@ -1667,11 +1667,11 @@ local int longest_match(s, cur_match)
         /* Skip to next match if the match length cannot increase
          * or if the match length is less than 2:
          */
-#if (defined(UNALIGNED_OK) && MAX_MATCH == 258)
+#if (defined(UNALIGNED_OK) && MAX_MATCH == 258) // 258:byte alignment
         /* This code assumes sizeof(unsigned short) == 2. Do not use
          * UNALIGNED_OK if your compiler uses a different size.
          */
-        if (*(ush*)(match+best_len-1) != scan_end ||
+        if (*(ush*)(match+best_len - 1) != scan_end ||
             *(ush*)match != scan_start) continue;
 
         /* It is not necessary to compare scan[2] and match[2] since they are
@@ -1685,15 +1685,15 @@ local int longest_match(s, cur_match)
          */
         scan++, match++;
         do {
-        } while (*(ush*)(scan+=2) == *(ush*)(match+=2) &&
-                 *(ush*)(scan+=2) == *(ush*)(match+=2) &&
-                 *(ush*)(scan+=2) == *(ush*)(match+=2) &&
-                 *(ush*)(scan+=2) == *(ush*)(match+=2) &&
+        } while (*(ush*)(scan+=2) == *(ush*)(match+=2) && // 2:byte alignment
+                 *(ush*)(scan+=2) == *(ush*)(match+=2) && // 2:byte alignment
+                 *(ush*)(scan+=2) == *(ush*)(match+=2) && // 2:byte alignment
+                 *(ush*)(scan+=2) == *(ush*)(match+=2) && // 2:byte alignment
                  scan < strend);
         /* The funny "do {}" generates better code on most compilers */
 
         /* Here, scan <= window+strstart+257 */
-        Assert(scan <= s->window+(unsigned)(s->window_size-1), "wild scan");
+        Assert(scan <= s->window + (unsigned)(s->window_size - 1), "wild scan");
         if (*scan == *match) scan++;
 
         len = (MAX_MATCH - 1) - (int)(strend-scan);
@@ -1714,7 +1714,7 @@ local int longest_match(s, cur_match)
          * are always equal when the other bytes match, given that
          * the hash keys are equal and that HASH_BITS >= 8.
          */
-        scan += 2, match++;
+        scan += 2, match++; // 2:byte alignment
 
         /* We check for insufficient lookahead only every 8th comparison;
          * the 256th check will be made at strstart+258.
@@ -1726,7 +1726,7 @@ local int longest_match(s, cur_match)
                  *++scan == *++match && *++scan == *++match &&
                  scan < strend);
 
-        Assert(scan <= s->window+(unsigned)(s->window_size-1), "wild scan");
+        Assert(scan <= s->window + (unsigned)(s->window_size - 1), "wild scan");
 
         len = MAX_MATCH - (int)(strend - scan);
         scan = strend - MAX_MATCH;
@@ -1770,29 +1770,28 @@ local int ct_tally (s, dist, lc)
                (ush)lc <= (ush)(MAX_MATCH-MIN_MATCH) &&
                (ush)d_code(dist) < (ush)D_CODES,  "ct_tally: bad match");
 
-        s->dyn_ltree[length_code[lc]+LITERALS+1].Freq++;
+        s->dyn_ltree[length_code[lc] + LITERALS + 1].Freq++;
         s->dyn_dtree[d_code(dist)].Freq++;
     }
 
     /* Try to guess if it is profitable to stop the current block here */
-    if (s->level > 2 && (s->last_lit & 0xfff) == 0) {
+    if (s->level > 2 && (s->last_lit & 0xfff) == 0) { // 2:byte alignment
         /* Compute an upper bound for the compressed length */
-        ulg out_length = (ulg)s->last_lit*8L;
+        ulg out_length = (ulg)s->last_lit * 8L;
         ulg in_length = (ulg)s->strstart - s->block_start;
         int dcode;
         for (dcode = 0; dcode < D_CODES; dcode++) {
-            out_length += (ulg)s->dyn_dtree[dcode].Freq *
-            (5L+extra_dbits[dcode]);
+            out_length += (ulg)s->dyn_dtree[dcode].Freq * (5L + extra_dbits[dcode]);
         }
-        out_length >>= 3;
+        out_length >>= 3; // 3:byte alignment
 
-        if (s->matches < s->last_lit/2 && out_length < in_length/2) {
+        if (s->matches < s->last_lit / 2 && out_length < in_length / 2) { // 2:byte alignment
             return 1;
         }
     }
-    return (s->last_lit == s->lit_bufsize-1);
+    return (s->last_lit == s->lit_bufsize - 1);
     /* We avoid equality with lit_bufsize because of wraparound at 64K
-     * on 16 bit machines and because stored blocks are restricted to
+     * on 16 bit machines and because stored fblocks are restricted to
      * 64K-1 bytes.
      */
 }
@@ -1803,16 +1802,16 @@ local void set_data_type(s)
     int n = 0;
     unsigned ascii_freq = 0;
     unsigned bin_freq = 0;
-    while (n < 7) {
+    while (n < 7) { // 7:byte alignment
         bin_freq += s->dyn_ltree[n++].Freq;
     }
-    while (n < 128) {
+    while (n < 128) { // 128:byte alignment
         ascii_freq += s->dyn_ltree[n++].Freq;
     }
     while (n < LITERALS) {
         bin_freq += s->dyn_ltree[n++].Freq;
     }
-    s->data_type = (Byte)(bin_freq > (ascii_freq >> 2) ? BINARY : ASCII);
+    s->data_type = (Byte)(bin_freq > (ascii_freq >> 2) ? BINARY : ASCII); // 2:byte alignment
 }
 
 local void pqdownheap(s, tree, k)
@@ -1825,7 +1824,7 @@ local void pqdownheap(s, tree, k)
     while (j <= s->heap_len) {
         /* Set j to the smallest of the two sons: */
         if (j < s->heap_len &&
-            smaller(tree, s->heap[j+1], s->heap[j], s->depth)) {
+            smaller(tree, s->heap[j + 1], s->heap[j], s->depth)) {
             j++;
         }
         /* Exit if v is smaller than both sons */
@@ -1869,7 +1868,7 @@ local void gen_bitlen(s, desc)
      */
     tree[s->heap[s->heap_max]].Len = 0; /* root of the heap */
 
-    for (h = s->heap_max+1; h < HEAP_SIZE; h++) {
+    for (h = s->heap_max + 1; h < HEAP_SIZE; h++) {
         n = s->heap[h];
         bits = tree[tree[n].Dad].Len + 1;
         if (bits > max_length) {
@@ -1885,7 +1884,7 @@ local void gen_bitlen(s, desc)
         s->bl_count[bits]++;
         xbits = 0;
         if (n >= base) {
-            xbits = extra[n-base];
+            xbits = extra[n - base];
         }
         f = tree[n].Freq;
         s->opt_len += (ulg)f * (bits + xbits);
@@ -1906,12 +1905,12 @@ local void gen_bitlen(s, desc)
             bits--;
         }
         s->bl_count[bits]--;      /* move one leaf down the tree */
-        s->bl_count[bits+1] += 2; /* move one overflow item as its brother */
+        s->bl_count[bits+1] += 2; /* move one overflow item as its brother */ // 2:byte alignment
         s->bl_count[max_length]--;
         /* The brother of the overflow item also moves one step up,
          * but this does not affect bl_count[max_length]
          */
-        overflow -= 2;
+        overflow -= 2; // 2:byte alignment
     } while (overflow > 0);
 
     /* Now recompute all bit lengths, scanning in increasing frequency.
@@ -1968,8 +1967,8 @@ local void build_tree(s, desc)
      * possible code. So to avoid special checks later on we force at least
      * two codes of non zero frequency.
      */
-    while (s->heap_len < 2) {
-        new = s->heap[++(s->heap_len)] = (max_code < 2 ? ++max_code : 0);
+    while (s->heap_len < 2) { // 2:byte alignment
+        new = s->heap[++(s->heap_len)] = (max_code < 2 ? ++max_code : 0); // 2:byte alignment
         tree[new].Freq = 1;
         s->depth[new] = 0;
         s->opt_len--;
@@ -1983,7 +1982,7 @@ local void build_tree(s, desc)
     /* The elements heap[heap_len/2+1 .. heap_len] are leaves of the tree,
      * establish sub-heaps of increasing lengths:
      */
-    for (n = s->heap_len/2; n >= 1; n--) {
+    for (n = s->heap_len / 2; n >= 1; n--) { // 2:byte alignment
         pqdownheap(s, tree, n);
     }
 
@@ -2010,7 +2009,7 @@ local void build_tree(s, desc)
         /* and insert the new node in the heap */
         s->heap[SMALLEST] = node++;
         pqdownheap(s, tree, SMALLEST);
-    } while (s->heap_len >= 2);
+    } while (s->heap_len >= 2); // 2:byte alignment
 
     s->heap[--(s->heap_max)] = s->heap[SMALLEST];
 
@@ -2037,9 +2036,9 @@ local void scan_tree (s, tree, max_code)
     int min_count = 4;         /* min repeat count */
 
     if (nextlen == 0) {
-        max_count = 138, min_count = 3;
+        max_count = 138, min_count = 3; // 3:byte alignment, 138:byte alignment
     }
-    tree[max_code+1].Len = (ush)0xffff; /* guard */
+    tree[max_code + 1].Len = (ush)0xffff; /* guard */
 
     for (n = 0; n <= max_code; n++) {
         curlen = nextlen;
@@ -2053,7 +2052,7 @@ local void scan_tree (s, tree, max_code)
                 s->bl_tree[curlen].Freq++;
             }
             s->bl_tree[REP_3_6].Freq++;
-        } else if (count <= 10) {
+        } else if (count <= 10) { // 10:byte alignment
             s->bl_tree[REPZ_3_10].Freq++;
         } else {
             s->bl_tree[REPZ_11_138].Freq++;
@@ -2061,11 +2060,11 @@ local void scan_tree (s, tree, max_code)
         count = 0;
         prevlen = curlen;
         if (nextlen == 0) {
-            max_count = 138, min_count = 3;
+            max_count = 138, min_count = 3; // 3:byte alignment, 138:byte alignment
         } else if (curlen == nextlen) {
-            max_count = 6, min_count = 3;
+            max_count = 6, min_count = 3; // 3:byte alignment, 6:byte alignment
         } else {
-            max_count = 7, min_count = 4;
+            max_count = 7, min_count = 4; // 7:byte alignment, 4:byte alignment
         }
     }
 }
@@ -2089,13 +2088,13 @@ local int build_bl_tree(s)
      * requires that at least 4 bit length codes be sent. (appnote.txt says
      * 3 but the actual value used is 4.)
      */
-    for (max_blindex = BL_CODES-1; max_blindex >= 3; max_blindex--) {
+    for (max_blindex = BL_CODES-1; max_blindex >= 3; max_blindex--) { // 3:byte alignment
         if (s->bl_tree[bl_order[max_blindex]].Len != 0) {
             break;
         }
     }
     /* Update opt_len to include the bit length tree and counts */
-    s->opt_len += 3*(max_blindex+1) + 5+5+4;
+    s->opt_len += 3 * (max_blindex + 1) + 5 + 5 + 4; // 3:byte alignment, 4:byte alignment, 5:byte alignment
 
     return max_blindex;
 }
@@ -2106,7 +2105,7 @@ local void send_bits(s, value, length)
     int length; /* number of bits */
 {
 #ifdef DEBUG
-    Assert(length > 0 && length <= 15, "invalid length");
+    Assert(length > 0 && length <= 15, "invalid length"); // 15:byte alignment
     s->bits_sent += (ulg)length;
 #endif
     /* If not enough room in bi_buf, use (valid) bits from bi_buf and
@@ -2127,7 +2126,7 @@ local void send_bits(s, value, length)
 local void bi_windup(s)
     deflate_state *s;
 {
-    if (s->bi_valid > 8) {
+    if (s->bi_valid > 8) { // 8:byte alignment
         put_short(s, s->bi_buf);
     } else if (s->bi_valid > 0) {
         put_byte(s, (Byte)s->bi_buf);
@@ -2135,7 +2134,7 @@ local void bi_windup(s)
     s->bi_buf = 0;
     s->bi_valid = 0;
 #ifdef DEBUG
-    s->bits_sent = (s->bits_sent+7) & ~7;
+    s->bits_sent = (s->bits_sent + 7) & ~7; // 7:byte alignment
 #endif
 }
 
@@ -2151,11 +2150,11 @@ local void copy_block(s, buf, len, header)
         put_short(s, (ush)len);
         put_short(s, (ush)~len);
 #ifdef DEBUG
-        s->bits_sent += 2*16;
+        s->bits_sent += 2 * 16; // 2:byte alignment, 16:byte alignment
 #endif
     }
 #ifdef DEBUG
-    s->bits_sent += (ulg)len<<3;
+    s->bits_sent += (ulg)len << 3; // 3:byte alignment
 #endif
     while (len--) {
         put_byte(s, *buf++);
@@ -2182,7 +2181,7 @@ local void compress_block(s, ltree, dtree)
             } else {
                 /* Here, lc is the match length - MIN_MATCH */
                 code = length_code[lc];
-                send_code(s, code+LITERALS+1, ltree); /* send the length code */
+                send_code(s, code+LITERALS + 1, ltree); /* send the length code */
                 extra = extra_lbits[code];
                 if (extra != 0) {
                     lc -= base_length[code];
@@ -2201,7 +2200,7 @@ local void compress_block(s, ltree, dtree)
             } /* literal or match pair ? */
 
             /* Check that the overlay between pending_buf and d_buf+l_buf is ok: */
-            Assert(s->pending < s->lit_bufsize + 2*lx, "pendingBuf overflow");
+            Assert(s->pending < s->lit_bufsize + 2 * lx, "pendingBuf overflow");
         } while (lx < s->last_lit);
     }
     send_code(s, END_BLOCK, ltree);
@@ -2221,12 +2220,12 @@ local void send_tree (s, tree, max_code)
     int min_count = 4;         /* min repeat count */
 
     if (nextlen == 0) {
-        max_count = 138, min_count = 3;
+        max_count = 138, min_count = 3; // 138:byte alignment, 3:byte alignment
     }
 
     for (n = 0; n <= max_code; n++) {
         curlen = nextlen;
-        nextlen = tree[n+1].Len;
+        nextlen = tree[n + 1].Len;
         if (++count < max_count && curlen == nextlen) {
             continue;
         } else if (count < min_count) {
@@ -2238,24 +2237,24 @@ local void send_tree (s, tree, max_code)
                 send_code(s, curlen, s->bl_tree);
                 count--;
             }
-            Assert(count >= 3 && count <= 6, " 3_6?");
+            Assert(count >= 3 && count <= 6, " 3_6?"); // 3:byte alignment, 6:byte alignment
             send_code(s, REP_3_6, s->bl_tree);
-            send_bits(s, count-3, 2);
-        } else if (count <= 10) {
+            send_bits(s, count - 3, 2); // 3:byte alignment, 2:byte alignment
+        } else if (count <= 10) { // 10:byte alignment
             send_code(s, REPZ_3_10, s->bl_tree);
-            send_bits(s, count-3, 3);
+            send_bits(s, count - 3, 3); // 3:byte alignment
         } else {
             send_code(s, REPZ_11_138, s->bl_tree);
-            send_bits(s, count-11, 7);
+            send_bits(s, count - 11, 7); // 11:byte alignment, 7:byte alignment
         }
         count = 0;
         prevlen = curlen;
         if (nextlen == 0) {
-            max_count = 138, min_count = 3;
+            max_count = 138, min_count = 3; // 138:byte alignment, 3:byte alignment
         } else if (curlen == nextlen) {
-            max_count = 6, min_count = 3;
+            max_count = 6, min_count = 3; // 6:byte alignment, 3:byte alignment
         } else {
-            max_count = 7, min_count = 4;
+            max_count = 7, min_count = 4; // 7:byte alignment, 4:byte alignment
         }
     }
 }
@@ -2266,19 +2265,19 @@ local void send_all_trees(s, lcodes, dcodes, blcodes)
 {
     int rank;                    /* index in bl_order */
 
-    Assert (lcodes >= 257 && dcodes >= 1 && blcodes >= 4, "not enough codes");
+    Assert (lcodes >= 257 && dcodes >= 1 && blcodes >= 4, "not enough codes"); // 257:byte alignment, 4:byte alignment
     Assert (lcodes <= L_CODES && dcodes <= D_CODES && blcodes <= BL_CODES,
             "too many codes");
-    send_bits(s, lcodes-257, 5); /* not +255 as stated in appnote.txt */
-    send_bits(s, dcodes-1,   5);
-    send_bits(s, blcodes-4,  4); /* not -3 as stated in appnote.txt */
+    send_bits(s, lcodes - 257, 5); // 257:byte alignment, 5:byte alignment
+    send_bits(s, dcodes-1,   5); // 5:byte alignment
+    send_bits(s, blcodes - 4,  4); // 4:byte alignment
     for (rank = 0; rank < blcodes; rank++) {
-        send_bits(s, s->bl_tree[bl_order[rank]].Len, 3);
+        send_bits(s, s->bl_tree[bl_order[rank]].Len, 3); // 3:byte alignment
     }
 
-    send_tree(s, (ct_data *)s->dyn_ltree, lcodes-1); /* literal tree */
+    send_tree(s, (ct_data *)s->dyn_ltree, lcodes - 1); /* literal tree */
 
-    send_tree(s, (ct_data *)s->dyn_dtree, dcodes-1); /* distance tree */
+    send_tree(s, (ct_data *)s->dyn_dtree, dcodes - 1); /* distance tree */
 }
 
 ulg ct_flush_block(s, buf, stored_len, eof)
@@ -2310,8 +2309,8 @@ ulg ct_flush_block(s, buf, stored_len, eof)
     max_blindex = build_bl_tree(s);
 
     /* Determine the best encoding. Compute first the block length in bytes */
-    opt_lenb = (s->opt_len+3+7)>>3;
-    static_lenb = (s->static_len+3+7)>>3;
+    opt_lenb = (s->opt_len + 3 + 7) >> 3; // 7:byte alignment, 3:byte alignment
+    static_lenb = (s->static_len + 3 + 7) >> 3; // 3:byte alignment, 7:byte alignment
 
     if (static_lenb <= opt_lenb) {
         opt_lenb = static_lenb;
@@ -2329,21 +2328,21 @@ ulg ct_flush_block(s, buf, stored_len, eof)
          * successful. If LIT_BUFSIZE <= WSIZE, it is never too late to
          * transform a block into a stored block.
          */
-        send_bits(s, (STORED_BLOCK<<1)+eof, 3);  /* send block type */
-        s->compressed_len = (s->compressed_len + 3 + 7) & ~7L;
-        s->compressed_len += (stored_len + 4) << 3;
+        send_bits(s, (STORED_BLOCK << 1) + eof, 3);  // 3:byte alignment /* send block type */
+        s->compressed_len = (s->compressed_len + 3 + 7) & ~7L; // 7:byte alignment, 3:byte alignment
+        s->compressed_len += (stored_len + 4) << 3; // 3:byte alignment, 4:byte alignment
 
         copy_block(s, buf, (unsigned)stored_len, 1); /* with header */
     } else if (static_lenb == opt_lenb) {
-        send_bits(s, (STATIC_TREES<<1)+eof, 3);
+        send_bits(s, (STATIC_TREES << 1) + eof, 3); // 3:byte alignment
         compress_block(s, (ct_data *)static_ltree, (ct_data *)static_dtree);
-        s->compressed_len += 3 + s->static_len;
+        s->compressed_len += 3 + s->static_len; // 3:byte alignment
     } else {
-        send_bits(s, (DYN_TREES<<1)+eof, 3);
-        send_all_trees(s, s->l_desc.max_code+1, s->d_desc.max_code+1,
+        send_bits(s, (DYN_TREES << 1) + eof, 3); // 3:byte alignment
+        send_all_trees(s, s->l_desc.max_code+1, s->d_desc.max_code + 1,
                        max_blindex+1);
         compress_block(s, (ct_data *)s->dyn_ltree, (ct_data *)s->dyn_dtree);
-        s->compressed_len += 3 + s->opt_len;
+        s->compressed_len += 3 + s->opt_len; // 3:byte alignment
     }
     Assert (s->compressed_len == s->bits_sent, "bad compressed size");
     init_block(s);
@@ -2353,7 +2352,7 @@ ulg ct_flush_block(s, buf, stored_len, eof)
         s->compressed_len += 7;  /* align on byte boundary */
     }
 
-    return s->compressed_len >> 3;
+    return s->compressed_len >> 3; // 3:byte alignment
 }
 
 local int deflate_fast(s, flush)
@@ -2363,7 +2362,7 @@ local int deflate_fast(s, flush)
     IPos hash_head; /* head of the hash chain */
     int bflush;     /* set if current block must be flushed */
 
-    s->prev_length = MIN_MATCH-1;
+    s->prev_length = MIN_MATCH - 1;
 
     for (;;) {
         /* Make sure that we always have enough lookahead, except
@@ -2396,7 +2395,7 @@ local int deflate_fast(s, flush)
              * of the string with itself at the start of the input file).
              */
             if (s->strategy != Z_HUFFMAN_ONLY) {
-            s->match_length = longest_match (s, hash_head);
+            s->match_length = longest_match(s, hash_head);
             }
             /* longest_match() sets match_start */
 
@@ -2431,7 +2430,7 @@ local int deflate_fast(s, flush)
                 s->strstart += s->match_length;
                 s->match_length = 0;
                 s->ins_h = s->window[s->strstart];
-                UPDATE_HASH(s, s->ins_h, s->window[s->strstart+1]);
+                UPDATE_HASH(s, s->ins_h, s->window[s->strstart + 1]);
 #if MIN_MATCH != 3
                 Call UPDATE_HASH() MIN_MATCH-3 more times
 #endif
@@ -2499,20 +2498,20 @@ local int deflate_slow(s, flush)
                 s->match_length = s->lookahead;
             }
 
-            if (s->match_length <= 5 && (s->strategy == Z_FILTERED ||
+            if (s->match_length <= 5 && (s->strategy == Z_FILTERED || // 5:byte alignment
                  (s->match_length == MIN_MATCH &&
                   s->strstart - s->match_start > TOO_FAR))) {
                 /* If prev_match is also MIN_MATCH, match_start is garbage
                  * but we will ignore the current match anyway.
                  */
-                s->match_length = MIN_MATCH-1;
+                s->match_length = MIN_MATCH - 1;
             }
         }
         /* If there was a match at the previous step and the current
          * match is not better, output the previous match:
          */
         if (s->prev_length >= MIN_MATCH && s->match_length <= s->prev_length) {
-            check_match(s, s->strstart-1, s->prev_match, s->prev_length);
+            check_match(s, s->strstart - 1, s->prev_match, s->prev_length);
 
             bflush = ct_tally(s, s->strstart -1 - s->prev_match,
                               s->prev_length - MIN_MATCH);
@@ -2520,7 +2519,7 @@ local int deflate_slow(s, flush)
             /* Insert in hash table all strings up to the end of the match.
              * strstart-1 and strstart are already inserted.
              */
-            s->lookahead -= s->prev_length-1;
+            s->lookahead -= s->prev_length - 1;
             s->prev_length -= 2;
             do {
                 s->strstart++;
@@ -2532,7 +2531,7 @@ local int deflate_slow(s, flush)
                  */
             } while (--s->prev_length != 0);
             s->match_available = 0;
-            s->match_length = MIN_MATCH-1;
+            s->match_length = MIN_MATCH - 1;
             s->strstart++;
 
             if (bflush) {
@@ -2543,7 +2542,7 @@ local int deflate_slow(s, flush)
              * single literal. If there was a match but the current match
              * is longer, truncate the previous match to a single literal.
              */
-            if (ct_tally (s, 0, s->window[s->strstart-1])) {
+            if (ct_tally (s, 0, s->window[s->strstart - 1])) {
                 FLUSH_BLOCK_ONLY(s, 0);
             }
             s->strstart++;
@@ -2561,7 +2560,7 @@ local int deflate_slow(s, flush)
         }
     }
     if (s->match_available) {
-        ct_tally (s, 0, s->window[s->strstart-1]);
+        ct_tally (s, 0, s->window[s->strstart - 1]);
     }
 
     FLUSH_BLOCK(s, flush == Z_FINISH);
@@ -2587,14 +2586,14 @@ local int deflate (strm, flush)
 
     /* Write the zlib header */
     if (strm->state->status == INIT_STATE) {
-        uInt header = (DEFLATED + ((strm->state->w_bits-8)<<4)) << 8;
-        uInt level_flags = (strm->state->level-1) >> 1;
+        uInt header = (DEFLATED + ((strm->state->w_bits - 8) << 4)) << 8; // 4:byte alignment, 8:byte alignment
+        uInt level_flags = (strm->state->level - 1) >> 1;
 
-        if (level_flags > 3) {
-            level_flags = 3;
+        if (level_flags > 3) { // 3:byte alignment
+            level_flags = 3; // 3:byte alignment
         }
-        header |= (level_flags << 6);
-        header += 31 - (header % 31);
+        header |= (level_flags << 6); // 3:byte alignment
+        header += 31 - (header % 31); // 31:byte alignment
 
         strm->state->status = BUSY_STATE;
         putShortMSB(strm->state, header);
@@ -2620,7 +2619,7 @@ local int deflate (strm, flush)
         if (flush == Z_FINISH) {
             strm->state->status = FINISH_STATE;
         }
-        if (strm->state->level <= 3) {
+        if (strm->state->level <= 3) { // 3:byte alignment
             if (deflate_fast(strm->state, flush)) {
                 return Z_OK;
             }
@@ -2640,7 +2639,7 @@ local int deflate (strm, flush)
     }
 
     /* Write the zlib trailer (adler32) */
-    putShortMSB(strm->state, (uInt)(strm->state->adler >> 16));
+    putShortMSB(strm->state, (uInt)(strm->state->adler >> 16)); // 16:byte alignment
     putShortMSB(strm->state, (uInt)(strm->state->adler & 0xffff));
     flush_pending(strm);
     /* If avail_out is zero, the application will call deflate again
@@ -2766,7 +2765,7 @@ local gzFile gz_open (path, mode, fd)
         /* Write a very simple .gz header:
          */
         fprintf(s->file, "%c%c%c%c%c%c%c%c%c%c", GZ_MAGIC_1, GZ_MAGIC_2,
-                DEFLATED, 0 /* flags */, 0, 0, 0, 0 /* time */, 0 /* xflags */, OS_CODE);
+                DEFLATED, 0, 0, 0, 0, 0, 0, OS_CODE);
     } else {
         /* Check and skip the header:
          */
@@ -2778,8 +2777,8 @@ local gzFile gz_open (path, mode, fd)
         Byte osCode;
         int c;
 
-        s->stream.avail_in = fread(s->inbuf, 1, 2, s->file);
-        if (s->stream.avail_in != 2 || s->inbuf[0] != GZ_MAGIC_1
+        s->stream.avail_in = fread(s->inbuf, 1, 2, s->file); // 2:size
+        if (s->stream.avail_in != 2 || s->inbuf[0] != GZ_MAGIC_1 // 2:byte alignment
             || s->inbuf[1] != GZ_MAGIC_2) {
             s->transparent = 1;
             return (gzFile)s;
@@ -2794,7 +2793,7 @@ local gzFile gz_open (path, mode, fd)
         if ((flags & EXTRA_FIELD) != 0) { /* skip the extra field */
             long len;
             err = fscanf(s->file, "%c%c", &c1, &c2);
-            len = c1 + ((long)c2<<8);
+            len = c1 + ((long)c2 << 8); // 8:byte alignment
             fseek(s->file, len, SEEK_CUR);
         }
         if ((flags & ORIG_NAME) != 0) { /* skip the original file name */
@@ -2868,7 +2867,7 @@ local int gzclose (file)
     }
 
     if (s->mode == 'w') {
-        err = gzflush (file, Z_FINISH);
+        err = gzflush(file, Z_FINISH);
         if (err != Z_OK) {
             return destroy((gz_stream *)file);
         }
@@ -2877,7 +2876,7 @@ local int gzclose (file)
         putLong (s->file, s->stream.total_in);
     } else if (s->mode == 'r' && s->z_err == Z_STREAM_END) {
         /* slide CRC and original size if they are at the end of inbuf */
-        if ((n = s->stream.avail_in) < 8  && !s->z_eof) {
+        if ((n = s->stream.avail_in) < 8  && !s->z_eof) { // 8:byte alignment
             Byte *p = s->inbuf;
             Byte *q = s->stream.next_in;
             while (n--) {
@@ -2885,13 +2884,13 @@ local int gzclose (file)
             }
 
             n = s->stream.avail_in;
-            n += fread(p, 1, 8, s->file);
+            n += fread(p, 1, 8, s->file); // 8:size
             s->stream.next_in = s->inbuf;
         }
         /* check CRC and original size */
         if (n < 8 ||
             getLong(s->stream.next_in) != s->crc ||
-            getLong(s->stream.next_in + 4) != s->stream.total_out) {
+            getLong(s->stream.next_in + 4) != s->stream.total_out) { // 4:byte alignment
             s->z_err = Z_DATA_ERROR;
         }
     }
@@ -2936,11 +2935,11 @@ static unsigned int wm_tool_crc32(unsigned int crc, unsigned char *buffer, int s
 
     for (i = 0; i < size; i++) {
         if (mode & WM_TOOL_CRC32_REFLECT_INPUT) {
-            temp = wm_tool_crc32_reflect(buffer[i], 8);
+            temp = wm_tool_crc32_reflect(buffer[i], 8); // 8:ch
         } else {
             temp = buffer[i];
         }
-        crc = wm_tool_crc32_tab[(crc ^ temp) & 0xff] ^ (crc >> 8);
+        crc = wm_tool_crc32_tab[(crc ^ temp) & 0xff] ^ (crc >> 8); // 8:byte alignment
     }
 
     return crc ;
@@ -2950,7 +2949,7 @@ static unsigned int wm_tool_get_crc32(unsigned char *buffer, int size, wm_tool_c
 {
     wm_tool_file_crc = wm_tool_crc32(wm_tool_file_crc, buffer, size, mode);
     if (mode & WM_TOOL_CRC32_REFLECT_OUTPUT) {
-        wm_tool_file_crc = wm_tool_crc32_reflect(wm_tool_file_crc, 32);
+        wm_tool_file_crc = wm_tool_crc32_reflect(wm_tool_file_crc, 32); // 32:size
     }
     return wm_tool_file_crc;
 }
@@ -2962,9 +2961,9 @@ static unsigned short wm_tool_get_crc16(unsigned char *ptr, unsigned short count
     crc = 0;
 
     while (count--) {
-        crc = crc ^ (int) *ptr++ << 8;
+        crc = crc ^ (int) *ptr++ << 8; // 8:byte alignment
 
-        for (i = 0; i < 8; i++) {
+        for (i = 0; i < 8; i++) { // 8:loop cap
             if (crc & 0x8000)
                 crc = crc << 1 ^ 0x1021;
             else
@@ -3224,7 +3223,7 @@ static int wm_tool_parse_arv(int argc, char *argv[])
             case 'w':
                 {
                     if (optarg[1] == 'M') {
-                        wm_tool_normal_serial_rate = (optarg[0] - 0x30) * 1000000;
+                        wm_tool_normal_serial_rate = (optarg[0] - 0x30) * 1000000; // 1000000:byte alignment
                     } else {
                         wm_tool_normal_serial_rate = strtol(optarg, NULL, 10);
                     }
@@ -3233,9 +3232,9 @@ static int wm_tool_parse_arv(int argc, char *argv[])
             case 's':
                 {
                     if (optarg[1] == 'M') {
-                        wm_tool_download_serial_rate = (optarg[0] - 0x30) * 1000000;
+                        wm_tool_download_serial_rate = (optarg[0] - 0x30) * 1000000; // 1000000:byte alignment
                     } else {
-                        wm_tool_download_serial_rate = strtol(optarg, NULL, 10);
+                        wm_tool_download_serial_rate = strtol(optarg, NULL, 10); // 10:base
                     }
                     break;
                 }
@@ -3312,12 +3311,12 @@ static int wm_tool_parse_arv(int argc, char *argv[])
                 }
             case 'u':
                 {
-                    wm_tool_upd_addr = strtol(optarg, NULL, 16);
+                    wm_tool_upd_addr = strtol(optarg, NULL, 16); // 16:value of base
                     break;
                 }
             case 'r':
                 {
-                    wm_tool_run_addr = strtol(optarg, NULL, 16);
+                    wm_tool_run_addr = strtol(optarg, NULL, 16); // 16:value of base
                     break;
                 }
             case 'D':
@@ -3348,17 +3347,17 @@ static int wm_tool_parse_arv(int argc, char *argv[])
                 }
             case 'H':
                 {
-                    wm_tool_image_header = strtol(optarg, NULL, 16);
+                    wm_tool_image_header = strtol(optarg, NULL, 16); // 16:value of base
                     break;
                 }
             case 'n':
                 {
-                    wm_tool_next_image_header = strtol(optarg, NULL, 16);
+                    wm_tool_next_image_header = strtol(optarg, NULL, 16); // 16:value of base
                     break;
                 }
             case 'U':
                 {
-                    wm_tool_image_upd_no = strtol(optarg, NULL, 16);
+                    wm_tool_image_upd_no = strtol(optarg, NULL, 16); // 16:value of base
                     break;
                 }
             default:
@@ -3430,7 +3429,7 @@ static int wm_tool_pack_image(const char *outfile)
 
     /* calculate image's header's CRC */
     wm_tool_file_crc = 0xFFFFFFFF;
-    wm_tool_get_crc32((unsigned char *)&fbooter, sizeof(wm_tool_firmware_booter_t) - 4, 0);
+    wm_tool_get_crc32((unsigned char *)&fbooter, sizeof(wm_tool_firmware_booter_t) - 4, 0); // 4:byte alignment
     fbooter.hd_checksum = wm_tool_file_crc;
 
     /* write image's header to output file */
@@ -3475,14 +3474,14 @@ static int wm_tool_pack_gz_image(const char *gzbin, const char *outfile)
     fpbin = fopen(gzbin, "rb");
     if (fpbin == NULL) {
         wm_tool_printf("can not open input file [%s].\r\n", gzbin);
-        return -2;
+        return -2; // -2:byte alignment
     }
 
     fpimg = fopen(outfile, "wb+");
     if (fpimg == NULL) {
         wm_tool_printf("create img file error: [%s].\r\n", outfile);
         fclose(fpbin);
-        return -3;
+        return -3; // -3:byte alignment
     }
 
     /* --------deal with upgrade image's CRC begin---- */
@@ -3490,8 +3489,8 @@ static int wm_tool_pack_gz_image(const char *gzbin, const char *outfile)
     while (!feof(fpbin)) {
         memset(buf, 0, sizeof(buf));
         readlen = fread(buf, 1, WM_TOOL_ONCE_READ_LEN, fpbin);
-        if (readlen % 4 != 0) {
-            patch = 4 - readlen%4;
+        if (readlen % 4 != 0) { // 4:byte alignment
+            patch = 4 - readlen % 4; // 4:byte alignment
             readlen += patch;
         }
         filelen += readlen;
@@ -3562,22 +3561,22 @@ static int wm_tool_pack_dbg_image(const char *image, const char *outfile)
     fpimg = fopen(image, "rb");
     if (fpimg == NULL) {
         wm_tool_printf("open img file error: [%s].\r\n", image);
-        return -4;
+        return -4; // -4:byte alignment
     }
 
     magic_word = 0;
-    readlen = fread(&magic_word, 1, 4, fpimg);
+    readlen = fread(&magic_word, 1, 4, fpimg); // 4:size
     if (magic_word != WM_TOOL_IMG_HEAD_MAGIC_NO) {
         wm_tool_printf("input [%s] file magic error.\n", image);
         fclose(fpimg);
-        return -5;
+        return -5; // -5:byte alignment
     }
 
     fout = fopen(outfile, "wb+");
     if (fout == NULL) {
         wm_tool_printf("create img file error [%s].\r\n", outfile);
         fclose(fpimg);
-        return -6;
+        return -6; // -6:byte alignment
     }
 
     appimg_len = wm_tool_get_file_size(image);
@@ -3631,7 +3630,7 @@ static int wm_tool_pack_fls(const char *image, const char *outfile)
     fpsec = fopen(wm_tool_secboot_image, "rb");
     if (fpsec == NULL) {
         wm_tool_printf("can not open input file [%s].\r\n", wm_tool_secboot_image);
-        return -2;
+        return -2; // -2:byte alignment
     }
 
     magic_word = 0;
@@ -3639,14 +3638,14 @@ static int wm_tool_pack_fls(const char *image, const char *outfile)
     if (magic_word != WM_TOOL_IMG_HEAD_MAGIC_NO) {
         wm_tool_printf("input [%s] file magic error.\r\n", wm_tool_secboot_image);
         fclose(fpsec);
-        return -3;
+        return -3; // -3:byte alignment
     }
 
     fpimg = fopen(image, "rb");
     if (fpimg == NULL) {
         wm_tool_printf("open img file error [%s].\r\n", image);
         fclose(fpsec);
-        return -4;
+        return -4; // -4:byte alignment
     }
 
     magic_word = 0;
@@ -3655,7 +3654,7 @@ static int wm_tool_pack_fls(const char *image, const char *outfile)
         wm_tool_printf("input [%s] file magic error.\r\n", image);
         fclose(fpsec);
         fclose(fpimg);
-        return -5;
+        return -5; // -5:byte alignment
     }
 
     fout = fopen(outfile, "wb+");
@@ -3663,7 +3662,7 @@ static int wm_tool_pack_fls(const char *image, const char *outfile)
         wm_tool_printf("create img file error [%s].\r\n", outfile);
         fclose(fpsec);
         fclose(fpimg);
-        return -6;
+        return -6; // -6:byte alignment
     }
 
     fseek(fpsec, 0, SEEK_SET);
@@ -3945,12 +3944,12 @@ static int wm_tool_uart_set_speed(int speed)
 
                 return SetCommState(wm_tool_uart_handle, &cfg) ? 0 : -1;
             } else {
-                return -3;
+                return -3; // -4:byte alignment
             }
         }
     }
 
-    return -2;
+    return -2; // -2:byte alignment
 }
 
 static void wm_tool_uart_clear(void)
@@ -4244,7 +4243,7 @@ static int wm_tool_uart_open(const char *device)
     tty.c_cflag |= CLOCAL | CREAD;
     tty.c_cflag &= ~CRTSCTS;
     tty.c_cc[VMIN] = 1;
-    tty.c_cc[VTIME] = 5;
+    tty.c_cc[VTIME] = 5; // 5:byte alignment
 
     /* have no software flow control */
     tty.c_iflag &= ~(IXON|IXOFF|IXANY);
@@ -4377,7 +4376,7 @@ static int wm_tool_show_log_from_serial(void)
             } else if (WM_TOOL_SHOW_LOG_HEX == wm_tool_show_log_type) {
                 for (i = 0; i < ret; i++, j++) {
                     wm_tool_printf("%02X ", buf[i]);
-                    if ((j + 1) % 16 == 0) {
+                    if ((j + 1) % 16 == 0) { // 16:byte alignment
                         wm_tool_printf("\r\n");
                     }
                 }
@@ -4398,13 +4397,13 @@ static int wm_tool_set_wifi_chip_speed(int speed)
 {
     int ret;
 
-    if (speed == 2000000) {
+    if (speed == 2000000) { // 2000000:value of speed
         ret = wm_tool_uart_write(wm_tool_chip_cmd_b2000000, sizeof(wm_tool_chip_cmd_b2000000));
-    } else if (speed == 1000000) {
+    } else if (speed == 1000000) { // 1000000:value of speed
         ret = wm_tool_uart_write(wm_tool_chip_cmd_b1000000, sizeof(wm_tool_chip_cmd_b1000000));
-    } else if (speed == 921600) {
+    } else if (speed == 921600) { // 921600:value of speed
         ret = wm_tool_uart_write(wm_tool_chip_cmd_b921600, sizeof(wm_tool_chip_cmd_b921600));
-    } else if (speed == 460800) {
+    } else if (speed == 460800) { // 460800:value of speed
         ret = wm_tool_uart_write(wm_tool_chip_cmd_b460800, sizeof(wm_tool_chip_cmd_b460800));
     } else {
         ret = wm_tool_uart_write(wm_tool_chip_cmd_b115200, sizeof(wm_tool_chip_cmd_b115200));
@@ -4419,9 +4418,9 @@ static int wm_tool_send_esc2uart(int ms)
     int err = 0;
     unsigned char esc_key = 27;
 
-    for (i = 0; i < (ms / 10); i++) {
+    for (i = 0; i < (ms / 10); i++) { // 10:byte alignment
         err = wm_tool_uart_write(&esc_key, 1);
-        wm_tool_delay_ms(10); /* 10-50ms */
+        wm_tool_delay_ms(10); // 10:10ms
     }
 
     return err;
@@ -4459,9 +4458,9 @@ static int wm_tool_erase_image(wm_tool_dl_erase_e type)
             }
         } else {
             wm_tool_printf("erase error, errno = %d.\r\n", errno);
-            return -2;
+            return -2; // -2:byte alignment
         }
-    } while (cnt < 3);
+    } while (cnt < 3); // 3:loop condition
 
     wm_tool_uart_set_block(0);
 
@@ -4492,7 +4491,7 @@ static int wm_tool_query_mac(void)
                 if (offset >= len) {
                     macstr[len - 1] = '\0'; /* \n -> 0 */
                     if (strstr(macstr, "Mac:")) {
-                        err = wm_tool_str_to_hex_array(macstr + strlen("MAC:"), 6, macaddr);
+                        err = wm_tool_str_to_hex_array(macstr + strlen("MAC:"), 6, macaddr); // 6:cnt
                     } else {
                         err = 0;
                     }
@@ -4530,7 +4529,7 @@ static int wm_tool_xmodem_download(const char *image)
     unsigned char ack_id;
     int sndlen;
     int total_size;
-    int ret = -111;
+    int ret = -111; // -111:byte alignment
     int percent = 0;
     int curImgLen = 0;
     wm_tool_firmware_booter_t fbooter;
@@ -4576,8 +4575,8 @@ static int wm_tool_xmodem_download(const char *image)
                             WM_TOOL_DBG_PRINT("packet_data_offset = %d, packet_data_len = %d\r\n", \
                                 packet_data_offset, packet_data_len);
                             WM_TOOL_DBG_PRINT("header %x %x %x %x\r\n", packet_data[packet_data_offset], \
-                                packet_data[packet_data_offset+1], packet_data[packet_data_offset+2], \
-                                packet_data[packet_data_offset+3]);
+                                packet_data[packet_data_offset + 1], packet_data[packet_data_offset + 2], \
+                                packet_data[packet_data_offset + 3]);
                             memmove(packet_data, packet_data + packet_data_offset, packet_data_len);
                             WM_TOOL_DBG_PRINT("header %x %x %x %x\r\n", packet_data[0], packet_data[1],
                                 packet_data[2], packet_data[3]);
@@ -4595,8 +4594,8 @@ static int wm_tool_xmodem_download(const char *image)
                             memcpy(&fbooter, packet_data, sizeof(wm_tool_firmware_booter_t));
                             curImgLen = fbooter.run_img_len;
                             curImgLen += sizeof(wm_tool_firmware_booter_t);
-                            if ((fbooter.img_type & 256) > 0) {
-                                curImgLen += 128;
+                            if ((fbooter.img_type & 256) > 0) { // 256:byte alignment
+                                curImgLen += 128; // 128:byte alignment
                             }
                             WM_TOOL_DBG_PRINT("curImgLen %d\r\n", curImgLen);
                         }
@@ -4614,18 +4613,19 @@ static int wm_tool_xmodem_download(const char *image)
                         memset(&frame_data[0], 0, sizeof(frame_data));
                         frame_data[0] = XMODEM_HEAD;
                         frame_data[1] = (char)pack_counter;
-                        frame_data[2] = (char)(255 - frame_data[1]);
+                        frame_data[2] = (char)(255 - frame_data[1]); // 255:byte alignment, 2:array element
 
                         for (i = 0; i < read_number; i++) {
-                            frame_data[i + 3] = packet_data[i];
+                            frame_data[i + 3] = packet_data[i]; // 3:byte alignment
                         }
 
                         crc_value = wm_tool_get_crc16(&frame_data[3], XMODEM_DATA_SIZE);
 
-                        frame_data[XMODEM_DATA_SIZE + 3]=(unsigned char)(crc_value >> 8);
-                        frame_data[XMODEM_DATA_SIZE + 4]=(unsigned char)(crc_value);
+                        frame_data[XMODEM_DATA_SIZE + 3] =
+                            (unsigned char)(crc_value >> 8); // 8:byte alignment, 3:byte alignment
+                        frame_data[XMODEM_DATA_SIZE + 4] = (unsigned char)(crc_value); // 4:byte alignment
 
-                        write_number = wm_tool_uart_write(frame_data, XMODEM_DATA_SIZE + 5);
+                        write_number = wm_tool_uart_write(frame_data, XMODEM_DATA_SIZE + 5); // 5:byte alignment
                         if (write_number <= 0) {
                             wm_tool_printf("write serial error, errno = %d.\r\n", errno);
                         }
@@ -4638,13 +4638,13 @@ static int wm_tool_xmodem_download(const char *image)
                         } else {
                             if (ack_id == XMODEM_ACK) {
                                 int start_percent = 0;
-                                int step = 10;
+                                int step = 10; // 10:byte alignment
                                 WM_TOOL_DBG_PRINT("Ok!\r\n");
                                 if (sndlen * step / total_size > percent) {
                                     percent = sndlen * step / total_size;
                                     wm_tool_printf("#");
                                 }
-                                if (sndlen % 10240 == 0) {
+                                if (sndlen % 10240 == 0) { // 10240:byte alignment
                                 }
                             } else {
                                 WM_TOOL_DBG_PRINT("error = %x!\r\n", ack_id);
@@ -4678,7 +4678,7 @@ static int wm_tool_xmodem_download(const char *image)
 
                             ret = 0;
                         } else {
-                            wm_tool_delay_ms(100);
+                            wm_tool_delay_ms(100); // 100:100ms
                             wm_tool_uart_clear();
                         }
                     }
@@ -4686,13 +4686,13 @@ static int wm_tool_xmodem_download(const char *image)
                 }
             case XMODEM_NAK:
                 {
-                    if (retry_num++ > 100) {
+                    if (retry_num++ > 100) { // 100:retry_num
                         WM_TOOL_DBG_PRINT("retry too many times, quit!\r\n");
                         wm_tool_printf("download firmware timeout.\r\n");
 
                         complete = 1;
                     } else {
-                        write_number = wm_tool_uart_write(frame_data, XMODEM_DATA_SIZE + 5);
+                        write_number = wm_tool_uart_write(frame_data, XMODEM_DATA_SIZE + 5); // 5:byte alignment
                         if (write_number <= 0) {
                             wm_tool_printf("write serial error, errno = %d.\r\n", errno);
                         }
@@ -4746,7 +4746,7 @@ static int wm_tool_download_firmware(void)
     }
 
     /* In some cases, setting the serial port initialization setting requires a delay. */
-    wm_tool_delay_ms(500);
+    wm_tool_delay_ms(500); // 500:500ms
 
     wm_tool_printf("serial connected.\r\n");
 
@@ -4759,7 +4759,7 @@ static int wm_tool_download_firmware(void)
         if (ret <= 0) {
             wm_tool_printf("reset error.\r\n");
             wm_tool_uart_close();
-            return -4;
+            return -4; // -4:byte alignment
         }
 
         if (wm_tool_normal_serial_rate != WM_TOOL_DEFAULT_BAUD_RATE) {
@@ -4768,21 +4768,21 @@ static int wm_tool_download_firmware(void)
     } else if (WM_TOOL_DL_ACTION_RTS == wm_tool_dl_action) {
         ret  = wm_tool_uart_set_dtr(0);
         ret |= wm_tool_uart_set_rts(1);
-        wm_tool_delay_ms(50);
+        wm_tool_delay_ms(50); // 50:50ms
         ret |= wm_tool_uart_set_dtr(1);
         ret |= wm_tool_uart_set_rts(0);
-        wm_tool_delay_ms(50);
+        wm_tool_delay_ms(50); // 50:50ms
         ret |= wm_tool_uart_set_dtr(0);
         if (ret < 0) {
             wm_tool_printf("set rts to reboot error.\r\n");
             wm_tool_uart_close();
-            return -5;
+            return -5; // -5:byte alignment
         }
     }
 
     wm_tool_printf("wait serial sync...");
 
-    wm_tool_send_esc2uart(500); /* used for delay */
+    wm_tool_send_esc2uart(500); // 500:used for delay
 
     start = time(NULL);
 
@@ -4798,7 +4798,7 @@ static int wm_tool_download_firmware(void)
                 cnt = 0;
             }
         } else {
-            wm_tool_send_esc2uart(30);
+            wm_tool_send_esc2uart(30); // 30:30ms
         }
 
         end = time(NULL);
@@ -4807,18 +4807,18 @@ static int wm_tool_download_firmware(void)
             wm_tool_printf(".");
 
             timeout++;
-            if ((timeout >= (WM_TOOL_DOWNLOAD_TIMEOUT_SEC / 10)) && note) {
+            if ((timeout >= (WM_TOOL_DOWNLOAD_TIMEOUT_SEC / 10)) && note) { // 10:byte alignment
                 wm_tool_printf("\r\nplease manually reset the device.\r\n");
                 note = 0;
             } else if (timeout > WM_TOOL_DOWNLOAD_TIMEOUT_SEC) {
                 wm_tool_uart_close();
                 wm_tool_printf("\r\nserial sync timeout.\r\n");
-                return -6;
+                return -6; // -6:byte alignment
             }
 
             start = time(NULL);
         }
-    } while (cnt < 3);
+    } while (cnt < 3); // 3:loop condition
 
     wm_tool_printf("\r\nserial sync sucess.\r\n");
 
@@ -4845,7 +4845,7 @@ static int wm_tool_download_firmware(void)
     if (wm_tool_download_serial_rate != WM_TOOL_DEFAULT_BAUD_RATE) {
         ret = wm_tool_set_wifi_chip_speed(wm_tool_download_serial_rate);
         if (ret > 0) {
-            wm_tool_delay_ms(1 * 1000);
+            wm_tool_delay_ms(1 * 1000); // 1000:ms
             wm_tool_uart_set_speed(wm_tool_download_serial_rate);
         }
     }
@@ -4853,9 +4853,9 @@ static int wm_tool_download_firmware(void)
     ret = wm_tool_xmodem_download(wm_tool_download_image);
 
     if (wm_tool_download_serial_rate != WM_TOOL_DEFAULT_BAUD_RATE) {
-        wm_tool_delay_ms(1 * 1000);
+        wm_tool_delay_ms(1 * 1000); // 1000:ms
         wm_tool_set_wifi_chip_speed(WM_TOOL_DEFAULT_BAUD_RATE);
-        wm_tool_delay_ms(1 * 1000);
+        wm_tool_delay_ms(1 * 1000); // 1000:ms
     }
 
     if (!ret) {
@@ -4863,10 +4863,10 @@ static int wm_tool_download_firmware(void)
             if (WM_TOOL_DL_ACTION_RTS == wm_tool_dl_action) { /* auto reset */
                 wm_tool_uart_set_dtr(0);
                 wm_tool_uart_set_rts(1);
-                wm_tool_delay_ms(50);
+                wm_tool_delay_ms(50); // 50:ms
                 wm_tool_uart_set_dtr(1);
                 wm_tool_uart_set_rts(0);
-                wm_tool_delay_ms(50);
+                wm_tool_delay_ms(50); // 50:ms
                 wm_tool_uart_set_dtr(0);
             } else {
                 wm_tool_printf("please manually reset the device.\r\n");

@@ -334,7 +334,7 @@ static int send_seg(struct bt_mesh_net_tx *net_tx, struct os_mbuf *sdu,
     tx->dst = net_tx->ctx->addr;
     tx->seg_n = (sdu->om_len - 1) / 12; // 12:byte alignment
     tx->nack_count = tx->seg_n + 1;
-    tx->seq_auth = SEQ_AUTH(BT_MESH_NET_IVI_TX, bt_mesh.seq);
+    tx->seq_auth = (SEQ_AUTH(BT_MESH_NET_IVI_TX, bt_mesh.seq));
     tx->sub = net_tx->sub;
     tx->new_key = net_tx->sub->kr_flag;
     tx->cb = cb;
@@ -736,19 +736,19 @@ static int trans_ack(struct bt_mesh_net_rx *rx, u8_t hdr,
     u16_t seq_zero;
     u8_t obo;
 
-    if (buf->om_len < 6) {
+    if (buf->om_len < 6) { // 6:Analyzing conditions
         BT_ERR("Too short ack message");
         return -EINVAL;
     }
 
     seq_zero = net_buf_simple_pull_be16(buf);
-    obo = seq_zero >> 15;
-    seq_zero = (seq_zero >> 2) & TRANS_SEQ_ZERO_MASK;
+    obo = seq_zero >> 15; // 15:byte alignment
+    seq_zero = (seq_zero >> 2) & TRANS_SEQ_ZERO_MASK; // 2:byte alignment
 
     if (IS_ENABLED(CONFIG_BT_MESH_FRIEND) && rx->friend_match) {
         BT_DBG("Ack for LPN 0x%04x of this Friend", rx->ctx.recv_dst);
         /* Best effort - we don't have enough info for true SeqAuth */
-        *seq_auth = SEQ_AUTH(BT_MESH_NET_IVI_RX(rx), seq_zero);
+        *seq_auth = (SEQ_AUTH(BT_MESH_NET_IVI_RX(rx), seq_zero));
         return 0;
     }
 
@@ -939,9 +939,9 @@ static inline s32_t ack_timeout(struct seg_rx *rx)
     /* The acknowledgment timer shall be set to a minimum of
      * 150 + 50 * TTL milliseconds.
      */
-    to = K_MSEC(150 + (50 * ttl));
+    to = K_MSEC(150 + (50 * ttl)); // 150:byte, 50:byte alignment
     /* 100 ms for every not yet received segment */
-    to += K_MSEC(((rx->seg_n + 1) - popcount(rx->block)) * 100);
+    to += K_MSEC(((rx->seg_n + 1) - popcount(rx->block)) * 100); // 100:100ms
     /* Make sure we don't send more frequently than the duration for
      * each packet (default is 300ms).
      */
@@ -1179,7 +1179,7 @@ static int trans_seg(struct os_mbuf *buf, struct bt_mesh_net_rx *net_rx,
     u8_t seg_o;
     int err;
 
-    if (buf->om_len < 5) {
+    if (buf->om_len < 5) { // 5:loop condition
         BT_ERR("Too short segmented message (len %u)", buf->om_len);
         return -EINVAL;
     }
@@ -1193,10 +1193,10 @@ static int trans_seg(struct os_mbuf *buf, struct bt_mesh_net_rx *net_rx,
     BT_DBG("ASZMIC %u AKF %u AID 0x%02x", ASZMIC(hdr), AKF(hdr), AID(hdr));
     net_buf_simple_pull(buf, 1);
     seq_zero = net_buf_simple_pull_be16(buf);
-    seg_o = (seq_zero & 0x03) << 3;
-    seq_zero = (seq_zero >> 2) & TRANS_SEQ_ZERO_MASK;
+    seg_o = (seq_zero & 0x03) << 3; // 3:byte alignment
+    seq_zero = (seq_zero >> 2) & TRANS_SEQ_ZERO_MASK; // 2:byte alignment
     seg_n = net_buf_simple_pull_u8(buf);
-    seg_o |= seg_n >> 5;
+    seg_o |= seg_n >> 5; // 5:byte alignment
     seg_n &= 0x1f;
     BT_DBG("SeqZero 0x%04x SegO %u SegN %u", seq_zero, seg_o, seg_n);
 
@@ -1218,10 +1218,10 @@ static int trans_seg(struct os_mbuf *buf, struct bt_mesh_net_rx *net_rx,
      * Mentioned delta shall be >= 0, if it is not then seq_auth will
      * be broken and it will be verified by the code below.
      */
-    *seq_auth = SEQ_AUTH(BT_MESH_NET_IVI_RX(net_rx),
+    *seq_auth = (SEQ_AUTH(BT_MESH_NET_IVI_RX(net_rx),
                          (net_rx->seq -
                           ((((net_rx->seq & BIT_MASK(14)) - seq_zero)) &
-                           BIT_MASK(13))));
+                           BIT_MASK(13)))));
     *seg_count = seg_n + 1;
     /* Look for old RX sessions */
     rx = seg_rx_find(net_rx, seq_auth);

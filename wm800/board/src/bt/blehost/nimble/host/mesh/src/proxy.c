@@ -972,22 +972,22 @@ static int proxy_segment_and_send(uint16_t conn_handle, u8_t type,
     /* ATT_MTU - OpCode (1 byte) - Handle (2 bytes) */
     mtu = ble_att_mtu(conn_handle) - 3; // 3:byte alignment
     if (mtu > msg->om_len) {
-        net_buf_simple_push_u8(msg, PDU_HDR(SAR_COMPLETE, type));
+        net_buf_simple_push_u8(msg, PDU_HDR((SAR_COMPLETE), (type)));
         return proxy_send(conn_handle, msg->om_data, msg->om_len);
     }
 
-    net_buf_simple_push_u8(msg, PDU_HDR(SAR_FIRST, type));
+    net_buf_simple_push_u8(msg, PDU_HDR((SAR_FIRST), (type)));
     proxy_send(conn_handle, msg->om_data, mtu);
     net_buf_simple_pull(msg, mtu);
 
     while (msg->om_len) {
         if (msg->om_len + 1 < mtu) {
-            net_buf_simple_push_u8(msg, PDU_HDR(SAR_LAST, type));
+            net_buf_simple_push_u8(msg, PDU_HDR((SAR_LAST), (type)));
             proxy_send(conn_handle, msg->om_data, msg->om_len);
             break;
         }
 
-        net_buf_simple_push_u8(msg, PDU_HDR(SAR_CONT, type));
+        net_buf_simple_push_u8(msg, PDU_HDR((SAR_CONT), (type)));
         proxy_send(conn_handle, msg->om_data, mtu);
         net_buf_simple_pull(msg, mtu);
     }
