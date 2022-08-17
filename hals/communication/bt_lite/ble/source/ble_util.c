@@ -59,10 +59,10 @@ void tls_bt_dump_hexstring(const char *info, uint8_t *p, int length)
 {
     int i = 0, j = 0;
     printf("%s\r\n", info);
-    for (i = 0; i<length; i++) {
+    for (i = 0; i < length; i++) {
         j++;
         printf("%02x ", p[i]);
-        if ((j%16) == 0) {
+        if ((j % 16) == 0) { // 16:byte alignment
             printf("\r\n");
         }
     }

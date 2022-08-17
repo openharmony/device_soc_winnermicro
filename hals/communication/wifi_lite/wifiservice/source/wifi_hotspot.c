@@ -113,14 +113,14 @@ WifiErrorCode EnableHotspot()
         apinfo.keyinfo.index = 1; // 1-4 (only wep)
     }
     struct tls_ip_info_t ipinfo = {0};
-    ipinfo.ip_addr[0] = 192;
-    ipinfo.ip_addr[1] = 168;
-    ipinfo.ip_addr[2] = 1;
-    ipinfo.ip_addr[3] = 1;
-    ipinfo.netmask[0] = 255;
-    ipinfo.netmask[1] = 255;
-    ipinfo.netmask[2] = 255;
-    ipinfo.netmask[3] = 0;
+    ipinfo.ip_addr[0] = 192; // 192:byte alignment
+    ipinfo.ip_addr[1] = 168; // 168:byte alignment
+    ipinfo.ip_addr[2] = 1; // 2:array element
+    ipinfo.ip_addr[3] = 1; // 3:array element
+    ipinfo.netmask[0] = 255; // 255:byte alignment
+    ipinfo.netmask[1] = 255; // 255:byte alignment
+    ipinfo.netmask[2] = 255; // 255:byte alignment, 2:array element
+    ipinfo.netmask[3] = 0; // 3:array element
     int retval = tls_wifi_softap_create(&apinfo, &ipinfo);
     if (retval != WM_SUCCESS) {
         printf("[wifi_service]:EnableHotspot tls_wifi_softap_create fail, err = %d\n", retval);

@@ -348,13 +348,14 @@ static inline void net_buf_simple_restore(struct os_mbuf *buf,
 static inline void sys_memcpy_swap(void *dst, const void *src, size_t length)
 {
     size_t Length = length;
+    const void *src_tmp = src;
     __ASSERT(((src < dst && (src + Length) <= dst) ||
               (src > dst && (dst + Length) <= src)),
              "Source and destination buffers must not overlap");
-    src += Length - 1;
+    src_tmp += Length - 1;
 
     for (; Length > 0; Length--) {
-        *((u8_t *)dst++) = *((u8_t *)src--);
+        *((u8_t *)dst++) = *((u8_t *)src_tmp--);
     }
 }
 

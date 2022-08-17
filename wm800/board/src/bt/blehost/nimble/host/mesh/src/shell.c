@@ -1590,8 +1590,7 @@ static int cmd_mod_pub(int argc, char *argv[])
 }
 
 struct shell_cmd_help cmd_mod_pub_help = {
-    NULL, "<addr> <mod id> [cid] [<PubAddr> " \
-    "<AppKeyIndex> <cred> <ttl> <period> <count> <interval>]", NULL
+    NULL, "<addr> <mod id> [cid] [<PubAddr> <AppKeyIndex> <cred> <ttl> <period> <count> <interval>]", NULL
 };
 
 static void hb_sub_print(struct bt_mesh_cfg_hb_sub *sub)
