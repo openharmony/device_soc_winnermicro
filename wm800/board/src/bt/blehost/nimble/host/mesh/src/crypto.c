@@ -272,7 +272,7 @@ static int bt_mesh_ccm_decrypt(const u8_t key[16], u8_t nonce[13],
                 return err;
             }
             for (i = 0; i < last_blk; i++) {
-                msg[i] = enc_msg[(j * 16) + i] ^ cmsg[i];
+                msg[i] = enc_msg[(j * 16) + i] ^ cmsg[i]; // 16:byte alignment
             }
 
             memcpy(out_msg + (j * 16), msg, last_blk); // 16:byte alignment

@@ -78,13 +78,13 @@ int chk_crc8(u8 *ptr, u32 len)
     u8 crc8;
     u8 data;
 
-    crc8=0;
-    while (len--!=0) {
+    crc8 = 0;
+    while (len-- != 0) {
         data = *ptr++;
-        crc8 = crc8_tbl[crc8^data];
+        crc8 = crc8_tbl[crc8 ^ data];
     }
 
-    if (crc8==0x00) {
+    if (crc8 == 0x00) {
         return 0;
     } else {
         return -1;
@@ -98,9 +98,9 @@ u8 get_crc8(u8 *ptr, u32 len)
     u8 data;
 
     crc8 = 0;
-    while (len--!=0) {
+    while (len-- != 0) {
         data = *ptr++;
-        crc8 = crc8_tbl[crc8^data];
+        crc8 = crc8_tbl[crc8 ^ data];
     }
 
     return crc8;
@@ -111,9 +111,9 @@ u8 calculate_crc8(u8 crc8, u8 *ptr, u32 len)
 {
     u8 data;
 
-    while (len--!=0) {
+    while (len-- != 0) {
         data = *ptr++;
-        crc8 = crc8_tbl[crc8^data];
+        crc8 = crc8_tbl[crc8 ^ data];
     }
 
     return crc8;
@@ -129,15 +129,15 @@ static u32 _cal_crc32(u32 crc_result, u8 data_8)
 
     flag = 0x01;
 
-    for (i = 0; i < 32; i++) {
+    for (i = 0; i < 32; i++) { // 32:loop cap
         crc_out[i] = 0;
     }
 
-    for (i = 0; i < 8; i++) {
+    for (i = 0; i < 8; i++) { // 8:loop cap
         in_data_buf[i] = (data_8 >> i) & flag;
     }
 
-    for (i = 0; i < 32; i++) {
+    for (i = 0; i < 32; i++) { // 32:loop cap
         crc_buf[i] = (unsigned char)(crc_result >> i) & flag;
     }
 
@@ -193,8 +193,8 @@ static u32 _cal_crc32(u32 crc_result, u8 data_8)
     crc_out[31] = in_data_buf[2]^crc_buf[23]^crc_buf[29];
 
     crc_result = 0;
-    for (i = 0; i < 32; i++) {
-        if (crc_out[i]) {crc_result |= (1<<i);}
+    for (i = 0; i < 32; i++) { // 32:loop cap
+        if (crc_out[i]) {crc_result |= (1 << i);}
     }
 
     return crc_result;
@@ -212,8 +212,10 @@ u32 get_crc32(u8 *data, u32 data_size)
     }
 
     val = 0;
-    for (i = 0; i < 32; i++) {
-        if ((crc_result>>i) & 0x1) {val |= (1<<(31-i));}
+    for (i = 0; i < 32; i++) { // 32:loop cap
+        if ((crc_result>>i) & 0x1) {
+            val |= (1 << (31 - i)); // 31:byte alignment
+        }
     }
 
     TLS_DBGPRT_INFO("calculate crc -0x%x .\n", ~val);
@@ -230,10 +232,14 @@ u32 checksum(u32 *data, u32 length, u32 init)
     /*
         Calculate the checksum.
     */
-    if (!init) {sum = 0;}
+    if (!init) {
+        sum = 0;
+    }
 
-    for (i = 0; i < length; i++) {sum+=*(data + i);}
-    checksum = ~((u32)(sum>>32)+(u32)sum);
+    for (i = 0; i < length; i++) {
+        sum += *(data + i);
+    }
+    checksum = ~((u32)(sum >> 32) + (u32)sum); // 32:byte alignment
 
     return checksum;
 }
@@ -265,8 +271,10 @@ int strtodec(int *dec, char *str)
 
     while (*strs_tmp) {
         i = atodec(*strs_tmp++);
-        if (i < 0) {return -1;}
-        dd = dd*10 + i;
+        if (i < 0) {
+            return -1;
+        }
+        dd = dd * 10 + i; // 10:byte alignment
     }
 
     *dec = dd*sign;
@@ -304,14 +312,18 @@ int strtohex(u32 *hex, char *str)
 
     while (*str_tmp) {
         n = atohex(*str_tmp++);
-        if (n < 0) {return -1;}
-        dd = (dd<<4) + n;
-        if (++i > 8) {return -1;}
+        if (n < 0) {
+            return -1;
+        }
+        dd = (dd << 4) + n; // 4:byte alignment
+        if (++i > 8) { // 8:byte alignment
+            return -1;
+        }
     }
 
     *hex = dd;
 
-    return (n<0?-1:0);
+    return (n < 0 ? -1 : 0);
 }
 
 int strtohexarray(u8 array[], int cnt, char *str)
@@ -326,7 +338,9 @@ int strtohexarray(u8 array[], int cnt, char *str)
         int hex = atohex(*str_tmp++);
         if (hex < 0) {
             return -1;
-        } else {tmp = (hex << 4) & 0xf0;}
+        } else {
+            tmp = (hex << 4) & 0xf0; // 4:byte alignment
+        }
 
         hex = atohex(*str_tmp++);
         if (hex < 0) {
@@ -353,13 +367,17 @@ int strtoip(u32 *ipadr, char * str)
     head = str;
     tail = str;
 
-    for (i = 0; i < 3;) {
+    for (i = 0; i < 3;) { // 3:byte alignment
         if (*tail == '.') {
             i++;
             *tail = 0;
-            ip <<= 8;
-            if (strtodec(&n, head) < 0) {return -1;}
-            if ((n < 0) || (n > 255)) {return -1;}
+            ip <<= 8; // 8:byte alignment
+            if (strtodec(&n, head) < 0) {
+                return -1;
+            }
+            if ((n < 0) || (n > 255)) { // 255:byte alignment
+                return -1;
+            }
             ip += n;
             *tail = '.';
             head = tail + 1;
@@ -367,11 +385,17 @@ int strtoip(u32 *ipadr, char * str)
         tail++;
     }
 
-    if (i < 3) {return -1;}
+    if (i < 3) { // 3:byte alignment
+        return -1;
+    }
 
-    ip <<= 8;
-    if (strtodec(&n, head) < 0) {return -1;}
-    if ((n < 0) || (n > 255)) {return -1;}
+    ip <<= 8; // 8:byte alignment
+    if (strtodec(&n, head) < 0) {
+        return -1;
+    }
+    if ((n < 0) || (n > 255)) { // 255:byte alignment
+        return -1;
+    }
     ip += n;
 
     *ipadr = ip;
@@ -382,8 +406,8 @@ int strtoip(u32 *ipadr, char * str)
 void iptostr(u32 ip, char *str)
 {
     int sret = sprintf(str, "%d.%d.%d.%d",
-        ((ip >> 24) & 0xff),((ip >> 16) & 0xff),\
-        ((ip >>  8) & 0xff), ((ip >>  0) & 0xff));
+        ((ip >> 24) & 0xff), ((ip >> 16) & 0xff), // 24:byte alignment, 16:byte alignment
+        ((ip >>  8) & 0xff), ((ip >>  0) & 0xff)); // 8:byte alignment
     if (sret < 0) {
         printf("sprintf error.\n");
     }
@@ -404,17 +428,17 @@ int hex_to_digit(int c)
         return c - '0';
     }
     if (c >= 'A' && c <= 'F') {
-        return c - ('A' - 10);
+        return c - ('A' - 10); // 10:byte alignment
     }
     if (c >= 'a' && c <= 'f') {
-        return c - ('a' - 10);
+        return c - ('a' - 10); // 10:byte alignment
     }
     return -1;
 }
 
 int digit_to_hex(int c)
 {
-    if (c >= 0 && c <= 9) {
+    if (c >= 0 && c <= 9) { // 9:byte alignment
         return c + '0';
     }
     if (c >= 0xA && c <= 0xF) {
@@ -429,15 +453,15 @@ int hexstr_to_unit(char *buf, u32 *d)
     int len = strlen(buf);
     *d = 0;
 
-    if (len > 8) {
+    if (len > 8) { // 8:byte alignment
         return -1;
     }
-    for (i=0; i<len; i++) {
+    for (i = 0; i < len; i++) {
         int c = hex_to_digit(buf[i]);
         if (c < 0) {
             return -1;
         }
-        *d = (u8)c | (*d << 4);
+        *d = (u8)c | (*d << 4); // 4:byte alignment
     }
     return 0;
 }
@@ -448,7 +472,7 @@ int string_to_uint(char *buf, u32 *d)
     if (len > 11 || len == 0) {  // 11:长度大于11或长度等于0
         return -1;
     }
-    for (i=0; i<len; i++) {
+    for (i = 0; i < len; i++) {
         if (!isdigit(buf[i])) {
             return -1;
         }
@@ -487,7 +511,7 @@ char *strdup(const char *s)
         return NULL;
     }
     memset_s(ret, sizeof(ret), 0, len);
-    memcpy_s(ret, sizeof(ret), s, len-1);
+    memcpy_s(ret, sizeof(ret), s, len - 1);
     return ret;
 }
 
@@ -522,7 +546,7 @@ void dumpBuffer(char *name, char* buffer, int len)
     printf("%s:\n", name);
     for (; i < len; i++) {
         printf("%02X, ", buffer[i]);
-        if ((i + 1) % 16 == 0) {
+        if ((i + 1) % 16 == 0) { // 16:byte alignment
             printf("\n");
         }
     }
@@ -535,7 +559,7 @@ void dumpUint32(char *name, uint32_t* buffer, int len)
     printf("%s:\n", name);
     for (; i < len; i++) {
         printf("%08x ", buffer[i]);
-        if ((i + 1) % 8 == 0) {
+        if ((i + 1) % 8 == 0) { // 8:byte alignment
             printf("\n");
         }
     }
