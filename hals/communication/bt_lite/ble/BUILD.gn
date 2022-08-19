@@ -40,7 +40,7 @@ kernel_module(module_name) {
   deps = [ "//foundation/communication/wifi_lite:wifi" ]
   visibility += [ "../../.." ]
   include_dirs = [
-    "//utils/native/lite/include",
+    "//commonlibrary/utils_lite/include",
     "//device/soc/winnermicro/wm800/board/include/",
     "//foundation/communication/bluetooth/interfaces/inner_api/include/c_header",
     "//device/soc/winnermicro/wm800/board/src/bt/blehost/nimble",

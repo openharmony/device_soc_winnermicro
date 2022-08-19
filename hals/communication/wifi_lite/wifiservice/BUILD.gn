@@ -39,7 +39,7 @@ kernel_module(module_name) {
   deps = [ "//foundation/communication/wifi_lite:wifi" ]
   visibility += [ "../../.." ]
   include_dirs = [
-    "//utils/native/lite/include",
+    "//commonlibrary/utils_lite/include",
     "//device/soc/winnermicro/w800/board/include/os",
     "//device/soc/winnermicro/w800/board/include/app",
     "//device/soc/winnermicro/w800/board/include/net",

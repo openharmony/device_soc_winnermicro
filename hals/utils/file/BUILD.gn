@@ -30,5 +30,5 @@ import("//kernel/liteos_m/liteos.gni")
 static_library("hal_file_static") {
   sources = [ "src/hal_lfs.c" ]
 
-  include_dirs = [ "//utils/native/lite/hals/file" ]
+  include_dirs = [ "//commonlibrary/utils_lite/hals/file" ]
 }
