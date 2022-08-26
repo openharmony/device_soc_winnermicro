@@ -57,7 +57,7 @@ if (ohos_kernel_type == "liteos_m") {
       "platform/sys",
       "src/os/liteos/include",
       "src/os/liteos/include_standrd",
-      "//utils/native/lite/include",
+      "//commonlibrary/utils_lite/include",
       "//third_party/musl/porting/liteos_m/kernel/src/include",
       "//third_party/musl/porting/liteos_m/kernel/src/internal",
       "//third_party/wpa_supplicant/wpa_supplicant-2.9/src/utils",
@@ -65,7 +65,7 @@ if (ohos_kernel_type == "liteos_m") {
       "//drivers/hdf_core/framework/include/platform",
       "//drivers/hdf_core/framework/include/utils",
       "//drivers/hdf_core/adapter/khdf/liteos_m/osal/include",
-      "//utils/native/base/include",
+      "//commonlibrary/c_utils/base/include",
     ]
   }
   module_group(module_name) {
