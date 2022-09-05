@@ -1049,7 +1049,7 @@ tls_os_status_t tls_os_timer_delete(tls_os_timer_t *timer)
     }
     uwTimerID = swtmr_cb->swtmrId;
     tls_os_status_t os_status;
-    LOS_SwtmrStop(uwTimerID);
+    (void)LOS_SwtmrStop(uwTimerID);
     ret = LOS_SwtmrDelete(uwTimerID);
     if (ret  == LOS_OK) {
         os_status = TLS_OS_SUCCESS;
@@ -1114,7 +1114,7 @@ u32 tls_os_timer_expirytime(tls_os_timer_t *timer)
 */
 void tls_os_time_delay(u32 ticks)
 {
-    LOS_TaskDelay(ticks);
+    (void)LOS_TaskDelay(ticks);
 }
 
 /*
@@ -1128,7 +1128,7 @@ void tls_os_time_delay(u32 ticks)
 */
 void tls_os_disp_task_stat_info(void)
 {
-    LOS_TaskInfoMonitor();
+    (void)LOS_TaskInfoMonitor();
 }
 
 /*
@@ -1144,7 +1144,7 @@ void tls_os_disp_task_stat_info(void)
 */
 void tls_os_init(void *arg)
 {
-    LOS_KernelInit();
+    (void)LOS_KernelInit();
 }
 
 /*
@@ -1160,7 +1160,7 @@ void tls_os_init(void *arg)
 */
 void tls_os_start_scheduler(void)
 {
-    LOS_Start();
+    (void)LOS_Start();
 }
 
 /*
