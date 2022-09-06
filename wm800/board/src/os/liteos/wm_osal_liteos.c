@@ -546,16 +546,16 @@ UINT32 LOS_SemCount(UINT32 semHandle)
     intSave = LOS_IntLock();
 
     if (semPosted->semStat == OS_SEM_UNUSED) {
-        LOS_IntRestore(intSave);
+        (void)LOS_IntRestore(intSave);
         return intRet;
     }
 
     if (semPosted->maxSemCount == semPosted->semCount) {
-        LOS_IntRestore(intSave);
+        (void)LOS_IntRestore(intSave);
         return intRet;
     }
     intRet = semPosted->semCount;
-    LOS_IntRestore(intSave);
+    (void)LOS_IntRestore(intSave);
     return intRet;
 }
 
@@ -798,7 +798,7 @@ u32 tls_os_set_critical(void)
 ***********************************************************************************************************/
 void tls_os_release_critical(u32 cpu_sr)
 {
-    LOS_IntRestore(cpu_sr);
+    (void)LOS_IntRestore(cpu_sr);
     return;
 }
 
@@ -939,12 +939,12 @@ extern LITE_OS_SEC_BSS SWTMR_CTRL_S     *g_swtmrCBArray;
         (pstSwtmr) = g_swtmrCBArray + (usSwTmrID) % LOSCFG_BASE_CORE_SWTMR_LIMIT; \
         if ((pstSwtmr)->usTimerID % LOSCFG_BASE_CORE_SWTMR_LIMIT != (usSwTmrID) % LOSCFG_BASE_CORE_SWTMR_LIMIT)  \
         {                                     \
-            LOS_IntRestore((uvIntSave));        \
+            (void)LOS_IntRestore((uvIntSave));        \
             printf("0x%x-%d-%d", (u32)(pstSwtmr), (pstSwtmr)->usTimerID, (usSwTmrID) ); \
             assert(0); \
         }                                     \
         (pstSwtmr)->uwInterval = (ticks); \
-        LOS_IntRestore(uvIntSave); \
+        (void)LOS_IntRestore(uvIntSave); \
     } while (0)
 }
 
@@ -989,13 +989,13 @@ int LOS_SwtmrIsActive(UINT32 swtmrId)
     swtmrCbId = swtmrId % LOSCFG_BASE_CORE_SWTMR_LIMIT;
     swtmr = g_swtmrCBArray + swtmrCbId;
     if (swtmr->usTimerID != swtmrId) {
-        LOS_IntRestore(intSave);
+        (void)LOS_IntRestore(intSave);
         return ret;
     }
     if (swtmr->ucState == OS_SWTMR_STATUS_TICKING) {
         ret = 1;
     }
-    LOS_IntRestore(intSave);
+    (void)LOS_IntRestore(intSave);
     return ret;
 }
 
