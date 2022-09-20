@@ -23,7 +23,6 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-#include "nimble/nimble_npl_os.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -51,6 +50,7 @@ enum ble_npl_error {
 typedef enum ble_npl_error ble_npl_error_t;
 
 /* Include OS-specific definitions */
+#include "nimble/nimble_npl_os.h"
 
 /*
  * Generic

@@ -56,7 +56,7 @@
     (y)[1] = (unsigned char)(((x)>>16)&255); \
     (y)[2] = (unsigned char)(((x)>>8)&255); \
     (y)[3] = (unsigned char)((x)&255); \
-}whiel (0)
+}while (0)
 #define STORE32L(x, y) do { \
     unsigned long __t = (x); \
     memcpy_s(y, sizeof(y), &__t, 4); \
@@ -1182,7 +1182,7 @@ static void rsaMonMulWriteM(const u32 *const in)
 }
 static void rsaMonMulReadA(u32 *const in)
 {
-    memcpy_s(in, sizeof(in) (u32 *)&RSAXBUF, RSAN * sizeof(u32));
+    memcpy_s(in, sizeof(in), (u32 *)&RSAXBUF, RSAN * sizeof(u32));
 }
 static void rsaMonMulReadB(u32 *const in)
 {

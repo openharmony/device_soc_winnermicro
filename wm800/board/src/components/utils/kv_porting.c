@@ -20,11 +20,3 @@
 
 void IoTWatchDogKick(void) {}
 
-int access(const char *filename, int amode)
-{
-    struct stat info = {0};
-    if (stat(filename, &info) != F_OK) {
-        return -1;
-    }
-    return 0;
-}
