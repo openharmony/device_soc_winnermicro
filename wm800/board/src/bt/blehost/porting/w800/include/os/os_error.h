@@ -35,7 +35,7 @@ enum os_error {
     OS_NOT_STARTED = 9,     /* OS must be started to call this function, but isn't */
     OS_ENOENT = 10,         /* No such thing */
     OS_EBUSY = 11,          /* Resource busy */
-    OS_ERROR = 12,          /* Generic Error */
+    // OS_ERROR = 12,          /* Generic Error */
 };
 
 typedef enum os_error os_error_t;

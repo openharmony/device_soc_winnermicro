@@ -159,7 +159,7 @@ static void DispatchScanStateChangeEvent(const WifiEvent* event, WifiEventState 
         return;
     }
 
-    if (state == WIFI_STATE_NOT_AVALIABLE) {
+    if (state == WIFI_STATE_NOT_AVAILABLE) {
         event->OnWifiScanStateChanged(state, bssCount);
         return;
     }
@@ -278,7 +278,7 @@ WifiErrorCode Scan(void)
         if (gWifiEvents[i] == NULL) {
             continue;
         }
-        DispatchScanStateChangeEvent(gWifiEvents[i], WIFI_STATE_NOT_AVALIABLE);
+        DispatchScanStateChangeEvent(gWifiEvents[i], WIFI_STATE_NOT_AVAILABLE);
     }
 
     if (UnlockWifiEventLock() != WIFI_SUCCESS) {
@@ -318,18 +318,18 @@ static void WifiEventCallback(u8 status)
             WifiLinkedInfo info = {0};
             WifiErrorCode err = GetLinkedInfo(&info);
             if (err != WIFI_SUCCESS) {
-                DispatchConnectEvent(WIFI_STATE_NOT_AVALIABLE, NULL);
+                DispatchConnectEvent(WIFI_STATE_NOT_AVAILABLE, NULL);
             } else {
                 DispatchConnectEvent(WIFI_STATE_AVAILABLE, &info);
             }
             break;
         case NETIF_WIFI_JOIN_FAILED:
             debug_wifi("WifiEventCallback status = WIFI_JOIN_FAILED\n");
-            DispatchConnectEvent(WIFI_STATE_NOT_AVALIABLE, NULL);
+            DispatchConnectEvent(WIFI_STATE_NOT_AVAILABLE, NULL);
             break;
         case NETIF_WIFI_DISCONNECTED:
             debug_wifi("WifiEventCallback status = WIFI_DISCONNECTED\n");
-            DispatchConnectEvent(WIFI_STATE_NOT_AVALIABLE, NULL);
+            DispatchConnectEvent(WIFI_STATE_NOT_AVAILABLE, NULL);
             break;
         case NETIF_WIFI_SOFTAP_SUCCESS: /* ap */
             debug_wifi("WifiEventCallback status = WIFI_SOFTAP_SUCCESS\n");
@@ -488,7 +488,7 @@ WifiErrorCode AdvanceScan(WifiScanParams *params)
         if (gWifiEvents[i] == NULL) {
             continue;
         }
-        DispatchScanStateChangeEvent(gWifiEvents[i], WIFI_STATE_NOT_AVALIABLE);
+        DispatchScanStateChangeEvent(gWifiEvents[i], WIFI_STATE_NOT_AVAILABLE);
     }
     if (UnlockWifiEventLock() != WIFI_SUCCESS) {
         return ERROR_WIFI_UNKNOWN;

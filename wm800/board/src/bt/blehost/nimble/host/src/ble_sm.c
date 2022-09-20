@@ -2466,7 +2466,7 @@ int ble_sm_inject_io(uint16_t conn_handle, struct ble_sm_io *pkey)
 void ble_sm_connection_broken(uint16_t conn_handle)
 {
     struct ble_sm_result res;
-    memset_s(&res, 0, sizeof res);
+    memset_s(&res, sizeof(res), 0, sizeof(res));
     res.app_status = BLE_HS_ENOTCONN;
     res.enc_cb = 1;
     ble_sm_process_result(conn_handle, &res);

@@ -161,7 +161,7 @@ int ble_hs_pvcy_set_our_irk(const uint8_t *irk)
     if (irk != NULL) {
         memcpy_s(new_irk, sizeof(new_irk), irk, 16); // 16:size
     } else {
-        memcpy_s(new_irk, ble_hs_pvcy_default_irk, 16); // 16:size
+        memcpy_s(new_irk, sizeof(ble_hs_pvcy_default_irk), ble_hs_pvcy_default_irk, 16); // 16:size
     }
 
     /* Clear the resolving list if this is a new IRK. */

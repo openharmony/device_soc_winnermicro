@@ -19,6 +19,7 @@
 #include "crypto.h"
 #include "adv.h"
 #include "mesh_priv.h"
+#include "net.h"
 #include "lpn.h"
 #include "friend.h"
 #include "proxy.h"
@@ -28,7 +29,6 @@
 #include "beacon.h"
 #include "settings.h"
 #include "prov.h"
-#include "net.h"
 
 /* Minimum valid Mesh Network PDU length. The Network headers
  * themselves take up 9 bytes. After that there is a minumum of 1 byte
