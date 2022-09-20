@@ -16,7 +16,7 @@
 #include <math.h>
 #include <stdint.h>
 
-double scalbn(long double x, int n)
+double scalbn(double x, int n)
 {
     union {double f; uint64_t i;} u;
     long double x_tmp = x;

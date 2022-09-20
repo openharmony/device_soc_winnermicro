@@ -23,9 +23,8 @@
 #include <assert.h>
 #include <stdint.h>
 #include <string.h>
-#include "securec.h"
+
 #include "wm_osal.h"
-#include "os/npl_freertos.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -69,6 +68,7 @@ struct ble_npl_sem {
  * file instead and static inline wrapper just calls proper implementation.
  * We need declarations of these functions and they are defined in header below.
  */
+#include "os/npl_freertos.h"
 
 static inline bool ble_npl_os_started(void)
 {

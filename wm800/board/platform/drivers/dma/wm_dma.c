@@ -200,8 +200,8 @@ void tls_dma_irq_clr(unsigned char ch, unsigned char flags)
         dma_context[Channel].transfer_done_pf   = callback;
         dma_context[Channel].transfer_done_priv = arg;
     }
-    if (sh > 3) {
-        sh = 4; // 4:byte alignment
+    if (Channel > 3) {
+        Channel = 4; // 4:byte alignment
     }
     tls_irq_priority(DMA_Channel0_IRQn + Channel, Channel / 2); // 2:byte alignment
     tls_irq_enable(DMA_Channel0_IRQn + Channel);

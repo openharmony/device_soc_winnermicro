@@ -21,14 +21,16 @@
 #define _OS_H
 
 #include <assert.h>
+
+#include "syscfg/syscfg.h"
+#include "nimble/nimble_npl.h"
+
 /* Mynewt components (not abstracted in NPL) */
 #include "os/endian.h"
 #include "os/queue.h"
 #include "os/os_error.h"
 #include "os/os_mbuf.h"
 #include "os/os_mempool.h"
-#include "syscfg/syscfg.h"
-#include "nimble/nimble_npl.h"
 
 #ifdef __cplusplus
 extern "C" {
