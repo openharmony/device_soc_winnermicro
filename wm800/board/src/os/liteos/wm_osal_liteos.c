@@ -945,7 +945,7 @@ extern LITE_OS_SEC_BSS SWTMR_CTRL_S     *g_swtmrCBArray;
         }                                     \
         (pstSwtmr)->uwInterval = (ticks); \
         (void)LOS_IntRestore(uvIntSave); \
-    } while (0)
+    } while (0); \
 }
 
 tls_os_status_t tls_os_timer_change(tls_os_timer_t *timer, u32 ticks)
@@ -1256,7 +1256,7 @@ void vPortEnterCritical(void)
 void vPortExitCritical(void)
 {
     if (ulCriticalNesting == 0) {
-        while (1);
+        while (1) {};
     }
 
     ulCriticalNesting --;

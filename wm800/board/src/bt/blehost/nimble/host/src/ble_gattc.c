@@ -2694,7 +2694,7 @@ static void ble_gattc_read_uuid_tmo(struct ble_gattc_proc *proc)
  * Handles an incoming ATT error response for the specified
  * read-using-characteristic-uuid proc.
  */
-static void ble_gattc_read_uuid_err(struct ble_gattc_proc *proc, int status, att_handle)
+static void ble_gattc_read_uuid_err(struct ble_gattc_proc *proc, int status, uint16_t att_handle)
 {
     ble_gattc_dbg_assert_proc_not_inserted(proc);
     ble_gattc_read_uuid_cb(proc, status, att_handle, NULL);

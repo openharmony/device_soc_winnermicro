@@ -125,6 +125,8 @@
 #define     WIFI_SOFTAP_CLOSED              0x6
 
 enum tls_wifi_auth_mode {
+    WM_WIFI_AUTH_MODE_OPEN              = 0, /**< authenticate mode : open */
+    WM_WIFI_AUTH_MODE_WEP_AUTO          = 3, /**< authenticate mode : wep (open or/and shared...) */
     WM_WIFI_AUTH_MODE_WPA_PSK_TKIP      = 4, /**< authenticate mode : wpa psk rc4 */
     WM_WIFI_AUTH_MODE_WPA_PSK_CCMP      = 8, /**< authenticate mode : wpa psk aes */
     /**< authenticate mode : wpa psk, tkip and aes */
