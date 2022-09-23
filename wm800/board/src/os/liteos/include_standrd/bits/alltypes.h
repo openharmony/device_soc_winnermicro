@@ -12,8 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef _ALLTYPES_H_
-#define _ALLTYPES_H_
 
 #define _REDIR_TIME64 1
 #define _Addr int
@@ -447,5 +445,3 @@ typedef struct {
 #undef _Addr
 #undef _Int64
 #undef _Reg
-
-#endif /* _ALLTYPES_H_ */

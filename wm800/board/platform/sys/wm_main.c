@@ -268,10 +268,10 @@ void task_start (void *data)
         tls_param_set(TLS_PARAM_ID_PSM, &enable, TRUE);
     }
 #endif
-    UserMain(void);
+    UserMain();
 
-    extern void OHOS_SystemInit(void);
-    OHOS_SystemInit(void);
+    extern void OHOS_SystemInit();
+    OHOS_SystemInit();
 
     for (;;) {
 #if 1
