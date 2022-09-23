@@ -17,8 +17,6 @@
  * under the License.
  */
 
-#include <string.h>
-#include <errno.h>
 #include "securec.h"
 #include "nimble/ble.h"
 #include "nimble/nimble_opt.h"

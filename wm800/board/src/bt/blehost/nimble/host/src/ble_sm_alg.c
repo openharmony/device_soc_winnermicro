@@ -18,8 +18,6 @@
  * code.
  */
 
-#include <stdint.h>
-#include <string.h>
 #include "syscfg/syscfg.h"
 #include "nimble/nimble_opt.h"
 #include "securec.h"

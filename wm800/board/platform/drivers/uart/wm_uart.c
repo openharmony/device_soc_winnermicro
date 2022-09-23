@@ -22,7 +22,7 @@
  *
  * Copyright (c) 2015 Winner Microelectronics Co., Ltd.
  */
-#include <string.h>
+
 #include "wm_regs.h"
 #include "wm_debug.h"
 #include "wm_irq.h"
