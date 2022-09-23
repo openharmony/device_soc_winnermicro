@@ -17,14 +17,9 @@
  * under the License.
  */
 
-#include <string.h>
-#include <errno.h>
 #include "securec.h"
 #include "nimble/ble.h"
 #include "ble_hs_priv.h"
-#include "ble_l2cap_priv.h"
-#include "ble_l2cap_coc_priv.h"
-#include "ble_l2cap_sig_priv.h"
 
 #if MYNEWT_VAL(BLE_L2CAP_COC_MAX_NUM) != 0
 
