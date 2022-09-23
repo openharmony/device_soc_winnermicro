@@ -17,12 +17,10 @@
  * under the License.
  */
 
-#include <string.h>
 #include "securec.h"
 #include "nimble/nimble_opt.h"
 #include "host/ble_sm.h"
 #include "ble_hs_priv.h"
-#include "ble_sm_priv.h"
 
 #if MYNEWT_VAL(BLE_SM_SC)
 

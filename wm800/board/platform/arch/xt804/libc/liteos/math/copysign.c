@@ -15,7 +15,7 @@
 
 #include "libm.h"
 
-double copysign(long double x, long double y)
+double copysign(double x, double y)
 {
     union {
         double f;

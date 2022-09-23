@@ -28,8 +28,7 @@ int bt_mesh_aes_cmac(const u8_t key[16], struct bt_mesh_sg *sg,
                      size_t sg_len, u8_t mac[16])
 {
     size_t sg_len_tmp = sg_len;
-    struct tc_aes_
-    key_sched_struct sched;
+    struct tc_aes_key_sched_struct sched;
     struct tc_cmac_struct state;
     struct bt_mesh_sg *sg_tmp = sg;
 
