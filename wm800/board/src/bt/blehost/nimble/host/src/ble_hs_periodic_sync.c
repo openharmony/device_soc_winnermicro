@@ -17,12 +17,9 @@
  * under the License.
  */
 
-#include <string.h>
-#include <errno.h>
 #include "syscfg/syscfg.h"
 #include "os/os.h"
 #include "host/ble_hs_id.h"
-#include "ble_hs_priv.h"
 
 #if MYNEWT_VAL(BLE_PERIODIC_ADV)
 static SLIST_HEAD(, ble_hs_periodic_sync) g_ble_hs_periodic_sync_handles;

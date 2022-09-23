@@ -13,10 +13,5 @@
  * limitations under the License.
  */
 
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <unistd.h>
-
 void IoTWatchDogKick(void) {}
 
