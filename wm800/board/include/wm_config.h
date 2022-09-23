@@ -100,5 +100,4 @@ CRYPTO
 #include "wm_os_config.h"  // if you want to use source code,please open
 #include "wm_wifi_config.h"
 
-#include "wm_ram_config.h"
 #endif /* __WM_CONFIG_H__ */
