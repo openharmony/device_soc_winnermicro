@@ -268,6 +268,14 @@ void task_start (void *data)
         tls_param_set(TLS_PARAM_ID_PSM, &enable, TRUE);
     }
 #endif
+
+#if TLS_CONFIG_HOSTIF
+    tls_hostif_init();
+#endif
+
+#if TLS_CONFIG_UART
+    tls_uart_init();
+#endif
     UserMain();
 
     extern void OHOS_SystemInit();

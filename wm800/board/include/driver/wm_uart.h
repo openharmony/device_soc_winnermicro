@@ -72,24 +72,21 @@
 /** Return count up to the end of the buffer.  Carefully avoid
    accessing head and tail more than once, so they can change
    underneath us without returning inconsistent results.  */
-#define CIRC_CNT_TO_END(head, tail, size) do { \
-        int end = (size) - (tail); \
+#define CIRC_CNT_TO_END(head, tail, size)\
+        ({int end = (size) - (tail); \
         int n = ((head) + end) & ((size)-1); \
-        n < end ? n : end; \
-    }while (0)
+        n < end ? n : end;}) \
 
 /** Return space available up to the end of the buffer.  */
-#define CIRC_SPACE_TO_END(head, tail, size) do { \
-        int end = (size) - 1 - (head); \
+#define CIRC_SPACE_TO_END(head, tail, size) \
+        ({int end = (size) - 1 - (head); \
         int n = (end + (tail)) & ((size)-1); \
-        n <= end ? n : end+1; \
-    }while (0)
+        n <= end ? n : end+1;}) \
 
-#define CIRC_SPACE_TO_END_FULL(head, tail, size) do { \
-        int end = (size) - 1 - (head); \
+#define CIRC_SPACE_TO_END_FULL(head, tail, size) \
+      ({int end = (size) - 1 - (head); \
         int n = (end + (tail)) & ((size)-1); \
-        n < end ? n : end+1; \
-    }while (0)
+	  n < end ? n : end+1;}) \
 
 #define uart_circ_empty(circ)        ((circ)->head == (circ)->tail)
 #define uart_circ_chars_pending(circ) \
