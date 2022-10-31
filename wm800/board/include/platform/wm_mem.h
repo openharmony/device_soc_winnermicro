@@ -171,7 +171,7 @@ void *mem_calloc_debug(u32 length, u32 size);
  *
  * @note           None
  */
-#define MEMCPY(dst, src, len)      memcpy_s(dst, sizeof(dst), src, len)
+#define MEMCPY(dst, src, len)      memcpy(dst, src, len)
 
 /**
  * @brief          This function is used to copy memory content from one address to another address
