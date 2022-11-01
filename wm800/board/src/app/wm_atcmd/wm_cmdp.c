@@ -53,7 +53,7 @@ extern const char HwVer[TEN];
 tls_os_timer_t *RSTTIMER = NULL;
 
 u8 gfwupdatemode = 0;
-u8 tls_get_fwup_mode(void){
+u8 tls_get_fwup_mode(void) {
     return gfwupdatemode;
 }
 
@@ -86,7 +86,8 @@ cmd_get_uart1_port_callback get_uart1_port_callback;
 cmd_set_uart1_mode_callback set_uart1_mode_callback;
 cmd_set_uart1_sock_param_callback set_uart1_sock_param_callback;
 
-void tls_set_fwup_mode(u8 flag){
+void tls_set_fwup_mode(u8 flag)
+{
     gfwupdatemode = flag;
 }
 
@@ -102,11 +103,13 @@ struct tls_socket_cfg *tls_cmd_get_socket_cfg(void)
     return &socket_cfg;
 }
 
-void tls_cmd_set_net_up(u8 netup){
+void tls_cmd_set_net_up(u8 netup)
+{
     net_up = netup;
 }
 
-u8 tls_cmd_get_net_up(void){
+u8 tls_cmd_get_net_up(void)
+{
     return net_up;
 }
 
@@ -115,20 +118,19 @@ void tls_cmd_init_socket_cfg(void)
     int timeout = 0, host_len;
     struct tls_param_socket remote_socket_cfg;
     tls_param_get(TLS_PARAM_ID_DEFSOCKET, &remote_socket_cfg, FALSE);
-    /* read default socket params */
-    socket_cfg.proto = remote_socket_cfg.protocol;
+    socket_cfg.proto = remote_socket_cfg.protocol;    /* read default socket params */
     socket_cfg.client = remote_socket_cfg.client_or_server ? 0 : 1;
     socket_cfg.port = remote_socket_cfg.port_num;
-    TLS_DBGPRT_INFO("socket_cfg.proto = %d, socket_cfg.client = %d, socket_cfg.port = %d\n", socket_cfg.proto, socket_cfg.client, socket_cfg.port);
+    TLS_DBGPRT_INFO("socket_cfg.proto = %d, socket_cfg.client = %d, socket_cfg.port = %d\n",
+                    socket_cfg.proto, socket_cfg.client, socket_cfg.port);
     host_len = strlen((char *)remote_socket_cfg.host);
     if (socket_cfg.client) {
-        /* host name */
-        if (host_len){
+        if (host_len) {        /* host name */
             MEMCPY(socket_cfg.host, remote_socket_cfg.host, host_len);
             string_to_ipaddr((char *)remote_socket_cfg.host, &socket_cfg.ip_addr[0]);
         }
     } else if (!socket_cfg.client && socket_cfg.proto == 0) {
-        if (strtodec(&timeout, (char *)remote_socket_cfg.host)<0){
+        if (strtodec(&timeout, (char *)remote_socket_cfg.host)<0) {
             timeout = 0;
         }
 
@@ -144,14 +146,14 @@ static void ResetTimerProc(void *ptmr, void *parg)
 
 void tls_cmd_reset_sys(void)
 {
-    int err=0;
+    int err = 0;
     if (RSTTIMER == NULL) {
         err = tls_os_timer_create(&RSTTIMER,
-                            ResetTimerProc,
-                            NULL,
-                            HZ/TEN,
-                            FALSE,
-                            NULL);
+                                  ResetTimerProc,
+                                  NULL,
+                                  HZ/TEN,
+                                  FALSE,
+                                  NULL);
         if (TLS_OS_SUCCESS == err) {
             tls_os_timer_start(RSTTIMER);
         }
@@ -179,22 +181,18 @@ int tls_cmd_ps(struct tls_cmd_ps_t *ps)
 
 int tls_cmd_scan(enum tls_cmd_mode mode)
 {
-
     int ret = 0;
     struct tls_hostif *hif = tls_get_hostif();
 
-    /* scanning not finished */
-    if (hif->last_scan)
+    if (hif->last_scan)    /* scanning not finished */
         return CMD_ERR_BUSY;
 
     hif->last_scan = 1;
     hif->last_scan_cmd_mode = mode;
 
-    /* register scan complt callback */
-    tls_wifi_scan_result_cb_register(hostif_wscan_cmplt);
+    tls_wifi_scan_result_cb_register(hostif_wscan_cmplt);    /* register scan complt callback */
 
-    /* trigger the scan */
-    ret = tls_wifi_scan();
+    ret = tls_wifi_scan();    /* trigger the scan */
     if (ret == WM_WIFI_SCANNING_BUSY) {
         hif->last_scan = 0;
         return CMD_ERR_BUSY;
@@ -206,24 +204,21 @@ int tls_cmd_scan(enum tls_cmd_mode mode)
     return CMD_ERR_OK;
 }
 
-int tls_cmd_scan_by_param( enum tls_cmd_mode mode, u16 channellist, u32 times, u16 switchinterval)
+int tls_cmd_scan_by_param(enum tls_cmd_mode mode, u16 channellist, u32 times, u16 switchinterval)
 {
     int ret = 0;
     struct tls_hostif *hif = tls_get_hostif();
     struct tls_wifi_scan_param_t scan_param;
 
-    /* scanning not finished */
-    if (hif->last_scan )
+    if (hif->last_scan)    /* scanning not finished */
         return CMD_ERR_BUSY;
 
     hif->last_scan = 1;
     hif->last_scan_cmd_mode = mode;
 
-    /* register scan complt callback */
-    tls_wifi_scan_result_cb_register(hostif_wscan_cmplt);
+    tls_wifi_scan_result_cb_register(hostif_wscan_cmplt);    /* register scan complt callback */
 
-    /* trigger the scan */
-    scan_param.scan_chanlist = channellist;
+    scan_param.scan_chanlist = channellist;    /* trigger the scan */
     scan_param.scan_chinterval = switchinterval;
     scan_param.scan_times = times;
     ret = tls_wifi_scan_by_param(&scan_param);
@@ -249,7 +244,7 @@ int tls_cmd_join_net(void)
     int ret;
 
     key = tls_mem_alloc(sizeof(struct tls_cmd_key_t));
-    if(!key)
+    if (!key)
         return -1;
     memset(key, 0, sizeof(struct tls_cmd_key_t));
 
@@ -259,7 +254,7 @@ int tls_cmd_join_net(void)
 
     if (bssid.enable) {
         if (ssid.ssid_len) {
-            ret = tls_wifi_connect_by_ssid_bssid(ssid.ssid, ssid.ssid_len,bssid.bssid, key->key, key->key_len);
+            ret = tls_wifi_connect_by_ssid_bssid(ssid.ssid, ssid.ssid_len, bssid.bssid, key->key, key->key_len);
         } else {
             ret = tls_wifi_connect_by_bssid(bssid.bssid, key->key, key->key_len);
         }
@@ -293,8 +288,8 @@ int tls_cmd_create_net(void)
     MEMCPY(apinfo->ssid, ssid.ssid, ssid.ssid_len);
     apinfo->ssid[ssid.ssid_len] = '\0';
 
-    tls_cmd_get_softap_encrypt( &apinfo->encrypt);
-    tls_cmd_get_softap_channel( &apinfo->channel);
+    tls_cmd_get_softap_encrypt(&apinfo->encrypt);
+    tls_cmd_get_softap_channel(&apinfo->channel);
     tls_cmd_get_softap_key((struct tls_cmd_key_t *)(&apinfo->keyinfo));
     tls_cmd_get_softap_ip_info(&ip_addr);
 
@@ -317,7 +312,7 @@ int tls_cmd_create_ibss_net(void)
     return ret;
 }
 
-int tls_cmd_join( enum tls_cmd_mode mode, struct tls_cmd_connect_t *conn)
+int tls_cmd_join(enum tls_cmd_mode mode, struct tls_cmd_connect_t *conn)
 {
     return;
 }
@@ -388,7 +383,6 @@ int tls_cmd_get_wireless_mode(u8 *mode)
 
     tls_param_get(TLS_PARAM_ID_WPROTOCOL, (void* )&wmode, TRUE);
     /* set WPAS_MODE to do*/
-
     switch (wmode) {
         case IEEE80211_MODE_INFRA:
             *mode = 0;
@@ -458,7 +452,7 @@ int tls_cmd_set_key(struct tls_cmd_key_t *key, u8 update_flash)
     tls_param_set(TLS_PARAM_ID_ORIGIN_KEY, (void *)orig_key, (bool)update_flash);
 
     sha1_key = (struct tls_param_sha1*)&param_key;
-    memset((u8* )sha1_key, 0, sizeof(struct tls_param_sha1));
+    memset((u8*)sha1_key, 0, sizeof(struct tls_param_sha1));
     tls_param_set(TLS_PARAM_ID_SHA1, (void *)sha1_key, TRUE);
 
     return 0;
@@ -499,7 +493,7 @@ int tls_cmd_set_encrypt(u8 encrypt, u8 update_flash)
 {
     struct tls_param_key param_key;
 
-    if (encrypt == 0){
+    if (encrypt == 0) {
         memset(param_key.psk, 0, SIXTY_FOUR);
         param_key.key_format = 0;
         param_key.key_index = 0;
@@ -537,7 +531,7 @@ int tls_cmd_get_bssid(struct tls_cmd_bssid_t *bssid)
 {
     struct tls_param_bssid param_bssid;
 
-    if (bssid){
+    if (bssid) {
         tls_param_get(TLS_PARAM_ID_BSSID, (void *)&param_bssid, (bool)0);
         MEMCPY(bssid->bssid, param_bssid.bssid, SIX);
         bssid->enable = param_bssid.bssid_enable;
@@ -775,7 +769,7 @@ int tls_cmd_set_hostif_mode(u8 mode, u8 update_flash)
 
 int tls_cmd_set_default_socket_params(struct tls_cmd_socket_t *params, u8 update_flash)
 {
-    struct tls_socket_cfg  *skt_cfg = &socket_cfg;
+    struct tls_socket_cfg *skt_cfg = &socket_cfg;
     struct tls_param_socket param_socket_cfg;
     if (tls_param_get_updp_mode() == 0) {
         skt_cfg->proto = params->proto;
@@ -796,7 +790,7 @@ int tls_cmd_set_default_socket_params(struct tls_cmd_socket_t *params, u8 update
 
 int tls_cmd_get_default_socket_params(struct tls_cmd_socket_t *params)
 {
-    struct tls_socket_cfg  *skt_cfg = &socket_cfg;
+    struct tls_socket_cfg *skt_cfg = &socket_cfg;
 
     params->proto = skt_cfg->proto;
     params->client = skt_cfg->client;
@@ -1190,7 +1184,7 @@ int tls_cmd_set_softap_key(struct tls_cmd_key_t *key, u8 update_flash)
     tls_param_set(TLS_PARAM_ID_SOFTAP_KEY, (void *)&param_key, (bool)update_flash);
 
     sha1_key = (struct tls_param_sha1*)&param_key;
-    memset((u8* )sha1_key, 0, sizeof(struct tls_param_sha1));
+    memset((u8*)sha1_key, 0, sizeof(struct tls_param_sha1));
     tls_param_set(TLS_PARAM_ID_SOFTAP_PSK, (void *)sha1_key, TRUE);
 
     return 0;
