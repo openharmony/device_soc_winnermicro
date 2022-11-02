@@ -52,18 +52,9 @@
 #endif
 #define VOID                    void
 typedef unsigned int BOOL;
-typedef unsigned char           UCHAR;
-//typedef signed char             CHAR;
 typedef char                    CHAR;
-typedef unsigned short          UINT16; 
-typedef signed short            INT16;
+typedef unsigned short          UINT16;
 typedef unsigned int            UINT32;
-typedef signed int              INT32;
-typedef unsigned long long      UINT64;
-typedef long long               INT64;
-typedef unsigned long           ULONG;
-typedef signed long             LONG;
-
 
 /* HTTP Status, API Return codes */
 /** HTTP Success status */
@@ -126,24 +117,25 @@ typedef signed long             LONG;
 /** Digest algorithem could be MD5 or MD5-sess other types are not supported */
 #define HTTP_CLIENT_ERROR_NO_DIGEST_ALG     28
 /** Binding error */
-#define HTTP_CLIENT_ERROR_SOCKET_BIND		29
+#define HTTP_CLIENT_ERROR_SOCKET_BIND       29
 /** Tls negotiation error */
-#define HTTP_CLIENT_ERROR_TLS_NEGO			30
+#define HTTP_CLIENT_ERROR_TLS_NEGO          30
 /** Feature is not (yet) implemented */
 #define HTTP_CLIENT_ERROR_NOT_IMPLEMENTED   64
 /** HTTP end of stream message */
 #define HTTP_CLIENT_EOS                     1000
 
 // HTTP Session flags (Public flags)
-#define HTTP_CLIENT_FLAG_KEEP_ALIVE         0x00000001 // Set the keep alive header
-#define HTTP_CLIENT_FLAG_SEND_CHUNKED       0x00000002 // The outgoing should chunked
-#define HTTP_CLIENT_FLAG_NO_CACHE           0x00000004 // Set the no cache header
-#define HTTP_CLIENT_FLAG_ASYNC              0x00000008 // Currently not implemented 
-#define HTTP_CLIENT_FLAG_MULTIPART_FORM       0x00000010 // The outgoing should multipart/form-data
+#define HTTP_CLIENT_FLAG_KEEP_ALIVE         0x00000001    // Set the keep alive header
+#define HTTP_CLIENT_FLAG_SEND_CHUNKED       0x00000002    // The outgoing should chunked
+#define HTTP_CLIENT_FLAG_NO_CACHE           0x00000004    // Set the no cache header
+#define HTTP_CLIENT_FLAG_ASYNC              0x00000008    // Currently not implemented 
+#define HTTP_CLIENT_FLAG_MULTIPART_FORM     0x00000010    // The outgoing should multipart/form-data
 
 // HTTP Type Definitions 
 typedef UINT32          HTTP_SESSION_HANDLE;
 typedef UINT32          HTTP_CLIENT_SESSION_FLAGS;
+
 /******************************************************************************
 *
 *  Section      : HTTP API structures
@@ -157,8 +149,7 @@ typedef u32 tls_http_session_handle_t;
 typedef u32 tls_http_session_flags_t;
 
 /** HTTP Supported authentication methods */
-typedef enum _HTTP_AUTH_SCHEMA
-{
+typedef enum _HTTP_AUTH_SCHEMA {
     AuthSchemaNone      = 0,
     AuthSchemaBasic,
     AuthSchemaDigest,
@@ -166,57 +157,53 @@ typedef enum _HTTP_AUTH_SCHEMA
     AuthNotSupported
 
 } HTTP_AUTH_SCHEMA;
+
 /** HTTP supported verbs */
-typedef enum _HTTP_VERB
-{
+typedef enum _HTTP_VERB {
     VerbGet             = 0,
     VerbHead,
     VerbPost,
     VerbPut,
     VerbFwup,
     VerbNotSupported
-    // Note: others verb such as connect and put are currently not supported
-
 } HTTP_VERB;
+
 /** Data structure that the caller can request at any time that will include
     some information regarding the session */
-typedef struct _HTTP_CLIENT
-{
+typedef struct _HTTP_CLIENT {
     UINT32        HTTPStatusCode;                 // HTTP Status code (200 OK)
-    UINT32		    RequestBodyLengthSent;          // Total bytes sent (body only)
-    UINT32		    ResponseBodyLengthReceived;     // Total bytes received (body only)
-    UINT32		    TotalResponseBodyLength;        // as extracted from the “content-length" header
+    UINT32        RequestBodyLengthSent;          // Total bytes sent (body only)
+    UINT32        ResponseBodyLengthReceived;     // Total bytes received (body only)
+    UINT32        TotalResponseBodyLength;        // as extracted from the “content-length" header
     UINT32        HttpState;
 } HTTP_CLIENT;
 
 /** HTTP parameters */
-typedef struct _HTTPParameters
-{
-    CHAR*                  Uri;        
-    CHAR*                  ProxyHost;  
-    UINT32                  UseProxy ;  
-    UINT32                  ProxyPort;
-    UINT32                  Verbose;
+typedef struct _HTTPParameters {
+    CHAR*                  Uri;
+    CHAR*                  ProxyHost;
+    UINT32                 UseProxy;
+    UINT32                 ProxyPort;
+    UINT32                 Verbose;
     CHAR*                  UserName;
     CHAR*                  Password;
-    HTTP_AUTH_SCHEMA      AuthType;
+    HTTP_AUTH_SCHEMA       AuthType;
 
 } HTTPParameters;
 
 #if TLS_CONFIG_HTTP_CLIENT_TASK
 /** the callback function of http clent for received */
-typedef void  (*http_client_recv_callback_fn)(HTTP_SESSION_HANDLE pSession, CHAR * data, UINT32 totallen, UINT32 datalen);
+typedef void (*http_client_recv_callback_fn)(HTTP_SESSION_HANDLE pSession, CHAR *data, UINT32 totallen, UINT32 datalen);
 /** the callback function of http clent for err */
-typedef void  (*http_client_err_callback_fn)(HTTP_SESSION_HANDLE pSession, int err);
+typedef void (*http_client_err_callback_fn)(HTTP_SESSION_HANDLE pSession, int err);
 
 /** message of the http client */
-typedef struct _http_client_msg
-{
+typedef struct _http_client_msg {
     HTTP_SESSION_HANDLE pSession;
     HTTPParameters param;
     HTTP_VERB method;
     CHAR* sendData;
-    UINT32      dataLen;
+    UINT32 dataLen;
     http_client_recv_callback_fn recv_fn;
     http_client_err_callback_fn err_fn;
 } http_client_msg;
@@ -359,7 +346,7 @@ UINT32                  HTTPClientAddRequestHeaders   (HTTP_SESSION_HANDLE pSess
  *
  * @note           None
  */
-UINT32                  HTTPClientSendRequest         (HTTP_SESSION_HANDLE pSession, CHAR *pUrl, VOID *pData, UINT32 nDataLength, BOOL TotalLength, UINT32 nTimeout,UINT32 nClientPort);
+UINT32                  HTTPClientSendRequest         (HTTP_SESSION_HANDLE pSession, CHAR *pUrl, VOID *pData, UINT32 nDataLength, BOOL TotalLength, UINT32 nTimeout, UINT32 nClientPort);
 /**
  * @brief          Write data to the remote server
  *

@@ -101,40 +101,40 @@ void tls_timeouts_mbox_fetch_p(u8 timeo_assigned, tls_mbox_t mbox, void **msg)
  */
 void tls_timeout_p(u8 timeo_assigned, u32 msecs, tls_timeout_handler handler, void *arg)
 {
-	  struct tls_timeo *timeout, *t;
-	  struct tls_timeo **timeo = &next_timeout[timeo_assigned];
+    struct tls_timeo *timeout, *t;
+    struct tls_timeo **timeo = &next_timeout[timeo_assigned];
 
-	  timeout = (struct tls_timeo *)tls_mem_alloc(sizeof(struct tls_timeo));
-	  if (timeout == NULL) {
-	    return;
-	  }
-	  timeout->next = NULL;
-	  timeout->h = handler;
-	  timeout->arg = arg;
-	  timeout->time = msecs;
+    timeout = (struct tls_timeo *)tls_mem_alloc(sizeof(struct tls_timeo));
+    if (timeout == NULL) {
+        return;
+    }
+    timeout->next = NULL;
+    timeout->h = handler;
+    timeout->arg = arg;
+    timeout->time = msecs;
 
-	  if (*timeo == NULL) {
-	    *timeo = timeout;
-	    return;
-	  }
+    if (*timeo == NULL) {
+        *timeo = timeout;
+        return;
+    }
 
-	  if ((*timeo)->time > msecs) {
-	    (*timeo)->time -= msecs;
-	    timeout->next = *timeo;
-	    *timeo = timeout;
-	  } else {
-	    for(t = *timeo; t != NULL; t = t->next) {
-	      timeout->time -= t->time;
-	      if (t->next == NULL || t->next->time > timeout->time) {
-	        if (t->next != NULL) {
-	          t->next->time -= timeout->time;
-	        }
-	        timeout->next = t->next;
-	        t->next = timeout;
-	        break;
-	      }
-	    }
-  }
+    if ((*timeo)->time > msecs) {
+        (*timeo)->time -= msecs;
+        timeout->next = *timeo;
+        *timeo = timeout;
+    } else {
+        for (t = *timeo; t != NULL; t = t->next) {
+          timeout->time -= t->time;
+          if (t->next == NULL || t->next->time > timeout->time) {
+            if (t->next != NULL) {
+              t->next->time -= timeout->time;
+            }
+            timeout->next = t->next;
+            t->next = timeout;
+            break;
+          }
+        }
+    }
 }
 
 /**
@@ -189,7 +189,7 @@ void tls_untimeout_p(u8 timeo_assigned, tls_timeout_handler handler, void *arg)
  */
 s8 tls_wl_timer_init(void)
 {
-	memset(next_timeout, 0, sizeof(struct tls_timeo *) * TLS_TIMEO_ALL_COUONT);
+    memset(next_timeout, 0, sizeof(struct tls_timeo *) * TLS_TIMEO_ALL_COUONT);
 
-	return 0;
+    return 0;
 }

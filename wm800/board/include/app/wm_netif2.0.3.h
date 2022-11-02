@@ -23,65 +23,31 @@
 #include "wm_params.h"
 
 /** MACRO for callback EVENT to join AP or create soft-AP successfully  */
-#define	NETIF_WIFI_JOIN_SUCCESS         0x1
+#define    NETIF_WIFI_JOIN_SUCCESS         0x1
 /** MACRO for callback EVENT to fail to join AP */
-#define  NETIF_WIFI_JOIN_FAILED          0x2
+#define    NETIF_WIFI_JOIN_FAILED          0x2
 /** MACRO for callback EVENT to disconnect from AP or destroy soft-AP */
-#define	NETIF_WIFI_DISCONNECTED         0x3
+#define    NETIF_WIFI_DISCONNECTED         0x3
 /** MACRO for callbck EVENT to get IP address */
-#define	NETIF_IP_NET_UP                 0x4
+#define    NETIF_IP_NET_UP                 0x4
 /** MACRO for callback EVNET to create AP successfully */
-#define	NETIF_WIFI_SOFTAP_SUCCESS    0x5
+#define    NETIF_WIFI_SOFTAP_SUCCESS       0x5
 /** MACRO for callback EVNET to create soft-AP failed */
-#define	NETIF_WIFI_SOFTAP_FAILED     0x6
+#define    NETIF_WIFI_SOFTAP_FAILED        0x6
 /** MACRO for callback EVNET to close soft-AP */
-#define	NETIF_WIFI_SOFTAP_CLOSED          0x7
+#define    NETIF_WIFI_SOFTAP_CLOSED        0x7
 /** MACRO for callback EVNET to inform soft ap's net */
-#define	NETIF_IP_NET2_UP                0x8
+#define    NETIF_IP_NET2_UP                0x8
 
-#define NETIF_IPV6_NET_UP           0x9
+#define    NETIF_IPV6_NET_UP               0x9
 
 /** These are the values for ip_addr_t.type */
-#define IPADDR_TYPE_V4                0U
-#define IPADDR_TYPE_V6                6U
-#define IPADDR_TYPE_ANY               46U
+#define    IPADDR_TYPE_V4                  0U
+#define    IPADDR_TYPE_V6                  6U
+#define    IPADDR_TYPE_ANY                 46U
 
-#define IPV6_ADDR_MAX_NUM       3       
+#define     IPV6_ADDR_MAX_NUM              3
 
-#if 0
-struct ip_addr {
-  u32_t addr;
-};
-
-typedef struct ip_addr ip_addr_t;	
-#endif
-#if 0
-struct ip4_addr {
-  u32_t addr;
-};
-typedef struct ip4_addr ip4_addr_t;
-
-struct ip6_addr {
-  u32_t addr[4];
-};
-typedef struct ip6_addr ip6_addr_t;
-
-#if (TLS_CONFIG_IPV4 && TLS_CONFIG_IPV6)
-typedef struct _ip_addr {
-  union {
-    ip6_addr_t ip6;
-    ip4_addr_t ip4;
-  } u_addr;
-  u8_t type;
-} ip_addr_t;
-#else
-#if TLS_CONFIG_IPV4
-typedef ip4_addr_t ip_addr_t;
-#else	  
-typedef ip6_addr_t ip_addr_t;
-#endif
-#endif
-#endif
 struct tls_ethif {
     ip_addr_t ip_addr;
     ip_addr_t netmask;
@@ -91,13 +57,13 @@ struct tls_ethif {
 #endif
     ip_addr_t dns1;
     ip_addr_t dns2;
-    u8 status;              //0:net down; 1:net up
+    u8 status;              /* 0:net down; 1:net up */
 #if TLS_CONFIG_IPV6
-    u8 ipv6_status[IPV6_ADDR_MAX_NUM];      //0:net down; 1:net up
+    u8 ipv6_status[IPV6_ADDR_MAX_NUM];    /* 0:net down; 1:net up */
 #endif
 };
 
-//type defination of netif status changed callback.
+ /* type defination of netif status changed callback. */
 typedef void (*tls_netif_status_event_fn)(u8 status);
 
 /**
@@ -199,7 +165,7 @@ err_t tls_netif_set_addr(ip_addr_t *ipaddr,
  * @brief          This function is used to set dns servers
  *
  * @param[in]      numdns     index of the DNS server to set
- 							  must be < DNS_MAX_SERVERS
+                               must be < DNS_MAX_SERVERS
  * @param[in]      *dnsserver IP address of the DNS server to set
  *
  * @return         None
@@ -223,7 +189,7 @@ err_t tls_netif_set_up(void);
 
 /**
  * @brief          This function is used to bring down an interface,disabling
- 				   any traffic processing
+                    any traffic processing
  *
  * @param[in]      None
  *
@@ -300,11 +266,11 @@ void tls_dhcps_stop(void);
  * @retval         DHCPS_ERR_SUCCESS - No error
  * @retval         DHCPS_ERR_MEM - Out of memory
  * @retval         DHCPS_ERR_LINKDOWN - The NI is inactive
- * @retval		   DNSS_ERR_PARAM - Input parameter error
+ * @retval           DNSS_ERR_PARAM - Input parameter error
  *
  * @note           None
  */
-INT8S tls_dnss_start(INT8U * DnsName);
+INT8S tls_dnss_start(INT8U *DnsName);
 
 /**
  * @brief          Stop the dns server's service
@@ -338,7 +304,7 @@ ip_addr_t *tls_dhcps_getip(const u8_t *mac);
  * @note           None
  */
 u8 *tls_dhcps_getmac(const ip_addr_t *ip);
-#endif //TLS_CONFIG_AP
+#endif /* TLS_CONFIG_AP */
 
 #if TLS_CONFIG_RMMS
 /**
@@ -405,8 +371,7 @@ err_t tls_netif2_set_down(void);
  * @note           Can only be used at APSTA mode
  */
 err_t tls_netif2_set_addr(ip_addr_t *ipaddr,
-                          ip_addr_t *netmask,
-                          ip_addr_t *gw);
+    ip_addr_t *netmask, ip_addr_t *gw);
 /*************************************************************************** 
 * Function: tls_dhcps_setdns
 * Description: Set dhcp server's dns address.
@@ -439,4 +404,4 @@ void tls_dhcps_setdns(u8_t numdns);
  * @}
  */
 
-#endif //WM_NETIF_H
+#endif /* WM_NETIF_H */
