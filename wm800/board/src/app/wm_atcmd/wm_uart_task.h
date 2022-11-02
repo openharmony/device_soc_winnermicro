@@ -32,24 +32,17 @@ struct uart_ricmd_info {
     u8  dest;
 };
 
-typedef struct tls_uart{
-	struct tls_uart_port *uart_port;
-	/** uart rx semaphore, notify receive a char */
-//	tls_os_mailbox_t              *rx_mailbox;
-	/** uart tx semaphore, notify tx empty */
-//	tls_os_mailbox_t              *tx_mailbox;
-	u32                         cmd_mode;
-
-	//bool	rx_idle;
-	u8	inputstate;
-    
-	    /** 
-	     * tx callbak, notify user application tx complete, 
-	     * user can use it, write new data to uart for transmit
-	     */
-	void (*tx_cb)(struct tls_uart *uart);
-	struct uart_ricmd_info ricmd_info;
-	u16 sksnd_cnt;
+typedef struct tls_uart {
+    struct tls_uart_port *uart_port;
+    u32   cmd_mode;
+    u8    inputstate;
+    /*
+    * tx callbak, notify user application tx complete, 
+    * user can use it, write new data to uart for transmit
+    */
+    void (*tx_cb)(struct tls_uart *uart);
+    struct uart_ricmd_info ricmd_info;
+    u16 sksnd_cnt;
 } tls_uart_t;
 
 struct tls_uart *tls_uart_open(u32 uart_no, TLS_UART_MODE_T uart_mode);

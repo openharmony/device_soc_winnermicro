@@ -13,14 +13,14 @@
  * limitations under the License.
  */
 
-#include "wm_uart_task.h"
-#include "wm_debug.h"
-#include "wm_regs.h"
-#include "wm_params.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include "wm_uart_task.h"
+#include "wm_debug.h"
+#include "wm_regs.h"
+#include "wm_params.h"
 #include "wm_fwup.h"
 #if (GCC_COMPILE==1)
 #include "wm_cmdp_hostif_gcc.h"
@@ -52,13 +52,13 @@
 
 #if (TLS_CONFIG_HOSTIF && TLS_CONFIG_UART)
 
-extern struct tls_uart_port uart_port[2];
-struct tls_uart uart_st[2];
+extern struct tls_uart_port uart_port[TWO];
+struct tls_uart uart_st[TWO];
 #if TLS_CONFIG_SOCKET_RAW || TLS_CONFIG_SOCKET_STD
 static u32 uart1_delaytime = 0;
 #endif
 
-#define UART_NET_SEND_DATA_SIZE      256 //512
+#define UART_NET_SEND_DATA_SIZE      256  //512
 
 struct uart_tx_msg {
     struct tls_uart *uart;
@@ -289,8 +289,7 @@ void tls_uart_init(void)
             tls_uart_set_fc_status(uart->uart_port->uart_no,
                                    TLS_UART_FLOW_CTRL_NONE);
         }
-    }
-    else {
+    } else {
         ;
     }
 
@@ -310,9 +309,11 @@ static s16 tls_uart0_task_rx_cb(u16 len, void *p)
                                TLS_UART_FLOW_CTRL_NONE);
     }
 
-    if (tls_wl_task_callback_static
-        (&wl_task_param_hostif, (start_routine) uart_rx, uart, 0,
-         TLS_MSG_ID_UART0_RX)) {
+    if (tls_wl_task_callback_static(&wl_task_param_hostif,
+                                    (start_routine) uart_rx,
+                                    uart,
+                                    0,
+                                    TLS_MSG_ID_UART0_RX)) {
         return WM_FAILED;
     }
     return WM_SUCCESS;
@@ -321,7 +322,6 @@ static s16 tls_uart0_task_rx_cb(u16 len, void *p)
 s16 tls_uart1_task_rx_cb(u16 len, void *p)
 {
     struct tls_uart *uart = &uart_st[1];
-
 
     if ((UART_TRANS_MODE == uart->cmd_mode)
         && (uart->uart_port->plus_char_cnt == THREE)) {
@@ -363,12 +363,10 @@ int tls_uart_close(struct tls_uart *uart)
     return WM_FAILED;
 }
 
-
 static u8 *find_atcmd_eol(u8 * src, u32 len)
 {
     u8 *p = NULL;
     u8 *q = NULL;
-
     p = memchr(src, '\r', len);
     q = memchr(src, '\n', len);
 
@@ -423,11 +421,9 @@ static u8 *parse_atcmd_eol(struct tls_uart *uart)
     u8 *p = NULL;
 
     /* jump to end of line */
-    if (recv->head > recv->tail)
-    {
+    if (recv->head > recv->tail) {
         p = find_atcmd_eol((u8 *)&recv->buf[recv->tail], (u32)(recv->head - recv->tail));
-        if (p)
-        {
+        if (p) {
             modify_atcmd_tail(recv, &p);
         }
     } else {
@@ -444,8 +440,7 @@ static u8 *parse_atcmd_eol(struct tls_uart *uart)
     }
 
     /* jump over EOF char */
-    if ((recv->buf[recv->tail] == '\r') || (recv->buf[recv->tail] == '\n'))
-    {
+    if ((recv->buf[recv->tail] == '\r') || (recv->buf[recv->tail] == '\n')) {
         recv->tail = (recv->tail + 1) & (TLS_UART_RX_BUF_SIZE - 1);
     }
     return p;
@@ -461,16 +456,14 @@ static void parse_atcmd_line(struct tls_uart *uart)
     u8 hostif_uart_type;
 
     while ((CIRC_CNT(recv->head, recv->tail, TLS_UART_RX_BUF_SIZE) >= FOUR)
-           && (atcmd_start == NULL))
-    {  /* check "at+" char */
+           && (atcmd_start == NULL)) {  /* check "at+" char */
         if (((recv->buf[recv->tail] == 'A') || (recv->buf[recv->tail] == 'a'))
             &&
             ((recv->buf[(recv->tail + 1) & (TLS_UART_RX_BUF_SIZE - 1)] == 'T')
              || (recv->buf[(recv->tail + 1) & (TLS_UART_RX_BUF_SIZE - 1)] ==
                  't'))
             && (recv->buf[(recv->tail + TWO) & (TLS_UART_RX_BUF_SIZE - 1)] ==
-                '+'))
-        {
+                '+')) {
             atcmd_start = (u8 *)&recv->buf[recv->tail];
             recv->tail = (recv->tail + THREE) & (TLS_UART_RX_BUF_SIZE - 1);
             ptr_eol = parse_atcmd_eol(uart);
@@ -526,9 +519,7 @@ static void parse_atcmd_line(struct tls_uart *uart)
             atcmd_start = NULL;
             if (CIRC_CNT(recv->head, recv->tail, TLS_UART_RX_BUF_SIZE) > 0) {
                 if (uart->uart_port->uart_no == TLS_UART_0) {
-                    tls_uart0_task_rx_cb(CIRC_CNT
-                                         (recv->head, recv->tail,
-                                          TLS_UART_RX_BUF_SIZE), NULL);
+                    tls_uart0_task_rx_cb(CIRC_CNT(recv->head, recv->tail, TLS_UART_RX_BUF_SIZE), NULL);
                 } else {
                     tls_uart1_task_rx_cb(CIRC_CNT
                                          (recv->head, recv->tail,
@@ -577,8 +568,7 @@ RESENDBUF:
 #endif
     {
         skt_info.socket = def_socket;
-        do
-        {
+        do {
             err = tls_hostif_send_data(&skt_info, uart_net_send_data, buflen);
             if (ERR_VAL == err) {
                 printf("\nsocket err val\n");
@@ -595,7 +585,7 @@ RESENDBUF:
                     continue;
                 } else {
                     printfFreq ++;
-                    if(printfFreq % FIFTY == 0) {
+                    if (printfFreq % FIFTY == 0) {
                         printf("ERR_MEM\r\n");
                     }
                     break;
@@ -656,8 +646,7 @@ static int cache_tcp_recv(struct tls_hostif_tx_msg *tx_msg)
                     precvmit->tail);
     buflen = p->tot_len - tx_msg->offset;
     tail = precvmit->tail;
-    while (1)
-    {
+    while (1) {
         copylen = CIRC_SPACE_TO_END_FULL(precvmit->head,
                                          tail, TLS_SOCKET_RECV_BUF_SIZE);
         if (copylen == 0) {
@@ -683,15 +672,14 @@ static int cache_tcp_recv(struct tls_hostif_tx_msg *tx_msg)
         precvmit->tail = precvmit->head + 1;
 
      /* Check whether the pbuf data is copied to the uart cache */
-    if (tx_msg->offset >= p->tot_len)
-    {
+    if (tx_msg->offset >= p->tot_len) {
         pbuf_free(p);
     }
 
     return copylen;
 }
 
-/*　
+ /*　
  * 处理流程说明：
  * 首先判断上次的同步帧是否已经处理完成，如果已经处理结束，
  *          则检查缓存head指向的字节，判断是否是0xAA(SYN_FLAG)，
@@ -720,8 +708,7 @@ static int cmd_loop(struct tls_uart *uart,
     unsigned procbytes = 0;
     unsigned char c;
 
-    while (procbytes < numbytes)
-    {
+    while (procbytes < numbytes) {
         c = recv->head;
         procbytes++;
 
@@ -749,8 +736,7 @@ void parse_ricmd_line(struct tls_uart *uart)
     int numbytes;
     int procbytes;
 
-    while (!uart_circ_empty(recv))
-    {
+    while (!uart_circ_empty(recv)) {
         /* check for frame header */
         skip_count = ricmd_handle_sync(uart, recv);
         if ((skip_count == 0) && !(uart->inputstate & INS_SYNC_CHAR))
@@ -787,7 +773,8 @@ static int uart_fwup_rsp(u8 portno, int status)
     cmd_rsp = tls_mem_alloc(SIXTEEN);
     if (cmd_rsp == NULL) {
         return -1;
-    } if (status) {
+    }
+    if (status) {
         len = sprintf(cmd_rsp, "+OK=%d\r\n\r\n", status);
     } else {
         len = sprintf(cmd_rsp, "+ERR=%d\r\n\r\n", status);
@@ -813,8 +800,7 @@ void uart_fwup_send(struct tls_uart *uart)
     u8 *p;
     u32 i, session_id, status;
 
-    if (data_cnt >= UART_UPFW_DATA_SIZE)
-    {
+    if (data_cnt >= UART_UPFW_DATA_SIZE) {
         uart->cmd_mode = UART_ATCMD_MODE;
         pfwup = (struct tls_fwup_block *) tls_mem_alloc(UART_UPFW_DATA_SIZE);
         if (!pfwup) {
@@ -822,16 +808,14 @@ void uart_fwup_send(struct tls_uart *uart)
             return;
         }
         p = (u8 *) pfwup;
-        for (i = 0; i < UART_UPFW_DATA_SIZE; i++)
-        {
+        for (i = 0; i < UART_UPFW_DATA_SIZE; i++) {
             *p++ = recv->buf[recv->tail++];
             recv->tail &= TLS_UART_RX_BUF_SIZE - 1;
         }
         session_id = tls_fwup_get_current_session_id();
         if (session_id) {
-            if (get_crc32((u8 *) pfwup, UART_UPFW_DATA_SIZE - TWELVE) ==
-                pfwup->crc32) {
-                if (TLS_FWUP_STATUS_OK == tls_fwup_set_update_numer(pfwup->number)) {
+            if (get_crc32((u8 *) pfwup, UART_UPFW_DATA_SIZE - TWELVE) == pfwup->crc32) {
+                if (tls_fwup_set_update_numer(pfwup->number) == TLS_FWUP_STATUS_OK) {
                     struct tls_fwup_block *blk;
                     u8 *buffer;
                     blk = (struct tls_fwup_block *)pfwup;
@@ -924,7 +908,8 @@ void uart_rx(struct tls_uart *uart)
         if (data_cnt >= uart->sksnd_cnt) {
             send_data = 1;
         } else {
-            return; }
+            return;
+        }
         if (send_data) {
             uart_net_send(uart, recv->head, recv->tail, uart->sksnd_cnt);
         }
@@ -944,8 +929,7 @@ void uart_tx(struct uart_tx_msg *tx_data)
     tls_uart_tx_msg_t *uart_tx_msg;
     struct pbuf *p;
 
-    switch (tx_msg->type)
-    {
+    switch (tx_msg->type) {
         case HOSTIF_TX_MSG_TYPE_EVENT:
         case HOSTIF_TX_MSG_TYPE_CMDRSP:
             tls_uart_fill_buf(uart->uart_port, tx_msg->u.msg_event.buf,
@@ -957,8 +941,7 @@ void uart_tx(struct uart_tx_msg *tx_data)
         /* Tcp and Udp both use the below case. */
         case HOSTIF_TX_MSG_TYPE_UDP:
         case HOSTIF_TX_MSG_TYPE_TCP:
-            if (uart->cmd_mode == UART_TRANS_MODE || hif->rptmode)
-            {
+            if (uart->cmd_mode == UART_TRANS_MODE || hif->rptmode) {
                 p = (struct pbuf *) tx_msg->u.msg_tcp.p;
                 uart_tx_msg = tls_mem_alloc(sizeof(tls_uart_tx_msg_t));
                 if (uart_tx_msg == NULL) {
