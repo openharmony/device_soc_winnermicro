@@ -46,6 +46,8 @@
 const u8 SysCreatedDate[] = __DATE__;
 const u8 SysCreatedTime[] = __TIME__;
 
+#define TWO 2
+
 #if TLS_CONFIG_HOSTIF
 #include "wm_osal.h"
 #include "wm_uart.h"
@@ -53,7 +55,6 @@ const u8 SysCreatedTime[] = __TIME__;
 
 #if (WM_BT_INCLUDED == CFG_ON || WM_BLE_INCLUDED == CFG_ON || WM_NIMBLE_INCLUDED == CFG_ON)
 #include "wm_bt.h"
-
 
 #if (WM_NIMBLE_INCLUDED == CFG_ON)
 #else
@@ -354,7 +355,7 @@ int tls_hostif_process_cmdrsp(u8 hostif_type, char *cmdrsp, u32 cmdrsp_size)
                         remain_len = tls_uart_tx_remain_len(&uart_port[0]);
                     else
                         remain_len = tls_uart_tx_remain_len(&uart_port[1]);
-                    tls_os_time_delay(2);
+                    tls_os_time_delay(TWO);
                 }
                 hif->uart_send_tx_msg_callback(hostif_type, tx_msg, FALSE);
             }
@@ -488,10 +489,10 @@ int tls_hostif_cmd_handler(u8 hostif_cmd_type, char *buf, u32 length)
                 if (err != -CMD_ERR_SKT_RPT && err != -CMD_ERR_SKT_SND) {
                     /* TODO: send cmd response */
                     cmdrsp_buf[cmdrsp_size] = '\r';
-                    cmdrsp_buf[cmdrsp_size+1] = '\n';
-                    cmdrsp_buf[cmdrsp_size+2] = '\r';
-                    cmdrsp_buf[cmdrsp_size+3] = '\n';
-                    cmdrsp_buf[cmdrsp_size+4] = '\0';
+                    cmdrsp_buf[cmdrsp_size + 1] = '\n';
+                    cmdrsp_buf[cmdrsp_size + TWO] = '\r';
+                    cmdrsp_buf[cmdrsp_size + 3] = '\n';
+                    cmdrsp_buf[cmdrsp_size + 4] = '\0';
                     cmdrsp_size += 4;
                 }
             }
@@ -810,7 +811,7 @@ int tls_hostif_send_event_tcp_conn(u8 socket, u8 res)
     err = tls_hostif_send_event_port_check();
     if (err)
         return 0;
-    buflen = sizeof(struct tls_hostif_hdr) + sizeof(struct tls_hostif_cmd_hdr) + 2;
+    buflen = sizeof(struct tls_hostif_hdr) + sizeof(struct tls_hostif_cmd_hdr) + TWO;
     buf = (char *)tls_mem_alloc(buflen);
     if (!buf)
         return 0;
@@ -963,7 +964,7 @@ int tls_hostif_send_event_scan_cmplt(struct tls_scan_bss_t *scan_res, enum tls_c
 #endif
             for (i = 0; i < scan_res->count; i++) {
                 strlen = sprintf(p, "%02X%02X%02X%02X%02X%02X,%u,%u,%u,\"",
-                        bss_info->bssid[0], bss_info->bssid[1], bss_info->bssid[2],
+                        bss_info->bssid[0], bss_info->bssid[1], bss_info->bssid[TWO],
                         bss_info->bssid[3], bss_info->bssid[4], bss_info->bssid[5],
                         bss_info->mode, bss_info->channel, bss_info->privacy);
                 buflen += strlen;
@@ -1680,13 +1681,13 @@ int tls_cmd_get_socket_status(u8 socket, u8 *buf, u32 bufsize)
         skts_ext->socket = socket;
         skts_ext->host_ipaddr[0] = 0;
         skts_ext->host_ipaddr[1] = 0;
-        skts_ext->host_ipaddr[2] = 0;
+        skts_ext->host_ipaddr[TWO] = 0;
         skts_ext->host_ipaddr[3] = 0;
         return ERR_OK;
     }
     getsockopt(socket, SOL_SOCKET, SO_TYPE, &optval, (socklen_t *)&optlen);
     skts_ext->protocol = optval == SOCK_STREAM ? SOCKET_PROTO_TCP : SOCKET_PROTO_UDP;
-    if (optval == SOCK_STREAM)//tcp
+    if (optval == SOCK_STREAM) /* tcp */
     {
         err = getsockopt(socket, SOL_SOCKET, SO_ACCEPTCONN, &optval, (socklen_t *)&optlen);
         if (err)
@@ -1982,11 +1983,11 @@ int ents_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, u
     int ret = 0;
     struct tls_cmd_ps_t ps;
 
-    if (cmd->ps.ps_type > 2 || (cmd->ps.wake_type > 1)) {
+    if (cmd->ps.ps_type > TWO || (cmd->ps.wake_type > 1)) {
         return -CMD_ERR_INV_PARAMS;
     }
 
-    if ((cmd->ps.ps_type == 1 || cmd->ps.ps_type == 2)
+    if ((cmd->ps.ps_type == 1 || cmd->ps.ps_type == TWO)
         && (((cmd->ps.wake_type == 1) && (cmd->ps.wake_time > 65535 || cmd->ps.wake_time < 1000))
         || (cmd->ps.delay_time < 100 || cmd->ps.delay_time > 10000)))
     {
@@ -2077,7 +2078,7 @@ sem_acquire:
 int wleav_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret=0;
-    if (cmd->wreg.region == 2) {
+    if (cmd->wreg.region == TWO) {
         ret = tls_cmd_disconnect_network(IEEE80211_MODE_AP);
     } else {
         ret = tls_cmd_disconnect_network(IEEE80211_MODE_INFRA);
@@ -2605,7 +2606,7 @@ int wbgr_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, u
     if (set_opt) {
         if(cmd->wbgr.mode>3 || cmd->wbgr.rate >28)
             return -CMD_ERR_INV_PARAMS;
-        limit_rate = (cmd->wbgr.mode == 1) ? 3 : ((cmd->wbgr.mode == 2) ? 28 : 11);
+        limit_rate = (cmd->wbgr.mode == 1) ? 3 : ((cmd->wbgr.mode == TWO) ? 28 : 11);
         hw_mode.max_rate = (cmd->wbgr.rate > limit_rate) ? limit_rate: cmd->wbgr.rate;
         hw_mode.hw_mode = cmd->wbgr.mode;
         ret = tls_cmd_set_hw_mode(&hw_mode, update_flash);
@@ -2885,7 +2886,7 @@ int iom_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, un
 {
     int ret = 0;
     if (set_opt) {
-        if (cmd->iom.mode > 2)
+        if (cmd->iom.mode > TWO)
             return -CMD_ERR_INV_PARAMS;
         ret = tls_cmd_set_iom(cmd->iom.mode, update_flash);
     } else {
@@ -3178,7 +3179,7 @@ int softap_wbgr_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION 
     if (set_opt) {
         if (cmd->wbgr.mode > 3 || cmd->wbgr.rate > 28)
             return -CMD_ERR_INV_PARAMS;
-        limit_rate = (cmd->wbgr.mode == 1)?3:((cmd->wbgr.mode == 2)? 28:11);
+        limit_rate = (cmd->wbgr.mode == 1) ? 3 : ((cmd->wbgr.mode == TWO) ? 28 : 11);
         hw_mode.max_rate = (cmd->wbgr.rate > limit_rate)?limit_rate: cmd->wbgr.rate;
         hw_mode.hw_mode = cmd->wbgr.mode;
         ret = tls_cmd_set_softap_hw_mode(&hw_mode, update_flash);
@@ -3351,11 +3352,11 @@ int rfw_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, un
     {
         return -CMD_ERR_INV_PARAMS;
     }
-    Addr = Addr*2;
+    Addr = Addr * TWO;
     for(i = 0; i < Num; i++)
     {
         rf_spi_write((Addr << 16) | databuf[i]);
-        Addr += 2;
+        Addr += TWO;
     }
     return 0;
 }
@@ -3493,7 +3494,7 @@ int txg_rate_set_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION
     if (set_opt) {
         tx_gain[cmd->txgr.tx_rate] = cmd->txgr.txr_gain[0];
         tx_gain[cmd->txgr.tx_rate+TX_GAIN_LEN/3] = cmd->txgr.txr_gain[1];
-        tx_gain[cmd->txgr.tx_rate+TX_GAIN_LEN*2/3] = cmd->txgr.txr_gain[2];
+        tx_gain[cmd->txgr.tx_rate+TX_GAIN_LEN*TWO/3] = cmd->txgr.txr_gain[TWO];
         tls_set_tx_gain(tx_gain);
     }
     return 0;
@@ -3505,7 +3506,7 @@ int txg_rate_get_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION
     cmdrsp->txgr.tx_rate = cmd->txgr.tx_rate;
     cmdrsp->txgr.txr_gain[0] = tx_gain[cmd->txgr.tx_rate];
     cmdrsp->txgr.txr_gain[1] =  tx_gain[cmd->txgr.tx_rate+TX_GAIN_LEN / 3];
-    cmdrsp->txgr.txr_gain[2] =   tx_gain[cmd->txgr.tx_rate+TX_GAIN_LEN * 2 / 3];
+    cmdrsp->txgr.txr_gain[TWO] =   tx_gain[cmd->txgr.tx_rate+TX_GAIN_LEN * TWO / 3];
     return 0;
 }
 
@@ -4083,7 +4084,7 @@ int wwps_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, u
             memcpy(tmp_wps.pin, cmd->wps.pin, cmd->wps.pin_len);
             tls_cmd_set_wps_pin(&tmp_wps, update_flash);
             cmdrsp->wps.result = 0;
-        } else if (cmd->wps.mode == 2) {
+        } else if (cmd->wps.mode == TWO) {
             err = tls_wps_start_pin();
             cmdrsp->wps.result = 0;
         } else if (cmd->wps.mode == 3) {
@@ -4129,7 +4130,7 @@ int cpu_state_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *c
         case 1:
             __DOZE();
             break;
-        case 2:
+        case TWO:
             __STOP();
             break;
         default:
@@ -4666,7 +4667,7 @@ void ble_gatt_evt_cback(tls_ble_evt_t event, tls_ble_msg_t *msg)
         case WM_BLE_SE_CONNECT_EVT:
             len = sprintf(buf, "+OK=0,%hhu,%hu,%hhu,%02X%02X%02X%02X%02X%02X\r\n",
                 msg->ser_connect.server_if, msg->ser_connect.conn_id,msg->ser_connect.connected,msg->ser_connect.addr[0],
-                msg->ser_connect.addr[1],msg->ser_connect.addr[2],msg->ser_connect.addr[3],
+                msg->ser_connect.addr[1],msg->ser_connect.addr[TWO],msg->ser_connect.addr[3],
                 msg->ser_connect.addr[4],msg->ser_connect.addr[5]);
             ret = tls_hostif_process_cmdrsp(hostif_type, buf, len);
             if(hif->uart_atcmd_bits & (1<<UART_ATCMD_BIT_ACTIVE_BT)) {
@@ -4753,7 +4754,7 @@ void ble_gatt_evt_cback(tls_ble_evt_t event, tls_ble_msg_t *msg)
             {
                 if (msg->cli_db.db)
                 {
-                    memcpy(&uuid, msg->cli_db.db->uuid.uu+12, 2);
+                    memcpy(&uuid, msg->cli_db.db->uuid.uu+12, TWO);
                     if (msg->cli_db.db->type == 0) {
                         len += sprintf(buf+len, "0x%04x,T=0x%02x,HDL=%hhu,PROP=0x%02x \r\n",uuid, msg->cli_db.db->type, msg->cli_db.db->attribute_handle, msg->cli_db.db->properties);
                     } else {
@@ -4926,7 +4927,7 @@ int ble_start_service_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_
         goto end_tag;
     }
 
-    ret = bt_wait_rsp_timeout(cmd->blestt.cmd_mode, cmd, hif, 2);
+    ret = bt_wait_rsp_timeout(cmd->blestt.cmd_mode, cmd, hif, TWO);
 
 end_tag:
     return (ret == TLS_BT_STATUS_SUCCESS) ? 0 : -CMD_ERR_OPS;
@@ -5005,7 +5006,7 @@ int ble_server_connect_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS
     hif->uart_atcmd_bits &= ~(1 << UART_ATCMD_BIT_BT);
 
     memcpy(addr.address, cmd->bleconn.addr, 6);asm("nop");asm("nop");asm("nop");
-    ret = tls_ble_server_connect(cmd->bleconn.server_if, (const tls_bt_addr_t *)&addr, 1, 2);
+    ret = tls_ble_server_connect(cmd->bleconn.server_if, (const tls_bt_addr_t *)&addr, 1, TWO);
     if (ret != TLS_BT_STATUS_SUCCESS)
     {
         goto end_tag;
@@ -5115,7 +5116,7 @@ int ble_client_connect_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS
 
     memcpy(&addr.address, cmd->bleconn.addr, 6);
 
-    ret = tls_ble_client_connect(cmd->bleconn.server_if, &addr, 1,2);
+    ret = tls_ble_client_connect(cmd->bleconn.server_if, &addr, 1, TWO);
     if (ret != TLS_BT_STATUS_SUCCESS)
     {
         goto end_tag;
@@ -5337,8 +5338,8 @@ static struct tls_cmd_t  at_ri_cmd_tbl[] = {
     { "SKSTT", HOSTIF_CMD_SKSTT, 0x22, 1, 1, skstt_proc},
     { "SKCLS", HOSTIF_CMD_SKCLOSE, 0x22, 1, 1, skcls_proc},
     { "SKSDF", HOSTIF_CMD_SKSDF, 0x22, 1, 1, sksdf_proc},
-    { "SKSND", HOSTIF_CMD_NOP, 0x02, 2, 0, sksnd_proc},
-    { "SKRCV", HOSTIF_CMD_NOP, 0x02, 2, 0, skrcv_proc},
+    { "SKSND", HOSTIF_CMD_NOP, 0x02, TWO, 0, sksnd_proc},
+    { "SKRCV", HOSTIF_CMD_NOP, 0x02, TWO, 0, skrcv_proc},
     { "SKRPTM", HOSTIF_CMD_NOP, 0xA, 1, 0, skrptm_proc},
     { "SKSRCIP", HOSTIF_CMD_SKSRCIP, 0x18, 0, 0, sksrcip_proc},
     { "SKGHBN", HOSTIF_CMD_SKGHBN, 0x22, 1, 1, skghbn_proc},
@@ -5350,10 +5351,10 @@ static struct tls_cmd_t  at_ri_cmd_tbl[] = {
     { "BSSID", HOSTIF_CMD_BSSID, 0x7F, 1, 1,bssid_proc},
     { "BRDSSID", HOSTIF_CMD_BRD_SSID, 0x7F, 1, 1,brdssid_proc},
     { "CNTPARAM", HOSTIF_CMD_CNTPARAM, 0x19, 0, 0,cntparam_proc},
-    { "CHL", HOSTIF_CMD_CHNL, 0x7F, 1, 2,chl_proc},
-    { "CHLL", HOSTIF_CMD_CHLL, 0x7F, 1, 2,chll_proc},
-    { "WREG", HOSTIF_CMD_WREG, 0x7F, 1, 2,wreg_proc},
-    { "WBGR", HOSTIF_CMD_WBGR, 0x7F, 2, 2, wbgr_proc},
+    { "CHL", HOSTIF_CMD_CHNL, 0x7F, 1, TWO,chl_proc},
+    { "CHLL", HOSTIF_CMD_CHLL, 0x7F, 1, TWO,chll_proc},
+    { "WREG", HOSTIF_CMD_WREG, 0x7F, 1, TWO,wreg_proc},
+    { "WBGR", HOSTIF_CMD_WBGR, 0x7F, TWO, TWO, wbgr_proc},
     { "WATC", HOSTIF_CMD_WATC, 0x7F, 1, 1, watc_proc},
     { "WPSM", HOSTIF_CMD_WPSM, 0x7F, 1, 1, wpsm_proc},
     { "WARC", HOSTIF_CMD_WARC, 0x7F, 1, 1, warc_proc},
@@ -5366,12 +5367,12 @@ static struct tls_cmd_t  at_ri_cmd_tbl[] = {
     { "AOLM", HOSTIF_CMD_AOLM, 0x7F, 0, 0, aolm_proc},
     { "PORTM", HOSTIF_CMD_PORTM, 0x7F, 1, 1, portm_proc},
     { "UART", HOSTIF_CMD_UART, 0x7F, 4, 7, uart_proc},
-    { "ATLT", HOSTIF_CMD_ATLT, 0x7F, 1, 2, atlt_proc},
-    { "DNS", HOSTIF_CMD_DNS, 0x7F, 1, 2, dns_proc},
+    { "ATLT", HOSTIF_CMD_ATLT, 0x7F, 1, TWO, atlt_proc},
+    { "DNS", HOSTIF_CMD_DNS, 0x7F, 1, TWO, dns_proc},
     { "DDNS", HOSTIF_CMD_DDNS, 0x7F, 0, 0, ddns_proc},
     { "UPNP", HOSTIF_CMD_UPNP, 0x7F, 0, 0, upnp_proc},
     { "DNAME", HOSTIF_CMD_DNAME, 0x7F, 0, 0, dname_proc},
-    { "ATPT", HOSTIF_CMD_ATPT, 0x7F, 1, 2, atpt_proc},
+    { "ATPT", HOSTIF_CMD_ATPT, 0x7F, 1, TWO, atpt_proc},
     { "&DBG", HOSTIF_CMD_DBG, 0x22, 1, 4, dbg_proc},
     { "ESPC", HOSTIF_CMD_NOP, 0xF, 1, 0, espc_proc},
     { "ESPT", HOSTIF_CMD_NOP, 0xF, 1, 0, espt_proc},
@@ -5388,13 +5389,13 @@ static struct tls_cmd_t  at_ri_cmd_tbl[] = {
 #endif
     { "QMAC", HOSTIF_CMD_MAC, 0x19, 0, 0, qmac_proc},
     { "QVER", HOSTIF_CMD_VER, 0x19, 0, 0, qver_proc},
-    { "&UPDD", HOSTIF_CMD_UPDD, 0x22, 1, 2, updd_proc},
-    { "&REGR", HOSTIF_CMD_REGR, 0x22, 2, 5, regr_proc},
-    { "&REGW", HOSTIF_CMD_REGW, 0x22, 2, 5, regw_proc},
-    { "&RFR", HOSTIF_CMD_RFR, 0x22, 2, 3, rfr_proc},
-    { "&RFW", HOSTIF_CMD_RFW, 0x22, 2, 3, rfw_proc},
-    { "&FLSR", HOSTIF_CMD_FLSR, 0x22, 2, 5, flsr_proc},
-    { "&FLSW", HOSTIF_CMD_FLSW, 0x22, 2, 5, flsw_proc},
+    { "&UPDD", HOSTIF_CMD_UPDD, 0x22, 1, TWO, updd_proc},
+    { "&REGR", HOSTIF_CMD_REGR, 0x22, TWO, 5, regr_proc},
+    { "&REGW", HOSTIF_CMD_REGW, 0x22, TWO, 5, regw_proc},
+    { "&RFR", HOSTIF_CMD_RFR, 0x22, TWO, 3, rfr_proc},
+    { "&RFW", HOSTIF_CMD_RFW, 0x22, TWO, 3, rfw_proc},
+    { "&FLSR", HOSTIF_CMD_FLSR, 0x22, TWO, 5, flsr_proc},
+    { "&FLSW", HOSTIF_CMD_FLSW, 0x22, TWO, 5, flsw_proc},
     { "&TXG", HOSTIF_CMD_NOP, 0xF, 1, 0, txg_proc},
     { "&TXGI", HOSTIF_CMD_NOP, 0xF, 1, 0, txgi_proc},
     { "&TXGS", HOSTIF_CMD_NOP, 0xF, 1, 0, txg_rate_set_proc},
@@ -5409,7 +5410,7 @@ static struct tls_cmd_t  at_ri_cmd_tbl[] = {
     { "&LPRSTR", HOSTIF_CMD_NOP, 0x2, 1, 0, lprstr_proc},
     { "&LPRSTP", HOSTIF_CMD_NOP, 0x1, 0, 0, lprstp_proc},
     { "&LPRSTT", HOSTIF_CMD_NOP, 0x1, 0, 0, lprstt_proc},
-    { "&LPPSTR", HOSTIF_CMD_NOP, 0x3, 2, 0, lppstr_proc},
+    { "&LPPSTR", HOSTIF_CMD_NOP, 0x3, TWO, 0, lppstr_proc},
     { "&LPPSTP", HOSTIF_CMD_NOP, 0x2, 1, 0, lppstp_proc},
     { "&LPRFPS", HOSTIF_CMD_NOP, 0x1, 0, 0, lprfps_proc},
     { "&LPCHRS", HOSTIF_CMD_NOP, 0x2, 1, 0, lpchrs_proc},
@@ -5426,8 +5427,8 @@ static struct tls_cmd_t  at_ri_cmd_tbl[] = {
     { "APMAC", HOSTIF_CMD_AP_MAC, 0x19, 0, 0, softap_qmac_proc},
     { "APENCRY", HOSTIF_CMD_AP_ENCRYPT, 0x7F, 1, 1,softap_encry_proc },
     { "APKEY", HOSTIF_CMD_AP_KEY, 0x7F, 3, 3, softap_key_proc },
-    { "APCHL", HOSTIF_CMD_AP_CHL, 0x7F, 1, 2,softap_chl_proc},
-    { "APWBGR", HOSTIF_CMD_AP_WBGR, 0x7F, 2, 2, softap_wbgr_proc},
+    { "APCHL", HOSTIF_CMD_AP_CHL, 0x7F, 1, TWO,softap_chl_proc},
+    { "APWBGR", HOSTIF_CMD_AP_WBGR, 0x7F, TWO, TWO, softap_wbgr_proc},
     { "APNIP", HOSTIF_CMD_AP_NIP, 0x7F, 1, 17, softap_nip_proc },
 #endif
 #if TLS_CONFIG_WIFI_PERF_TEST
@@ -5440,10 +5441,10 @@ static struct tls_cmd_t  at_ri_cmd_tbl[] = {
     { "WWPS", HOSTIF_CMD_WPS, 0x7F, 1, 1, wwps_proc},
 #endif
     { "CUSTDATA", HOSTIF_CMD_CUSTDATA, 0x19, 0, 0, custdata_proc},
-    { "WIDTH", HOSTIF_CMD_NOP, 0x2, 2, 0, tls_tx_sin},
-    { "&RXSIN", HOSTIF_CMD_NOP, 0x2, 2, 0, tls_rx_wave},
+    { "WIDTH", HOSTIF_CMD_NOP, 0x2, TWO, 0, tls_tx_sin},
+    { "&RXSIN", HOSTIF_CMD_NOP, 0x2, TWO, 0, tls_rx_wave},
     { "TXLO", HOSTIF_CMD_NOP, 0x7F, 1,  0,  tls_tx_lo_proc},
-    { "TXIQ", HOSTIF_CMD_NOP, 0x7F, 2,  0,  tls_tx_iq_mismatch_proc},
+    { "TXIQ", HOSTIF_CMD_NOP, 0x7F, TWO,  0,  tls_tx_iq_mismatch_proc},
     { "FREQ", HOSTIF_CMD_NOP, 0x7F, 1,  0,  tls_freq_error_proc},
     { "VCG",    HOSTIF_CMD_NOP, 0x7F, 1, 0 , tls_rf_vcg_ctrl_proc},
     { "&LPTPD", HOSTIF_CMD_NOP, 0x7F, 1, 0, tls_lptperiod_proc},
@@ -5452,15 +5453,15 @@ static struct tls_cmd_t  at_ri_cmd_tbl[] = {
     { "CPUDIV", HOSTIF_CMD_NOP, 0xb, 1, 0,cpu_clock_proc},
 #if (WM_BT_INCLUDED == CFG_ON || WM_BLE_INCLUDED == CFG_ON || WM_NIMBLE_INCLUDED == CFG_ON)
 
-    { "BTEN", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 2, 0, bt_enable_proc},
+    { "BTEN", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, TWO, 0, bt_enable_proc},
     { "BTDES", HOSTIF_CMD_NOP, ATCMD_OP_NULL, 0, 0, bt_destory_proc},
     { "&BTMAC", HOSTIF_CMD_NOP, 0xF, 1, 0, bt_mac_proc},
     { "&BTNAME", HOSTIF_CMD_NOP, 0xF, 1, 0, bt_name_proc},
     { "BTCTRLGS", HOSTIF_CMD_NOP, ATCMD_OP_NULL | ATCMD_OP_QU | RICMD_OP_GET, 0, 0, bt_ctrl_get_status_proc},
     { "BTSLEEP", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 1, 0, bt_sleep_proc},
-    { "BLETPS", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 2, 0, ble_tx_power_set_proc},
+    { "BLETPS", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, TWO, 0, ble_tx_power_set_proc},
     { "BLETPG", HOSTIF_CMD_NOP, ATCMD_OP_NULL | ATCMD_OP_QU | RICMD_OP_GET, 1, 0, ble_tx_power_get_proc},
-    { "BTTXPOW", HOSTIF_CMD_NOP, ATCMD_OP_NULL | ATCMD_OP_EQ | ATCMD_OP_EP | ATCMD_OP_QU | RICMD_OP_GET | RICMD_OP_SET, 2, 0, bt_tx_power_proc},
+    { "BTTXPOW", HOSTIF_CMD_NOP, ATCMD_OP_NULL | ATCMD_OP_EQ | ATCMD_OP_EP | ATCMD_OP_QU | RICMD_OP_GET | RICMD_OP_SET, TWO, 0, bt_tx_power_proc},
     { "BTTEST", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 1, 0, bt_test_mode_proc},
     { "BTRF", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 1, 0, bt_rf_mode_proc},
 #if (WM_BTA_AV_SINK_INCLUDED == CFG_ON)
@@ -5484,8 +5485,8 @@ static struct tls_cmd_t  at_ri_cmd_tbl[] = {
 
 #if (WM_BLE_INCLUDED == CFG_ON || WM_NIMBLE_INCLUDED == CFG_ON)
     { "BLEADV", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 1, 0, ble_adv_proc},
-    { "BLEADATA", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 2, 0, ble_adv_data_proc},
-    { "BLESCRSP", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 2, 0, ble_scan_rsp_proc},
+    { "BLEADATA", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, TWO, 0, ble_adv_data_proc},
+    { "BLESCRSP", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, TWO, 0, ble_scan_rsp_proc},
     { "BLEAPRM", HOSTIF_CMD_NOP, ATCMD_OP_NULL | ATCMD_OP_EQ | ATCMD_OP_EP | ATCMD_OP_QU | RICMD_OP_SET | RICMD_OP_SET, 5, 0, ble_adv_param_proc},
     { "BLESCPRM", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 3, 0, ble_scan_param_proc},
     { "BLESFLT", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 1, 0, ble_scan_filter_proc},
@@ -5495,7 +5496,7 @@ static struct tls_cmd_t  at_ri_cmd_tbl[] = {
     { "BLEDC", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 1, 0, ble_demo_client_proc},
     { "BLEDCMC", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 1, 0, ble_demo_client_multi_conn_proc},
     { "BLESSCM", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 1, 0, ble_scan_chnl_proc},
-    { "BLEUM", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 2, 0, ble_uart_mode_proc},
+    { "BLEUM", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, TWO, 0, ble_uart_mode_proc},
     { "BLEDMADV", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 1, 0, ble_demo_adv_proc},
     { "BLEDMSCAN", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 1, 0, ble_demo_scan_proc},
     { "BLESND", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 1, 0, ble_demo_send_indicate},
@@ -5505,15 +5506,15 @@ static struct tls_cmd_t  at_ri_cmd_tbl[] = {
     { "BLEADDCH", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 5, 0, ble_add_characteristic_proc},
     { "BLEADESC", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 4, 0, ble_add_descript_proc},
     { "BLESTTSC", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 3, 0, ble_start_service_proc},
-    { "BLESTPSC", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 2, 0, ble_stop_service_proc},
-    { "BLEDELSC", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 2, 0, ble_del_service_proc},
+    { "BLESTPSC", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, TWO, 0, ble_stop_service_proc},
+    { "BLEDELSC", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, TWO, 0, ble_del_service_proc},
     { "BLEDESSV", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 1, 0, ble_destory_server_proc},
-    { "BLESCONN", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 2, 0, ble_server_connect_proc},
+    { "BLESCONN", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, TWO, 0, ble_server_connect_proc},
     { "BLESVDIS", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 3, 0, ble_server_disconnect_proc},
     { "BLESIND", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 4, 0, ble_server_send_indication_proc},
     { "BLESRSP", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 5, 0, ble_server_send_resp_proc},
     { "BLECCT", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 1, 0, ble_client_create_proc},
-    { "BLECCONN", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 2, 0, ble_client_connect_proc},
+    { "BLECCONN", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, TWO, 0, ble_client_connect_proc},
     { "BLECSSC", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 1, 0, ble_client_scan_service_proc},
     { "BLECGDB", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 1, 0, ble_client_get_gatt_proc},
     { "BLECRNTY", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 4, 0, ble_client_reg_notify_proc},
@@ -5521,7 +5522,7 @@ static struct tls_cmd_t  at_ri_cmd_tbl[] = {
     { "BLECACH", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 4, 0, ble_client_access_characteristic_proc},
     { "BLECDIS", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 3, 0, ble_client_disconnect_proc},
     { "BLECDES", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 1, 0, ble_client_destory_proc},
-    { "BLECMTU", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 2, 0, ble_client_cfg_mtu_proc},
+    { "BLECMTU", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, TWO, 0, ble_client_cfg_mtu_proc},
 #endif
 
 #endif
@@ -5573,7 +5574,7 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
             }
             cmd->ps.wake_type = (u8)params;
 
-            ret = string_to_uint(tok->arg[2], &params);
+            ret = string_to_uint(tok->arg[TWO], &params);
             if (ret) {
                 err = 1;
                 break;
@@ -5602,11 +5603,11 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
         switch(tok->arg_found)
         {
             case 3:
-                ret = string_to_uint(tok->arg[2], &value);
+                ret = string_to_uint(tok->arg[TWO], &value);
                 if (ret)
                     return -CMD_ERR_INV_PARAMS;
                 cmd->scanparam.switchinterval = value;
-            case 2:
+            case TWO:
                 ret = string_to_uint(tok->arg[1], &value);
                 if (ret)
                     return -CMD_ERR_INV_PARAMS;
@@ -5660,7 +5661,7 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
     ||(strcmp("APENCRY", at_name) == 0)
 #endif
              ) {
-        int ret = 0; 
+        int ret = 0;
         u32 param;
         if (tok->arg_found > 1)
             return -CMD_ERR_INV_PARAMS;
@@ -5687,10 +5688,11 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
                 return -CMD_ERR_INV_PARAMS;
             cmd->key.format = (u8)params;
             ret = strtodec((int *)&params, tok->arg[1]);
-            if (ret)
+            if (ret) {
                 return -CMD_ERR_INV_PARAMS;
+            }
             cmd->key.index = (u8)params;
-            ret = atcmd_filter_quotation(&keyInfo,(u8 *)tok->arg[2]);
+            ret = atcmd_filter_quotation(&keyInfo,(u8 *)tok->arg[TWO]);
             if (ret)
                 return -CMD_ERR_INV_PARAMS;
             cmd->key.key_len = strlen((char *)keyInfo);
@@ -5702,19 +5704,19 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
         int h, l;
         int ret;
         u32 params;
-        if (tok->arg_found > 2)
+        if (tok->arg_found > TWO)
             return -CMD_ERR_INV_PARAMS;
         if (tok->arg_found >= 1) {
             ret = string_to_uint(tok->arg[0], &params);
             if (ret)
                 return -CMD_ERR_INV_PARAMS;
             cmd->bssid.enable = (u8)params;
-            if (((cmd->bssid.enable == 0) && (tok->arg_found == 2)) || ((cmd->bssid.enable == 1) && (tok->arg_found == 1)))
+            if (((cmd->bssid.enable == 0) && (tok->arg_found == TWO)) || ((cmd->bssid.enable == 1) && (tok->arg_found == 1)))
                     return -CMD_ERR_INV_PARAMS;
-            if (tok->arg_found == 2) {
-                len = tok->arg[2] - tok->arg[1] - 1;
+            if (tok->arg_found == TWO) {
+                len = tok->arg[TWO] - tok->arg[1] - 1;
                 if (len == 12) {
-                    for (i = 0, j=0; i<len; i+= 2, j++) {
+                    for (i = 0, j=0; i<len; i += TWO, j++) {
                         h = hex_to_digit(tok->arg[1][i]);
                         l = hex_to_digit(tok->arg[1][i+1]);
                         if (h < 0 || l < 0) {
@@ -5734,7 +5736,7 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
     ) {
         int ret;
         u32 params;
-        if (tok->arg_found > 2)
+        if (tok->arg_found > TWO)
             return -CMD_ERR_INV_PARAMS;
         if (tok->arg_found > 0) {
             ret = string_to_uint(tok->arg[0], &params);
@@ -5775,7 +5777,6 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
             if(ret)
                 return -CMD_ERR_INV_PARAMS;
             cmd->wreg.region = (u16)params;
-            //printf("params = %d  region = %d\n",params, cmd->wreg.region);
         }
     } else if((strcmp("WBGR", at_name) == 0)
 #if TLS_CONFIG_AP
@@ -5788,9 +5789,9 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
     ) {
         int ret;
         u32 params;
-        if (tok->arg_found != 0 && tok->arg_found != 2)
+        if (tok->arg_found != 0 && tok->arg_found != TWO)
             return -CMD_ERR_INV_PARAMS;
-        if (tok->arg_found == 2) {
+        if (tok->arg_found == TWO) {
             ret = string_to_uint(tok->arg[0], &params);
             if (ret)
                 return -CMD_ERR_INV_PARAMS;
@@ -5812,9 +5813,9 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
     else if (strcmp("BTTXPOW", at_name) == 0) {
         int ret;
         u32 params;
-        if (tok->arg_found > 2)
+        if (tok->arg_found > TWO)
             return -CMD_ERR_INV_PARAMS;
-        if (tok->arg_found == 2) {
+        if (tok->arg_found == TWO) {
             ret = string_to_uint(tok->arg[0], &params);
             if (ret)
                 return -CMD_ERR_INV_PARAMS;
@@ -5830,7 +5831,7 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
             return -CMD_ERR_INV_PARAMS;
         cmd->bt.cmd_mode = tok->cmd_mode;
     }
-#if (WM_BT_INCLUDED == CFG_ON)    
+#if (WM_BT_INCLUDED == CFG_ON)
     else if ((strcmp("BTAVS", at_name) == 0)|| (strcmp("BTHFP", at_name) == 0)
              || (strcmp("BTSPPS", at_name) == 0)|| (strcmp("BTSPPC", at_name) == 0)) {
         int ret = 0; 
@@ -5847,7 +5848,7 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
 
         cmd->bt.cmd_mode = tok->cmd_mode;
     } else if ((strcmp("BTSCM", at_name) == 0)||(strcmp("BTINQUIRY", at_name) == 0)) {
-        int ret = 0; 
+        int ret = 0;
         u32 param;
         if (tok->arg_found != 1)
             return -CMD_ERR_INV_PARAMS;
@@ -5856,7 +5857,7 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
             return -CMD_ERR_INV_PARAMS;
         cmd->bt.cmd = (u8)param;
     
-        if (cmd->bt.cmd >2)
+        if (cmd->bt.cmd > TWO)
               return -CMD_ERR_INV_PARAMS;
 
         cmd->bt.cmd_mode = tok->cmd_mode;
@@ -5870,7 +5871,7 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
         cmd->btname.cmd_mode = tok->cmd_mode;
     }
 
-#endif    
+#endif
     else if (
              (strcmp("BTSLEEP", at_name) == 0) || (strcmp("BTTEST", at_name) == 0)
              || (strcmp("BLEDS", at_name) == 0)|| (strcmp("BLEDC", at_name) == 0)|| (strcmp("BLEDCMC", at_name) == 0)
@@ -5898,11 +5899,12 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
         if (tok->arg_found != 1)
             return -CMD_ERR_INV_PARAMS;
         ret = string_to_uint(tok->arg[0], &param);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->bt.cmd = (u8)param;
     
-        if (cmd->bt.cmd > 2)
+        if (cmd->bt.cmd > TWO)
               return -CMD_ERR_INV_PARAMS;
 
         cmd->bt.cmd_mode = tok->cmd_mode;
@@ -5912,19 +5914,22 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
         if (tok->arg_found != 1)
             return -CMD_ERR_INV_PARAMS;
         ret = string_to_uint(tok->arg[0], &param);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->bt.cmd = (u8)param;
         cmd->bt.cmd_mode = tok->cmd_mode;
     } else if (strcmp("BLETPG", at_name) == 0) {
         int ret;
         u32 params;
-        if (tok->arg_found > 1)
+        if (tok->arg_found > 1) {
             return -CMD_ERR_INV_PARAMS;
+        }
         if (tok->arg_found == 1) {
             ret = string_to_uint(tok->arg[0], &params);
-            if(ret)
+            if (ret) {
                 return -CMD_ERR_INV_PARAMS;
+            }
             cmd->btctrl.type = (u8)params;
             cmd->btctrl.cmd_mode = tok->cmd_mode;
         }
@@ -5932,52 +5937,65 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
         int ret;
         u32 params;
         u8 *tmpmac = NULL;
-        if ((tok->arg_found < 5) || (tok->arg_found > 8))
+        if ((tok->arg_found < 5) || (tok->arg_found > 8)) {
             return -CMD_ERR_INV_PARAMS;
+        }
         ret = hexstr_to_unit(tok->arg[0], (u32 *)&cmd->bleprm.adv_int_min);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         ret = hexstr_to_unit(tok->arg[1], (u32 *)&cmd->bleprm.adv_int_max);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
 
         /*see LE command 7.8.5*/
-        if (cmd->bleprm.adv_int_min < 0x20 || cmd->bleprm.adv_int_min > 0x4000)
+        if (cmd->bleprm.adv_int_min < 0x20 || cmd->bleprm.adv_int_min > 0x4000) {
             return -CMD_ERR_INV_PARAMS;
-        if (cmd->bleprm.adv_int_max < 0x20 || cmd->bleprm.adv_int_max > 0x4000)
+        }
+        if (cmd->bleprm.adv_int_max < 0x20 || cmd->bleprm.adv_int_max > 0x4000) {
             return -CMD_ERR_INV_PARAMS;
-        if (cmd->bleprm.adv_int_max < cmd->bleprm.adv_int_min)
+        }
+        if (cmd->bleprm.adv_int_max < cmd->bleprm.adv_int_min) {
             return -CMD_ERR_INV_PARAMS;
+        }
 
-        ret = string_to_uint(tok->arg[2], &params);
-        if (ret)
+        ret = string_to_uint(tok->arg[TWO], &params);
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->bleprm.adv_type = (u8)params;
         ret = string_to_uint(tok->arg[3], &params);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->bleprm.own_addr_type = (u8)params;
         ret = string_to_uint(tok->arg[4], &params);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->bleprm.channel_map = (u8)params;
         memset(cmd->bleprm.peer_addr, 0 , ETH_ALEN);
         switch (tok->arg_found)
         {
             case 8:
-                if (atcmd_filter_quotation(&tmpmac, (u8 *)tok->arg[7]))
+                if (atcmd_filter_quotation(&tmpmac, (u8 *)tok->arg[7])) {
                     return -CMD_ERR_INV_PARAMS;
-                if (strtohexarray(cmd->bleprm.peer_addr, ETH_ALEN, (char *)tmpmac)< 0)
+                }
+                if (strtohexarray(cmd->bleprm.peer_addr, ETH_ALEN, (char *)tmpmac)< 0) {
                     return -CMD_ERR_INV_PARAMS;
+                }
             case 7:
                 ret = string_to_uint(tok->arg[6], &params);
-                if (ret)
+                if (ret) {
                     return -CMD_ERR_INV_PARAMS;
+                }
                 cmd->bleprm.peer_addr_type = (u8)params;
             case 6:
                 ret = string_to_uint(tok->arg[5], &params);
-                if (ret)
+                if (ret) {
                     return -CMD_ERR_INV_PARAMS;
+                }
                 cmd->bleprm.adv_filter_policy = (u8)params;
                 break;
             default:
@@ -5986,32 +6004,37 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
     } else if (strcmp("BLESCAN", at_name) == 0 ||strcmp("BLEDMSCAN", at_name) == 0) {
         int ret = 0; 
         u32 param;
-        if (tok->arg_found != 1)
+        if (tok->arg_found != 1) {
             return -CMD_ERR_INV_PARAMS;
+        }
         ret = string_to_uint(tok->arg[0], &param);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         /**O or 1 is accepted*/
-        if (param > 1)
+        if (param > 1) {
             return -CMD_ERR_INV_PARAMS;
-        
+        }
+
         cmd->blescan.cmd = (u8)param;
         cmd->blescan.cmd_mode = tok->cmd_mode;
     } else if(strcmp("BLESND", at_name) == 0) {
         int ret = 0;
         int data_length = 0;
-        if (tok->arg_found != 1)
+        if (tok->arg_found != 1) {
             return -CMD_ERR_INV_PARAMS;
-        
+        }
         data_length = strlen(tok->arg[0]);
-        if (data_length & 0x01)
+        if (data_length & 0x01) {
             return -CMD_ERR_INV_PARAMS;
-        if ((data_length>>1) > sizeof(cmd->blesnd.param))
+        }
+        if ((data_length>>1) > sizeof(cmd->blesnd.param)) {
             return -CMD_ERR_NOT_ALLOW;
-        
+        }
         ret = strtohexarray(cmd->blesnd.param, data_length>>1, tok->arg[0]);
-        if (ret != 0)
+        if (ret != 0) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->blesnd.param_len = data_length>>1;
 
         cmd->blesnd.cmd_mode = tok->cmd_mode;
@@ -6019,222 +6042,271 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
         int ret = 0; 
         u32 param;
         int len = 0;
-        if (tok->arg_found != 2)
+        if (tok->arg_found != TWO) {
             return -CMD_ERR_INV_PARAMS;
+        }
         ret = string_to_uint(tok->arg[0], &param);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->bleadv.include_name = (u8)param;
 
-        if (cmd->bleadv.include_name > 1)
+        if (cmd->bleadv.include_name > 1) {
             return -CMD_ERR_INV_PARAMS;
+        }
 
         len = strlen(tok->arg[1]);
         len = MIN(len, 24);
         
-        cmd->bleadv.len = len/2; //asciistring to hexstring, expected length;
-        ret = strtohexarray(cmd->bleadv.data,len/2,tok->arg[1]); 
-        if (ret)
+        cmd->bleadv.len = len / TWO; //asciistring to hexstring, expected length;
+        ret = strtohexarray(cmd->bleadv.data,len / TWO,tok->arg[1]);
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->bleadv.cmd_mode = tok->cmd_mode;
     } else if (strcmp("BLECTSV", at_name) == 0 || strcmp("BLECCT", at_name) == 0) {
         int ret;
         u32 params;
-        if (tok->arg_found != 1)
+        if (tok->arg_found != 1) {
             return -CMD_ERR_INV_PARAMS;
+        }
         ret = hexstr_to_unit(tok->arg[0], &params);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         /*Only support bit uuid format*/
-        if (params&0xFFFF0000)
+        if (params&0xFFFF0000) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->blesv.uuid = (u16)params;
         cmd->blesv.cmd_mode = tok->cmd_mode;
     } else if (strcmp("BLEADDSC", at_name) == 0) {
         int ret;
         u32 params;
-        if (tok->arg_found != 4)
+        if (tok->arg_found != 4) {
             return -CMD_ERR_INV_PARAMS;
+        }
         ret = string_to_uint(tok->arg[0], &params);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->blesc.server_if = (u8)params;
         ret = string_to_uint(tok->arg[1], &params);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->blesc.inst_id = (u16)params;
-        ret = hexstr_to_unit(tok->arg[2], &params);
-        if (ret)
+        ret = hexstr_to_unit(tok->arg[TWO], &params);
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->blesc.uuid = (u16)params;
         ret = string_to_uint(tok->arg[3], &params);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->blesc.handles = (u16)params;
         cmd->blesc.cmd_mode = tok->cmd_mode;
     } else if (strcmp("BLEADDCH", at_name) == 0) {
         int ret;
         u32 params;
-        if (tok->arg_found != 5)
+        if (tok->arg_found != 5) {
             return -CMD_ERR_INV_PARAMS;
+        }
         ret = string_to_uint(tok->arg[0], &params);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->blech.server_if = (u8)params;
         ret = string_to_uint(tok->arg[1], &params);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->blech.service_handle = (u16)params;
-        ret = hexstr_to_unit(tok->arg[2], &params);
-        if (ret)
+        ret = hexstr_to_unit(tok->arg[TWO], &params);
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->blech.uuid = (u16)params;
         ret = hexstr_to_unit(tok->arg[3], &params);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->blech.prop = params;
         ret = hexstr_to_unit(tok->arg[4], &params);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->blech.perm = params;
         cmd->blech.cmd_mode = tok->cmd_mode;
     } else if (strcmp("BLEADESC", at_name) == 0) {
         int ret;
         u32 params;
-        if (tok->arg_found != 4)
+        if (tok->arg_found != 4) {
             return -CMD_ERR_INV_PARAMS;
+        }
         ret = string_to_uint(tok->arg[0], &params);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->blech.server_if = (u8)params;
         ret = string_to_uint(tok->arg[1], &params);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->blech.service_handle = (u16)params;
-        ret = hexstr_to_unit(tok->arg[2], &params);
-        if (ret)
+        ret = hexstr_to_unit(tok->arg[TWO], &params);
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->blech.uuid = (u16)params;
         ret = hexstr_to_unit(tok->arg[3], &params);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->blech.perm = params;
         cmd->blech.cmd_mode = tok->cmd_mode;
     } else if(strcmp("BLESIND", at_name) == 0) {
         int ret;
         u32 params;
-        if (tok->arg_found != 4)
+        if (tok->arg_found != 4) {
             return -CMD_ERR_INV_PARAMS;
+        }
         ret = string_to_uint(tok->arg[0], &params);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->blesndind.server_if = (u8)params;
         ret = string_to_uint(tok->arg[1], &params);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->blesndind.attr_handle= (u16)params;
-        ret = string_to_uint(tok->arg[2], &params);
-        if (ret)
+        ret = string_to_uint(tok->arg[TWO], &params);
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->blesndind.conn_id= (u16)params;
         strncpy((char *)cmd->blesndind.value, tok->arg[3], sizeof(cmd->blesndind.value));
         cmd->blesndind.cmd_mode = tok->cmd_mode;
     } else if(strcmp("BLESRSP", at_name) == 0) {
         int ret;
         u32 params;
-        if (tok->arg_found != 5)
+        if (tok->arg_found != 5) {
             return -CMD_ERR_INV_PARAMS;
+        }
         ret = string_to_uint(tok->arg[0], &params);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->blesndrsp.conn_id = (u16)params;
         ret = string_to_uint(tok->arg[1], &params);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->blesndrsp.trans_id = (u16)params;
-        ret = string_to_uint(tok->arg[2], &params);
-        if (ret)
+        ret = string_to_uint(tok->arg[TWO], &params);
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->blesndrsp.attr_handle = (u16)params;
         ret = string_to_uint(tok->arg[3], &params);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->blesndrsp.auth_req = (u8)params;
         strncpy((char *)cmd->blesndrsp.value, tok->arg[4], sizeof(cmd->blesndind.value));
         cmd->blesndrsp.cmd_mode = tok->cmd_mode;
     } else if (strcmp("BLESTTSC", at_name) == 0) {
         int ret;
         u32 params;
-        if (tok->arg_found != 3)
+        if (tok->arg_found != 3) {
             return -CMD_ERR_INV_PARAMS;
+        }
         ret = string_to_uint(tok->arg[0], &params);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->blestt.server_if = (u8)params;
         ret = string_to_uint(tok->arg[1], &params);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->blestt.service_handle = (u16)params;
-        ret = hexstr_to_unit(tok->arg[2], &params);
-        if (ret)
+        ret = hexstr_to_unit(tok->arg[TWO], &params);
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->blestt.tran_type = (u8)params;
         cmd->blestt.cmd_mode = tok->cmd_mode;
     } else if (strcmp("BLESTPSC", at_name) == 0 || strcmp("BLEDELSC", at_name) == 0) {
         int ret;
         u32 params;
-        if (tok->arg_found != 2)
+        if (tok->arg_found != TWO) {
             return -CMD_ERR_INV_PARAMS;
+        }
         ret = string_to_uint(tok->arg[0], &params);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->blestt.server_if = (u8)params;
         ret = string_to_uint(tok->arg[1], &params);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->blestt.service_handle = (u16)params;
         cmd->blestt.cmd_mode = tok->cmd_mode;
     } else if (strcmp("BLESCONN", at_name) == 0 || strcmp("BLECCONN", at_name) == 0) {
         int ret;
         u32 params;
         u8 *tmpmac = NULL;
-        if (tok->arg_found != 2)
+        if (tok->arg_found != TWO) {
             return -CMD_ERR_INV_PARAMS;
+        }
         ret = string_to_uint(tok->arg[0], &params);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->bleconn.server_if = (u8)params;
-        if (atcmd_filter_quotation(&tmpmac, (u8 *)tok->arg[1]))
+        if (atcmd_filter_quotation(&tmpmac, (u8 *)tok->arg[1])) {
             return -CMD_ERR_INV_PARAMS;
-        if (strtohexarray(cmd->bleconn.addr, ETH_ALEN, (char *)tmpmac)< 0)
+        }
+        if (strtohexarray(cmd->bleconn.addr, ETH_ALEN, (char *)tmpmac)< 0) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->bleconn.cmd_mode = tok->cmd_mode;
     } else if (strcmp("BLERDRSSI", at_name) == 0 ) {
         int ret;
         u32 params;
         u8 *tmpmac = NULL;
-        if (tok->arg_found != 1)
+        if (tok->arg_found != 1) {
             return -CMD_ERR_INV_PARAMS;
+        }
 
-        if (atcmd_filter_quotation(&tmpmac, (u8 *)tok->arg[0]))
+        if (atcmd_filter_quotation(&tmpmac, (u8 *)tok->arg[0])) {
             return -CMD_ERR_INV_PARAMS;
-        if (strtohexarray(cmd->bleconn.addr, ETH_ALEN, (char *)tmpmac)< 0)
+        }
+        if (strtohexarray(cmd->bleconn.addr, ETH_ALEN, (char *)tmpmac)< 0) {
             return -CMD_ERR_INV_PARAMS;
+        }
 
         cmd->bleconn.cmd_mode = tok->cmd_mode;
     } else if (strcmp("BLECMTU", at_name) == 0) {
         int ret;
         u32 params;
-        if (tok->arg_found != 2)
+        if (tok->arg_found != TWO) {
             return -CMD_ERR_INV_PARAMS;
+        }
         ret = string_to_uint(tok->arg[0], &params);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->blecmtu.conn_id = (u16)params;
 
         ret = string_to_uint(tok->arg[1], &params);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->blecmtu.mtu = (u16)params;
 
         cmd->blecmtu.cmd_mode = tok->cmd_mode;
@@ -6242,63 +6314,77 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
         int ret;
         u32 params;
         u8 *tmpmac = NULL;
-        if (tok->arg_found != 3)
+        if (tok->arg_found != 3) {
             return -CMD_ERR_INV_PARAMS;
+        }
         ret = string_to_uint(tok->arg[0], &params);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->bleconn.server_if = (u8)params;
-        if (atcmd_filter_quotation(&tmpmac, (u8 *)tok->arg[1]))
+        if (atcmd_filter_quotation(&tmpmac, (u8 *)tok->arg[1])) {
             return -CMD_ERR_INV_PARAMS;
-        if (strtohexarray(cmd->bleconn.addr, ETH_ALEN, (char *)tmpmac)< 0)
+        }
+        if (strtohexarray(cmd->bleconn.addr, ETH_ALEN, (char *)tmpmac)< 0) {
             return -CMD_ERR_INV_PARAMS;
-        ret = string_to_uint(tok->arg[2], &params);
-        if (ret)
+        }
+        ret = string_to_uint(tok->arg[TWO], &params);
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->bleconn.conn_id = (u16)params;
         cmd->bleconn.cmd_mode = tok->cmd_mode;
     } else if (strcmp("BLECRNTY", at_name) == 0 || strcmp("BLECDNTY", at_name) == 0) {
         int ret;
         u32 params;
         u8 *tmpmac = NULL;
-        if (tok->arg_found != 4)
+        if (tok->arg_found != 4) {
             return -CMD_ERR_INV_PARAMS;
+        }
         ret = string_to_uint(tok->arg[0], &params);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->blenty.client_if = (u8)params;
-        if (atcmd_filter_quotation(&tmpmac, (u8 *)tok->arg[1]))
+        if (atcmd_filter_quotation(&tmpmac, (u8 *)tok->arg[1])) {
             return -CMD_ERR_INV_PARAMS;
-        if (strtohexarray(cmd->blenty.addr, ETH_ALEN, (char *)tmpmac)< 0)
+        }
+        if (strtohexarray(cmd->blenty.addr, ETH_ALEN, (char *)tmpmac)< 0) {
             return -CMD_ERR_INV_PARAMS;
-        ret = string_to_uint(tok->arg[2], &params);
-        if (ret)
+        }
+        ret = string_to_uint(tok->arg[TWO], &params);
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->blenty.attr_handle= (u16)params;
 
-        ret = string_to_uint(tok->arg[2], &params);
-        if (ret)
+        ret = string_to_uint(tok->arg[TWO], &params);
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->blenty.conn_id = (u16)params;
 
         cmd->blenty.cmd_mode = tok->cmd_mode;
     } else if (strcmp("BLECSSC", at_name) == 0 || strcmp("BLECGDB", at_name) == 0) {
         int ret;
         u32 params;
-        if (tok->arg_found != 1)
+        if (tok->arg_found != 1) {
             return -CMD_ERR_INV_PARAMS;
+        }
         ret = string_to_uint(tok->arg[0], &params);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->bleconn.conn_id = (u16)params;
         cmd->bleconn.cmd_mode = tok->cmd_mode;
     } else if(strcmp("&BTMAC", at_name) == 0) {
         u8 *tmpmac = NULL;
         if (tok->arg_found == 1){
-            if (atcmd_filter_quotation(&tmpmac, (u8 *)tok->arg[0]))
+            if (atcmd_filter_quotation(&tmpmac, (u8 *)tok->arg[0])) {
                 return -CMD_ERR_INV_PARAMS;
+            }
             cmd->mac.length = strlen((char *)tmpmac);
-            if (strtohexarray(cmd->mac.macaddr, ETH_ALEN, (char *)tmpmac)< 0)  
+            if (strtohexarray(cmd->mac.macaddr, ETH_ALEN, (char *)tmpmac)< 0)
                 return -CMD_ERR_INV_PARAMS;
             }
     } else if (strcmp("&BTNAME", at_name) == 0) {
@@ -6307,7 +6393,7 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
                 atcmd_filter_quotation(&namestr, (u8 *)tok->arg[0]);
                 cmd->btname.len = strlen((char *)namestr);
                 memcpy(cmd->btname.name, namestr, cmd->btname.len);
-                cmd->btname.cmd_mode = tok->cmd_mode;   
+                cmd->btname.cmd_mode = tok->cmd_mode;
             }
     } else if (strcmp("BLECACH", at_name) == 0) {
         int ret;
@@ -6315,8 +6401,9 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
         u8 *tmpdata;
 
         ret = string_to_uint(tok->arg[0], &params);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->bleacc.mode = (u8)params;
         /*read opertion, 4 parameters */
         if (cmd->bleacc.mode == 1) {
@@ -6330,23 +6417,27 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
         }
 
         ret = string_to_uint(tok->arg[1], &params);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->bleacc.conn_id = (u16)params;
-        ret = string_to_uint(tok->arg[2], &params);
-        if (ret)
+        ret = string_to_uint(tok->arg[TWO], &params);
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->bleacc.handle = (u16)params;
         ret = string_to_uint(tok->arg[3], &params);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->bleacc.auth_req = (u8)params;
 
         /*write operation, handle the input data*/
         if (cmd->bleacc.mode == 0) {
             ret = atcmd_filter_quotation(&tmpdata, (u8 *)tok->arg[4]);
-            if (ret)
+            if (ret) {
                 return -CMD_ERR_INV_PARAMS;
+            }
 
             cmd->bleacc.data_len = strlen((char *)tmpdata);
             memcpy(cmd->bleacc.data, tmpdata, cmd->bleacc.data_len);
@@ -6355,31 +6446,39 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
     } else if (strcmp("BLESCPRM", at_name) == 0) {
         int ret;
         u32 params;
-        if (tok->arg_found != 3)
+        if (tok->arg_found != 3) {
             return -CMD_ERR_INV_PARAMS;
+        }
         ret = hexstr_to_unit(tok->arg[0], &params);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->bleprm.adv_int_min = params;
 
         ret = hexstr_to_unit(tok->arg[1], &params);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->bleprm.adv_int_max = params;
 
-        ret = string_to_uint(tok->arg[2], &params);  //adding passive and active scan parametes;
-        if (ret)
+        ret = string_to_uint(tok->arg[TWO], &params);  //adding passive and active scan parametes;
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->bleprm.adv_type = (u8)params;
 
-        if (cmd->bleprm.adv_int_min < 0x0004 || cmd->bleprm.adv_int_min > 0x4000)
+        if (cmd->bleprm.adv_int_min < 0x0004 || cmd->bleprm.adv_int_min > 0x4000) {
             return -CMD_ERR_INV_PARAMS;
-        if (cmd->bleprm.adv_int_max < 0x0004 || cmd->bleprm.adv_int_max > 0x4000)
+        }
+        if (cmd->bleprm.adv_int_max < 0x0004 || cmd->bleprm.adv_int_max > 0x4000) {
             return -CMD_ERR_INV_PARAMS;
-        if (cmd->bleprm.adv_int_min > cmd->bleprm.adv_int_max)
+        }
+        if (cmd->bleprm.adv_int_min > cmd->bleprm.adv_int_max) {
             return -CMD_ERR_INV_PARAMS;
-        if (cmd->bleprm.adv_type > 1)
+        }
+        if (cmd->bleprm.adv_type > 1) {
             return -CMD_ERR_INV_PARAMS;
+        }
     }
 #endif
     else if ((strcmp("NIP", at_name) == 0)
@@ -6391,8 +6490,9 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
         int err = 0;
         u32 params;
         u8 *tmpbuf=NULL;
-        if (tok->arg_found !=0 && tok->arg_found !=1 && tok->arg_found != 5)
+        if (tok->arg_found != 0 && tok->arg_found != 1 && tok->arg_found != 5) {
             return -CMD_ERR_INV_PARAMS;
+        }
         if (tok->arg_found > 0) {
             do {
                 ret = string_to_uint(tok->arg[0], &params);
@@ -6422,7 +6522,7 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
                 }
                 MEMCPY(cmd->nip.ip, (u8 *)&params, 4);
                 /* netmask */
-                ret = atcmd_filter_quotation(&tmpbuf,(u8 *)tok->arg[2]);
+                ret = atcmd_filter_quotation(&tmpbuf,(u8 *)tok->arg[TWO]);
                 if (ret) {
                     err = 1;
                     break;
@@ -6460,8 +6560,9 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
 
                 err = 0;
             } while(0);
-            if (err)
+            if (err) {
                 return -CMD_ERR_INV_PARAMS;
+            }
         }
     } else if (strcmp("ATRM", at_name) == 0) {
         u32  params;
@@ -6469,8 +6570,9 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
         int ret;
         u8 *tmp;
         struct tls_cmd_socket_t socket;
-        if (tok->arg_found != 0 && tok->arg_found != 4)
+        if (tok->arg_found != 0 && tok->arg_found != 4) {
             return -CMD_ERR_INV_PARAMS;
+        }
         if (tok->arg_found == 4) {
             do {
                 memset(&socket, 0, sizeof(struct tls_cmd_socket_t));
@@ -6488,7 +6590,7 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
                     break;
                 }
                 socket.client = (u8)params ? 0 : 1;
-                ret = atcmd_filter_quotation(&tmp, (u8 *)tok->arg[2]);
+                ret = atcmd_filter_quotation(&tmp, (u8 *)tok->arg[TWO]);
                 if (ret) {
                     err = 1;
                     break;
@@ -6503,7 +6605,7 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
                 if (socket.client) {
                     ret = string_to_ipaddr((char *)tmp, (u8 *)&params);
                     if (!ret) {
-                        MEMCPY(socket.ip_addr, (u8 *)&params, 4); 
+                        MEMCPY(socket.ip_addr, (u8 *)&params, 4);
                     }
                     strcpy(socket.host_name, (char *)tmp);
                 } else {
@@ -6541,14 +6643,16 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
         }
     } else if(strcmp("AOLM", at_name) == 0 || strcmp("DDNS", at_name) == 0 || strcmp("UPNP", at_name) == 0 ||
             strcmp("DNAME", at_name) == 0) {
-        if (tok->arg_found)
+        if (tok->arg_found) {
             return -CMD_ERR_INV_PARAMS;
+        }
     } else if (strcmp("UART", at_name) == 0) {
         int err = 0;
         int ret;
         u32 params;
-        if (tok->arg_found != 0 && tok->arg_found != 4 && tok->arg_found != 5)
+        if (tok->arg_found != 0 && tok->arg_found != 4 && tok->arg_found != 5) {
             return -CMD_ERR_INV_PARAMS;
+        }
         if (tok->arg_found >= 4) {
             do {
                 /* baud rate */
@@ -6566,7 +6670,7 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
                 }
                 cmd->uart.char_len = params;
                 /* stopbit */
-                ret = string_to_uint(tok->arg[2], &params);
+                ret = string_to_uint(tok->arg[TWO], &params);
                 if (ret) {
                     err = 1;
                     break;
@@ -6593,46 +6697,54 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
 
                 err = 0;
             } while (0);
-            if (err)
+            if (err) {
                 return -CMD_ERR_INV_PARAMS;
+            }
         }
     } else if (strcmp("&DBG", at_name) == 0) {
         u32 dbg;
         int ret = 0;
-        if (tok->arg_found != 1)
+        if (tok->arg_found != 1) {
             return -CMD_ERR_INV_PARAMS;
+        }
         ret = string_to_uint(tok->arg[0], &dbg);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->dbg.dbg_level = dbg;
     } else if (strcmp("ESPC", at_name) == 0) {
         int ret;
         u32 params;
-        if (tok->arg_found > 1)
+        if (tok->arg_found > 1) {
             return -CMD_ERR_INV_PARAMS;
+        }
         if (tok->arg_found == 1) {
             ret = strtohex(&params, tok->arg[0]);
-            if (ret)
+            if (ret) {
                 return -CMD_ERR_INV_PARAMS;
+            }
             cmd->espc.escapechar = (u8)params;
         }
-    } else if(strcmp("WEBS", at_name) == 0) {
+    } else if (strcmp("WEBS", at_name) == 0) {
         u32 params;
         int ret = 0; 
-        if(tok->arg_found > 2)
+        if (tok->arg_found > TWO) {
             return -CMD_ERR_INV_PARAMS;
-        if(tok->arg_found >= 1) {
+        }
+        if (tok->arg_found >= 1) {
             ret = strtodec((int *)&params, tok->arg[0]);
-            if(ret)
+            if (ret) {
                 return -CMD_ERR_INV_PARAMS;
+            }
             cmd->webs.autorun = (u8)params;
             cmd->webs.portnum = 80;
         }
 
-        if(tok->arg_found >= 2) {
+        if (tok->arg_found >= TWO) {
             ret = strtodec((int *)&params, tok->arg[1]);
-            if(ret)
+            if (ret) {
                 return -CMD_ERR_INV_PARAMS;
+            }
             cmd->webs.portnum = (u16)params;
         }
     }
@@ -6648,8 +6760,9 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
         u8 *ipstr = NULL;
         struct hostent* HostEntry;
 
-        if ((tok->arg_found != 4) && (tok->arg_found != 5))
+        if ((tok->arg_found != 4) && (tok->arg_found != 5)) {
             return -CMD_ERR_INV_PARAMS;
+        }
         do {
             memset(&socket, 0, sizeof(struct tls_cmd_socket_t));
             ret = string_to_uint(tok->arg[0], &params);
@@ -6665,36 +6778,36 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
                 break;
             }
             socket.client = (u8)params ? 0 : 1;
-            host_len = tok->arg[3] - tok->arg[2] - 1;
+            host_len = tok->arg[3] - tok->arg[TWO] - 1;
             if (host_len > 32) {
                 err = 1;
                 break;
             }
             /* check ip or timeout  */
             if (socket.client) {
-                ret = string_to_ipaddr(tok->arg[2], (u8 *)&params);
-                if (!ret){
+                ret = string_to_ipaddr(tok->arg[TWO], (u8 *)&params);
+                if (!ret) {
                     MEMCPY(socket.ip_addr, (u8 *)&params, 4); 
                 } else {
-                    atcmd_filter_quotation(&ipstr, (u8 *)tok->arg[2]);
+                    atcmd_filter_quotation(&ipstr, (u8 *)tok->arg[TWO]);
                     HostEntry = gethostbyname((char *)ipstr); 
-                    if(HostEntry) {
+                    if (HostEntry) {
                         MEMCPY(socket.ip_addr, HostEntry->h_addr_list[0], 4);
                     } else {
                         err = 1;
                         break;
                     }
                 }
-                MEMCPY(socket.host_name, tok->arg[2], host_len);
+                MEMCPY(socket.host_name, tok->arg[TWO], host_len);
             } else {
                 if (socket.proto == 0) {
-                    if (*tok->arg[2] != '\0') {
-                        ret = string_to_uint(tok->arg[2], &params);
+                    if (*tok->arg[TWO] != '\0') {
+                        ret = string_to_uint(tok->arg[TWO], &params);
                         if (ret || params > 10000000) {
                             err = 1;
                             break;
                         }
-                        socket.timeout = params; 
+                        socket.timeout = params;
                     }
                 }
             }
@@ -6704,36 +6817,30 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
                 err = 1;
                 break;
             }
-            if ((tok->arg_found == 4) && (params == 0))
-            {
+            if ((tok->arg_found == 4) && (params == 0)) {
                 err = 1;
                 break;
             }
             socket.port = params; 
             socket.host_len = host_len;
         /* check local port */
-            if(tok->arg_found == 5)
-            {
+            if(tok->arg_found == 5) {
                 ret = string_to_uint(tok->arg[4], &params);
                 if (ret || (params > 0xFFFF)) {
                     err = 1;
                     break;
                 }
-                if((socket.proto == 0) && (socket.client == 0))
-                {
-                    if(params != 0)
-                    {
+                if((socket.proto == 0) && (socket.client == 0)) {
+                    if(params != 0) {
                         socket.port = params;
                     } else {
-                        if(socket.port == 0)
-                        {
+                        if(socket.port == 0) {
                             err = 1;
                             break;
                         }
                     }
                 } else {
-                    if((params == 0) || (socket.port == 0))
-                    {
+                    if((params == 0) || (socket.port == 0)) {
                         err = 1;
                         break;
                     }
@@ -6758,80 +6865,91 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
     } else if ((strcmp("SKSTT", at_name) == 0) || (strcmp("SKCLS", at_name) == 0) || (strcmp("SKSDF", at_name) == 0)) {
         int err;
         u32 params;
-        if (tok->arg_found != 1)
+        if (tok->arg_found != 1) {
             return -CMD_ERR_INV_PARAMS;
+        }
         err = string_to_uint(tok->arg[0], &params);
-        if (err)
+        if (err) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->skstt.socket = params;
     } else if ((strcmp("SKSND", at_name) == 0) || (strcmp("SKRCV", at_name) == 0)) {
         int ret;
         u32 params;
-        if (tok->cmd_mode == CMD_MODE_UART0_ATCMD)
-        {
+        if (tok->cmd_mode == CMD_MODE_UART0_ATCMD) {
             return -CMD_ERR_UNSUPP;
         }
 
-        if (tok->arg_found != 2)
+        if (tok->arg_found != TWO) {
             return -CMD_ERR_INV_PARAMS;
+        }
         ret = string_to_uint(tok->arg[0], &params);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->sksnd.socket = params;
         ret = string_to_uint(tok->arg[1], &params);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->sksnd.size = params;
     } else if (strcmp("SKRPTM", at_name) == 0) {
         int err;
         u32 params;
-        if (tok->arg_found > 1)
+        if (tok->arg_found > 1) {
             return -CMD_ERR_INV_PARAMS;
+        }
         if (tok->arg_found == 1){
             err = string_to_uint(tok->arg[0], &params);
-            if (err)
+            if (err) {
                 return -CMD_ERR_INV_PARAMS;
+            }
             cmd->skrptm.mode = params;
         }
     } else if (strcmp("SKGHBN", at_name) == 0) {
         u8 *ipstr = NULL;
-        if(tok->arg_found != 1)
+        if(tok->arg_found != 1) {
             return -CMD_ERR_INV_PARAMS;
+        }
         atcmd_filter_quotation(&ipstr, (u8 *)tok->arg[0]);
         memcpy(cmd->skghbn.ipstr, ipstr, strlen((char *)ipstr));
     }
 #endif
 #if TLS_CONFIG_HTTP_CLIENT_TASK
     else if (strcmp("HTTPC", at_name) == 0) {
-
-    int ret, verb;
+        int ret, verb;
         u8 * uri;
-        if (tok->arg_found != 2 && tok->arg_found != 3)
+        if (tok->arg_found != TWO && tok->arg_found != 3) {
             return -CMD_ERR_INV_PARAMS;
+        }
         ret = atcmd_filter_quotation(&uri,(u8 *)tok->arg[0]);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->httpc.url_len = strlen((char *)uri);
         cmd->httpc.url = uri;
         ret = string_to_uint(tok->arg[1], (u32 *)&verb);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->httpc.verb = (u8)verb;
         if (verb == VerbPost || verb == VerbPut) {
-            if(tok->arg_found != 3) {
+            if (tok->arg_found != 3) {
                 return -CMD_ERR_INV_PARAMS;
             }
-            cmd->httpc.data_len = strlen(tok->arg[2]);
-            cmd->httpc.data = (u8 *)tok->arg[2];
+            cmd->httpc.data_len = strlen(tok->arg[TWO]);
+            cmd->httpc.data = (u8 *)tok->arg[TWO];
         }
     } else if (strcmp("FWUP", at_name) == 0) {
         int ret;
         u8 * uri;
-        if (tok->arg_found != 1)
+        if (tok->arg_found != 1) {
             return -CMD_ERR_INV_PARAMS;
+        }
         ret = atcmd_filter_quotation(&uri,(u8 *)tok->arg[0]);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->httpc.url_len = strlen((char *)uri);
         cmd->httpc.url = uri;
     }
@@ -6839,153 +6957,170 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
 #endif
     else if (strcmp("&UPDM", at_name) == 0) {
         int ret, mode;
-        if (tok->arg_found != 1)
+        if (tok->arg_found != 1) {
             return -CMD_ERR_INV_PARAMS;
+        }
         ret = string_to_uint(tok->arg[0], (u32 *)&mode);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->updm.mode = (u8)mode;
         cmd->updm.src = 0;
     } else if (strcmp("&UPDD", at_name) == 0) {
         int ret, datasize;
         cmd_set_uart1_mode_callback callback;
-        if (tok->arg_found != 1)
+        if (tok->arg_found != 1) {
             return -CMD_ERR_INV_PARAMS;
+        }
         ret = string_to_uint(tok->arg[0], (u32 *)&datasize);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
 
         if (tls_get_fwup_mode()) {
             cmd->updd.size = (u16)datasize;
             cmd->updd.data[0] = 0;/* 标识是at指令 */
-            if(tok->cmd_mode == CMD_MODE_UART1_ATCMD) {
+            if (tok->cmd_mode == CMD_MODE_UART1_ATCMD) {
                 callback = tls_cmd_get_set_uart1_mode();
-                if(callback!=NULL)
+                if(callback != NULL) {
                     callback(UART_ATDATA_MODE);
+                }
             } else if (tok->cmd_mode == CMD_MODE_UART0_ATCMD) {
                 callback = tls_cmd_get_set_uart0_mode();
-                if (callback != NULL)
+                if (callback != NULL) {
                     callback(UART_ATDATA_MODE);
+                }
             }
         }
     } else if (strcmp("&REGR", at_name) == 0 || strcmp("&FLSR", at_name) == 0) {
         int ret;
         u32 Addr, Num;
-        if (tok->arg_found != 2)
+        if (tok->arg_found != TWO) {
             return -CMD_ERR_OPS;
+        }
         ret = hexstr_to_unit(tok->arg[0], &Addr);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->regr.reg_base_addr = Addr;
         ret = hexstr_to_unit(tok->arg[1], &Num);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->regr.length = Num;
     } else if (strcmp("&REGW", at_name) == 0 || strcmp("&FLSW", at_name) == 0) {
         int ret;
         u32 Addr, Value, i;
-        if (tok->arg_found <2 || tok->arg_found>9)
+        if (tok->arg_found < TWO || tok->arg_found > 9) {
             return -CMD_ERR_OPS;
+        }
         ret = hexstr_to_unit(tok->arg[0], &Addr);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->regw.reg_base_addr = Addr;
         cmd->regw.length = tok->arg_found - 1;
-        for (i=0; i<cmd->regw.length; i++){
+        for (i = 0; i < cmd->regw.length; i++) {
             ret = hexstr_to_unit(tok->arg[i+1], &Value);
-            if(ret)
+            if (ret) {
                 return -CMD_ERR_INV_PARAMS;
+            }
             cmd->regw.v[i] = Value;
         }
     } else if (strcmp("&RFR", at_name) == 0) {
         int ret;
         u32 Addr, Num;
-        if (tok->arg_found != 2)
+        if (tok->arg_found != TWO) {
             return -CMD_ERR_OPS;
+        }
         ret = hexstr_to_unit(tok->arg[0], &Addr);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->rfr.reg_base_addr = (u16)Addr;
         ret = hexstr_to_unit(tok->arg[1], &Num);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->rfr.length = Num;
     } else if (strcmp("&RFW", at_name) == 0) {
         int ret;
         u32 Addr, Value, i;
-        if (tok->arg_found <2 || tok->arg_found>9)
+        if (tok->arg_found < TWO || tok->arg_found > 9) {
             return -CMD_ERR_OPS;
+        }
         ret = hexstr_to_unit(tok->arg[0], &Addr);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->rfw.reg_base_addr = (u16)Addr;
         cmd->rfw.length = tok->arg_found - 1;
-        for (i=0; i<cmd->rfw.length; i++){
+        for (i = 0; i < cmd->rfw.length; i++){
             ret = hexstr_to_unit(tok->arg[i+1], &Value);
-            if(ret)
+            if (ret) {
                 return -CMD_ERR_INV_PARAMS;
+            }
             cmd->rfw.v[i] = (u16)Value;
         }
     } else if (strcmp("&TXG", at_name) == 0) {
-        if (tok->arg_found > 1)
+        if (tok->arg_found > 1) {
             return -CMD_ERR_INV_PARAMS;
+        }
         if (tok->arg_found == 1) {
-            if (strtohexarray(cmd->txg.tx_gain, TX_GAIN_LEN, tok->arg[0]) < 0)
-            {
+            if (strtohexarray(cmd->txg.tx_gain, TX_GAIN_LEN, tok->arg[0]) < 0) {
                 return -CMD_ERR_INV_PARAMS;
             }
         }
     } else if (strcmp("&TXGI", at_name) == 0) {
-        if (tok->arg_found > 1)
+        if (tok->arg_found > 1) {
             return -CMD_ERR_INV_PARAMS;
+        }
 
-        if (tok->arg_found == 1)
-        {
-            if (strtohexarray(cmd->txg.tx_gain, TX_GAIN_LEN/3, tok->arg[0]) < 0)
-            {
+        if (tok->arg_found == 1) {
+            if (strtohexarray(cmd->txg.tx_gain, TX_GAIN_LEN/3, tok->arg[0]) < 0) {
                 return -CMD_ERR_INV_PARAMS;
             }
         }
     } else if (strcmp("&TXGS", at_name) == 0) {
-        if (tok->arg_found >=1)
-        {
+        if (tok->arg_found >= 1) {
             u32 rate;
-            if (0 != string_to_uint(tok->arg[0], (u32 *)&rate))
+            if (0 != string_to_uint(tok->arg[0], (u32 *)&rate)) {
                 return -CMD_ERR_INV_PARAMS;
+            }
             cmd->txgr.tx_rate = rate;
         }
 
-        if (tok->arg_found ==2)
-        {
-            if (strtohexarray(cmd->txgr.txr_gain, 3, tok->arg[1]) < 0)
-            {
+        if (tok->arg_found == TWO) {
+            if (strtohexarray(cmd->txgr.txr_gain, 3, tok->arg[1]) < 0) {
                 return -CMD_ERR_INV_PARAMS;
             }
         }
     } else  if (strcmp("&TXGG", at_name) == 0) {
         if (tok->arg_found >= 1) {
             u32 rate;
-            if (0 != string_to_uint(tok->arg[0], (u32 *)&rate))
+            if (0 != string_to_uint(tok->arg[0], (u32 *)&rate)) {
                 return -CMD_ERR_INV_PARAMS;
+            }
             cmd->txgr.tx_rate = rate;
         }
     } else if(strcmp("&MAC", at_name) == 0) {
         u8 *tmpmac = NULL;
         if(tok->arg_found == 1) {
-            if (atcmd_filter_quotation(&tmpmac, (u8 *)tok->arg[0]))
-                return -CMD_ERR_INV_PARAMS;
-            cmd->mac.length = strlen((char *)tmpmac);
-            if (strtohexarray(cmd->mac.macaddr, ETH_ALEN, (char *)tmpmac)< 0)
+            if (atcmd_filter_quotation(&tmpmac, (u8 *)tok->arg[0])) {
                 return -CMD_ERR_INV_PARAMS;
             }
+            cmd->mac.length = strlen((char *)tmpmac);
+            if (strtohexarray(cmd->mac.macaddr, ETH_ALEN, (char *)tmpmac)< 0) {
+                return -CMD_ERR_INV_PARAMS;
+            }
+        }
     } else if (strcmp("TXLO", at_name) == 0) {
         int ret = 0;
         u32 value = 0;
 
         if (tok->arg_found == 1) {
             ret = hexstr_to_unit(tok->arg[0], &value);
-            if (ret)
-            {
+            if (ret) {
                 return -CMD_ERR_INV_PARAMS;
             }
             cmd->txLO.txlo = value;
@@ -6994,7 +7129,7 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
         int ret = 0;
         u32 value = 0;
 
-        if (tok->arg_found == 2) {
+        if (tok->arg_found == TWO) {
             ret = hexstr_to_unit(tok->arg[0],  &value);
             if (ret) {
                 return -CMD_ERR_INV_PARAMS;
@@ -7013,8 +7148,7 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
 
         if (tok->arg_found == 1) {
             ret = strtodec(&value, tok->arg[0]);
-            if (ret)
-            {
+            if (ret) {
                 return -CMD_ERR_INV_PARAMS;
             }
             cmd->FreqErr.freqerr = value;
@@ -7031,192 +7165,228 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
             }
             cmd->vcgCtrl.vcg = value;
         }
-    } else if(strcmp("&SPIF", at_name) == 0) {
+    } else if (strcmp("&SPIF", at_name) == 0) {
         int ret, len;
-        if (tok->arg_found != 1 && tok->arg_found != 2)
+        if (tok->arg_found != 1 && tok->arg_found != TWO)
             return -CMD_ERR_INV_PARAMS;
         ret = string_to_uint(tok->arg[0], (u32 *)&len);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->spif.len = (u8)len;
-        if (tok->arg_found == 2) {
-            if (strtohexarray(cmd->spif.data, cmd->spif.len, (char *)tok->arg[1]) < 0)
+        if (tok->arg_found == TWO) {
+            if (strtohexarray(cmd->spif.data, cmd->spif.len, (char *)tok->arg[1]) < 0) {
                 return -CMD_ERR_INV_PARAMS;
+            }
             cmd->spif.mode = 1;
-        } else
+        } else {
             cmd->spif.mode =0;
-    } else if(strcmp("&LPCHL", at_name) == 0) {
+        }
+    } else if (strcmp("&LPCHL", at_name) == 0) {
         int ret;
 
         if (tok->arg_found == 1) {
             ret = string_to_uint(tok->arg[0], (u32 *)&cmd->lpchl.channel);
-            if(ret)
+            if (ret) {
                 return -CMD_ERR_INV_PARAMS;
+            }
             cmd->lpchl.bandwidth = 0;
-        } else if(tok->arg_found == 2) {
+        } else if (tok->arg_found == TWO) {
             ret = string_to_uint(tok->arg[0], (u32 *)&cmd->lpchl.channel);
-            if (ret)
+            if (ret) {
                 return -CMD_ERR_INV_PARAMS;
+            }
             ret = string_to_uint(tok->arg[1], (u32 *)&cmd->lpchl.bandwidth);
-            if (ret)
+            if (ret) {
                 return -CMD_ERR_INV_PARAMS;
+            }
         } else {
             return -CMD_ERR_INV_PARAMS;
         }
     } else if(strcmp("&LPTSTR", at_name) == 0) {
         int ret;
-        if ((tok->arg_found < 5) || (tok->arg_found > 8))
+        if ((tok->arg_found < 5) || (tok->arg_found > 8)) {
             return -CMD_ERR_INV_PARAMS;
+        }
         ret = hexstr_to_unit(tok->arg[0], (u32 *)&cmd->lptstr.tempcomp);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         ret = hexstr_to_unit(tok->arg[1], (u32 *)&cmd->lptstr.packetcount);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
-        ret = hexstr_to_unit(tok->arg[2], (u32 *)&cmd->lptstr.psdulen);
-        if (ret)
+        }
+        ret = hexstr_to_unit(tok->arg[TWO], (u32 *)&cmd->lptstr.psdulen);
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         ret = hexstr_to_unit(tok->arg[3], (u32 *)&cmd->lptstr.txgain);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         ret = hexstr_to_unit(tok->arg[4], (u32 *)&cmd->lptstr.datarate);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
     switch (tok->arg_found) {
         case 8:
             ret = hexstr_to_unit(tok->arg[7], (u32 *)&cmd->lptstr.gimode);
-            if (ret)
+            if (ret) {
                 return -CMD_ERR_INV_PARAMS;
+            }
         case 7:
             ret = hexstr_to_unit(tok->arg[6], (u32 *)&cmd->lptstr.greenfield);
-            if (ret)
+            if (ret) {
                 return -CMD_ERR_INV_PARAMS;
+            }
         case 6:
             ret = hexstr_to_unit(tok->arg[5], (u32 *)&cmd->lptstr.rifs);
-            if (ret)
+            if (ret) {
                 return -CMD_ERR_INV_PARAMS;
-        break;
+            }
+            break;
         default:
             break;
     }
-    } else if(strcmp("&LPRSTR", at_name) == 0 || strcmp("&LPCHRS", at_name) == 0 || strcmp("&LPCHLR", at_name) == 0) {
+    } else if (strcmp("&LPRSTR", at_name) == 0 || strcmp("&LPCHRS", at_name) == 0 || strcmp("&LPCHLR", at_name) == 0) {
         int ret;
-        if ((tok->arg_found != 1)&&(tok->arg_found != 2))
+        if ((tok->arg_found != 1)&&(tok->arg_found != TWO)) {
             return -CMD_ERR_INV_PARAMS;
+        }
         ret = hexstr_to_unit(tok->arg[0], (u32 *)&cmd->lpchl.channel);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
-        if (tok->arg_found == 2) {
+        }
+        if (tok->arg_found == TWO) {
             ret = hexstr_to_unit(tok->arg[1], (u32 *)&cmd->lpchl.bandwidth);
-            if (ret)
+            if (ret) {
                 return -CMD_ERR_INV_PARAMS;
+            }
         }
-    } else if(strcmp("&LPPSTR", at_name) == 0) {
+    } else if (strcmp("&LPPSTR", at_name) == 0) {
         int ret;
-        if (tok->arg_found != 0 && tok->arg_found !=2)
+        if (tok->arg_found != 0 && tok->arg_found != TWO) {
             return -CMD_ERR_INV_PARAMS;
-        if (tok->arg_found == 2) {
+        }
+        if (tok->arg_found == TWO) {
             ret = hexstr_to_unit(tok->arg[0], (u32 *)&cmd->lppstr.param);
-            if (ret)
+            if (ret) {
                 return -CMD_ERR_INV_PARAMS;
+            }
             ret = hexstr_to_unit(tok->arg[1], (u32 *)&cmd->lppstr.start);
-            if (ret)
+            if (ret) {
                 return -CMD_ERR_INV_PARAMS;
+            }
         }
-    } else if(strcmp("&LPPSTP", at_name) == 0) {
+    } else if (strcmp("&LPPSTP", at_name) == 0) {
         int ret;
-        if(tok->arg_found != 1)
+        if(tok->arg_found != 1) {
             return -CMD_ERR_INV_PARAMS;
+        }
         ret = hexstr_to_unit(tok->arg[0], (u32 *)&cmd->lppstp.mismatch);
-        if(ret)
+        if(ret) {
             return -CMD_ERR_INV_PARAMS;
-    } else if(strcmp("&LPTBD", at_name) == 0) {
+        }
+    } else if (strcmp("&LPTBD", at_name) == 0) {
         int ret;
-        if (tok->arg_found != 7)
+        if (tok->arg_found != 7) {
             return -CMD_ERR_INV_PARAMS;
+        }
         cmd->lptstr.packetcount = 0;
         ret = hexstr_to_unit(tok->arg[0], (u32 *)&cmd->lptstr.psdulen);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
         ret = hexstr_to_unit(tok->arg[1], (u32 *)&cmd->lptstr.txgain);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
-        ret = hexstr_to_unit(tok->arg[2], (u32 *)&cmd->lptstr.datarate);
-        if (ret)
+        }
+        ret = hexstr_to_unit(tok->arg[TWO], (u32 *)&cmd->lptstr.datarate);
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
     } else if (strcmp("WIDTH", at_name) == 0) {
         int ret;
-        if (tok->arg_found != 2)
+        if (tok->arg_found != TWO) {
             return -CMD_ERR_INV_PARAMS;
-
+        }
         ret = string_to_uint(tok->arg[0], (u32 *)&cmd->width.freq);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
-
+        }
         ret = string_to_uint(tok->arg[1], (u32 *)&cmd->width.dividend);
-        if (ret)
+        if (ret) {
             return -CMD_ERR_INV_PARAMS;
+        }
     } else if (strcmp("&RXSIN", at_name) == 0) {
         int ret;
-        if (tok->arg_found != 2) 
+        if (tok->arg_found != TWO) {
            return -CMD_ERR_INV_PARAMS;
-
+        }
         ret = string_to_uint(tok->arg[0], (u32 *)&cmd->rxsin.rxlen);
-        if (ret)
+        if (ret) {
            return -CMD_ERR_INV_PARAMS;
-
+        }
         ret = string_to_uint(tok->arg[1], (u32 *)&cmd->rxsin.isprint);
-        if (ret)
+        if (ret) {
            return -CMD_ERR_INV_PARAMS;
+        }
     } else if (strcmp("CPUSTA", at_name) == 0) {
         int ret;
-        if (tok->arg_found != 1)
+        if (tok->arg_found != 1) {
             return -CMD_ERR_INV_PARAMS;
+        }
         ret = string_to_uint(tok->arg[0], (u32 *)&cmd->width.freq);
-        if (ret)
+        if (ret) {
            return -CMD_ERR_INV_PARAMS;
+        }
     } else if (strcmp("CPUDIV", at_name) == 0) {
         int ret;
-        if (tok->arg_found > 1)
+        if (tok->arg_found > 1) {
             return -CMD_ERR_INV_PARAMS;
+        }
         if (tok->arg_found == 1) {
             ret = string_to_uint(tok->arg[0], (u32 *)&cmd->width.freq);
-            if(ret)
+            if(ret) {
                return -CMD_ERR_INV_PARAMS;
+            }
         }
     } else if (strcmp("&LPTPD", at_name) == 0) {
         int ret;
         if (tok->arg_found == 1) {
             ret = string_to_uint(tok->arg[0], (u32 *)&cmd->rxsin.rxlen);
-            if(ret)
+            if(ret) {
                return -CMD_ERR_INV_PARAMS;
+            }
         }
     }
 #if TLS_CONFIG_WIFI_PERF_TEST
-    else if(strcmp("THT", at_name) == 0){
+    else if (strcmp("THT", at_name) == 0) {
         cmd->tht.tok = (u32 *)tok;
         return 0;
     }
 #endif
 #if TLS_CONFIG_WPS 
-    else if(strcmp("WWPS", at_name) == 0){
-        if (tok->arg_found > 2)
+    else if (strcmp("WWPS", at_name) == 0) {
+        if (tok->arg_found > TWO) {
             return -CMD_ERR_INV_PARAMS;
-        if (tok->arg_found >= 1){
-            if (!strcmp(tok->arg[0], "get_pin"))
+        }
+        if (tok->arg_found >= 1) {
+            if (!strcmp(tok->arg[0], "get_pin")) {
                 cmd->wps.mode = 0;
-            else if (!strcmp(tok->arg[0], "set_pin")) {
-                if (tok->arg_found != 2)
+            } else if (!strcmp(tok->arg[0], "set_pin")) {
+                if (tok->arg_found != TWO)
                     return -CMD_ERR_INV_PARAMS;
                 cmd->wps.mode = 1;
                 cmd->wps.pin_len = strlen(tok->arg[1]);
                 MEMCPY(cmd->wps.pin, tok->arg[1], cmd->wps.pin_len);
-            } else if (!strcmp(tok->arg[0], "start_pin"))
-                cmd->wps.mode = 2;
-            else if (!strcmp(tok->arg[0], "start_pbc"))
+            } else if (!strcmp(tok->arg[0], "start_pin")) {
+                cmd->wps.mode = TWO;
+            } else if (!strcmp(tok->arg[0], "start_pbc")) {
                 cmd->wps.mode = 3;
-            else
+            } else {
                 return -CMD_ERR_INV_PARAMS;
+            }
         }
     }
 #endif
@@ -7228,35 +7398,37 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
             cmd->ping.src = 1;
         }
         if (tok->arg_found == 4) {
-        int ret;
-        cmd->ping.ip = (u8 *)tok->arg[0];
-        ret = string_to_uint(tok->arg[1], (u32 *)&cmd->ping.timeLimt);
-        if (ret)
-           return -CMD_ERR_INV_PARAMS;
-        ret = string_to_uint(tok->arg[2], (u32 *)&cmd->ping.cnt);
-        if (ret)
-           return -CMD_ERR_INV_PARAMS;
-        ret = string_to_uint(tok->arg[3], (u32 *)&cmd->ping.start);
-        if (ret)
-           return -CMD_ERR_INV_PARAMS;
-            cmd->ping.ext = 1;
-        } else if (tok->arg_found == 1) {
+            int ret;
             cmd->ping.ip = (u8 *)tok->arg[0];
-            cmd->ping.ext = 0;
-        } else {
-            return -CMD_ERR_INV_PARAMS;
+            ret = string_to_uint(tok->arg[1], (u32 *)&cmd->ping.timeLimt);
+            if (ret) {
+                return -CMD_ERR_INV_PARAMS;
+            }
+            ret = string_to_uint(tok->arg[TWO], (u32 *)&cmd->ping.cnt);
+            if (ret) {
+               return -CMD_ERR_INV_PARAMS;
+            }
+            ret = string_to_uint(tok->arg[3], (u32 *)&cmd->ping.start);
+            if (ret) {
+                return -CMD_ERR_INV_PARAMS;
+                cmd->ping.ext = 1;
+            } else if (tok->arg_found == 1) {
+                cmd->ping.ip = (u8 *)tok->arg[0];
+                cmd->ping.ext = 0;
+            } else {
+                return -CMD_ERR_INV_PARAMS;
+            }
         }
     }
 #endif
-    else if(strcmp("SETTOKEN", at_name) == 0) {
+    else if (strcmp("SETTOKEN", at_name) == 0) {
         int i,j;
         int count = 0;
 
-        if(tok->arg_found == 4) {
-            for(i=0; i<4; i++)
+        if (tok->arg_found == 4) {
+            for(i = 0; i < 4; i++)
             {
-                for(j=0;j<strlen(tok->arg[i]);j++)
-                {
+                for(j = 0;j < strlen(tok->arg[i]); j++) {
                     cmd->token.token[count++] = (*((char *)(tok->arg[i] + j)));
                 }
                 if (i < 3) {
@@ -7277,11 +7449,11 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
 #if TLS_CONFIG_AP
        || strcmp("APMAC", at_name) == 0
 #endif
-      ) {
+    ) {
         *res_len = sprintf(res_resp, "+OK=%02x%02x%02x%02x%02x%02x", 
-                cmdrsp->mac.addr[0], cmdrsp->mac.addr[1], cmdrsp->mac.addr[2], 
+                cmdrsp->mac.addr[0], cmdrsp->mac.addr[1], cmdrsp->mac.addr[TWO],
                 cmdrsp->mac.addr[3], cmdrsp->mac.addr[4], cmdrsp->mac.addr[5]);
-    } else if(strcmp("TEM", at_name) == 0) {
+    } else if (strcmp("TEM", at_name) == 0) {
         if (set_opt) {
             *res_len = atcmd_ok_resp(res_resp);
         }
@@ -7308,14 +7480,15 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
         ) {
         *res_len = atcmd_ok_resp(res_resp);
     } else if (strcmp("WJOIN", at_name) == 0) {
-        int len=0,i=0;
+        int len = 0,i = 0;
         len = sprintf(res_resp, "+OK=%02x%02x%02x%02x%02x%02x,%d,%d,%d,\"",
-                        cmdrsp->join.bssid[0],cmdrsp->join.bssid[1], cmdrsp->join.bssid[2],
+                        cmdrsp->join.bssid[0],cmdrsp->join.bssid[1], cmdrsp->join.bssid[TWO],
                         cmdrsp->join.bssid[3],cmdrsp->join.bssid[4], cmdrsp->join.bssid[5],
                         cmdrsp->join.type, cmdrsp->join.channel,
                         (cmdrsp->join.encrypt?1:0));
-        for (i = 0; i < cmdrsp->join.ssid_len; i++)
+        for (i = 0; i < cmdrsp->join.ssid_len; i++) {
             sprintf(res_resp+len+i, "%c", cmdrsp->join.ssid[i]);
+        }
         *res_len = len + cmdrsp->join.ssid_len;
         len = sprintf(res_resp+len + cmdrsp->join.ssid_len, "\",%d", (signed char)cmdrsp->join.rssi);
         *res_len += len;
@@ -7325,17 +7498,17 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
 #if TLS_CONFIG_AP
               || strcmp("APLKSTT", at_name) == 0
 #endif
-             ) {
+    ) {
         if (cmdrsp->lkstt.status == 0) {
             *res_len = sprintf(res_resp, "+OK=%u", cmdrsp->lkstt.status);
         } else {
             *res_len = sprintf(res_resp, "+OK=%d,\"%d.%d.%d.%d\",\"%d.%d.%d.%d\",\"%d.%d.%d.%d\",\"%d.%d.%d.%d\",\"%d.%d.%d.%d\"",
                 cmdrsp->lkstt.status,
-                cmdrsp->lkstt.ip[0], cmdrsp->lkstt.ip[1], cmdrsp->lkstt.ip[2], cmdrsp->lkstt.ip[3],
-                cmdrsp->lkstt.nm[0], cmdrsp->lkstt.nm[1], cmdrsp->lkstt.nm[2], cmdrsp->lkstt.nm[3],
-                cmdrsp->lkstt.gw[0], cmdrsp->lkstt.gw[1], cmdrsp->lkstt.gw[2], cmdrsp->lkstt.gw[3],
-                cmdrsp->lkstt.dns1[0], cmdrsp->lkstt.dns1[1], cmdrsp->lkstt.dns1[2], cmdrsp->lkstt.dns1[3],
-                cmdrsp->lkstt.dns2[0], cmdrsp->lkstt.dns2[1], cmdrsp->lkstt.dns2[2], cmdrsp->lkstt.dns2[3]);
+                cmdrsp->lkstt.ip[0], cmdrsp->lkstt.ip[1], cmdrsp->lkstt.ip[TWO], cmdrsp->lkstt.ip[3],
+                cmdrsp->lkstt.nm[0], cmdrsp->lkstt.nm[1], cmdrsp->lkstt.nm[TWO], cmdrsp->lkstt.nm[3],
+                cmdrsp->lkstt.gw[0], cmdrsp->lkstt.gw[1], cmdrsp->lkstt.gw[TWO], cmdrsp->lkstt.gw[3],
+                cmdrsp->lkstt.dns1[0], cmdrsp->lkstt.dns1[1], cmdrsp->lkstt.dns1[TWO], cmdrsp->lkstt.dns1[3],
+                cmdrsp->lkstt.dns2[0], cmdrsp->lkstt.dns2[1], cmdrsp->lkstt.dns2[TWO], cmdrsp->lkstt.dns2[3]);
         }
     } else if (strcmp("DNS", at_name) == 0 || strcmp("PASS", at_name) == 0) {
         if (set_opt) {
@@ -7347,16 +7520,16 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
 #if TLS_CONFIG_AP
              || strcmp("APSSID", at_name) == 0
 #endif
-            ) {
+    ) {
         if (set_opt) {
             *res_len = atcmd_ok_resp(res_resp);
         } else {
             *res_len = sprintf(res_resp, "+OK=%s", cmdrsp->ssid.ssid);
         }
-    } else if((strcmp("WPRT", at_name) == 0) || (strcmp("ENCRY", at_name) == 0) || (strcmp("BRDSSID", at_name) == 0) ||
+    } else if ((strcmp("WPRT", at_name) == 0) || (strcmp("ENCRY", at_name) == 0) || (strcmp("BRDSSID", at_name) == 0) ||
              (strcmp("WATC", at_name) == 0) || (strcmp("WPSM", at_name) == 0) || (strcmp("WARC", at_name) == 0) ||
              (strcmp("WARM", at_name) == 0) || (strcmp("ATM", at_name) == 0) || (strcmp("PORTM", at_name) == 0) ||
-             (strcmp("IOM", at_name) == 0) || (strcmp("CMDM", at_name) == 0) || (strcmp("ONESHOT", at_name) == 0) 
+             (strcmp("IOM", at_name) == 0) || (strcmp("CMDM", at_name) == 0) || (strcmp("ONESHOT", at_name) == 0)
 #if TLS_CONFIG_AP
         ||(strcmp("APENCRY", at_name) == 0)
 #endif
@@ -7366,7 +7539,7 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
         } else {
             *res_len = sprintf(res_resp, "+OK=%hhu", cmdrsp->bt.status);
         }
-    } else if((strcmp("KEY", at_name) == 0)
+    } else if ((strcmp("KEY", at_name) == 0)
 #if TLS_CONFIG_AP
         ||(strcmp("APKEY", at_name) == 0)
 #endif
@@ -7382,35 +7555,36 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
         if (set_opt) {
             *res_len = atcmd_ok_resp(res_resp);
         } else {
-            if(cmdrsp->bssid.enable) {
+            if (cmdrsp->bssid.enable) {
                 *res_len = sprintf(res_resp, "+OK=%u,%02x%02x%02x%02x%02x%02x", 
                         cmdrsp->bssid.enable,
-                        cmdrsp->bssid.bssid[0],cmdrsp->bssid.bssid[1],cmdrsp->bssid.bssid[2],
-                        cmdrsp->bssid.bssid[3],cmdrsp->bssid.bssid[4],cmdrsp->bssid.bssid[5]);
+                        cmdrsp->bssid.bssid[0], cmdrsp->bssid.bssid[1], cmdrsp->bssid.bssid[TWO],
+                        cmdrsp->bssid.bssid[3], cmdrsp->bssid.bssid[4], cmdrsp->bssid.bssid[5]);
             } else {
                 *res_len = sprintf(res_resp, "+OK=%u",cmdrsp->bssid.enable);
             }
         }
     } else if (strcmp("CNTPARAM", at_name) == 0) {
-        int i=0;
+        int i = 0;
         if (!set_opt) {
             if (cmdrsp->cntparam_bssid_en.bssid_enable) {
                 *res_len = sprintf(res_resp, "+OK=%u,%02x%02x%02x%02x%02x%02x,",
                     cmdrsp->cntparam_bssid_en.bssid_enable,
-                    cmdrsp->cntparam_bssid_en.bssid[0],cmdrsp->cntparam_bssid_en.bssid[1],cmdrsp->cntparam_bssid_en.bssid[2],
-                    cmdrsp->cntparam_bssid_en.bssid[3],cmdrsp->cntparam_bssid_en.bssid[4],cmdrsp->cntparam_bssid_en.bssid[5]);
+                    cmdrsp->cntparam_bssid_en.bssid[0], cmdrsp->cntparam_bssid_en.bssid[1], cmdrsp->cntparam_bssid_en.bssid[TWO],
+                    cmdrsp->cntparam_bssid_en.bssid[3], cmdrsp->cntparam_bssid_en.bssid[4], cmdrsp->cntparam_bssid_en.bssid[5]);
                 MEMCPY(res_resp + *res_len, cmdrsp->cntparam_bssid_en.key, cmdrsp->cntparam_bssid_en.key_len);
                 *res_len += cmdrsp->cntparam_bssid_en.key_len;
             } else {
                 *res_len = sprintf(res_resp, "+OK=%u,",cmdrsp->cntparam_bssid_dis.bssid_enable);
-                for(i=0; i<cmdrsp->cntparam_bssid_dis.ssid_len; i++)
+                for(i = 0; i < cmdrsp->cntparam_bssid_dis.ssid_len; i++) {
                     *res_len += sprintf(res_resp + (*res_len), "%c", cmdrsp->cntparam_bssid_dis.ssid_key[i]);
+                }
                 *res_len += sprintf(res_resp + *res_len,",");
-                MEMCPY(res_resp + *res_len, cmdrsp->cntparam_bssid_dis.ssid_key+cmdrsp->cntparam_bssid_dis.ssid_len, cmdrsp->cntparam_bssid_dis.key_len);
+                MEMCPY(res_resp + *res_len, cmdrsp->cntparam_bssid_dis.ssid_key + cmdrsp->cntparam_bssid_dis.ssid_len, cmdrsp->cntparam_bssid_dis.key_len);
                 *res_len += cmdrsp->cntparam_bssid_dis.key_len;
             }
         }
-    } else if((strcmp("CHL", at_name) == 0)
+    } else if ((strcmp("CHL", at_name) == 0)
 #if TLS_CONFIG_AP
     ||(strcmp("APCHL", at_name) == 0)
 #endif
@@ -7418,7 +7592,7 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
         if (set_opt) {
             *res_len = atcmd_ok_resp(res_resp);
         } else {
-            if(cmdrsp->channel.enable) {
+            if (cmdrsp->channel.enable) {
                 *res_len = sprintf(res_resp, "+OK=%u,%u", cmdrsp->channel.enable, cmdrsp->channel.channel);
             } else {
                 *res_len = sprintf(res_resp, "+OK=%u", cmdrsp->channel.enable);
@@ -7449,27 +7623,27 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
         if (set_opt) {
             *res_len = atcmd_ok_resp(res_resp);
         } else {
-            *res_len = sprintf(res_resp, "+OK=%02x%02x%02x%02x%02x%02x", 
-                cmdrsp->mac.addr[0], cmdrsp->mac.addr[1], cmdrsp->mac.addr[2],
+            *res_len = sprintf(res_resp, "+OK=%02x%02x%02x%02x%02x%02x",
+                cmdrsp->mac.addr[0], cmdrsp->mac.addr[1], cmdrsp->mac.addr[TWO],
                 cmdrsp->mac.addr[3], cmdrsp->mac.addr[4], cmdrsp->mac.addr[5]);
         }
     }
- #if (WM_NIMBLE_INCLUDED == CFG_ON)   
+ #if (WM_NIMBLE_INCLUDED == CFG_ON)
     else if (strcmp("BTEN", at_name) == 0|| strcmp("BTDES", at_name) == 0 ) {
         *res_len = atcmd_ok_resp(res_resp);
-    } else if(strcmp("&BTNAME", at_name) == 0) {
-        if(set_opt) {
+    } else if (strcmp("&BTNAME", at_name) == 0) {
+        if (set_opt) {
             *res_len = atcmd_ok_resp(res_resp);
         } else {
-            *res_len = sprintf(res_resp, "+OK=%s", cmdrsp->btname.name); 
+            *res_len = sprintf(res_resp, "+OK=%s", cmdrsp->btname.name);
         }
     }
 
  #else
     else if (strcmp("BLECTSV", at_name) == 0 || strcmp("BLECCT", at_name) == 0|| strcmp("BTEN", at_name) == 0
         || strcmp("BTDES", at_name) == 0  || (strcmp("BLEADDSC", at_name) == 0) 
-        || (strcmp("BLEADDCH", at_name) == 0) || (strcmp("BLEADESC", at_name) == 0) ||(strcmp("BLESTTSC", at_name) == 0) 
-        || (strcmp("BLESTPSC", at_name) == 0) || (strcmp("BLEDELSC", at_name) == 0)|| (strcmp("BLEDESSV", at_name) == 0) 
+        || (strcmp("BLEADDCH", at_name) == 0) || (strcmp("BLEADESC", at_name) == 0) ||(strcmp("BLESTTSC", at_name) == 0)
+        || (strcmp("BLESTPSC", at_name) == 0) || (strcmp("BLEDELSC", at_name) == 0)|| (strcmp("BLEDESSV", at_name) == 0)
         || (strcmp("BLESVDIS", at_name) == 0) || (strcmp("BLESIND", at_name) == 0)||(strcmp("BLECMTU", at_name) == 0)
         || (strcmp("BLESRSP", at_name) == 0) ||(strcmp("BLECDIS", at_name) == 0) ||(strcmp("BLESCONN", at_name) == 0)
         || (strcmp("BLECSSC", at_name) == 0) || (strcmp("BLECRNTY", at_name) == 0) || (strcmp("BLECDNTY", at_name) == 0)
@@ -7479,8 +7653,8 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
         ) {
         *res_len = 0;
     }
- #endif   
-    else if((strcmp("BTDIAL", at_name) == 0)) {
+ #endif
+    else if ((strcmp("BTDIAL", at_name) == 0)) {
         *res_len = atcmd_ok_resp(res_resp);
     } else if (strcmp("BLEAPRM", at_name) == 0) {
         if (set_opt) {
@@ -7490,12 +7664,12 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
             cmdrsp->bleprm.adv_int_min, cmdrsp->bleprm.adv_int_max,
             cmdrsp->bleprm.adv_type, cmdrsp->bleprm.own_addr_type, cmdrsp->bleprm.channel_map,
             cmdrsp->bleprm.adv_filter_policy, cmdrsp->bleprm.peer_addr_type, 
-            cmdrsp->bleprm.peer_addr[0], cmdrsp->bleprm.peer_addr[1], cmdrsp->bleprm.peer_addr[2],
+            cmdrsp->bleprm.peer_addr[0], cmdrsp->bleprm.peer_addr[1], cmdrsp->bleprm.peer_addr[TWO],
             cmdrsp->bleprm.peer_addr[3], cmdrsp->bleprm.peer_addr[4], cmdrsp->bleprm.peer_addr[5]);
         }
     }
 #endif
-    else if(strcmp("WREG", at_name) == 0 || strcmp("ATLT", at_name) == 0 || strcmp("ATPT", at_name) == 0 ||
+    else if (strcmp("WREG", at_name) == 0 || strcmp("ATLT", at_name) == 0 || strcmp("ATPT", at_name) == 0 ||
              strcmp("ESPT", at_name) == 0) {
         if (set_opt) {
             *res_len = atcmd_ok_resp(res_resp);
@@ -7525,18 +7699,18 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
                         "+OK=%u,%u.%u.%u.%u,%u.%u.%u.%u,%u.%u.%u.%u,%u.%u.%u.%u",
                         cmdrsp->nip.type,
                         cmdrsp->nip.ip[0], cmdrsp->nip.ip[1],
-                        cmdrsp->nip.ip[2], cmdrsp->nip.ip[3],
+                        cmdrsp->nip.ip[TWO], cmdrsp->nip.ip[3],
                         cmdrsp->nip.nm[0], cmdrsp->nip.nm[1],
-                        cmdrsp->nip.nm[2], cmdrsp->nip.nm[3],
+                        cmdrsp->nip.nm[TWO], cmdrsp->nip.nm[3],
                         cmdrsp->nip.gw[0], cmdrsp->nip.gw[1],
-                        cmdrsp->nip.gw[2], cmdrsp->nip.gw[3],
+                        cmdrsp->nip.gw[TWO], cmdrsp->nip.gw[3],
                         cmdrsp->nip.dns[0], cmdrsp->nip.dns[1],
-                        cmdrsp->nip.dns[2], cmdrsp->nip.dns[3]);
+                        cmdrsp->nip.dns[TWO], cmdrsp->nip.dns[3]);
         }
     } else if (strcmp("ATRM", at_name) == 0) {
         if (set_opt) {
             *res_len = atcmd_ok_resp(res_resp);
-        } else{
+        } else {
             *res_len = sprintf(res_resp, 
                     "+OK=%u,%u,", cmdrsp->atrm.proto,
                     cmdrsp->atrm.client ? 0 : 1);
@@ -7551,13 +7725,13 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
             }
             *res_len += sprintf(res_resp + (*res_len), ",%u", cmdrsp->atrm.port);
         }
-    } else if(strcmp("UART", at_name) == 0) {
-        u32 baud_rate=0;
+    } else if (strcmp("UART", at_name) == 0) {
+        u32 baud_rate = 0;
         if (set_opt) {
             *res_len = atcmd_ok_resp(res_resp);
         } else {
             memcpy(&baud_rate, cmdrsp->uart.baud_rate, 3);
-            
+
             *res_len = sprintf(res_resp, 
                         "+OK=%u,%u,%u,%u,%u",
                         baud_rate,
@@ -7571,14 +7745,15 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
         } else {
             *res_len = sprintf(res_resp, "+OK=0x%02x", cmdrsp->espc.escapechar);
         }
-    } else if(strcmp("WEBS", at_name) == 0) {
+    } else if (strcmp("WEBS", at_name) == 0) {
         if (set_opt) {
             *res_len = atcmd_ok_resp(res_resp);
         } else {
-            if (cmdrsp->webs.autorun == 1)
+            if (cmdrsp->webs.autorun == 1) {
                 *res_len = sprintf(res_resp, "+OK=%d,%d",cmdrsp->webs.autorun, cmdrsp->webs.portnum);
-            else
+            } else {
                 *res_len = sprintf(res_resp, "+OK=%d", cmdrsp->webs.autorun);
+            }
         }
     }
 #if TLS_CONFIG_SOCKET_RAW || TLS_CONFIG_SOCKET_STD
@@ -7588,26 +7763,27 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
         if (set_opt) {
             *res_len = sprintf(res_resp, "+OK=%d", cmdrsp->skct.socket);
         }
-    } else if (strcmp("SKSTT", at_name) == 0){
+    } else if (strcmp("SKSTT", at_name) == 0) {
         struct hostif_cmdrsp_skstt_ext *ext;
-        int i=0;
+        int i = 0;
         u32 buflen;
         struct tls_uart_circ_buf * precvmit = NULL;
         if (set_opt) {
             *res_len = sprintf(res_resp, "+OK=");
             ext = &cmdrsp->skstt.ext[0];
-            
+
             for (i = 0; i < cmdrsp->skstt.number; i++) {
                 precvmit =tls_hostif_get_recvmit(ext->socket);
-                if (precvmit == NULL)
+                if (precvmit == NULL) {
                     buflen = 0;
-                else
+                } else {
                     buflen = CIRC_CNT(precvmit->head, precvmit->tail, TLS_SOCKET_RECV_BUF_SIZE);
+                }
                 *res_len += sprintf(res_resp + (*res_len),
                         "%d,%d,\"%d.%d.%d.%d\",%d,%d,%d\r\n",
                     ext->socket, ext->status, 
                     ext->host_ipaddr[0], ext->host_ipaddr[1],
-                    ext->host_ipaddr[2], ext->host_ipaddr[3],
+                    ext->host_ipaddr[TWO], ext->host_ipaddr[3],
                     ext->remote_port,ext->local_port, buflen);
                 ext++;
             }
@@ -7623,10 +7799,11 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
             maxsize = cmdrsp->skrcv.size;
             socket = cmdrsp->skrcv.socket;
             precvmit = tls_hostif_get_recvmit(socket);
-            if(precvmit) {
+            if (precvmit) {
                 ret = CIRC_CNT(precvmit->head, precvmit->tail, TLS_SOCKET_RECV_BUF_SIZE);
-                if(ret < maxsize)
+                if (ret < maxsize) {
                     maxsize = ret;
+                }
             } else {
                 return -CMD_ERR_INV_PARAMS;
             }
@@ -7635,53 +7812,52 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
             while(1)
             {
                 ret = CIRC_CNT_TO_END(precvmit->head, precvmit->tail, TLS_SOCKET_RECV_BUF_SIZE);
-                if (ret == 0)
-                {
+                if (ret == 0) {
                     break;
                 }
-                if (ret > maxsize)
-                {
+                if (ret > maxsize) {
                     ret = maxsize;
                 }
-                memcpy(res_resp + *res_len,(char *)(precvmit->buf+precvmit->tail),ret);
+                memcpy(res_resp + *res_len,(char *)(precvmit->buf + precvmit->tail), ret);
                 *res_len += ret;
                 precvmit->tail = (precvmit->tail + ret) & (TLS_SOCKET_RECV_BUF_SIZE - 1);
                 maxsize -= ret;
-                if(maxsize <= 0)
+                if (maxsize <= 0) {
                     break;
+                }
             }
             res_resp[*res_len] = '\0';
             return -CMD_ERR_SKT_RPT;
         }
-    } else if(strcmp("SKRPTM", at_name) == 0) {
+    } else if (strcmp("SKRPTM", at_name) == 0) {
         if (set_opt) {
             *res_len = atcmd_ok_resp(res_resp);
         } else {
             *res_len = sprintf(res_resp, "+OK=%d\n", cmdrsp->skrptm.mode);
         }
     } else if (strcmp("SKSRCIP", at_name) == 0) {
-        *res_len = sprintf(res_resp, "+OK=%d.%d.%d.%d", cmdrsp->sksrcip.ipvalue[0], cmdrsp->sksrcip.ipvalue[1], cmdrsp->sksrcip.ipvalue[2],cmdrsp->sksrcip.ipvalue[3]);
-    } else if(strcmp("SKGHBN", at_name) == 0) {
+        *res_len = sprintf(res_resp, "+OK=%d.%d.%d.%d", cmdrsp->sksrcip.ipvalue[0], cmdrsp->sksrcip.ipvalue[1], cmdrsp->sksrcip.ipvalue[TWO], cmdrsp->sksrcip.ipvalue[3]);
+    } else if (strcmp("SKGHBN", at_name) == 0) {
         *res_len = sprintf(res_resp, "+OK=\"%d.%d.%d.%d\"", \
                     cmdrsp->skghbn.h_addr_list[0], cmdrsp->skghbn.h_addr_list[1], \
-                    cmdrsp->skghbn.h_addr_list[2], cmdrsp->skghbn.h_addr_list[3]);
+                    cmdrsp->skghbn.h_addr_list[TWO], cmdrsp->skghbn.h_addr_list[3]);
     }
 #endif
 #if TLS_CONFIG_HTTP_CLIENT_TASK
     else if (strcmp("HTTPC", at_name) == 0) {
         *res_len = sprintf(res_resp, "+OK=%d", cmdrsp->httpc.psession);
-    } else if(strcmp("FWUP", at_name) == 0) {
+    } else if (strcmp("FWUP", at_name) == 0) {
         *res_len = sprintf(res_resp, "+OK=%d", cmdrsp->httpc.psession);
     }
 #endif
 #endif
-    else if(strcmp("QVER", at_name) == 0) {
+    else if (strcmp("QVER", at_name) == 0) {
         *res_len = sprintf(res_resp, "+OK=%c%x.%02x.%02x.%02x%02x,%c%x.%02x.%02x@ %s %s",
-                cmdrsp->ver.hw_ver[0], cmdrsp->ver.hw_ver[1], cmdrsp->ver.hw_ver[2],
+                cmdrsp->ver.hw_ver[0], cmdrsp->ver.hw_ver[1], cmdrsp->ver.hw_ver[TWO],
                 cmdrsp->ver.hw_ver[3], cmdrsp->ver.hw_ver[4], cmdrsp->ver.hw_ver[5],
-                cmdrsp->ver.fw_ver[0], cmdrsp->ver.fw_ver[1], cmdrsp->ver.fw_ver[2],
+                cmdrsp->ver.fw_ver[0], cmdrsp->ver.fw_ver[1], cmdrsp->ver.fw_ver[TWO],
                 cmdrsp->ver.fw_ver[3],SysCreatedTime, SysCreatedDate);
-    } else if(strcmp("&UPDM", at_name) == 0 || strcmp("&REGW", at_name) == 0 || strcmp("&RFW", at_name) == 0 ||
+    } else if (strcmp("&UPDM", at_name) == 0 || strcmp("&REGW", at_name) == 0 || strcmp("&RFW", at_name) == 0 ||
              strcmp("&FLSW", at_name) == 0 || strcmp("&LPTSTR", at_name) == 0 || strcmp("&LPTSTP", at_name) == 0 ||
              strcmp("&LPRSTR", at_name) == 0 || strcmp("&LPRSTP", at_name) == 0 || strcmp("&LPPSTP", at_name) == 0 ||
              strcmp("&LPRFPS", at_name) == 0 || strcmp("&LPTBD", at_name) == 0 || strcmp("&LPSTPT", at_name) == 0 ||
@@ -7689,7 +7865,7 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
              || strcmp("WIDTH", at_name) == 0
              || strcmp("&RXSIN", at_name) == 0) {
         *res_len = atcmd_ok_resp(res_resp);
-    } else if(strcmp("&UPDD", at_name) == 0) {
+    } else if (strcmp("&UPDD", at_name) == 0) {
         *res_len = sprintf(res_resp, "+OK=%d", tls_fwup_get_current_update_numer());
     } else if (strcmp("&LPTPD", at_name) == 0) {
         if (set_opt) {
@@ -7698,34 +7874,34 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
             *res_len = sprintf(res_resp, "+OK=%d", tls_get_tx_litepoint_period());
         }
     } else if (strcmp("&REGR", at_name) == 0) {
-        int i=0;
+        int i = 0;
         *res_len = sprintf(res_resp, "+OK=%08x", cmdrsp->regr.value[0]);
-        for(i=1;i<cmdrsp->regr.length;i++)
+        for (i = 1;i < cmdrsp->regr.length; i++) {
             *res_len += sprintf(res_resp + *res_len, ",%08x", cmdrsp->regr.value[i]);
+        }
     } else if (strcmp("&RFR", at_name) == 0) {
-        int i=0;
+        int i = 0;
         *res_len = sprintf(res_resp, "+OK=%04x", cmdrsp->rfr.value[0]);
-        for(i=1;i<cmdrsp->rfr.length;i++){
+        for (i = 1;i < cmdrsp->rfr.length; i++) {
             *res_len += sprintf(res_resp + *res_len, ",%04x", cmdrsp->rfr.value[i]);
         }
     } else if (strcmp("&FLSR", at_name) == 0) {
         u8 temp[16];
-        int i=0;
+        int i = 0;
         u8 buff[32];
         u32 len;
         u32 regv32;
         len = cmdrsp->flsr.length;
-        memcpy(buff, (u8 *)&cmdrsp->flsr.value[0], 4*len);
+        memcpy(buff, (u8 *)&cmdrsp->flsr.value[0], 4 * len);
         MEMCPY(&regv32, &buff[0], 4);
         *res_len = sprintf(res_resp, "+OK=%08x", regv32);
-        for(i = 1; i < len; i++)
-        {
+        for(i = 1; i < len; i++) {
             MEMCPY(&regv32, &buff[i * 4], 4);
             sprintf((char *)temp, ",%08x", regv32);
             strcat(res_resp, (char *)temp);
             *res_len += 9;
         }
-    } else if(strcmp("&TXG", at_name) == 0) {
+    } else if (strcmp("&TXG", at_name) == 0) {
         if (set_opt) {
             *res_len = atcmd_ok_resp(res_resp);
         } else {
@@ -7736,7 +7912,7 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
             "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x"
             "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x"
             "%02x%02x", \
-                cmdrsp->txg.tx_gain[0], cmdrsp->txg.tx_gain[1], cmdrsp->txg.tx_gain[2], \
+                cmdrsp->txg.tx_gain[0], cmdrsp->txg.tx_gain[1], cmdrsp->txg.tx_gain[TWO], \
                 cmdrsp->txg.tx_gain[3], cmdrsp->txg.tx_gain[4], cmdrsp->txg.tx_gain[5], \
                 cmdrsp->txg.tx_gain[6], cmdrsp->txg.tx_gain[7], cmdrsp->txg.tx_gain[8], \
                 cmdrsp->txg.tx_gain[9], cmdrsp->txg.tx_gain[10], cmdrsp->txg.tx_gain[11],\
@@ -7773,7 +7949,7 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
             *res_len = sprintf(res_resp, "+OK=%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x"
                                              "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x"
                                              "%02x%02x%02x%02x", \
-                cmdrsp->txg.tx_gain[0], cmdrsp->txg.tx_gain[1], cmdrsp->txg.tx_gain[2], \
+                cmdrsp->txg.tx_gain[0], cmdrsp->txg.tx_gain[1], cmdrsp->txg.tx_gain[TWO], \
                 cmdrsp->txg.tx_gain[3], cmdrsp->txg.tx_gain[4], cmdrsp->txg.tx_gain[5], \
                 cmdrsp->txg.tx_gain[6], cmdrsp->txg.tx_gain[7], cmdrsp->txg.tx_gain[8], \
                 cmdrsp->txg.tx_gain[9], cmdrsp->txg.tx_gain[10], cmdrsp->txg.tx_gain[11],\
@@ -7788,38 +7964,42 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
     if (strcmp("&TXGS", at_name) == 0) {
        *res_len = atcmd_ok_resp(res_resp);
     }
-    if (strcmp("&TXGG", at_name) == 0)
-    {
-        *res_len = sprintf(res_resp, "+OK=%d,%02x%02x%02x", cmdrsp->txgr.tx_rate, cmdrsp->txgr.txr_gain[0], cmdrsp->txgr.txr_gain[1], cmdrsp->txgr.txr_gain[2] );
+    if (strcmp("&TXGG", at_name) == 0) {
+        *res_len = sprintf(res_resp, "+OK=%d,%02x%02x%02x", cmdrsp->txgr.tx_rate, cmdrsp->txgr.txr_gain[0], cmdrsp->txgr.txr_gain[1], cmdrsp->txgr.txr_gain[TWO]);
     }
 
-    if(strcmp("&MAC", at_name) == 0) {
-        if(set_opt) {
+    if (strcmp("&MAC", at_name) == 0) {
+        if (set_opt) {
             *res_len = atcmd_ok_resp(res_resp);
-        } else
+        } else {
             *res_len = sprintf(res_resp, "+OK=%02x%02x%02x%02x%02x%02x", 
-                cmdrsp->mac.addr[0], cmdrsp->mac.addr[1], cmdrsp->mac.addr[2],
+                cmdrsp->mac.addr[0], cmdrsp->mac.addr[1], cmdrsp->mac.addr[TWO],
                 cmdrsp->mac.addr[3], cmdrsp->mac.addr[4], cmdrsp->mac.addr[5]);
+        }
     } else if (strcmp("TXLO", at_name) == 0) {
-        if(set_opt) {
+        if (set_opt) {
             *res_len = atcmd_ok_resp(res_resp);
-        } else
+        } else {
             *res_len = sprintf(res_resp, "+OK =%08x", cmdrsp->txLO.txlo);
+        }
     } else if (strcmp("TXIQ", at_name) == 0) {
-        if(set_opt) {
+        if (set_opt) {
             *res_len = atcmd_ok_resp(res_resp);
-        } else
+        } else {
             *res_len = sprintf(res_resp, "+OK =%08x,%08x", cmdrsp->txIQ.txiqgain, cmdrsp->txIQ.txiqphase);
+        }
     } else if (strcmp("FREQ", at_name) == 0) {
         if (set_opt) {
             *res_len = atcmd_ok_resp(res_resp);
-        } else
+        } else {
             *res_len = sprintf(res_resp, "+OK =%d", cmdrsp->FreqErr.freqerr);
+        }
     } else if (strcmp("VCG", at_name) == 0) {
-        if(set_opt) {
+        if (set_opt) {
             *res_len = atcmd_ok_resp(res_resp);
-        } else
-        *res_len = sprintf(res_resp, "+OK =%d", cmdrsp->vcgCtrl.vcg);
+        } else {
+            *res_len = sprintf(res_resp, "+OK =%d", cmdrsp->vcgCtrl.vcg);
+        }
     } else if (strcmp("&SPIF", at_name) == 0) {
         if (cmdrsp->spif.mode==0) {
             *res_len = sprintf(res_resp, "+OK=%s", cmdrsp->spif.data);
@@ -7832,19 +8012,19 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
         } else {
             *res_len = sprintf(res_resp, "+OK=%d", cmdrsp->lpchl.channel);
         }
-    } else if(strcmp("&LPTSTT", at_name) == 0) {
+    } else if (strcmp("&LPTSTT", at_name) == 0) {
         *res_len = sprintf(res_resp, "+OK=%x", tls_tx_litepoint_test_get_totalsnd());
-    } else if((strcmp("&LPRSTT", at_name) == 0) || (strcmp("&LPRAGC", at_name) == 0)) {
+    } else if ((strcmp("&LPRSTT", at_name) == 0) || (strcmp("&LPRAGC", at_name) == 0)) {
         u32 cnt_total = 0, cnt_good = 0, cnt_bad = 0;
         tls_rx_litepoint_test_result(&cnt_total, &cnt_good, &cnt_bad);
         *res_len = sprintf(res_resp, "+OK=%x,%x,%x", cnt_total, cnt_good, cnt_bad);
-    } else if(strcmp("&LPPSTR", at_name) == 0) {
-        if (gulCalFlag){
+    } else if (strcmp("&LPPSTR", at_name) == 0) {
+        if (gulCalFlag) {
             *res_len = sprintf(res_resp, "+OK=%x", rf_spi_read(11));
         } else {
             *res_len = atcmd_ok_resp(res_resp);
         }
-    } else if(strcmp("&LPRSR", at_name) == 0) {
+    } else if (strcmp("&LPRSR", at_name) == 0) {
         u32 rx_valid, rx_snr, rx_rcpi = 0;
         tls_rx_litepoint_pwr_result(&rx_valid, &rx_snr, &rx_rcpi);
         if (rx_valid) {
@@ -7854,30 +8034,31 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
         }
     }
 #if TLS_CONFIG_WIFI_PERF_TEST
-    else if(strcmp("THT", at_name) == 0) {
+    else if (strcmp("THT", at_name) == 0) {
         *res_len = atcmd_ok_resp(res_resp);
     }
 #endif
 #if TLS_CONFIG_WPS
-    else if(strcmp("WWPS", at_name) == 0) {
-        if(set_opt) {
-            if (cmdrsp->wps.result==0) {
+    else if (strcmp("WWPS", at_name) == 0) {
+        if (set_opt) {
+            if (cmdrsp->wps.result == 0) {
                 *res_len = atcmd_ok_resp(res_resp);
-            } else if(cmdrsp->wps.result==1) {
+            } else if(cmdrsp->wps.result == 1) {
                 *res_len = sprintf(res_resp, "+OK=");
-                for(int i=0; i<WPS_PIN_LEN; i++)
+                for(int i = 0; i < WPS_PIN_LEN; i++) {
                     *res_len += sprintf(res_resp + *res_len, "%c", cmdrsp->wps.pin[i]);
+                }
             }
         } else {
             *res_len = atcmd_ok_resp(res_resp);
         }
     }
 #endif
-    else if(strcmp("CUSTDATA", at_name) == 0) {
+    else if (strcmp("CUSTDATA", at_name) == 0) {
         *res_len = sprintf(res_resp, "+OK=\"%s\"", cmdrsp->custdata.data);
     }
 #if TLS_CONFIG_AP
-    else if(strcmp("SLIST", at_name) == 0) {
+    else if (strcmp("SLIST", at_name) == 0) {
         if (0 == cmdrsp->stalist.sta_num) {
             *res_len = sprintf(res_resp, "+OK=%hhu", cmdrsp->stalist.sta_num);
         } else {
@@ -7885,7 +8066,7 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
         }
     }
 #endif
-    else if(strcmp("PING", at_name) == 0) {
+    else if (strcmp("PING", at_name) == 0) {
         if (cmdrsp->ping.ext) {
             *res_len = atcmd_ok_resp(res_resp);
         } else {
@@ -7895,7 +8076,7 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
         *res_len = atcmd_ok_resp(res_resp);
     } else if (strcmp("CPUDIV", at_name) == 0) {
         *res_len = sprintf(res_resp, "+OK=%hhu", cmdrsp->pass.length);
-    } else if(strcmp("SETTOKEN", at_name) == 0) {
+    } else if (strcmp("SETTOKEN", at_name) == 0) {
         *res_len = atcmd_ok_resp(res_resp);
     }
 
@@ -7905,31 +8086,34 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
 int ri_parse_func(s16 ri_cmd_id, char *buf, u32 length, union HOSTIF_CMD_PARAMS_UNION *cmd)
 {
     if (ri_cmd_id == HOSTIF_CMD_REGR || ri_cmd_id == HOSTIF_CMD_FLSR) {
-        if (length > 9)
+        if (length > 9) {
             return CMD_ERR_INV_PARAMS;
-    } else if(ri_cmd_id == HOSTIF_CMD_RFR) {
-        if (length > 7)
+        }
+    } else if (ri_cmd_id == HOSTIF_CMD_RFR) {
+        if (length > 7) {
             return CMD_ERR_INV_PARAMS;
-    } else if(ri_cmd_id == HOSTIF_CMD_REGW || ri_cmd_id == HOSTIF_CMD_FLSW) {
-        if(length > 41)
+        }
+    } else if (ri_cmd_id == HOSTIF_CMD_REGW || ri_cmd_id == HOSTIF_CMD_FLSW) {
+        if (length > 41) {
             return CMD_ERR_INV_PARAMS;
-    } else if(ri_cmd_id == HOSTIF_CMD_RFW) {
-        if(length > 23)
+        }
+    } else if (ri_cmd_id == HOSTIF_CMD_RFW) {
+        if (length > 23) {
             return CMD_ERR_INV_PARAMS;
-    } else if(ri_cmd_id == HOSTIF_CMD_UPDM) {
+        }
+    } else if (ri_cmd_id == HOSTIF_CMD_UPDM) {
         cmd->updm.src = 1;
-    } else if(ri_cmd_id == HOSTIF_CMD_UPDD) {
+    } else if (ri_cmd_id == HOSTIF_CMD_UPDD) {
         cmd->updd.data[0] = 1;/* 标识是ri指令 */
-        //tls_set_hspi_fwup_mode(1);
     }
 #if TLS_CONFIG_RI_CMD
     else if(ri_cmd_id == HOSTIF_CMD_WSCAN || ri_cmd_id == HOSTIF_CMD_WJOIN) { 
         struct tls_hostif *hif = tls_get_hostif();
-        if (hif->hostif_mode == HOSTIF_MODE_HSPI)
+        if (hif->hostif_mode == HOSTIF_MODE_HSPI) {
             cmd->scanparam.mode = CMD_MODE_HSPI_RICMD;
-        else
+        } else {
             cmd->scanparam.mode = CMD_MODE_UART1_RICMD;
-
+        }
         cmd->scanparam.chlist = 0;
         cmd->scanparam.scantimes = 0;
         cmd->scanparam.switchinterval = 0;
@@ -7943,72 +8127,81 @@ int ri_parse_func(s16 ri_cmd_id, char *buf, u32 length, union HOSTIF_CMD_PARAMS_
         struct tls_cmd_socket_t socket;
         struct tls_hostif *hif = tls_get_hostif();
         memset(&socket, 0, sizeof(struct tls_cmd_socket_t));
-        do{
-            if (len >1) {
+        do {
+            if (len > 1) {
                 socket.proto = *p;
-                if(socket.proto>1)
+                if(socket.proto > 1) {
                     break;
-            } else
+                }
+            } else {
                 break;
+            }
             len -= 1;
             p += 1;
 
             if (len > 1) {
-                if(*p >1)
+                if(*p > 1) {
                     break;
+                }
                 socket.client = *p ? 0 : 1;
-            } else
+            } else {
                 break;
+            }
             len -= 1;
             p += 1;
 
             if (len > 1) {
-                if(*p > 31)
+                if(*p > 31) {
                     break;
-                else
+                } else {
                     socket.host_len = *p;
-            } else
+                }
+            } else {
                 break;
+            }
             len -= 1;
             p += 1;
 
             if(len > socket.host_len) {
                 if (socket.client == 1 && socket.host_len == 4) {
-                    //*(u32 *)&socket.ip_addr[0] = get_unaligned_le32(p);
                     u32 ipaddr = get_unaligned_le32(p);
                     MEMCPY(socket.ip_addr, &ipaddr, 4);
-                } else if(socket.client == 1) {
+                } else if (socket.client == 1) {
                     MEMCPY(socket.host_name, p, socket.host_len);
-                } else if(socket.client == 0 && socket.proto == 0) {
+                } else if (socket.client == 0 && socket.proto == 0) {
                     socket.timeout = get_unaligned_be32(p);
-                } else
-                    ;
-            } else
+                } else {
+                }
+            } else {
                 break;
+            }
             len -= socket.host_len;
             p += socket.host_len;
 
-            if (len >= 2) {
+            if (len >= TWO) {
                 socket.port = get_unaligned_be16(p);
-            } else
+            } else {
                 break;
-            len -= 2;
-            p += 2;
+            }
+            len -= TWO;
+            p += TWO;
             
-            if (len <2 && socket.port == 0)
+            if (len < TWO && socket.port == 0) {
                 break;
-            if (len >=2) {
+            }
+            if (len >= TWO) {
                 params = get_unaligned_be16(p);
                 if ((socket.proto == 0) && (socket.client == 0)) {
-                    if (params != 0)
+                    if (params != 0) {
                         socket.port = params;
-                    else {
+                    } else {
                         if(socket.port == 0)
                             break;
                     }
                 } else {
-                    if ((params == 0) || (socket.port == 0))
+                    if ((params == 0) || (socket.port == 0)) {
                         break;
+                    }
                 }
                 socket.localport = params;
             }
@@ -8018,10 +8211,11 @@ int ri_parse_func(s16 ri_cmd_id, char *buf, u32 length, union HOSTIF_CMD_PARAMS_
             return CMD_ERR_INV_PARAMS;
         }
 
-        if (hif->hostif_mode == HOSTIF_MODE_HSPI)
+        if (hif->hostif_mode == HOSTIF_MODE_HSPI) {
             cmd->skct.mode = CMD_MODE_HSPI_RICMD;
-        else
+        } else {
             cmd->skct.mode = CMD_MODE_UART1_RICMD;
+        }
         cmd->skct.proto = socket.proto;
         cmd->skct.client = socket.client;
         cmd->skct.host_len = socket.host_len;
@@ -8030,83 +8224,94 @@ int ri_parse_func(s16 ri_cmd_id, char *buf, u32 length, union HOSTIF_CMD_PARAMS_
         cmd->skct.localport = socket.localport;
         memcpy(cmd->skct.ip_addr, socket.ip_addr, 4);
         cmd->skct.timeout = socket.timeout;
-    } else if(ri_cmd_id == HOSTIF_CMD_SKGHBN) {
-        cmd->skghbn.ipstr[length-4] = '\0';
+    } else if (ri_cmd_id == HOSTIF_CMD_SKGHBN) {
+        cmd->skghbn.ipstr[length - 4] = '\0';
     }
 #endif
-    else if(ri_cmd_id == HOSTIF_CMD_ATRM) {
+    else if (ri_cmd_id == HOSTIF_CMD_ATRM) {
         struct tls_cmd_socket_t socket;
         u8 *p = (u8 *)buf + sizeof(struct tls_hostif_cmd_hdr);
-        u32 len= length - sizeof(struct tls_hostif_cmd_hdr);
+        u32 len = length - sizeof(struct tls_hostif_cmd_hdr);
         int err = CMD_ERR_INV_PARAMS;
         u16 params;
         memset(&socket, 0, sizeof(struct tls_cmd_socket_t));
         do {
             if (len >1) {
                 socket.proto = *p;
-                if(socket.proto>1)
+                if(socket.proto>1) {
                     break;
-            } else
+                }
+            } else {
                 return 0;
+            }
             len -= 1;
             p += 1;
 
             if (len > 1) {
-                if (*p >1)
+                if (*p >1) {
                     break;
+                }
                 socket.client = *p ? 0 : 1;
-            } else
+            } else {
                 break;
+            }
             len -= 1;
             p += 1;
 
             if (len > 1) {
-                if (*p > 31)
+                if (*p > 31) {
                     break;
-                else
+                } else {
                     socket.host_len = *p;
-            } else
+                }
+            } else {
                 break;
+            }
             len -= 1;
             p += 1;
 
             if (len > socket.host_len) {
                 if (socket.client == 1 && socket.host_len == 4) {
-                    //*(u32 *)socket.ip_addr = get_unaligned_le32(p);
                     u32 ipaddr = get_unaligned_le32(p);
                     MEMCPY(socket.ip_addr, &ipaddr, 4);
-                } else if(socket.client == 1) {
+                } else if (socket.client == 1) {
                     MEMCPY(socket.host_name, p, socket.host_len);
-                } else if(socket.client == 0 && socket.proto == 0) {
+                } else if (socket.client == 0 && socket.proto == 0) {
                     socket.timeout = get_unaligned_be32(p);
-                } else
+                } else {
                     MEMCPY(socket.host_name, p, socket.host_len);
-            } else
+                }
+            } else {
                 break;
+            }
             len -= socket.host_len;
             p += socket.host_len;
 
-            if (len >= 2) {
+            if (len >= TWO) {
                 socket.port = get_unaligned_be16(p);
-            } else
+            } else {
                 break;
-            len -= 2;
-            p += 2;
+            }
+            len -= TWO;
+            p += TWO;
             
-            if (len <2 && socket.port==0)
+            if (len < TWO && socket.port == 0) {
                 break;
-            if (len >=2) {
+            }
+            if (len >= TWO) {
                 params = get_unaligned_be16(p);
                 if ((socket.proto == 0) && (socket.client == 0)) {
-                    if (params != 0)
+                    if (params != 0) {
                         socket.port = params;
-                    else {
-                        if (socket.port == 0)
+                    } else {
+                        if (socket.port == 0) {
                             break;
+                        }
                     }
                 } else {
-                    if ((params == 0) || (socket.port == 0))
+                    if ((params == 0) || (socket.port == 0)) {
                         break;
+                    }
                 }
                 socket.localport = params;
             }
@@ -8125,32 +8330,36 @@ int ri_parse_func(s16 ri_cmd_id, char *buf, u32 length, union HOSTIF_CMD_PARAMS_
         memcpy(cmd->atrm.ip_addr, socket.ip_addr, 4);
         cmd->atrm.timeout = socket.timeout;
     } else if(ri_cmd_id == HOSTIF_CMD_WEBS) {
-        if (length == 5)
+        if (length == 5) {
             cmd->webs.portnum = 80;
+        }
     }
 #if TLS_CONFIG_HTTP_CLIENT_TASK
-    else if(ri_cmd_id == HOSTIF_CMD_HTTPC || ri_cmd_id == HOSTIF_CMD_FWUP) {
+    else if (ri_cmd_id == HOSTIF_CMD_HTTPC || ri_cmd_id == HOSTIF_CMD_FWUP) {
         u8 *p = (u8 *)buf + sizeof(struct tls_hostif_cmd_hdr);
-        u8 *url=NULL;
-        if (cmd->httpc.url_len>255)
+        u8 *url = NULL;
+        if (cmd->httpc.url_len > 255) {
             return CMD_ERR_INV_PARAMS;
-        if (cmd->httpc.data_len>512)
+        }
+        if (cmd->httpc.data_len > 512) {
             return CMD_ERR_INV_PARAMS;
+        }
         url = (u8 *)tls_mem_alloc(sizeof(u8) * (cmd->httpc.url_len + cmd->httpc.data_len));
-        if (url==NULL)
+        if (url == NULL) {
             return CMD_ERR_MEM;
+        }
         memset(url, 0, cmd->httpc.url_len + cmd->httpc.data_len);
         p += 4;
-        memcpy(url, p, cmd->httpc.url_len+cmd->httpc.data_len);
-        cmd->httpc.url = p+8;
+        memcpy(url, p, cmd->httpc.url_len + cmd->httpc.data_len);
+        cmd->httpc.url = p + 8;
         cmd->httpc.data = p + 8 + cmd->httpc.url_len + 1;
-        memcpy(p+8, url, cmd->httpc.url_len);
+        memcpy(p + 8, url, cmd->httpc.url_len);
         p[cmd->httpc.url_len + 8] = '\0';
-        memcpy(p+9+cmd->httpc.url_len, url+cmd->httpc.url_len, cmd->httpc.data_len);
-        p[9+cmd->httpc.url_len+cmd->httpc.data_len] = '\0';
+        memcpy(p + 9 + cmd->httpc.url_len, url + cmd->httpc.url_len, cmd->httpc.data_len);
+        p[9 + cmd->httpc.url_len + cmd->httpc.data_len] = '\0';
         tls_mem_free(url);
-        url=NULL;
-    }    
+        url = NULL;
+    }
 #endif
 #endif
     return 0;
@@ -8159,9 +8368,9 @@ int ri_parse_func(s16 ri_cmd_id, char *buf, u32 length, union HOSTIF_CMD_PARAMS_
 int ri_format_func(s16 ri_cmd_id, u8 set_opt, u8 update_flash, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp, char *res_resp, u32 *res_len)
 {
     if(ri_cmd_id == HOSTIF_CMD_MAC
-#if TLS_CONFIG_AP 
+#if TLS_CONFIG_AP
     || ri_cmd_id == HOSTIF_CMD_AP_MAC
-#endif    
+#endif
     ) {
         *res_len = sizeof(struct tls_hostif_cmd_hdr) + 6;
     } else if(ri_cmd_id == HOSTIF_CMD_VER) {
@@ -8170,62 +8379,66 @@ int ri_format_func(s16 ri_cmd_id, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
 #if TLS_CONFIG_RI_CMD
     else if (ri_cmd_id == HOSTIF_CMD_PS || ri_cmd_id == HOSTIF_CMD_DBG || ri_cmd_id == HOSTIF_CMD_UPDP) {
         ;
-    } else if(ri_cmd_id == HOSTIF_CMD_RESET_FLASH || ri_cmd_id == HOSTIF_CMD_RESET || ri_cmd_id == HOSTIF_CMD_PMTF ||
-             ri_cmd_id == HOSTIF_CMD_GPIO || ri_cmd_id == HOSTIF_CMD_WLEAVE || ri_cmd_id == HOSTIF_CMD_WSCAN ||
-             ri_cmd_id == HOSTIF_CMD_AOLM || ri_cmd_id == HOSTIF_CMD_DDNS ||
-             ri_cmd_id == HOSTIF_CMD_UPNP || ri_cmd_id == HOSTIF_CMD_DNAME){
+    } else if (ri_cmd_id == HOSTIF_CMD_RESET_FLASH || ri_cmd_id == HOSTIF_CMD_RESET || ri_cmd_id == HOSTIF_CMD_PMTF ||
+              ri_cmd_id == HOSTIF_CMD_GPIO || ri_cmd_id == HOSTIF_CMD_WLEAVE || ri_cmd_id == HOSTIF_CMD_WSCAN ||
+              ri_cmd_id == HOSTIF_CMD_AOLM || ri_cmd_id == HOSTIF_CMD_DDNS ||
+              ri_cmd_id == HOSTIF_CMD_UPNP || ri_cmd_id == HOSTIF_CMD_DNAME) {
         struct tls_hostif_cmdrsp *cmd_rsp = (struct tls_hostif_cmdrsp *)res_resp;
-        cmd_rsp->cmd_hdr.ext=0x00;
-    } else if(ri_cmd_id == HOSTIF_CMD_WJOIN) {
-        if(cmdrsp->join.result==1) {
-            u8 *p=cmdrsp->join.ssid + cmdrsp->join.ssid_len;
+        cmd_rsp->cmd_hdr.ext = 0x00;
+    } else if (ri_cmd_id == HOSTIF_CMD_WJOIN) {
+        if (cmdrsp->join.result == 1) {
+            u8 *p = cmdrsp->join.ssid + cmdrsp->join.ssid_len;
             *p = cmdrsp->join.rssi;
             *res_len = sizeof(struct tls_hostif_cmd_hdr) + 11 + cmdrsp->join.ssid_len;
         } else {
             struct tls_hostif_cmdrsp *cmd_rsp = (struct tls_hostif_cmdrsp *)res_resp;
-            cmd_rsp->cmd_hdr.ext=0x00;
+            cmd_rsp->cmd_hdr.ext = 0x00;
         }
-    } else if(ri_cmd_id == HOSTIF_CMD_LINK_STATUS
+    } else if (ri_cmd_id == HOSTIF_CMD_LINK_STATUS
 #if TLS_CONFIG_AP    
     || ri_cmd_id == HOSTIF_CMD_AP_LINK_STATUS
 #endif
     ) {
-        if (cmdrsp->lkstt.status == 1)
+        if (cmdrsp->lkstt.status == 1) {
             *res_len = sizeof(struct tls_hostif_cmd_hdr) +
-                sizeof(struct _HOSTIF_CMDRSP_PARAMS_LKSTT);
-        else
+                       sizeof(struct _HOSTIF_CMDRSP_PARAMS_LKSTT);
+        } else {
             *res_len = sizeof(struct tls_hostif_cmd_hdr) + 1;
+        }
     } else if (ri_cmd_id == HOSTIF_CMD_SSID || ri_cmd_id == HOSTIF_CMD_DNS
 #if TLS_CONFIG_AP
     || ri_cmd_id == HOSTIF_CMD_AP_SSID
-#endif    
+#endif
     ) {
-        if (!set_opt)
+        if (!set_opt) {
             *res_len = sizeof(struct tls_hostif_cmd_hdr) + 1 + cmdrsp->ssid.ssid_len;
-    } else if(ri_cmd_id == HOSTIF_CMD_WPRT || ri_cmd_id == HOSTIF_CMD_ENCRYPT || ri_cmd_id == HOSTIF_CMD_BRD_SSID ||
-             ri_cmd_id == HOSTIF_CMD_WATC || ri_cmd_id == HOSTIF_CMD_WPSM || ri_cmd_id == HOSTIF_CMD_WARM ||
-             ri_cmd_id == HOSTIF_CMD_ATM || ri_cmd_id == HOSTIF_CMD_PORTM || ri_cmd_id == HOSTIF_CMD_ONESHOT ||
-             ri_cmd_id == HOSTIF_CMD_WARC || ri_cmd_id == HOSTIF_CMD_IOM || ri_cmd_id == HOSTIF_CMD_CMDM 
+        }
+    } else if (ri_cmd_id == HOSTIF_CMD_WPRT || ri_cmd_id == HOSTIF_CMD_ENCRYPT || ri_cmd_id == HOSTIF_CMD_BRD_SSID ||
+               ri_cmd_id == HOSTIF_CMD_WATC || ri_cmd_id == HOSTIF_CMD_WPSM || ri_cmd_id == HOSTIF_CMD_WARM ||
+               ri_cmd_id == HOSTIF_CMD_ATM || ri_cmd_id == HOSTIF_CMD_PORTM || ri_cmd_id == HOSTIF_CMD_ONESHOT ||
+               ri_cmd_id == HOSTIF_CMD_WARC || ri_cmd_id == HOSTIF_CMD_IOM || ri_cmd_id == HOSTIF_CMD_CMDM
 #if TLS_CONFIG_AP
            ||  ri_cmd_id == HOSTIF_CMD_AP_ENCRYPT
 #endif
-            ) {
-        if (!set_opt)
+    ) {
+        if (!set_opt) {
             *res_len = sizeof(struct tls_hostif_cmd_hdr) + 1;
+        }
     } else if (ri_cmd_id == HOSTIF_CMD_KEY
 #if TLS_CONFIG_AP
     || ri_cmd_id == HOSTIF_CMD_AP_KEY
 #endif
     ) {
-        if(!set_opt)
+        if (!set_opt) {
             *res_len = sizeof(struct tls_hostif_cmd_hdr) + 3 + cmdrsp->key.key_len;
-    } else if(ri_cmd_id == HOSTIF_CMD_BSSID || ri_cmd_id == HOSTIF_CMD_UART || ri_cmd_id == HOSTIF_CMD_PASS) {
-        if(!set_opt) {
+        }
+    } else if (ri_cmd_id == HOSTIF_CMD_BSSID || ri_cmd_id == HOSTIF_CMD_UART || ri_cmd_id == HOSTIF_CMD_PASS) {
+        if (!set_opt) {
             u8 baud_rate[3];
             memcpy(baud_rate, cmdrsp->uart.baud_rate, 3);
-            cmdrsp->uart.baud_rate[0] = baud_rate[2];
+            cmdrsp->uart.baud_rate[0] = baud_rate[TWO];
             cmdrsp->uart.baud_rate[1] = baud_rate[1];
-            cmdrsp->uart.baud_rate[2] = baud_rate[0];
+            cmdrsp->uart.baud_rate[TWO] = baud_rate[0];
             *res_len = sizeof(struct tls_hostif_cmd_hdr) + 7;
         }
     } else if(ri_cmd_id == HOSTIF_CMD_CHNL || ri_cmd_id == HOSTIF_CMD_WBGR
@@ -8233,43 +8446,45 @@ int ri_format_func(s16 ri_cmd_id, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
     || ri_cmd_id == HOSTIF_CMD_AP_CHL || ri_cmd_id == HOSTIF_CMD_AP_WBGR
 #endif
     ) {
-        if (!set_opt)
-            *res_len = sizeof(struct tls_hostif_cmd_hdr) + 2;
-    } else if (ri_cmd_id == HOSTIF_CMD_WREG || ri_cmd_id == HOSTIF_CMD_ATLT || 
-             ri_cmd_id == HOSTIF_CMD_CHLL || ri_cmd_id == HOSTIF_CMD_ATPT) {
+        if (!set_opt) {
+            *res_len = sizeof(struct tls_hostif_cmd_hdr) + TWO;
+        }
+    } else if (ri_cmd_id == HOSTIF_CMD_WREG || ri_cmd_id == HOSTIF_CMD_ATLT ||
+               ri_cmd_id == HOSTIF_CMD_CHLL || ri_cmd_id == HOSTIF_CMD_ATPT) {
         if (!set_opt) {
             cmdrsp->wreg.region = host_to_be16(cmdrsp->wreg.region);
-            *res_len = sizeof(struct tls_hostif_cmd_hdr) + 2;
+            *res_len = sizeof(struct tls_hostif_cmd_hdr) + TWO;
         }
     } else if(ri_cmd_id == HOSTIF_CMD_NIP
 #if TLS_CONFIG_AP
     || ri_cmd_id == HOSTIF_CMD_AP_NIP
 #endif
     ) {
-        if (!set_opt)
+        if (!set_opt) {
             *res_len = sizeof(struct tls_hostif_cmd_hdr) + 17;
+        }
     } else if(ri_cmd_id == HOSTIF_CMD_WEBS) {
         if (!set_opt) {
             cmdrsp->webs.portnum = host_to_be16(cmdrsp->webs.portnum);
             *res_len = sizeof(struct tls_hostif_cmd_hdr) + 3;
         }
-            
-    } else if(ri_cmd_id == HOSTIF_CMD_ATRM) {
-        u8 *p=(u8 *)res_resp+sizeof(struct tls_hostif_hdr) + sizeof(struct tls_hostif_cmd_hdr);
+    } else if (ri_cmd_id == HOSTIF_CMD_ATRM) {
+        u8 *p = (u8 *)res_resp + sizeof(struct tls_hostif_hdr) + sizeof(struct tls_hostif_cmd_hdr);
         u8  proto, cs, host_len;
         u16 port;
         char host_name[32];
-        
+
         if (!set_opt) {
             proto = cmdrsp->atrm.proto;
             cs = cmdrsp->atrm.client ? 0: 1;
             host_len = cmdrsp->atrm.host_len;
-            if(cmdrsp->atrm.client && cmdrsp->atrm.host_len == 4)
+            if (cmdrsp->atrm.client && cmdrsp->atrm.host_len == 4) {
                 memcpy(host_name, cmdrsp->atrm.ip_addr, cmdrsp->atrm.host_len);
-            else if(cmdrsp->atrm.client)
+            } else if (cmdrsp->atrm.client) {
                 memcpy(host_name, cmdrsp->atrm.host_name, cmdrsp->atrm.host_len);
-            else if(!cmdrsp->atrm.client && cmdrsp->atrm.proto==0)
+            } else if (!cmdrsp->atrm.client && cmdrsp->atrm.proto==0) {
                 put_unaligned_be32(cmdrsp->atrm.timeout, (u8 *)host_name);
+            }
             port = cmdrsp->atrm.port;
 
             *p = proto;
@@ -8284,7 +8499,7 @@ int ri_format_func(s16 ri_cmd_id, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
 
             *res_len = sizeof(struct tls_hostif_cmd_hdr) + 5 + cmdrsp->atrm.host_len;
         }
-    } else if(ri_cmd_id == HOSTIF_CMD_CNTPARAM) {
+    } else if (ri_cmd_id == HOSTIF_CMD_CNTPARAM) {
         if (!set_opt) {
             if (cmdrsp->cntparam_bssid_en.bssid_enable) {
                 *res_len = sizeof(struct tls_hostif_cmd_hdr) + 8 + cmdrsp->cntparam_bssid_en.key_len;
@@ -8296,12 +8511,12 @@ int ri_format_func(s16 ri_cmd_id, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
 #if TLS_CONFIG_SOCKET_RAW || TLS_CONFIG_SOCKET_STD
     else if (ri_cmd_id == HOSTIF_CMD_SKCT) {
         struct tls_hostif_cmdrsp *cmd_rsp = (struct tls_hostif_cmdrsp *)res_resp;
-        cmd_rsp->cmd_hdr.ext=0x01;
+        cmd_rsp->cmd_hdr.ext = 0x01;
         *res_len = sizeof(struct tls_hostif_cmd_hdr) + 1;
     } else if (ri_cmd_id == HOSTIF_CMD_SKSTT) {
         struct tls_hostif_cmdrsp *cmd_rsp = (struct tls_hostif_cmdrsp *)res_resp;
-        cmd_rsp->cmd_hdr.ext=0x01;
-        for (int i=0; i<cmdrsp->skstt.number; i++) {
+        cmd_rsp->cmd_hdr.ext = 0x01;
+        for (int i = 0; i < cmdrsp->skstt.number; i++) {
             put_unaligned_le32(get_unaligned_le32(cmdrsp->skstt.ext[i].host_ipaddr),
                     (u8 *)cmdrsp->skstt.ext[i].host_ipaddr);
             put_unaligned_be16(get_unaligned_le16((u8 *)&cmdrsp->skstt.ext[i].remote_port),
@@ -8310,17 +8525,18 @@ int ri_format_func(s16 ri_cmd_id, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
                     (u8 *)&cmdrsp->skstt.ext[i].local_port);
         }
         *res_len = sizeof(struct tls_hostif_cmd_hdr) + 1 + cmdrsp->skstt.number * sizeof(struct hostif_cmdrsp_skstt_ext);
-    } else if(ri_cmd_id == HOSTIF_CMD_SKCLOSE || ri_cmd_id ==HOSTIF_CMD_SKSDF) {
+    } else if (ri_cmd_id == HOSTIF_CMD_SKCLOSE || ri_cmd_id ==HOSTIF_CMD_SKSDF) {
         ;
-    } else if(ri_cmd_id == HOSTIF_CMD_SKSRCIP) {
-        if(!set_opt)
+    } else if (ri_cmd_id == HOSTIF_CMD_SKSRCIP) {
+        if(!set_opt) {
             *res_len = sizeof(struct tls_hostif_cmd_hdr) + 4;
-    } else if(ri_cmd_id == HOSTIF_CMD_SKGHBN) {
+        }
+    } else if (ri_cmd_id == HOSTIF_CMD_SKGHBN) {
         struct tls_hostif_cmdrsp *cmd_rsp = (struct tls_hostif_cmdrsp *)res_resp;
-        cmd_rsp->cmd_hdr.ext=0x01;
+        cmd_rsp->cmd_hdr.ext = 0x01;
         *res_len = sizeof(struct tls_hostif_cmd_hdr) + 4;
     }
-    
+
 #endif
 #if TLS_CONFIG_HTTP_CLIENT_TASK
     else if(ri_cmd_id == HOSTIF_CMD_HTTPC) {
@@ -8332,33 +8548,36 @@ int ri_format_func(s16 ri_cmd_id, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
 #endif
 #endif
     else if (ri_cmd_id == HOSTIF_CMD_UPDM || ri_cmd_id == HOSTIF_CMD_UPDD ||
-             ri_cmd_id == HOSTIF_CMD_REGW ||  ri_cmd_id == HOSTIF_CMD_RFW || 
+             ri_cmd_id == HOSTIF_CMD_REGW ||  ri_cmd_id == HOSTIF_CMD_RFW ||
              ri_cmd_id == HOSTIF_CMD_FLSW) {
         struct tls_hostif_cmdrsp *cmd_rsp = (struct tls_hostif_cmdrsp *)res_resp;
-        cmd_rsp->cmd_hdr.ext=0x00;
+        cmd_rsp->cmd_hdr.ext = 0x00;
     } else if(ri_cmd_id == HOSTIF_CMD_REGR || ri_cmd_id == HOSTIF_CMD_FLSR) {
         struct tls_hostif_cmdrsp *cmd_rsp = (struct tls_hostif_cmdrsp *)res_resp;
         cmd_rsp->cmd_hdr.ext=0x01;
-        for(int i=0; i<cmdrsp->regr.length; i++)
+        for(int i = 0; i < cmdrsp->regr.length; i++) {
             cmdrsp->regr.value[i] = host_to_be32(cmdrsp->regr.value[i]);
+        }
         *res_len = sizeof(struct tls_hostif_cmd_hdr) + 1 + cmdrsp->regr.length * 4;
-    } else if(ri_cmd_id == HOSTIF_CMD_RFR) {
+    } else if (ri_cmd_id == HOSTIF_CMD_RFR) {
         struct tls_hostif_cmdrsp *cmd_rsp = (struct tls_hostif_cmdrsp *)res_resp;
-        cmd_rsp->cmd_hdr.ext=0x01;
-        for(int i=0; i<cmdrsp->rfr.length; i++)
+        cmd_rsp->cmd_hdr.ext = 0x01;
+        for(int i = 0; i < cmdrsp->rfr.length; i++) {
             cmdrsp->rfr.value[i] = host_to_be16(cmdrsp->rfr.value[i]);
-        *res_len = sizeof(struct tls_hostif_cmd_hdr) + 1 + cmdrsp->regr.length * 2;
+        }
+        *res_len = sizeof(struct tls_hostif_cmd_hdr) + 1 + cmdrsp->regr.length * TWO;
     } else if(ri_cmd_id == HOSTIF_CMD_CUSTDATA) {
-        if (!set_opt)
+        if (!set_opt) {
             *res_len = sizeof(struct tls_hostif_cmd_hdr) + 1 + cmdrsp->custdata.length;
+        }
     }
-#if TLS_CONFIG_WPS    
+#if TLS_CONFIG_WPS
     else if(ri_cmd_id == HOSTIF_CMD_WPS) {
         if (cmdrsp->wps.result == 1) {
             struct tls_hostif_cmdrsp *cmd_rsp = (struct tls_hostif_cmdrsp *)res_resp;
-            cmd_rsp->cmd_hdr.ext=0x01;
+            cmd_rsp->cmd_hdr.ext = 0x01;
             memcpy((u8 *)&cmdrsp->wps.result, (u8 *)&cmdrsp->wps.pin_len, cmdrsp->wps.pin_len + 1);
-            *res_len = sizeof(struct tls_hostif_cmd_hdr) + 2 + cmdrsp->custdata.length;
+            *res_len = sizeof(struct tls_hostif_cmd_hdr) + TWO + cmdrsp->custdata.length;
         }
     }
 #endif
@@ -8372,10 +8591,11 @@ int ri_format_func(s16 ri_cmd_id, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
     }
 #endif
 
-    else if(ri_cmd_id == HOSTIF_CMD_TEM) {
+    else if (ri_cmd_id == HOSTIF_CMD_TEM) {
         *res_len = sizeof(struct tls_hostif_cmd_hdr) + strlen((char *)cmdrsp->mac.addr);
-    } else
+    } else {
         return CMD_ERR_UNSUPP;
+    }
     return 0;
 }
 
@@ -8402,7 +8622,7 @@ int atcmd_nop_proc(struct tls_atcmd_token_t *tok, char *res_resp, u32 *res_len)
         *res_len = atcmd_err_resp(res_resp, CMD_ERR_OPS);
     }
 
-    return 0; 
+    return 0;
 }
 
 static int hostif_check_atcmd_opt(u8 op, u8 arg_found, u8 opt_flag, u8 arg_len, u8 *set_opt, u8 *update_flash) {
@@ -8411,11 +8631,13 @@ static int hostif_check_atcmd_opt(u8 op, u8 arg_found, u8 opt_flag, u8 arg_len, 
         return -CMD_ERR_UNSUPP;
     }
     if (r == ATCMD_OP_EQ || r == ATCMD_OP_EP) {
-        if (arg_len > arg_found)
+        if (arg_len > arg_found) {
             return -CMD_ERR_UNSUPP;
+        }
         *set_opt = 1;
-        if (op == ATCMD_OP_EP)
+        if (op == ATCMD_OP_EP) {
             *update_flash = 1;
+        }
     }
     return 0;
 }
@@ -8423,21 +8645,23 @@ static int hostif_check_atcmd_opt(u8 op, u8 arg_found, u8 opt_flag, u8 arg_len, 
 char* get_first_comma(char* buf, int len) {
     char prec='\0', curc;
     int n = 0;
-    if (len <= 0)
+    if (len <= 0) {
         return NULL;
+    }
     if (*buf == '"') {
-        for(n=1; n<len; n++) {
+        for (n = 1; n < len; n++) {
             curc = *(buf + n);
             if (curc == ',' && prec == '"') {
-                if (n<3 || *(buf + n - 2) != '\\') {
+                if (n < 3 || *(buf + n - TWO) != '\\') {
                     return buf + n;
                 }
             }
             prec = curc;
         }
         return NULL;
-    } else
+    } else {
         return strchr(buf, ',');
+    }
 }
 
 int tls_atcmd_parse(struct tls_atcmd_token_t *tok, char *buf, u32 len)
@@ -8472,8 +8696,9 @@ int tls_atcmd_parse(struct tls_atcmd_token_t *tok, char *buf, u32 len)
     } else {
         /* format : at+wprt=0 
          *          at+skct=0,0,192.168.1.4,80 */
-        if ((c - buf) > (ATCMD_NAME_MAX_LEN - 1))
+        if ((c - buf) > (ATCMD_NAME_MAX_LEN - 1)) {
             return -CMD_ERR_UNSUPP;
+        }
         MEMCPY(tok->name, buf, c-buf);
         *(tok->name + (c-buf)) = '\0';
         tok->op = ATCMD_OP_NULL;
@@ -8493,9 +8718,9 @@ int tls_atcmd_parse(struct tls_atcmd_token_t *tok, char *buf, u32 len)
         }
         tok->arg[0]= buf;
         tok->arg_found = 0;
-    if(tok->op & 0x9) {
-        return 0;
-    }
+        if (tok->op & 0x9) {
+            return 0;
+        }
         remain_len = len - (buf - buf_start);
         end_line = strchr(buf, '\n');
         if (!end_line) {
@@ -8509,8 +8734,9 @@ int tls_atcmd_parse(struct tls_atcmd_token_t *tok, char *buf, u32 len)
                 }
                 /* last parameter */
                 *(u8 *)end_line = '\0';
-                if (end_line != buf)
+                if (end_line != buf) {
                     tok->arg_found++;
+                }
                 tok->arg[tok->arg_found] = end_line + 1;
                 remain_len -= (end_line - buf);
                 if (remain_len > 1) {
@@ -8537,11 +8763,11 @@ int tls_atcmd_parse(struct tls_atcmd_token_t *tok, char *buf, u32 len)
 }
 
 int tls_hostif_atcmd_exec(struct tls_atcmd_token_t *tok,
-        char *res_rsp, u32 *res_len)
+    char *res_rsp, u32 *res_len)
 {
     int err = 0;
     struct tls_cmd_t *atcmd, *match = NULL;
-    u8 set_opt=0, update_flash=0;
+    u8 set_opt = 0, update_flash = 0;
     union HOSTIF_CMD_PARAMS_UNION *cmd = NULL;
     union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp = NULL;
 
@@ -8561,63 +8787,68 @@ int tls_hostif_atcmd_exec(struct tls_atcmd_token_t *tok,
     }
     /* at command handle */
     if (match) {
-    cmd = tls_mem_alloc(sizeof(union HOSTIF_CMD_PARAMS_UNION));
-    if (NULL == cmd)
-    {
-        err = -CMD_ERR_MEM;
-        goto err;
-    }
-    cmdrsp = tls_mem_alloc(sizeof(union HOSTIF_CMDRSP_PARAMS_UNION));
-    if (NULL == cmdrsp)
-    {
-        err = -CMD_ERR_MEM;
-        goto err;
-    }
-    
-        err = hostif_check_atcmd_opt(tok->op, tok->arg_found, match->op_flag, match->at_arg_len, &set_opt, &update_flash);
-        if (err)
+        cmd = tls_mem_alloc(sizeof(union HOSTIF_CMD_PARAMS_UNION));
+        if (NULL == cmd) {
+            err = -CMD_ERR_MEM;
             goto err;
+        }
+        cmdrsp = tls_mem_alloc(sizeof(union HOSTIF_CMDRSP_PARAMS_UNION));
+        if (NULL == cmdrsp) {
+            err = -CMD_ERR_MEM;
+            goto err;
+        }
+
+        err = hostif_check_atcmd_opt(tok->op, tok->arg_found, match->op_flag, match->at_arg_len, &set_opt, &update_flash);
+        if (err) {
+            goto err;
+        }
         memset(cmd, 0, sizeof(union HOSTIF_CMD_PARAMS_UNION));
         err = at_parse_func(match->at_name, tok, cmd);
-        if (err)
+        if (err) {
             goto err;
+        }
         memset(cmdrsp, 0, sizeof(union HOSTIF_CMDRSP_PARAMS_UNION));
         err = match->proc_func(set_opt, update_flash, cmd, cmdrsp);
-        if (err)
+        if (err) {
             goto err;
-        err = at_format_func(match->at_name, set_opt, update_flash, cmdrsp, res_rsp, res_len); 
+        }
+        err = at_format_func(match->at_name, set_opt, update_flash, cmdrsp, res_rsp, res_len);
         if (err) {
             if (err != -CMD_ERR_SKT_RPT) {
                 goto err;
             }
         }
-     if (NULL != cmd)
-        tls_mem_free(cmd);
-     if (NULL != cmdrsp)
-        tls_mem_free(cmdrsp);
-         return err;
+        if (NULL != cmd) {
+            tls_mem_free(cmd);
+        }
+        if (NULL != cmdrsp) {
+            tls_mem_free(cmdrsp);
+            return err;
+        }
     } else {
         err = -CMD_ERR_UNSUPP;
     }
 err:
     /* at command not found */
-    *res_len = sprintf(res_rsp, "+ERR=%d", err); 
-    if (NULL != cmd)
+    *res_len = sprintf(res_rsp, "+ERR=%d", err);
+    if (NULL != cmd) {
         tls_mem_free(cmd);
-    if (NULL != cmdrsp)
+    }
+    if (NULL != cmdrsp) {
         tls_mem_free(cmdrsp);
+    }
     return err;
 }
 
 int ricmd_default_proc(char *buf, u32 length, int err,
-        char *cmdrsp_buf, u32 *cmdrsp_size)
+    char *cmdrsp_buf, u32 *cmdrsp_size)
 {
 #if TLS_CONFIG_HOSTIF
     struct tls_hostif_cmdrsp *cmdrsp = (struct tls_hostif_cmdrsp *)cmdrsp_buf;
     struct tls_hostif_cmd *cmd = (struct tls_hostif_cmd *)buf;
 
     /* if cmd is not suppost, return this cmd and err code  */
-    tls_hostif_fill_cmdrsp_hdr(cmdrsp, cmd->cmd_hdr.code, err, ((err || (cmd->cmd_hdr.ext & 0x1))? 0 : 1));
+    tls_hostif_fill_cmdrsp_hdr(cmdrsp, cmd->cmd_hdr.code, err, ((err || (cmd->cmd_hdr.ext & 0x1)) ? 0 : 1));
     *cmdrsp_size = sizeof(struct tls_hostif_cmd_hdr);
 #endif
     return 0;
@@ -8628,13 +8859,13 @@ int tls_hostif_ricmd_exec(char *buf, u32 length, char *cmdrsp_buf, u32 *cmdrsp_s
     struct tls_hostif_cmd *cmd = (struct tls_hostif_cmd *)buf;
     struct tls_hostif_cmdrsp *cmdrsp = (struct tls_hostif_cmdrsp *)cmdrsp_buf;
     int err = 0;
-    struct tls_cmd_t * match = NULL;
-    int cmdcnt = sizeof(at_ri_cmd_tbl)/ sizeof(struct tls_cmd_t);
+    struct tls_cmd_t *match = NULL;
+    int cmdcnt = sizeof(at_ri_cmd_tbl) / sizeof(struct tls_cmd_t);
     int i = 0, set_opt=0, update_flash = 0;
 
     int cmd_code = cmd->cmd_hdr.code;
 
-     /*find cmdId*/
+    /*find cmdId*/
     if (cmd_code == 0) {
         cmd->cmd_hdr.ext = 1;
         goto erred;
@@ -8663,9 +8894,9 @@ int tls_hostif_ricmd_exec(char *buf, u32 length, char *cmdrsp_buf, u32 *cmdrsp_s
             err = CMD_ERR_INV_PARAMS;
             goto erred;
         }
-        if ((cmd->cmd_hdr.msg_type != 0x01) || 
-              ((set_opt == 0) && (length != sizeof(struct tls_hostif_cmd_hdr))) ||
-              ((set_opt == 1) && (length < sizeof(struct tls_hostif_cmd_hdr) + match->ri_set_len))) {
+        if ((cmd->cmd_hdr.msg_type != 0x01) ||
+            ((set_opt == 0) && (length != sizeof(struct tls_hostif_cmd_hdr))) ||
+            ((set_opt == 1) && (length < sizeof(struct tls_hostif_cmd_hdr) + match->ri_set_len))) {
             err = CMD_ERR_INV_PARAMS;
             goto erred;
         }
@@ -8693,4 +8924,4 @@ erred:
     return err;
 }
 
-#endif /*TLS_CONFIG_HOSTIF*/
+#endif /* TLS_CONFIG_HOSTIF */

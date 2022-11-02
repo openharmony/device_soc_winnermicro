@@ -19,10 +19,10 @@
 #include "wm_wl_task.h"
 
 struct tls_timeo {
-  struct tls_timeo *next;
-  u32 time;
-  tls_timeout_handler h;
-  void *arg;
+    struct tls_timeo *next;
+    u32 time;
+    tls_timeout_handler h;
+    void *arg;
 };
 
 /** The one and only timeout list */
@@ -42,49 +42,49 @@ struct tls_timeo *next_timeout[TLS_TIMEO_ALL_COUONT];
  */
 void tls_timeouts_mbox_fetch_p(u8 timeo_assigned, tls_mbox_t mbox, void **msg)
 {
-  u32 time_needed;
-  struct tls_timeo *tmptimeout;
-  tls_timeout_handler handler;
-  void *arg;
+    u32 time_needed;
+    struct tls_timeo *tmptimeout;
+    tls_timeout_handler handler;
+    void *arg;
 
-  struct tls_timeo **timeo = &next_timeout[timeo_assigned];
+    struct tls_timeo **timeo = &next_timeout[timeo_assigned];
 
- again:
-  if (!(*timeo)) {
-    time_needed = tls_arch_mbox_fetch(mbox, msg, 0);
-  } else {
-    if ((*timeo)->time > 0) {
-      time_needed = tls_arch_mbox_fetch(mbox, msg, (*timeo)->time);
+    again:
+    if (!(*timeo)) {
+        time_needed = tls_arch_mbox_fetch(mbox, msg, 0);
     } else {
-      time_needed = SYS_ARCH_TIMEOUT;
-    }
+        if ((*timeo)->time > 0) {
+            time_needed = tls_arch_mbox_fetch(mbox, msg, (*timeo)->time);
+        } else {
+            time_needed = SYS_ARCH_TIMEOUT;
+        }
 
-    if (time_needed == SYS_ARCH_TIMEOUT) {
-      /* If time == SYS_ARCH_TIMEOUT, a timeout occured before a message
-         could be fetched. We should now call the timeout handler and
-         deallocate the memory allocated for the timeout. */
-      tmptimeout = *timeo;
-      *timeo = tmptimeout->next;
-      handler = tmptimeout->h;
-      arg = tmptimeout->arg;
-      tls_mem_free(tmptimeout);
-      if (handler != NULL) {
-        handler(arg);
-      }
+        if (time_needed == SYS_ARCH_TIMEOUT) {
+            /* If time == SYS_ARCH_TIMEOUT, a timeout occured before a message
+            could be fetched. We should now call the timeout handler and
+            deallocate the memory allocated for the timeout. */
+            tmptimeout = *timeo;
+            *timeo = tmptimeout -> next;
+            handler = tmptimeout -> h;
+            arg = tmptimeout -> arg;
+            tls_mem_free(tmptimeout);
+            if (handler != NULL) {
+                handler(arg);
+            }
 
-      /* We try again to fetch a message from the mbox. */
-      goto again;
-    } else {
-      /* If time != SYS_ARCH_TIMEOUT, a message was received before the timeout
-         occured. The time variable is set to the number of
-         milliseconds we waited for the message. */
-      if (time_needed < (*timeo)->time) {
-        (*timeo)->time -= time_needed;
-      } else {
-        (*timeo)->time = 0;
-      }
+            /* We try again to fetch a message from the mbox. */
+            goto again;
+        } else {
+            /* If time != SYS_ARCH_TIMEOUT, a message was received before the timeout
+            occured. The time variable is set to the number of
+            milliseconds we waited for the message. */
+            if (time_needed < (*timeo)->time) {
+                (*timeo)->time -= time_needed;
+            } else {
+                (*timeo)->time = 0;
+            }
+        }
     }
-  }
 }
 
 /**
@@ -132,7 +132,7 @@ void tls_timeout_p(u8 timeo_assigned, u32 msecs, tls_timeout_handler handler, vo
             timeout->next = t->next;
             t->next = timeout;
             break;
-          }
+            }
         }
     }
 }
@@ -151,31 +151,31 @@ void tls_timeout_p(u8 timeo_assigned, u32 msecs, tls_timeout_handler handler, vo
  */
 void tls_untimeout_p(u8 timeo_assigned, tls_timeout_handler handler, void *arg)
 {
-  struct tls_timeo *prev_t, *t;
-  struct tls_timeo **timeo = &next_timeout[timeo_assigned];
+    struct tls_timeo *prev_t, *t;
+    struct tls_timeo **timeo = &next_timeout[timeo_assigned];
 
-  if (*timeo == NULL) {
-    return;
-  }
-
-  for (t = *timeo, prev_t = NULL; t != NULL; prev_t = t, t = t->next) {
-    if ((t->h == handler) && (t->arg == arg)) {
-      /* We have a match */
-      /* Unlink from previous in list */
-      if (prev_t == NULL) {
-        *timeo = t->next;
-      } else {
-        prev_t->next = t->next;
-      }
-      /* If not the last one, add time of this one back to next */
-      if (t->next != NULL) {
-        t->next->time += t->time;
-      }
-      tls_mem_free(t);
-      return;
+    if (*timeo == NULL) {
+        return;
     }
-  }
-  return;
+
+    for (t = *timeo, prev_t = NULL; t != NULL; prev_t = t, t = t->next) {
+        if ((t->h == handler) && (t->arg == arg)) {
+            /* We have a match */
+            /* Unlink from previous in list */
+            if (prev_t == NULL) {
+                *timeo = t->next;
+            } else {
+                prev_t->next = t->next;
+            }
+            /* If not the last one, add time of this one back to next */
+            if (t->next != NULL) {
+                t->next->time += t->time;
+            }
+            tls_mem_free(t);
+            return;
+        }
+    }
+    return;
 }
 
 /**
@@ -189,7 +189,6 @@ void tls_untimeout_p(u8 timeo_assigned, tls_timeout_handler handler, void *arg)
  */
 s8 tls_wl_timer_init(void)
 {
-    memset(next_timeout, 0, sizeof(struct tls_timeo *) * TLS_TIMEO_ALL_COUONT);
-
+    memset(next_timeout, 0, sizeof(struct tls_timeo *) *TLS_TIMEO_ALL_COUONT);
     return 0;
 }
