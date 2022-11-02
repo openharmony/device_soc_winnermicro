@@ -22,6 +22,8 @@
 #include "ip_addr.h"
 #include "wm_mem.h"
 
+#define FOUR 4
+
 #define TCP_WRITE_FLAG_COPY 0x01
 #define TCP_WRITE_FLAG_MORE 0x02
 
@@ -34,7 +36,7 @@ static void net_tcp_err_cb(void *arg, err_t err);
 static err_t net_tcp_poll_cb(void *arg, struct tcp_pcb *pcb);
 static void net_free_socket(int socketno);
 
-#define BUF_CIRC_CNT_TO_END(head,tail,size) \
+#define BUF_CIRC_CNT_TO_END(head, tail, size) \
     ({int end = (size) - (tail); \
       int n = ((head) + end) & ((size)-1); \
       n < end ? n : end;})
@@ -64,9 +66,9 @@ struct tls_netconn *get_server_conn(struct tls_netconn *conn)
 
 static struct tls_netconn *net_alloc_socket(struct tls_netconn *conn)
 {
-    int sock=-1, i=0, j=0;
+    int sock = -1, i = 0, j = 0;
     u32 cpu_sr;
-    struct tls_netconn * conn_t = NULL;
+    struct tls_netconn *conn_t = NULL;
 
     for (i = 0; i < TLS_MAX_NETCONN_NUM; i++)
     {
@@ -83,7 +85,7 @@ static struct tls_netconn *net_alloc_socket(struct tls_netconn *conn)
 
     if (conn != NULL) {
         j = dl_list_len(&conn->list);
-        if (j >= 4) {
+        if (j >= FOUR) {
             TLS_DBGPRT_ERR("list len > 4\n");
             sock = -1;
         }
@@ -104,8 +106,8 @@ static struct tls_netconn *net_alloc_socket(struct tls_netconn *conn)
         conn_t->skt_num = sock + 1;  /* TLS_MAX_NETCONN_NUM + */
         dl_list_init(&conn_t->list);
 #if CONN_SEM_NOT_FREE
-        TLS_DBGPRT_INFO("conn_op_completed[%d]=%x\n",sock, (u32)conn_op_completed[sock]);
-        if (NULL == conn_op_completed[sock]) {
+        TLS_DBGPRT_INFO("conn_op_completed[%d]=%x\n", sock, (u32)conn_op_completed[sock]);
+        if (conn_op_completed[sock] == NULL) {
             if (sys_sem_new(&conn_op_completed[sock], 0) != ERR_OK) {
                 net_free_socket(conn_t->skt_num);
             }
@@ -127,26 +129,24 @@ static void net_free_socket(int socketno)
     struct tls_netconn *conn = NULL;
 
     conn = tls_net_get_socket(socketno);
-    if (conn == NULL || TRUE != conn->used)
-    {
+    if (conn == NULL || TRUE != conn->used) {
         TLS_DBGPRT_ERR("\nconn=%x,used=%d\n", (u32)conn, conn->used);
         return;
     }
     TLS_DBGPRT_INFO("conn ptr = 0x%x\n", (u32)conn);
-#if !CONN_SEM_NOT_FREE    
-    if (NULL != conn->op_completed)
-    {
+#if !CONN_SEM_NOT_FREE
+    if (conn->op_completed != NULL) {
         sys_sem_free(&conn->op_completed);
     }
-#endif    
+#endif
     conn->used = false;
     if (conn->client && conn->list.prev != NULL && conn->list.prev != &conn->list) {
         TLS_DBGPRT_INFO("del from list.\n");
         cpu_sr = tls_os_set_critical();
         dl_list_del(&conn->list);
-        tls_os_release_critical(cpu_sr);            
+        tls_os_release_critical(cpu_sr);
     }
-    index = conn->skt_num - 1;//TLS_MAX_NETCONN_NUM - 
+    index = conn->skt_num - 1;    /* TLS_MAX_NETCONN_NUM */
     if (conn->pcb.tcp) {
         tcp_close(conn->pcb.tcp);
         conn->pcb.tcp = NULL;
@@ -179,19 +179,18 @@ static err_t net_tcp_poll_cb(void *arg, struct tcp_pcb *pcb)
 static void net_tcp_err_cb(void *arg, err_t err)
 {
     struct tls_netconn *conn = NULL;
-    struct tcp_pcb *pcb = NULL;  
+    struct tcp_pcb *pcb = NULL;
     int socketno = (int)arg;
     u8 event = NET_EVENT_TCP_CONNECT_FAILED;
 
     conn = tls_net_get_socket(socketno);
-    if (conn == NULL || TRUE != conn->used)
-    {
+    if (conn == NULL || TRUE != conn->used) {
         TLS_DBGPRT_ERR("\nconn=%x,used=%d\n", (u32)conn, conn->used);
         return;
     }
-    pcb = conn->pcb.tcp;  
+    pcb = conn->pcb.tcp;
     TLS_DBGPRT_INFO("tcp err = %d, pcb==%x, conn==%x, skt==%x\n", err, (u32)pcb, (u32)conn, (u32)conn->skd);
-    
+
     if (pcb) {
         tcp_arg(pcb, NULL);
         tcp_sent(pcb, NULL);
@@ -218,12 +217,10 @@ static void net_tcp_err_cb(void *arg, err_t err)
 }
 
 #if (RAW_SOCKET_USE_CUSTOM_PBUF)
-static struct raw_sk_pbuf_custom*
-raw_sk_alloc_pbuf_custom(void)
+static struct raw_sk_pbuf_custom *raw_sk_alloc_pbuf_custom(void)
 {
     return (struct raw_sk_pbuf_custom*)mem_malloc(sizeof(struct raw_sk_pbuf_custom));
 }
-
 
 static void raw_sk_free_pbuf_custom(struct raw_sk_pbuf_custom* p)
 {
@@ -235,11 +232,11 @@ static void raw_sk_free_pbuf_custom(struct raw_sk_pbuf_custom* p)
 
 static void raw_sk_free_pbuf_custom_fn(struct pbuf *p)
 {
-    struct raw_sk_pbuf_custom *pcr = (struct raw_sk_pbuf_custom*)p;
+    struct raw_sk_pbuf_custom *pcr = (struct raw_sk_pbuf_custom *)p;
 
     if (p != NULL) {
-        if (TRUE == ((struct tls_netconn *)pcr->conn)->used && pcr->pcb == ((struct tls_netconn *)pcr->conn)->pcb.tcp)
-        {
+        if (TRUE == ((struct tls_netconn *)pcr->conn)->used &&
+    pcr->pcb == ((struct tls_netconn *)pcr->conn)->pcb.tcp) {
             tcp_recved((struct tcp_pcb *)pcr->pcb, p->tot_len);
         }
 
@@ -279,15 +276,16 @@ static err_t net_tcp_connect_cb(void *arg, struct tcp_pcb *pcb, err_t err)
     if ((conn->proto == TLS_NETCONN_TCP) && (err == ERR_OK)) {
         TLS_DBGPRT_INFO("net_tcp_connect_cb =====> state : %d\n", pcb->state);
         conn->state = NETCONN_STATE_CONNECTED;
-        net_send_event_to_hostif (conn, NET_EVENT_TCP_CONNECTED);
+        net_send_event_to_hostif(conn, NET_EVENT_TCP_CONNECTED);
     } else {
         TLS_DBGPRT_INFO("the err is =%d\n", err);
     } 
 
     if (conn->skd != NULL && conn->skd->connf != NULL) {
         err_ret = conn->skd->connf(conn->skt_num, err);
-        if (err_ret == ERR_ABRT)
+        if (err_ret == ERR_ABRT) {
             tcp_abort(pcb);
+        }
         return err_ret;
     }
 
@@ -305,22 +303,23 @@ static err_t net_tcp_accept_cb(void *arg, struct tcp_pcb *newpcb, err_t err)
 /**
  * Receive callback function for UDP netconns.
  */
-static void net_udp_recv_cb(void *arg, struct udp_pcb *pcb, 
-        struct pbuf *p, const ip_addr_t *srcaddr, u16_t port)
+static void net_udp_recv_cb(void *arg, struct udp_pcb *pcb,
+    struct pbuf *p, const ip_addr_t *srcaddr, u16_t port)
 {
     struct tls_netconn *conn;
     u32 datalen = 0;
     int socketno = -1;
 
-    LWIP_UNUSED_ARG(pcb); /* only used for asserts... */
+    LWIP_UNUSED_ARG(pcb);    /* only used for asserts... */
     LWIP_ASSERT("recv_udp must have a pcb argument", pcb != NULL);
     LWIP_ASSERT("recv_udp must have an argument", arg < 0);
     socketno = (int)arg;
     conn = tls_net_get_socket(socketno);
-    if (conn == NULL || conn->used != TRUE || NULL == pcb){
+    if (conn == NULL || conn->used != TRUE || NULL == pcb) {
         TLS_DBGPRT_ERR("\nconn=%x,used=%d\n", (u32)conn, conn->used);
-        if (p != NULL)
-                pbuf_free(p);
+        if (p != NULL) {
+            pbuf_free(p);
+        }
         return;
     }
     LWIP_ASSERT("recv_udp: recv for wrong pcb!", conn->pcb.udp == pcb);
@@ -377,9 +376,9 @@ static err_t net_skt_tcp_send(struct tls_net_msg *net_msg)
         return ERR_ARG;
     }
     pcb = conn->pcb.tcp;
-    /* 
+    /*
         When tcp error occured, lwip will delete the pcb and sometimes GSKT.
-        This function maybe registered by GSKT_TimerSend, so we must check if GSKT has been delted!!! 
+        This function maybe registered by GSKT_TimerSend, so we must check if GSKT has been delted!!!
     */
     err = tcp_write(pcb, net_msg->dataptr, net_msg->len, TCP_WRITE_FLAG_COPY);
     if (err == ERR_OK) {
@@ -403,8 +402,9 @@ static void net_do_send(void *ctx)
     conn = tls_net_get_socket(socketno);
     if (conn == NULL || TRUE != conn->used) {
         TLS_DBGPRT_ERR("conn =%x,used=%d\n", (u32)conn, conn->used);
-        if (p)
+        if (p) {
             pbuf_free(p);
+        }
 #if CONN_SEM_NOT_FREE
         sys_sem_signal(&conn_op_completed[socketno - 1]);
 #endif
@@ -436,7 +436,7 @@ static void net_do_send(void *ctx)
 }
 
 /**
- * Send data on a TCP pcb 
+ * Send data on a TCP pcb
  */
 static void net_do_write(void *ctx)
 {
@@ -447,8 +447,7 @@ static void net_do_write(void *ctx)
     int socketno = -1;
     socketno = net_msg->skt_no;
     conn = tls_net_get_socket(socketno);
-    if (conn == NULL ||TRUE != conn->used)
-    {
+    if (conn == NULL ||TRUE != conn->used) {
         TLS_DBGPRT_ERR("\n conn=%x,used=%d\n", (u32)conn, conn->used);
 #if CONN_SEM_NOT_FREE
         sys_sem_signal(&conn_op_completed[socketno - 1]);
@@ -469,16 +468,15 @@ static void net_do_write(void *ctx)
             net_msg->err = ERR_CONN;
             TLS_DBGPRT_INFO("==>err=%d\n", net_msg->err);
         }
-    if (conn->client && conn->idle_time > 0)
-    {
-        TLS_DBGPRT_INFO("conn->skt_num=%d, conn->client=%d\n", conn->skt_num, conn->client);
-        server_conn = get_server_conn(conn);
-        TLS_DBGPRT_INFO("server_conn=%p\n", server_conn);
-        if (server_conn) {
-            conn->idle_time = server_conn->idle_time;
-            TLS_DBGPRT_INFO("update conn->idle_time %d\n", conn->idle_time);
+        if (conn->client && conn->idle_time > 0) {
+            TLS_DBGPRT_INFO("conn->skt_num=%d, conn->client=%d\n", conn->skt_num, conn->client);
+            server_conn = get_server_conn(conn);
+            TLS_DBGPRT_INFO("server_conn=%p\n", server_conn);
+            if (server_conn) {
+                conn->idle_time = server_conn->idle_time;
+                TLS_DBGPRT_INFO("update conn->idle_time %d\n", conn->idle_time);
+            }
         }
-    }
 #else /* LWIP_TCP */
         net_msg->err = ERR_VAL;
 #endif /* LWIP_TCP */
@@ -490,7 +488,7 @@ static void net_do_write(void *ctx)
 
     {
 #if CONN_SEM_NOT_FREE
-        sys_sem_signal(&conn_op_completed[socketno - 1]);
+    sys_sem_signal(&conn_op_completed[socketno - 1]);
 #else
     conn = tls_net_get_socket(socketno);
     if (conn && TRUE == conn->used) {
@@ -554,11 +552,11 @@ static void do_close_connect(void *ctx)
     struct tls_netconn *client_conn;
     int socketno = net_msg->skt_no;
     int i;
-    int sktNums[TLS_MAX_SOCKET_NUM] = {-1};// 2*TLS_MAX_NETCONN_NUM
+    int sktNums[TLS_MAX_SOCKET_NUM] = {-1}; /* 2*TLS_MAX_NETCONN_NUM */
 
     conn = tls_net_get_socket(socketno);
     if (conn == NULL || TRUE != conn->used) {
-        TLS_DBGPRT_ERR("conn==%x,used=%d\n", (u32)conn, conn->used);    
+        TLS_DBGPRT_ERR("conn==%x,used=%d\n", (u32)conn, conn->used);
         tls_mem_free(net_msg);
         return;
     }
@@ -566,7 +564,6 @@ static void do_close_connect(void *ctx)
     switch (conn->proto) {
         case TLS_NETCONN_UDP:
             if (conn->pcb.udp != NULL) {
-                //conn->pcb.udp->recv_arg = NULL;
                 udp_remove(conn->pcb.udp);
                 conn->pcb.udp = NULL;
             }
@@ -599,7 +596,7 @@ static void do_close_connect(void *ctx)
     tls_mem_free(net_msg);
 }
 
-int tls_socket_create(struct tls_socket_desc * skd)
+int tls_socket_create(struct tls_socket_desc *skd)
 {
     return;
 }
@@ -609,12 +606,11 @@ int tls_socket_get_status(u8 socket, u8 *buf, u32 bufsize)
     return;
 }
 
-struct tls_netconn * tls_net_get_socket(u8 socket)
+struct tls_netconn *tls_net_get_socket(u8 socket)
 {
     struct tls_netconn *conn = NULL;
 
-    if (socket < 1 || socket > TLS_MAX_NETCONN_NUM )
-    {
+    if (socket < 1 || socket > TLS_MAX_NETCONN_NUM) {
         TLS_DBGPRT_ERR("skt num=%d\n", socket);
         return NULL;
     }
@@ -664,7 +660,7 @@ int tls_socket_send(u8 skt_num, void *pdata, u16 len)
 
 int tls_net_init()
 {
-    memset(p_net_conn, 0, sizeof(struct tls_netconn *) * TLS_MAX_NETCONN_NUM);
+    memset(p_net_conn, 0, sizeof(struct tls_netconn *) *TLS_MAX_NETCONN_NUM);
     return 0;
 }
 
