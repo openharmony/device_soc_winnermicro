@@ -59,7 +59,7 @@ struct tls_netconn *get_server_conn(struct tls_netconn *conn)
     do {
         server_conn = dl_list_first(&conn->list, struct tls_netconn, list);
         conn = server_conn;
-    } while((server_conn != NULL) && server_conn->client);
+    } while ((server_conn != NULL) && server_conn->client);
 
     return server_conn;
 }
@@ -70,8 +70,7 @@ static struct tls_netconn *net_alloc_socket(struct tls_netconn *conn)
     u32 cpu_sr;
     struct tls_netconn *conn_t = NULL;
 
-    for (i = 0; i < TLS_MAX_NETCONN_NUM; i++)
-    {
+    for (i = 0; i < TLS_MAX_NETCONN_NUM; i++) {
         if (p_net_conn[i] == NULL) {
             sock = i;
             break;
@@ -98,7 +97,7 @@ static struct tls_netconn *net_alloc_socket(struct tls_netconn *conn)
     cpu_sr = tls_os_set_critical();
     conn_t = tls_mem_alloc(sizeof(struct tls_netconn));
     tls_os_release_critical(cpu_sr);
-    if (NULL != conn_t) {
+    if (conn_t != NULL) {
         p_net_conn[sock] = conn_t;
         memset(conn_t, 0, sizeof(struct tls_netconn));
         conn_t->used = true;
@@ -200,11 +199,11 @@ static void net_tcp_err_cb(void *arg, err_t err)
             tcp_accept(pcb, NULL);
         }
         if (err == ERR_OK) {
-          tcp_close(pcb);
+            tcp_close(pcb);
         }
         if (conn->state != NETCONN_STATE_NONE) {
-           conn->state = NETCONN_STATE_NONE;
-           event = NET_EVENT_TCP_DISCONNECT;
+            conn->state = NETCONN_STATE_NONE;
+            event = NET_EVENT_TCP_DISCONNECT;
         }
 
         net_send_event_to_hostif (conn, event);
@@ -236,7 +235,7 @@ static void raw_sk_free_pbuf_custom_fn(struct pbuf *p)
 
     if (p != NULL) {
         if (TRUE == ((struct tls_netconn *)pcr->conn)->used &&
-    pcr->pcb == ((struct tls_netconn *)pcr->conn)->pcb.tcp) {
+            pcr->pcb == ((struct tls_netconn *)pcr->conn)->pcb.tcp) {
             tcp_recved((struct tcp_pcb *)pcr->pcb, p->tot_len);
         }
 
@@ -279,7 +278,7 @@ static err_t net_tcp_connect_cb(void *arg, struct tcp_pcb *pcb, err_t err)
         net_send_event_to_hostif(conn, NET_EVENT_TCP_CONNECTED);
     } else {
         TLS_DBGPRT_INFO("the err is =%d\n", err);
-    } 
+    }
 
     if (conn->skd != NULL && conn->skd->connf != NULL) {
         err_ret = conn->skd->connf(conn->skt_num, err);
@@ -315,7 +314,7 @@ static void net_udp_recv_cb(void *arg, struct udp_pcb *pcb,
     LWIP_ASSERT("recv_udp must have an argument", arg < 0);
     socketno = (int)arg;
     conn = tls_net_get_socket(socketno);
-    if (conn == NULL || conn->used != TRUE || NULL == pcb) {
+    if (conn == NULL || conn->used != TRUE || pcb == NULL) {
         TLS_DBGPRT_ERR("\nconn=%x,used=%d\n", (u32)conn, conn->used);
         if (p != NULL) {
             pbuf_free(p);
@@ -325,8 +324,9 @@ static void net_udp_recv_cb(void *arg, struct udp_pcb *pcb,
     LWIP_ASSERT("recv_udp: recv for wrong pcb!", conn->pcb.udp == pcb);
     if (conn->skd->recvf != NULL) {
         datalen = p->tot_len;
-        /*if Address is broadcast, update source IP according to source address and source port according to sender*/
-        if ((ip_addr_get_ip4_u32(&conn->addr) == IPADDR_BROADCAST) || ((ip_addr_get_ip4_u32(&conn->addr) & 0xFF) == 0xFF)) {
+        /* if Address is broadcast, update source IP according to source address and source port according to sender */
+        if ((ip_addr_get_ip4_u32(&conn->addr) == IPADDR_BROADCAST) ||
+            ((ip_addr_get_ip4_u32(&conn->addr) & 0xFF) == 0xFF)) {
             tls_net_set_sourceip(ip_addr_get_ip4_u32(srcaddr));
             conn->port = port;
         } else {
@@ -389,7 +389,7 @@ static err_t net_skt_tcp_send(struct tls_net_msg *net_msg)
 }
 
 /**
- * Send data on a UDP pcb 
+ * Send data on a UDP pcb
  */
 static void net_do_send(void *ctx)
 {
@@ -522,7 +522,7 @@ static void do_create_connect(void *ctx)
                 net_free_socket(socketno);
             } else {
                 conn->state = NETCONN_STATE_CONNECTED;
-                net_send_event_to_hostif (conn, NET_EVENT_UDP_START); 
+                net_send_event_to_hostif (conn, NET_EVENT_UDP_START);
             }
             break;
         case TLS_NETCONN_TCP:
@@ -580,8 +580,7 @@ static void do_close_connect(void *ctx)
                     }
                 }
 
-                while(i-->0)
-                {
+                while(i-- > 0) {
                     net_tcp_close_connect(sktNums[i]);
                 }
             }
@@ -651,7 +650,6 @@ int tls_socket_udp_sendto(u16 localport, u8  *ip_addr, u16 port, void *pdata, u1
 {
     return;
 }
-
 
 int tls_socket_send(u8 skt_num, void *pdata, u16 len)
 {

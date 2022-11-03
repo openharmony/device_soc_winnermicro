@@ -152,7 +152,7 @@ s8 tls_wl_task_untimeout(struct task_parameter *task_param, tls_timeout_handler 
     if (tls_mbox_valid(task_mbox[task_param->mbox_id])) {
         msg = (struct task_msg *)tls_mem_alloc(sizeof(struct task_msg));
         if (msg == NULL) {
-          return TLS_OS_ERROR;
+            return TLS_OS_ERROR;
         }
 
         msg->type = TASK_MSG_UNTIMEOUT;
@@ -161,7 +161,7 @@ s8 tls_wl_task_untimeout(struct task_parameter *task_param, tls_timeout_handler 
         tls_mbox_post(task_mbox[task_param->mbox_id], msg);
         return TLS_OS_SUCCESS;
     }
-  return TLS_OS_ERROR;
+    return TLS_OS_ERROR;
 }
 
 s8 tls_wl_task_init(void)
