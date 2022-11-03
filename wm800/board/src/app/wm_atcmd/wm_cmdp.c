@@ -18,7 +18,7 @@
 #include <ctype.h>
 #include "wm_config.h"
 #include "wm_cmdp.h"
-#if (GCC_COMPILE==1)
+#if (GCC_COMPILE == 1)
 #include "wm_cmdp_hostif_gcc.h"
 #else
 #include "wm_cmdp_hostif.h"
@@ -53,7 +53,8 @@ extern const char HwVer[TEN];
 tls_os_timer_t *RSTTIMER = NULL;
 
 u8 gfwupdatemode = 0;
-u8 tls_get_fwup_mode(void) {
+u8 tls_get_fwup_mode(void)
+{
     return gfwupdatemode;
 }
 
@@ -308,7 +309,7 @@ int tls_cmd_create_net(void)
 
 int tls_cmd_create_ibss_net(void)
 {
-    int ret=CMD_ERR_UNSUPP;
+    int ret = CMD_ERR_UNSUPP;
     return ret;
 }
 
@@ -381,8 +382,8 @@ int tls_cmd_get_wireless_mode(u8 *mode)
     int err  = 0;
     u8 wmode = 0;
 
-    tls_param_get(TLS_PARAM_ID_WPROTOCOL, (void* )&wmode, TRUE);
-    /* set WPAS_MODE to do*/
+    tls_param_get(TLS_PARAM_ID_WPROTOCOL, (void *)&wmode, TRUE);
+    /* set WPAS_MODE to do */
     switch (wmode) {
         case IEEE80211_MODE_INFRA:
             *mode = 0;
@@ -544,8 +545,8 @@ int tls_cmd_get_original_ssid(struct tls_param_ssid *original_ssid)
 {
     tls_param_get(TLS_PARAM_ID_ORIGIN_SSID, (void *)original_ssid, 1);
     if (original_ssid->ssid_len > THIRTY_TWO) {
-           original_ssid->ssid_len = 0;
-           original_ssid->ssid[0] = '\0';
+            original_ssid->ssid_len = 0;
+            original_ssid->ssid[0] = '\0';
     }
 
     return 0;
@@ -1019,7 +1020,7 @@ int tls_cmd_set_sha1(u8* psk, u8 update_flash)
 
 int tls_cmd_get_sha1(u8 *psk)
 {
-    tls_param_get(TLS_PARAM_ID_SHA1, (void *)psk,1);
+    tls_param_get(TLS_PARAM_ID_SHA1, (void *)psk, 1);
     return 0;
 }
 
@@ -1032,7 +1033,7 @@ int tls_cmd_set_wps_pin(struct tls_param_wps* wps, u8 update_flash)
 
 int tls_cmd_get_wps_pin(struct tls_param_wps *wps)
 {
-    tls_param_get(TLS_PARAM_ID_WPS, (void *)wps,1);
+    tls_param_get(TLS_PARAM_ID_WPS, (void *)wps, 1);
     return 0;
 }
 #endif
@@ -1089,7 +1090,7 @@ int tls_cmd_wr_flash(struct tls_cmd_flash_t *wr_flash)
 {
     u8 data[TWENTY_FOUR];
     tls_fls_write(wr_flash->flash_addr, (u8 *)wr_flash->value,
-            sizeof(u32) * wr_flash->word_cnt);
+                  sizeof(u32) * wr_flash->word_cnt);
 
     memset(data, 0, TWENTY_FOUR);
     tls_fls_read(wr_flash->flash_addr, data, TWENTY_FOUR);
@@ -1215,7 +1216,7 @@ int tls_cmd_set_softap_encrypt(u8 encrypt, u8 update_flash)
 {
     struct tls_param_key param_key;
 
-    if (0 == encrypt) {
+    if (encrypt == 0) {
         memset(param_key.psk, 0, SIXTY_FOUR);
         param_key.key_format = 0;
         param_key.key_index = 0;

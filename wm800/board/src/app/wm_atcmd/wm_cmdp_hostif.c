@@ -169,7 +169,8 @@ extern int tls_ble_gap_set_name(const char *dev_name, uint8_t update_flash);
 extern int tls_ble_gap_set_data(uint8_t type, uint8_t *data, uint8_t data_len);
 extern int tls_ble_gap_set_adv_data(bool include_name, uint8_t *mfg_data, int mfg_data_len);
 extern int tls_ble_gap_set_adv_param(uint32_t min, uint32_t max, uint8_t chn_map, uint8_t filter_policy, uint8_t *dir_mac);
-extern int tls_ble_gap_set_scan_param(uint32_t intv, uint32_t window, uint8_t filter_policy, bool limited, bool passive, bool filter_duplicate);
+extern int tls_ble_gap_set_scan_param(uint32_t intv, uint32_t window,
+    uint8_t filter_policy, bool limited, bool passive, bool filter_duplicate);
 
 #endif
 #endif
@@ -344,7 +345,7 @@ int tls_hostif_atcmd_loopback(u8 hostif_type,
     return 0;
 }
 
-extern struct tls_uart_port uart_port[];
+extern struct tls_uart_port uart_port[FOUR];
 int tls_hostif_process_cmdrsp(u8 hostif_type, char *cmdrsp, u32 cmdrsp_size)
 {
     struct tls_hostif_tx_msg *tx_msg;
@@ -692,7 +693,8 @@ int tls_hostif_send_event_wjoin_success(void)
     }
     tls_wifi_get_current_bss(&bss);
     
-    buflen = sizeof(struct tls_hostif_hdr) + sizeof(struct tls_hostif_cmd_hdr) + TEN + TWO + bss.ssid_len;
+    buflen = sizeof(struct tls_hostif_hdr) + sizeof(struct tls_hostif_cmd_hdr) 
+             + TEN + TWO + bss.ssid_len;
     buf = (char *)tls_mem_alloc(buflen);
     if (!buf) {
         return 0;
@@ -1136,23 +1138,23 @@ void hostif_wscan_cmplt(void)
 #if TLS_OS_FREERTOS
 u32 hostif_stk[HOSTIF_TASK_STK_SIZE];
 struct task_parameter wl_task_param_hostif = {
-        .mbox_size = THIRTY + TWO,
-        .name = "uart spi task",
-        .stk_size = HOSTIF_TASK_STK_SIZE,
-        .stk_start = (u8 *)hostif_stk,
-        .task_id = TLS_HOSTIF_TASK_PRIO,
-        .mbox_id = TLS_MBOX_ID_HOSTIF_TASK,
-        .timeo_id = TLS_TIMEO_ID_HOSTIF_TASK,
+    .mbox_size = THIRTY + TWO,
+    .name = "uart spi task",
+    .stk_size = HOSTIF_TASK_STK_SIZE,
+    .stk_start = (u8 *)hostif_stk,
+    .task_id = TLS_HOSTIF_TASK_PRIO,
+    .mbox_id = TLS_MBOX_ID_HOSTIF_TASK,
+    .timeo_id = TLS_TIMEO_ID_HOSTIF_TASK,
 };
 #elif TLS_OS_LITEOS
 struct task_parameter wl_task_param_hostif = {
-        .mbox_size = THIRTY + TWO,
-        .name = "uart spi task",
-        .stk_size = HOSTIF_TASK_STK_SIZE,
-        .stk_start = (u8 *)NULL,
-        .task_id = TLS_HOSTIF_TASK_PRIO,
-        .mbox_id = TLS_MBOX_ID_HOSTIF_TASK,
-        .timeo_id = TLS_TIMEO_ID_HOSTIF_TASK,
+    .mbox_size = THIRTY + TWO,
+    .name = "uart spi task",
+    .stk_size = HOSTIF_TASK_STK_SIZE,
+    .stk_start = (u8 *)NULL,
+    .task_id = TLS_HOSTIF_TASK_PRIO,
+    .mbox_id = TLS_MBOX_ID_HOSTIF_TASK,
+    .timeo_id = TLS_TIMEO_ID_HOSTIF_TASK,
 };
 #endif
 
@@ -1283,7 +1285,8 @@ int tls_hostif_send_data(struct tls_hostif_socket_info *skt_info,
     if (skt_info->socket) {
         err = tls_socket_send(skt_info->socket, buf, buflen);
     } else if (skt_info->proto == 1) {    // udp
-        err = tls_socket_udp_sendto(skt_info->local_port, (u8 *)(&skt_info->remote_ip), skt_info->remote_port, buf, buflen);
+        err = tls_socket_udp_sendto(skt_info->local_port, 
+                                   (u8 *)(&skt_info->remote_ip), skt_info->remote_port, buf, buflen);
     }
 #else
     if (FD_ISSET(skt_info->socket, &fdatsockets)) {
@@ -1303,7 +1306,8 @@ int tls_hostif_send_data(struct tls_hostif_socket_info *skt_info,
         }
         ext = &skt_status->skts_ext[0];
         if (ext->protocol == SOCKET_PROTO_UDP) {
-            err = sendto(skt_info->socket, buf, buflen, 0, &sock_cmdp_addrs[skt_info->socket - LWIP_SOCKET_OFFSET], (socklen_t)sizeof(struct sockaddr));
+            err = sendto(skt_info->socket, buf, buflen, 0, 
+                         &sock_cmdp_addrs[skt_info->socket - LWIP_SOCKET_OFFSET], (socklen_t)sizeof(struct sockaddr));
         } else if (skt_status->socket_cnt > 1) {
             for(n = 1; n < skt_status->socket_cnt; n++) {
                 ext = &skt_status->skts_ext[n];
@@ -1344,8 +1348,9 @@ static void hostif_default_socket_create_tmr(int ticks)
             FALSE,
             NULL);
 
-    if (!err)
+    if (!err) {
         tls_os_timer_start(default_sock_tmr);
+    }
 }
 
 static void hostif_default_socket_stop_tmr()
@@ -1376,7 +1381,8 @@ static s8 hostif_socket_rpt(u8 skt_num, u16 datalen, u8 *ipaddr, u16 port, s8 er
     if (hif->rptmode) {
         cmdind_buf = tls_mem_alloc(CMDIND_BUF_SIZE);
         if (cmdind_buf) {
-            cmdind_size = sprintf(cmdind_buf,"+SKTRPT=%d,%d,%d.%d.%d.%d,%d\r\n\r\n", skt_num, datalen, ipaddr[0], ipaddr[1], ipaddr[TWO], ipaddr[THREE], port);
+            cmdind_size = sprintf(cmdind_buf,"+SKTRPT=%d,%d,%d.%d.%d.%d,%d\r\n\r\n",
+                                  skt_num, datalen, ipaddr[0], ipaddr[1], ipaddr[TWO], ipaddr[THREE], port);
             if (tls_hostif_process_cmdrsp(hif->hostif_mode, cmdind_buf, cmdind_size)) {
                 tls_mem_free(cmdind_buf);
             }
@@ -1551,13 +1557,13 @@ static void sock_recv_timeout_handler(void * arg)
     for(sock = LWIP_SOCKET_OFFSET; sock < (MEMP_NUM_NETCONN + LWIP_SOCKET_OFFSET); sock++) {
         if (FD_ISSET(sock, &fdatsockets) && FD_ISSET(sock, &rdset)) {
             getsockopt(sock, SOL_SOCKET, SO_TYPE, &optval, (socklen_t *)&optlen);
-            if (optval == SOCK_STREAM) {    //tcp
+            if (optval == SOCK_STREAM) {    // tcp
                 ret = getsockopt(sock, SOL_SOCKET, SO_ACCEPTCONN, &optval, (socklen_t *)&optlen);
                 if (ret) {
                     optval = 0;
                 }
             }
-            if (1 != optval) {    //is udp or tcp client
+            if (1 != optval) {    // is udp or tcp client
                 p = pbuf_alloc(PBUF_RAW, TLS_SOCKET_RECV_BUF_SIZE, PBUF_RAM);
                 ret = recvfrom(sock, p->payload, TLS_SOCKET_RECV_BUF_SIZE, 0, (struct sockaddr *)&from, &fromlen);
                 if (ret <= 0) {
@@ -1954,7 +1960,8 @@ int tls_hostif_set_net_status_callback(void)
 
 #if TLS_CONFIG_HTTP_CLIENT_TASK
 u8  pSession_flag = 0;
-void tls_hostif_http_client_recv_callback(HTTP_SESSION_HANDLE pSession, CHAR *data, u32 totallen, u32 datalen)
+void tls_hostif_http_client_recv_callback(HTTP_SESSION_HANDLE pSession, CHAR *data,
+    u32 totallen, u32 datalen)
 {
     #undef CMDIND_BUF_SIZE
     #define CMDIND_BUF_SIZE 64
@@ -2042,12 +2049,16 @@ int atcmd_filter_quotation(u8 **keyInfo, u8 *inbuf)
 }
 
 #if 1
-int z_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp) {
+int z_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+{
     tls_cmd_reset_sys();
     return 0;
 }
 
-int e_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp) {
+int e_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+{
     struct tls_hostif *hif = tls_get_hostif();
     if (hif->uart_insdisp) {
         hif->uart_insdisp = 0;
@@ -2057,7 +2068,9 @@ int e_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, unio
     return 0;
 }
 
-int ents_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp){
+int ents_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+{
     int ret = 0;
     struct tls_cmd_ps_t ps;
 
@@ -2066,7 +2079,8 @@ int ents_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, u
     }
 
     if ((cmd->ps.ps_type == 1 || cmd->ps.ps_type == TWO)
-        && (((cmd->ps.wake_type == 1) && (cmd->ps.wake_time > SIXTY_FIVE_THOUSAND_FIVE_HUNDRED_AND_THIRTY_FIVE || cmd->ps.wake_time < ONE_THOUSAND))
+        && (((cmd->ps.wake_type == 1)
+        && (cmd->ps.wake_time > SIXTY_FIVE_THOUSAND_FIVE_HUNDRED_AND_THIRTY_FIVE || cmd->ps.wake_time < ONE_THOUSAND))
         || (cmd->ps.delay_time < ONE_HUNDRED || cmd->ps.delay_time > TEN_THOUSAND))) {
         return -CMD_ERR_INV_PARAMS;
     }
@@ -2079,24 +2093,28 @@ int ents_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, u
     return ret ? -CMD_ERR_OPS : 0;
 }
 
-int rstf_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int rstf_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     return;
 }
 
-int pmtf_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int pmtf_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret=0;
     ret = tls_cmd_pmtf();
     return ret ? -CMD_ERR_OPS : 0;
 }
 
-int ioc_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int ioc_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     return 0;
 }
 
-int wjoin_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int wjoin_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int err; 
     struct tls_hostif *hif = tls_get_hostif();
@@ -2107,7 +2125,7 @@ int wjoin_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, 
     err = tls_cmd_join(cmd->wjoin.mode, NULL);
 
     tls_netif_set_status(0);
-    if (cmd->wjoin.mode!=CMD_MODE_HSPI_RICMD && cmd->wjoin.mode!=CMD_MODE_UART1_RICMD) {
+    if (cmd->wjoin.mode!=CMD_MODE_HSPI_RICMD && cmd->wjoin.mode != CMD_MODE_UART1_RICMD) {
         if (err == CMD_ERR_OK) {
 sem_acquire:
             /* waiting for ever: infact 20s, determind by wpa_supplicant_connect_timeout */
@@ -2152,7 +2170,8 @@ sem_acquire:
     return 0;
 }
 
-int wleav_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int wleav_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret=0;
     if (cmd->wreg.region == TWO) {
@@ -2163,7 +2182,8 @@ int wleav_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, 
     return ret ? -CMD_ERR_FLASH : 0;
 }
 
-int wscan_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int wscan_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret=0;
     u32 time, offset = 0;
@@ -2173,7 +2193,8 @@ int wscan_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, 
     struct tls_hostif *hif = tls_get_hostif();
 
     hif->uart_atcmd_bits &= ~(1 << UART_ATCMD_BIT_WSCAN);
-    ret = tls_cmd_scan_by_param(cmd->scanparam.mode, cmd->scanparam.chlist, cmd->scanparam.scantimes, cmd->scanparam.switchinterval);
+    ret = tls_cmd_scan_by_param(cmd->scanparam.mode, cmd->scanparam.chlist,
+                                cmd->scanparam.scantimes, cmd->scanparam.switchinterval);
     if (ret) {
         return -ret;
     }
@@ -2188,7 +2209,8 @@ int wscan_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, 
         }
         expiredtime = (time == 0) ? TEN + FOUR : time;
         expiredtime *= (cmd->scanparam.scantimes > 0 ? (cmd->scanparam.scantimes) : 1);
-        expiredtime *= (cmd->scanparam.switchinterval > ONE_HUNDRED ? (cmd->scanparam.switchinterval) : TWO_HUNDRED);
+        expiredtime *= (cmd->scanparam.switchinterval > ONE_HUNDRED
+                       ? (cmd->scanparam.switchinterval) : TWO_HUNDRED);
         expiredtime += FIVE * HZ;
         
         time = tls_os_get_time();
@@ -2215,7 +2237,8 @@ sem_acquire:
 
 
 #if TLS_CONFIG_SOCKET_RAW || TLS_CONFIG_SOCKET_STD
-int lkstt_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int lkstt_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     struct tls_cmd_link_status_t lk;
 
@@ -2234,7 +2257,8 @@ int lkstt_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, 
     return 0;
 }
 
-int entm_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int entm_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     u16 rx_fifocnt;
     u8 ch;
@@ -2278,7 +2302,8 @@ int entm_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, u
     return 0;
 }
 
-int skct_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int skct_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int socket_num;
 #if TLS_CONFIG_CMD_USE_RAW_SOCKET
@@ -2340,7 +2365,8 @@ sem_acquire:
     return 0;
 }
 
-int skstt_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int skstt_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret = 0, i = 0;
     u32 buflen;
@@ -2379,7 +2405,8 @@ int skstt_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, 
     return ret ? -CMD_ERR_OPS : 0;
 }
 
-int skcls_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int skcls_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret = 0;
     if (set_opt) {
@@ -2394,7 +2421,8 @@ int skcls_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, 
     return ret ? -CMD_ERR_OPS : 0;
 }
 
-int sksdf_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int sksdf_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     if (set_opt) {
         if (cmd->sksdf.socket < 1 || cmd->sksdf.socket > TWENTY) {
@@ -2406,7 +2434,8 @@ int sksdf_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, 
     return 0;
 }
 
-int sksnd_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int sksnd_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int err = 0;
 
@@ -2445,7 +2474,8 @@ int sksnd_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, 
     return 0;
 }
 
-int skrcv_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int skrcv_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     u32 socket = 0, size = 0, maxsize;
     u8 state;
@@ -2473,7 +2503,8 @@ int skrcv_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, 
     return 0;
 }
 
-int skrptm_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int skrptm_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret = 0;
     struct tls_hostif *hif = tls_get_hostif();
@@ -2489,12 +2520,14 @@ int skrptm_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
     return ret ? -CMD_ERR_OPS : 0;
 }
 
-int sksrcip_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int sksrcip_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     return;
 }
 
-int skghbn_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int skghbn_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     u8 *ipstr = NULL;
     int i = 0;
@@ -2516,7 +2549,8 @@ int skghbn_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
 
 #endif
 
-int wprt_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int wprt_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret = 0;
     if (set_opt) {
@@ -2530,7 +2564,8 @@ int wprt_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, u
     return ret ? -CMD_ERR_OPS : 0;
 }
 
-int ssid_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int ssid_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret = 0;
     struct tls_cmd_ssid_t ssid;
@@ -2553,7 +2588,8 @@ int ssid_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, u
     return ret ? -CMD_ERR_OPS : 0;
 }
 
-int key_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int key_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret = 0;
     struct tls_cmd_key_t key;
@@ -2579,7 +2615,8 @@ int key_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, un
     return ret ? -CMD_ERR_OPS : 0;
 }
 
-int encry_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int encry_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret = 0;
     if (set_opt) {
@@ -2594,7 +2631,8 @@ int encry_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, 
     return ret ? -CMD_ERR_OPS : 0;
 }
 
-int bssid_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int bssid_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret = 0;
     struct tls_cmd_bssid_t bssid;
@@ -2616,7 +2654,8 @@ int bssid_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, 
     return ret ? -CMD_ERR_OPS : 0;
 }
 
-int brdssid_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int brdssid_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret = 0;
     if (set_opt) {
@@ -2631,7 +2670,8 @@ int brdssid_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd
     return ret ? -CMD_ERR_OPS : 0;
 }
 
-int cntparam_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int cntparam_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     struct tls_param_ssid original_ssid;
     struct tls_param_original_key original_key;
@@ -2653,16 +2693,20 @@ int cntparam_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cm
         cmdrsp->cntparam_bssid_dis.ssid_len = original_ssid.ssid_len;
         memcpy(cmdrsp->cntparam_bssid_dis.ssid_key, original_ssid.ssid, original_ssid.ssid_len);
         cmdrsp->cntparam_bssid_dis.key_len = original_key.key_length;
-        memcpy(cmdrsp->cntparam_bssid_dis.ssid_key+cmdrsp->cntparam_bssid_dis.ssid_len, original_key.psk, original_key.key_length);
+        memcpy(cmdrsp->cntparam_bssid_dis.ssid_key+cmdrsp->cntparam_bssid_dis.ssid_len,
+               original_key.psk, original_key.key_length);
     }
     return 0;
 }
 
-int chl_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int chl_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret = 0;
     if (set_opt) {
-        if ((cmd->channel.enable > 1) || ((cmd->channel.enable == 1) && ((cmd->channel.channel > (TEN + FOUR)) || (cmd->channel.channel < 1)))) {
+        if ((cmd->channel.enable > 1) || ((cmd->channel.enable == 1)
+           && ((cmd->channel.channel > (TEN + FOUR))
+           || (cmd->channel.channel < 1)))) {
             return -CMD_ERR_INV_PARAMS;
         }
         if(cmd->channel.enable == 0) {
@@ -2676,7 +2720,8 @@ int chl_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, un
     return ret ? -CMD_ERR_OPS : 0;
 }
 
-int chll_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int chll_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     if (set_opt) {
         if ((cmd->channel_list.channellist & (~0x3fff)) || (cmd->channel_list.channellist == 0)) {
@@ -2690,7 +2735,8 @@ int chll_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, u
     return 0;
 }
 
-int wreg_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int wreg_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     if (set_opt) {
         tls_cmd_set_region(cmd->wreg.region, update_flash);
@@ -2700,7 +2746,8 @@ int wreg_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, u
     return 0;
 }
 
-int wbgr_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int wbgr_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret=0;
     int limit_rate;
@@ -2711,7 +2758,8 @@ int wbgr_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, u
         if(cmd->wbgr.mode > THREE || cmd->wbgr.rate > (TWENTY + EIGHT)) {
             return -CMD_ERR_INV_PARAMS;
         }
-        limit_rate = (cmd->wbgr.mode == 1) ? THREE : ((cmd->wbgr.mode == TWO) ? (TWENTY + EIGHT) : (TEN + 1));
+        limit_rate = (cmd->wbgr.mode == 1) ? THREE : ((cmd->wbgr.mode == TWO)
+                     ? (TWENTY + EIGHT) : (TEN + 1));
         hw_mode.max_rate = (cmd->wbgr.rate > limit_rate) ? limit_rate: cmd->wbgr.rate;
         hw_mode.hw_mode = cmd->wbgr.mode;
         ret = tls_cmd_set_hw_mode(&hw_mode, update_flash);
@@ -2723,7 +2771,8 @@ int wbgr_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, u
     return ret ? -CMD_ERR_OPS : 0;
 }
 
-int watc_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int watc_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret = 0;
     if (set_opt) {
@@ -2738,7 +2787,8 @@ int watc_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, u
     return ret ? -CMD_ERR_OPS : 0;
 }
 
-int wpsm_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int wpsm_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret = 0;
     if (set_opt) {
@@ -2753,7 +2803,8 @@ int wpsm_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, u
     return ret ? -CMD_ERR_OPS : 0;
 }
 
-int warc_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int warc_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret = 0;
     if (set_opt) {
@@ -2768,7 +2819,8 @@ int warc_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, u
     return ret ? -CMD_ERR_OPS : 0;
 }
 
-int warm_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int warm_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret = 0;
     if (set_opt) {
@@ -2784,7 +2836,8 @@ int warm_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, u
 }
 
 #if TLS_CONFIG_SOCKET_RAW || TLS_CONFIG_SOCKET_STD
-int nip_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int nip_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret = 0;
     struct tls_cmd_ip_params_t ip_info;
@@ -2811,7 +2864,8 @@ int nip_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, un
 }
 #endif
 
-int atm_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int atm_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret = 0;
     if (set_opt) {
@@ -2826,7 +2880,8 @@ int atm_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, un
     return ret ? -CMD_ERR_OPS : 0;
 }
 
-int atrm_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int atrm_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     if (set_opt) {
         tls_cmd_set_default_socket_params((struct tls_cmd_socket_t *)&cmd->atrm, update_flash);
@@ -2836,12 +2891,14 @@ int atrm_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, u
     return 0;
 }
 
-int aolm_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int aolm_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     return 0;
 }
 
-int portm_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int portm_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret = 0;
     if (set_opt) {
@@ -2856,7 +2913,8 @@ int portm_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, 
     return ret ? -CMD_ERR_OPS : 0;
 }
 
-int uart_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int uart_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret = 0;
     struct tls_cmd_uart_params_t uart_cfg;
@@ -2880,7 +2938,8 @@ int uart_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, u
     return ret ? -CMD_ERR_OPS : 0;
 }
 
-int atlt_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int atlt_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret = 0;
     if (set_opt) {
@@ -2895,7 +2954,8 @@ int atlt_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, u
     return ret ? -CMD_ERR_OPS : 0;
 }
 
-int dns_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int dns_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret = 0;
     if (set_opt) {
@@ -2912,22 +2972,26 @@ int dns_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, un
     return ret ? -CMD_ERR_OPS : 0;
 }
 
-int ddns_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int ddns_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     return 0;
 }
 
-int upnp_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int upnp_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     return 0;
 }
 
-int dname_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int dname_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     return 0;
 }
 
-int atpt_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int atpt_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret = 0;
     if (set_opt) {
@@ -2942,7 +3006,8 @@ int atpt_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, u
     return ret ? -CMD_ERR_OPS : 0;
 }
 
-int dbg_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int dbg_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     if (set_opt) {
         tls_cmd_set_dbg(cmd->dbg.dbg_level);
@@ -2951,7 +3016,8 @@ int dbg_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, un
     return 0;
 }
 
-int espc_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int espc_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret = 0;
     if (set_opt) {
@@ -2966,7 +3032,8 @@ int espc_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, u
     return ret ? -CMD_ERR_OPS : 0;
 }
 
-int espt_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int espt_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret = 0;
     if (set_opt) {
@@ -2981,7 +3048,8 @@ int espt_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, u
     return ret ? -CMD_ERR_OPS : 0;
 }
 
-int webs_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int webs_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret = 0;
     struct tls_webs_cfg stWebsCfg;
@@ -3001,7 +3069,8 @@ int webs_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, u
     return ret ? -CMD_ERR_OPS : 0;
 }
 
-int iom_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int iom_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret = 0;
     if (set_opt) {
@@ -3016,7 +3085,8 @@ int iom_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, un
     return ret ? -CMD_ERR_OPS : 0;
 }
 
-int cmdm_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int cmdm_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret = 0;
     if (set_opt) {
@@ -3031,7 +3101,8 @@ int cmdm_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, u
     return ret ? -CMD_ERR_OPS : 0;
 }
 
-int pass_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int pass_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret = 0;
     if (set_opt) {
@@ -3047,7 +3118,8 @@ int pass_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, u
     return ret ? -CMD_ERR_OPS : 0;
 }
 
-int oneshot_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int oneshot_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret = 0;
     if (set_opt) {
@@ -3066,7 +3138,8 @@ int oneshot_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd
     return ret ? -CMD_ERR_OPS : 0;
 }
 
-int updp_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int updp_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     if (set_opt) {
         if (cmd->updp.mode > 1) {
@@ -3089,7 +3162,8 @@ int updp_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, u
 }
 
 #if TLS_CONFIG_HTTP_CLIENT_TASK
-int httpc_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int httpc_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     http_client_msg msg;
 
@@ -3113,7 +3187,8 @@ int httpc_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, 
     return 0;
 }
 
-int fwup_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int fwup_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     return;
 }
@@ -3121,7 +3196,8 @@ int fwup_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, u
 #endif
 #endif
 
-int tem_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int tem_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret = 0;
     struct tls_cmd_tem_t tem = { 0 };
@@ -3152,7 +3228,8 @@ int tem_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, un
    return ret ? -CMD_ERR_OPS : 0;
 }
 
-int qmac_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int qmac_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     u8 *mac = NULL;
     mac = wpa_supplicant_get_mac();
@@ -3161,7 +3238,8 @@ int qmac_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, u
 }
 
 #if TLS_CONFIG_AP
-int slist_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int slist_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
 #define STA_DETAIL_BUF_LEN  320
     u32 sta_num = 0;
@@ -3187,7 +3265,8 @@ int slist_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, 
     return 0;
 }
 
-int softap_lkstt_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int softap_lkstt_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     struct tls_cmd_link_status_t lk;
 
@@ -3206,7 +3285,8 @@ int softap_lkstt_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION
     return 0;
 }
 
-int softap_ssid_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int softap_ssid_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret = 0;
     struct tls_cmd_ssid_t ssid;
@@ -3229,7 +3309,8 @@ int softap_ssid_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION 
     return ret ? -CMD_ERR_OPS : 0;
 }
 
-int softap_qmac_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int softap_qmac_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     u8 *mac = NULL;
     mac = hostapd_get_mac();
@@ -3237,7 +3318,8 @@ int softap_qmac_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION 
     return 0;
 }
 
-int softap_encry_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int softap_encry_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret = 0;
     if (set_opt) {
@@ -3252,7 +3334,8 @@ int softap_encry_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION
     return ret ? -CMD_ERR_OPS : 0;
 }
 
-int softap_key_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int softap_key_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret = 0;
     struct tls_cmd_key_t key;
@@ -3278,7 +3361,8 @@ int softap_key_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *
     return ret ? -CMD_ERR_OPS : 0;
 }
 
-int softap_chl_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int softap_chl_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret = 0;
     if (set_opt) {
@@ -3297,7 +3381,8 @@ int softap_chl_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *
     return ret ? -CMD_ERR_OPS : 0;
 }
 
-int softap_wbgr_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int softap_wbgr_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret=0;
     int limit_rate;
@@ -3320,7 +3405,8 @@ int softap_wbgr_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION 
     return ret ? -CMD_ERR_OPS : 0;
 }
 
-int softap_nip_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int softap_nip_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret = 0;
     struct tls_cmd_ip_params_t ip_info;
@@ -3347,13 +3433,15 @@ int softap_nip_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *
 }
 #endif
 
-int qver_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int qver_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     tls_cmd_get_ver((struct tls_cmd_ver_t *)&cmdrsp->ver);
     return 0;
 }
 
-int updd_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int updd_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int datasize, session_id;
     int err = 0;
@@ -3384,7 +3472,8 @@ int updd_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, u
 
 * Author:     kevin 2014-03-19
 ******************************************************************/
-int regr_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int regr_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     u32 Addr, Num;
     int i = 0;
@@ -3408,7 +3497,8 @@ int regr_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, u
 
 * Author:     kevin 2014-03-19
 ******************************************************************/
-int regw_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int regw_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     u32 Addr, i;
     u32 cpu_sr;
@@ -3433,7 +3523,8 @@ int regw_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, u
 
 * Author:     kevin 2014-03-19
 ******************************************************************/
-int rfr_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int rfr_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int i;
     u32 Addr, Num;
@@ -3463,7 +3554,8 @@ int rfr_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, un
 
 * Author:     kevin 2014-03-19
 ******************************************************************/
-int rfw_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int rfw_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int i;
     u32 Addr, Num;
@@ -3485,7 +3577,8 @@ int rfw_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, un
     return 0;
 }
 
-int flsr_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int flsr_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     u32 addr, len, ret = 0;
     u8 buff[THIRTY + TWO];
@@ -3509,7 +3602,8 @@ int flsr_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, u
     return 0;
 }
 
-int flsw_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int flsw_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     u32 addr, num, data, ret, i;
     u8 buff[THIRTY + TWO];
@@ -3540,7 +3634,8 @@ int flsw_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, u
 
 * Author:     kevin 2014-03-12
 ******************************************************************/
-int txg_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int txg_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     u8* tx_gain = ieee80211_get_tx_gain();
     if (set_opt) {
@@ -3565,14 +3660,14 @@ int txg_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, un
 
 * Author:     
 ******************************************************************/
-int txgi_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int txgi_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     u8* tx_gain = ieee80211_get_tx_gain();
     int i = 0;
     int j = 0;
 
-    const unsigned char rf_txgainmap[] =
-    {
+    const unsigned char rf_txgainmap[] = {
         0x52, 0x54,  0x20, 0x24, 0x26, 0x60, 0x62, 0x64, 0x70, 0x72, 0x74, 0x76, 0x78, 0x7A, 0x38, 0x3A, /*for NC*/
         0x10, 0x12, 0x50, 0x52, 0x54, 0x20, 0x24, 0x26, 0x60, 0x62, 0x64, 0x70, 0x72, 0x74, 0x76, 0x78,
         0x7A, 0x7C, 0x7E, 0x38, 0x3A,
@@ -3603,7 +3698,8 @@ int txgi_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, u
 }
 
 
-int txg_rate_set_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int txg_rate_set_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     u8* tx_gain = ieee80211_get_tx_gain();
     if (set_opt) {
@@ -3615,7 +3711,8 @@ int txg_rate_set_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION
     return 0;
 }
 
-int txg_rate_get_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int txg_rate_get_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, 
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     u8* tx_gain = ieee80211_get_tx_gain();
     cmdrsp->txgr.tx_rate = cmd->txgr.tx_rate;
@@ -3625,7 +3722,8 @@ int txg_rate_get_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION
     return 0;
 }
 
-int mac_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int mac_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     if (set_opt) {
         if (cmd->mac.length > (TEN + TWO)) {
@@ -3641,7 +3739,8 @@ int mac_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, un
     return 0;
 }
 
-int hwv_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int hwv_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     tls_cmd_get_ver((struct tls_cmd_ver_t *)&cmdrsp->ver);
     return 0;
@@ -3657,7 +3756,8 @@ int hwv_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, un
 
 * Author:     kevin 2014-03-17
 ******************************************************************/
-int spif_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int spif_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     return 0;
 }
@@ -3687,7 +3787,8 @@ static void atcmd_lpinit(void)
 
 * Author:     kevin 2014-03-12
 ******************************************************************/
-int lpchl_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int lpchl_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     if ((cmd->lpchl.channel < 1) || (cmd->lpchl.channel > (TEN + FOUR))) {
         TLS_DBGPRT_INFO("kevin params err! %x\r\n", cmd->lpchl.channel);
@@ -3723,7 +3824,8 @@ int lpchl_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, 
                   [gimode],      1: mac_txbd->ctrl4 |= (1 << 19)
                   [timedelay]    包间隔时间，单位微妙，16进制
 ******************************************************************/
-int lptstr_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int lptstr_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     TLS_DBGPRT_INFO("tempcomp = 0x%x, PacketCount = 0x%x, PsduLen = 0x%x, TxGain = 0x%x, DataRate = 0x%x"
             "rifs:0x%x,greenfield:0x%x, gimode:0x%x \r\n",
@@ -3737,7 +3839,8 @@ int lptstr_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
     return 0;
 }
 
-int tls_lptperiod_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int tls_lptperiod_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     if (set_opt) {
         tls_set_tx_litepoint_period(cmd->rxsin.rxlen);
@@ -3755,7 +3858,8 @@ int tls_lptperiod_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNIO
             
 * Author:     kevin 2014-03-13
 ******************************************************************/
-int lptstp_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int lptstp_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     tls_txrx_litepoint_test_stop();
     return 0;
@@ -3771,7 +3875,8 @@ int lptstp_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
             
 * Author:     kevin 2014-03-13
 ******************************************************************/
-int lptstt_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int lptstt_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     return 0;
 }
@@ -3786,7 +3891,8 @@ int lptstt_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
             
 * Author:     kevin 2014-03-13
 ******************************************************************/
-int lprstr_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int lprstr_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     if ((cmd->lpchl.channel < 1) || (cmd->lpchl.channel > (TEN + FOUR))) {
         TLS_DBGPRT_INFO("Channel = 0x%x \r\n", cmd->lpchl.channel);
@@ -3807,7 +3913,8 @@ int lprstr_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
             
 * Author:     kevin 2014-03-13
 ******************************************************************/
-int lprstp_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int lprstp_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     tls_txrx_litepoint_test_stop();
     return 0;
@@ -3823,7 +3930,8 @@ int lprstp_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
             
 * Author:     kevin 2014-03-13
 ******************************************************************/
-int lprstt_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int lprstt_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     return 0;
 }
@@ -3839,7 +3947,8 @@ int lprstt_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
 * Author:     kevin 2014-03-14
 ******************************************************************/
 u8 gulCalFlag = 0;
-int lppstr_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int lppstr_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     return 0;
 }
@@ -3854,7 +3963,8 @@ int lppstr_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
             
 * Author:     kevin 2014-03-14
 ******************************************************************/
-int lppstp_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int lppstp_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     return 0;
 }
@@ -3870,7 +3980,8 @@ int lppstp_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
             
 * Author:     kevin 2014-03-14
 ******************************************************************/
-int lprfps_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int lprfps_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     return 0;
 }
@@ -3886,7 +3997,8 @@ int lprfps_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
             
 * Author:     kevin 2014-03-14
 ******************************************************************/
-int lpchrs_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int lpchrs_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     return lpchl_proc(set_opt, update_flash, cmd, cmdrsp);
 }
@@ -3914,7 +4026,8 @@ int lpchrs_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
             
 * Author:     kevin 2014-03-14
 ******************************************************************/
-int lptbd_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int lptbd_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     return lptstr_proc(set_opt, update_flash, cmd, cmdrsp);
 }
@@ -3929,7 +4042,8 @@ int lptbd_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, 
             
 * Author:     kevin 2014-03-14
 ******************************************************************/
-int lpstpt_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int lpstpt_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     return lptstp_proc(set_opt, update_flash, cmd, cmdrsp);
 }
@@ -3944,7 +4058,8 @@ int lpstpt_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
             
 * Author:     kevin 2014-03-14
 ******************************************************************/
-int lpchlr_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int lpchlr_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     return lprstr_proc(set_opt, update_flash, cmd, cmdrsp);
 }
@@ -3959,7 +4074,8 @@ int lpchlr_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
             
 * Author:     kevin 2014-03-14
 ******************************************************************/
-int lpstpr_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int lpstpr_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     return lprstp_proc(set_opt, update_flash, cmd, cmdrsp);
 }
@@ -3974,7 +4090,8 @@ int lpstpr_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
             
 * Author:     kevin 2014-03-14
 ******************************************************************/
-int lpragc_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int lpragc_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     return 0;
 }
@@ -3989,13 +4106,15 @@ int lpragc_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
             
 * Author:     kevin 2014-03-14
 ******************************************************************/
-int lprsr_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int lprsr_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     return 0;
 }
 
 extern int tls_tx_wave_start(u32 freq, u32 dividend);
-int tls_tx_sin(u8 set_opt, u8 update_flah, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int tls_tx_sin(u8 set_opt, u8 update_flah, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret = -1;
     ret = tls_tx_wave_start(cmd->width.freq, cmd->width.dividend);
@@ -4004,7 +4123,8 @@ int tls_tx_sin(u8 set_opt, u8 update_flah, union HOSTIF_CMD_PARAMS_UNION *cmd, u
 }
 
 extern int tls_rx_data_from_adc(u32 datalen, char showtouart);
-int tls_rx_wave(u8 set_opt, u8 update_flah, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int tls_rx_wave(u8 set_opt, u8 update_flah, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret = -1;
     ret = tls_rx_data_from_adc(cmd->rxsin.rxlen, cmd->rxsin.isprint);
@@ -4013,7 +4133,8 @@ int tls_rx_wave(u8 set_opt, u8 update_flah, union HOSTIF_CMD_PARAMS_UNION *cmd, 
 }
 
 
-int tls_tx_lo_proc(u8 set_opt, u8 update_flah, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int tls_tx_lo_proc(u8 set_opt, u8 update_flah, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret = -1;
 
@@ -4027,7 +4148,8 @@ int tls_tx_lo_proc(u8 set_opt, u8 update_flah, union HOSTIF_CMD_PARAMS_UNION *cm
 }
 
 
-int tls_tx_iq_mismatch_proc(u8 set_opt, u8 update_flah, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int tls_tx_iq_mismatch_proc(u8 set_opt, u8 update_flah, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret = -1;
 
@@ -4042,7 +4164,8 @@ int tls_tx_iq_mismatch_proc(u8 set_opt, u8 update_flah, union HOSTIF_CMD_PARAMS_
     return ret;
 }
 
-int tls_freq_error_proc(u8 set_opt, u8 update_flah, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int tls_freq_error_proc(u8 set_opt, u8 update_flah, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret = -1;
 
@@ -4055,7 +4178,8 @@ int tls_freq_error_proc(u8 set_opt, u8 update_flah, union HOSTIF_CMD_PARAMS_UNIO
     return ret;
 }
 
-int tls_rf_vcg_ctrl_proc(u8 set_opt, u8 update_flah, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int tls_rf_vcg_ctrl_proc(u8 set_opt, u8 update_flah, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     return;
 }
@@ -4081,7 +4205,8 @@ TCP TX: AT+THT=Cc,192.168.1.100, TCP, -l=1024,-t=10,-i=1
 * Argument:    
             
 ******************************************************************/
-int tht_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int tht_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret = -1;
     ret = tht_start_iperf_test(((struct tls_atcmd_token_t *)cmd->tht.tok)->arg);
@@ -4120,7 +4245,8 @@ static int ping_parse_param(struct ping_param *para,
     AT+PING=HOST,INTERVAL(ms),T(0|1),START(1)
     AT+PING=HOST,INTERVAL(ms),T(0|1),STOP(0)
 */
-static int ping_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+static int ping_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret = -1;
     struct ping_param para;
@@ -4179,7 +4305,8 @@ Step1:     AT+WWPS=start_pbc
 
 */
 #if TLS_CONFIG_WPS
-int wwps_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int wwps_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     struct tls_param_wps tmp_wps;
     int err=0;
@@ -4264,7 +4391,7 @@ s32 tls_uart_bps_set(u8 portNum, u32 bdrate)
     reg_addr = HR_UART0_BAUD_RATE_CTRL + portNum * 0x200;
     tls_sys_clk_get(&sysclk);
     val = (sysclk.apbclk * ONE_MILLION / ((TEN + SIX) * bdrate) - 1) |
-    (((sysclk.apbclk * ONE_MILLION % (bdrate * (TEN + SIX))) * (TEN + SIX) / (bdrate * (TEN + SIX))) << (TEN + SIX));
+          (((sysclk.apbclk * ONE_MILLION % (bdrate * (TEN + SIX))) * (TEN + SIX) / (bdrate * (TEN + SIX))) << (TEN + SIX));
 
     tls_reg_write32(reg_addr, val);
 
@@ -4454,7 +4581,8 @@ int bt_test_mode_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION
     return (ret == TLS_BT_STATUS_SUCCESS) ? 0 : -CMD_ERR_OPS;
 }
 
-int bt_mac_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int bt_mac_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     int ret;
     
@@ -4469,12 +4597,14 @@ int bt_mac_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
     return ret;
 }
 
-int bt_name_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int bt_name_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     return;
 }
 
-int bt_rf_mode_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int bt_rf_mode_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     tls_bt_status_t ret = TLS_BT_STATUS_SUCCESS;
     tls_rf_bt_mode(cmd->bt.cmd);
@@ -4483,7 +4613,8 @@ int bt_rf_mode_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *
 
 #if (WM_BTA_AV_SINK_INCLUDED == CFG_ON)
 
-int bt_audio_sink_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int bt_audio_sink_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     tls_bt_status_t ret = TLS_BT_STATUS_SUCCESS;
 
@@ -4498,7 +4629,8 @@ int bt_audio_sink_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNIO
 
 #if (WM_BTA_HFP_HSP_INCLUDED == CFG_ON)
 
-int bt_hfp_client_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int bt_hfp_client_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     tls_bt_status_t ret = TLS_BT_STATUS_SUCCESS;
 
@@ -4510,7 +4642,8 @@ int bt_hfp_client_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNIO
     return (ret == TLS_BT_STATUS_SUCCESS) ? 0 : -CMD_ERR_OPS;
 }
 
-int bt_dial_up_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int bt_dial_up_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     tls_bt_status_t ret = TLS_BT_STATUS_FAIL;
 
@@ -4522,7 +4655,8 @@ int bt_dial_up_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *
 #endif
 
 #if (WM_BTA_SPPC_INCLUDED == CFG_ON)
-int bt_spp_client_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int bt_spp_client_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     tls_bt_status_t ret = TLS_BT_STATUS_SUCCESS;
 
@@ -4537,7 +4671,8 @@ int bt_spp_client_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNIO
 
 #if (WM_BTA_SPPS_INCLUDED == CFG_ON)
 
-int bt_spp_server_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int bt_spp_server_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     tls_bt_status_t ret = TLS_BT_STATUS_SUCCESS;
 
@@ -4552,7 +4687,8 @@ int bt_spp_server_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNIO
 
 #if (WM_BT_INCLUDED == CFG_ON)
 
-int bt_scan_mode_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int bt_scan_mode_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     tls_bt_status_t ret = TLS_BT_STATUS_SUCCESS;
     ret = demo_bt_scan_mode(cmd->bt.cmd);
@@ -4560,7 +4696,8 @@ int bt_scan_mode_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION
     return (ret == TLS_BT_STATUS_SUCCESS) ? 0 : -CMD_ERR_OPS;
 }
 
-int bt_inquiry_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int bt_inquiry_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     tls_bt_status_t ret = TLS_BT_STATUS_SUCCESS;
     ret = demo_bt_inquiry(cmd->bt.cmd);
@@ -4642,7 +4779,8 @@ static u8 get_valid_adv_length_and_name(uint8_t *ptr, uint8_t *pname)
     return ret;
 }
 
-int ble_read_rssi_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int ble_read_rssi_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     tls_bt_status_t ret;
 #if (WM_BLE_INCLUDED == CFG_ON)
@@ -4669,37 +4807,44 @@ int ble_read_rssi_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNIO
     return (ret == TLS_BT_STATUS_SUCCESS) ? 0 : -CMD_ERR_OPS;
 }
 
-int ble_demo_send_indicate(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int ble_demo_send_indicate(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     return;
 }
 
-int ble_demo_scan_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int ble_demo_scan_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     return;
 }
 
-int ble_scan_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int ble_scan_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     return;
 }
 
-int ble_demo_server_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int ble_demo_server_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     return;
 }
 
-int ble_demo_client_multi_conn_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int ble_demo_client_multi_conn_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     return;
 }
 
-int ble_demo_client_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int ble_demo_client_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     return;
 }
 
-int ble_scan_chnl_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int ble_scan_chnl_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     tls_bt_status_t ret;
 
@@ -4708,7 +4853,8 @@ int ble_scan_chnl_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNIO
     return (ret == TLS_BT_STATUS_SUCCESS) ? 0 : -CMD_ERR_OPS;
 }
 
-int ble_uart_mode_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int ble_uart_mode_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     return;
 }
@@ -4759,7 +4905,8 @@ void ble_gatt_evt_cback(tls_ble_evt_t event, tls_ble_msg_t *msg)
             break;
         case WM_BLE_SE_ADD_CHAR_DESCR_EVT:
             len = sprintf(buf, "+OK=%hhu,%hhu,%hhu,%hhu\r\n", msg->ser_add_char_descr.status,
-                          msg->ser_add_char_descr.server_if, msg->ser_add_char_descr.service_id, msg->ser_add_char_descr.attr_id);
+                          msg->ser_add_char_descr.server_if, msg->ser_add_char_descr.service_id,
+                          msg->ser_add_char_descr.attr_id);
             ret = tls_hostif_process_cmdrsp(hostif_type, buf, len);
             break;
         case WM_BLE_SE_START_EVT:
@@ -4830,8 +4977,8 @@ void ble_gatt_evt_cback(tls_ble_evt_t event, tls_ble_msg_t *msg)
             passive_response = 1;
             break;
         case WM_BLE_SE_WRITE_EVT:
-            len = sprintf(buf, "+OK=0,%hu,%hhu,%hhu,%hhu,", msg->ser_write.conn_id,msg->ser_write.handle, msg->ser_write.trans_id,
-                          msg->ser_write.len);
+            len = sprintf(buf, "+OK=0,%hu,%hhu,%hhu,%hhu,", msg->ser_write.conn_id,msg->ser_write.handle,
+                          msg->ser_write.trans_id, msg->ser_write.len);
 
             tmp_len = MIN(TWO_HUNDRED_AND_FIFTY_SIX, msg->ser_write.len);
             for(index = 0; index < tmp_len; index++) {
@@ -4867,7 +5014,8 @@ void ble_gatt_evt_cback(tls_ble_evt_t event, tls_ble_msg_t *msg)
             /**Note, if w800 triger the disconnect event, status and reason always 0;
             *  otherwise, status is 0, reason indicates the actual disconnect reason
             */
-            len = sprintf(buf, "+OK=%hhu,%hu,%hhu,%hhu\r\n",0, msg->cli_close.client_if, msg->cli_close.conn_id, msg->cli_close.reason);
+            len = sprintf(buf, "+OK=%hhu,%hu,%hhu,%hhu\r\n",0, msg->cli_close.client_if, msg->cli_close.conn_id,
+                          msg->cli_close.reason);
             ret = tls_hostif_process_cmdrsp(hostif_type, buf, len);
             if (hif->uart_atcmd_bits & (1 << UART_ATCMD_BIT_ACTIVE_BT)) {
                 passive_response = 0;
@@ -4886,9 +5034,11 @@ void ble_gatt_evt_cback(tls_ble_evt_t event, tls_ble_msg_t *msg)
                 if (msg->cli_db.db) {
                     memcpy(&uuid, msg->cli_db.db->uuid.uu + (TEN + TWO), TWO);
                     if (msg->cli_db.db->type == 0) {
-                        len += sprintf(buf + len, "0x%04x,T=0x%02x,HDL=%hhu,PROP=0x%02x \r\n",uuid, msg->cli_db.db->type, msg->cli_db.db->attribute_handle, msg->cli_db.db->properties);
+                        len += sprintf(buf + len, "0x%04x,T=0x%02x,HDL=%hhu,PROP=0x%02x \r\n",uuid,
+                                       msg->cli_db.db->type, msg->cli_db.db->attribute_handle, msg->cli_db.db->properties);
                     } else {
-                        len += sprintf(buf + len, "\t0x%04x,T=0x%02x,HDL=%hhu,PROP=0x%02x \r\n",uuid, msg->cli_db.db->type, msg->cli_db.db->attribute_handle, msg->cli_db.db->properties);
+                        len += sprintf(buf + len, "\t0x%04x,T=0x%02x,HDL=%hhu,PROP=0x%02x \r\n",uuid,
+                                       msg->cli_db.db->type, msg->cli_db.db->attribute_handle, msg->cli_db.db->properties);
                     }
                     msg->cli_db.db++;
                 }
@@ -4896,7 +5046,8 @@ void ble_gatt_evt_cback(tls_ble_evt_t event, tls_ble_msg_t *msg)
             ret = tls_hostif_process_cmdrsp(hostif_type, buf, len);
             break;
         case WM_BLE_CL_REG_NOTIFY_EVT:
-            len = sprintf(buf, "+OK=%hhu,%hu,%hhu\r\n", msg->cli_reg_notify.status, msg->cli_reg_notify.conn_id, msg->cli_reg_notify.handle);
+            len = sprintf(buf, "+OK=%hhu,%hu,%hhu\r\n", msg->cli_reg_notify.status,
+                          msg->cli_reg_notify.conn_id, msg->cli_reg_notify.handle);
             ret = tls_hostif_process_cmdrsp(hostif_type, buf, len);
             break;
         case WM_BLE_CL_READ_CHAR_EVT:
@@ -4916,7 +5067,8 @@ void ble_gatt_evt_cback(tls_ble_evt_t event, tls_ble_msg_t *msg)
             ret = tls_hostif_process_cmdrsp(hostif_type, buf, len);
             break;
         case WM_BLE_CL_DEREG_NOTIFY_EVT:
-            len = sprintf(buf, "+OK=%hhu,%hhu,%hu\r\n", msg->cli_reg_notify.status, msg->cli_reg_notify.handle, msg->cli_reg_notify.conn_id);
+            len = sprintf(buf, "+OK=%hhu,%hhu,%hu\r\n", msg->cli_reg_notify.status,
+                          msg->cli_reg_notify.handle, msg->cli_reg_notify.conn_id);
             ret = tls_hostif_process_cmdrsp(hostif_type, buf, len);
             break;
         case WM_BLE_CL_DEREGISTER_EVT:
@@ -4930,7 +5082,8 @@ void ble_gatt_evt_cback(tls_ble_evt_t event, tls_ble_msg_t *msg)
             }
             break;
         case WM_BLE_CL_CFG_MTU_EVT:
-            len = sprintf(buf, "+OK=%hhu,%hu,%hu\r\n", msg->cli_cfg_mtu.status, msg->cli_cfg_mtu.conn_id, msg->cli_cfg_mtu.mtu);
+            len = sprintf(buf, "+OK=%hhu,%hu,%hu\r\n", msg->cli_cfg_mtu.status, 
+                          msg->cli_cfg_mtu.conn_id, msg->cli_cfg_mtu.mtu);
             ret = tls_hostif_process_cmdrsp(hostif_type, buf, len);
             if (hif->uart_atcmd_bits & (1 << UART_ATCMD_BIT_ACTIVE_BT)) {
                 passive_response = 0;
@@ -4954,7 +5107,8 @@ void ble_gatt_evt_cback(tls_ble_evt_t event, tls_ble_msg_t *msg)
     tls_os_sem_release(hif->uart_atcmd_sem);
 }
 
-int ble_create_server_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int ble_create_server_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     tls_bt_status_t ret;
     struct tls_hostif *hif = tls_get_hostif();
@@ -4973,7 +5127,8 @@ end_tag:
     return (ret == TLS_BT_STATUS_SUCCESS) ? 0 : -CMD_ERR_OPS;
 }
 
-int ble_add_service_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int ble_add_service_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     tls_bt_status_t ret;
     struct tls_hostif *hif = tls_get_hostif();
@@ -4986,7 +5141,8 @@ int ble_add_service_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UN
     hif->last_bt_cmd_mode = cmd->blesc.cmd_mode;
     hif->uart_atcmd_bits &= ~(1 << UART_ATCMD_BIT_BT);
 
-    ret = tls_ble_server_add_service(cmd->blesc.server_if, cmd->blesc.inst_id, 1, app_uuid16_to_uuid128(cmd->blesc.uuid), cmd->blesc.handles);
+    ret = tls_ble_server_add_service(cmd->blesc.server_if, cmd->blesc.inst_id, 1,
+                                     app_uuid16_to_uuid128(cmd->blesc.uuid), cmd->blesc.handles);
     if (ret != TLS_BT_STATUS_SUCCESS) {
         goto end_tag;
     }
@@ -4998,7 +5154,8 @@ end_tag:
 
 }
 
-int ble_add_characteristic_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int ble_add_characteristic_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     tls_bt_status_t ret;
     struct tls_hostif *hif = tls_get_hostif();
@@ -5019,7 +5176,8 @@ end_tag:
     return (ret == TLS_BT_STATUS_SUCCESS) ? 0 : -CMD_ERR_OPS;
 }
 
-int ble_add_descript_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int ble_add_descript_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     tls_bt_status_t ret;
     struct tls_hostif *hif = tls_get_hostif();
@@ -5039,7 +5197,8 @@ end_tag:
     return (ret == TLS_BT_STATUS_SUCCESS) ? 0 : -CMD_ERR_OPS;
 }
 
-int ble_start_service_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int ble_start_service_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     tls_bt_status_t ret;
     struct tls_hostif *hif = tls_get_hostif();
@@ -5058,7 +5217,8 @@ end_tag:
     return (ret == TLS_BT_STATUS_SUCCESS) ? 0 : -CMD_ERR_OPS;
 }
 
-int ble_stop_service_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int ble_stop_service_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     tls_bt_status_t ret;
     struct tls_hostif *hif = tls_get_hostif();
@@ -5078,7 +5238,8 @@ end_tag:
     return (ret == TLS_BT_STATUS_SUCCESS) ? 0 : -CMD_ERR_OPS;
 }
 
-int ble_del_service_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int ble_del_service_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     tls_bt_status_t ret;
     struct tls_hostif *hif = tls_get_hostif();
@@ -5098,7 +5259,8 @@ end_tag:
     return (ret == TLS_BT_STATUS_SUCCESS) ? 0 : -CMD_ERR_OPS;
 }
 
-int ble_destory_server_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int ble_destory_server_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     tls_bt_status_t ret;
     struct tls_hostif *hif = tls_get_hostif();
@@ -5118,7 +5280,8 @@ end_tag:
     return (ret == TLS_BT_STATUS_SUCCESS) ? 0 : -CMD_ERR_OPS;
 }
 
-int ble_server_connect_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int ble_server_connect_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     tls_bt_status_t ret;
     tls_bt_addr_t addr;
@@ -5143,7 +5306,8 @@ end_tag:
     return (ret == TLS_BT_STATUS_SUCCESS) ? 0 : -CMD_ERR_OPS;
 }
 
-int ble_server_disconnect_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int ble_server_disconnect_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     tls_bt_status_t ret;
     tls_bt_addr_t addr;
@@ -5165,7 +5329,8 @@ end_tag:
     return (ret == TLS_BT_STATUS_SUCCESS) ? 0 : -CMD_ERR_OPS;
 }
 
-int ble_server_send_indication_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int ble_server_send_indication_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     tls_bt_status_t ret;
     struct tls_hostif *hif = tls_get_hostif();
@@ -5185,7 +5350,8 @@ end_tag:
     return (ret == TLS_BT_STATUS_SUCCESS) ? 0 : -CMD_ERR_OPS;
 }
 
-int ble_server_send_resp_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int ble_server_send_resp_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     tls_bt_status_t ret;
     struct tls_hostif *hif = tls_get_hostif();
@@ -5205,7 +5371,8 @@ end_tag:
     return (ret == TLS_BT_STATUS_SUCCESS) ? 0 : -CMD_ERR_OPS;
 }
 
-int ble_client_create_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int ble_client_create_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     tls_bt_status_t ret;
     struct tls_hostif *hif = tls_get_hostif();
@@ -5224,7 +5391,8 @@ end_tag:
     return (ret == TLS_BT_STATUS_SUCCESS) ? 0 : -CMD_ERR_OPS;
 }
 
-int ble_client_connect_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int ble_client_connect_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     tls_bt_status_t ret;
     tls_bt_addr_t addr;
@@ -5246,7 +5414,8 @@ end_tag:
     return (ret == TLS_BT_STATUS_SUCCESS) ? 0 : -CMD_ERR_OPS;
 }
 
-int ble_client_scan_service_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int ble_client_scan_service_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     tls_bt_status_t ret;
     struct tls_hostif *hif = tls_get_hostif();
@@ -5265,7 +5434,8 @@ end_tag:
     return (ret == TLS_BT_STATUS_SUCCESS) ? 0 : -CMD_ERR_OPS;
 }
 
-int ble_client_get_gatt_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int ble_client_get_gatt_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     tls_bt_status_t ret;
     struct tls_hostif *hif = tls_get_hostif();
@@ -5284,7 +5454,8 @@ end_tag:
     return (ret == TLS_BT_STATUS_SUCCESS) ? 0 : -CMD_ERR_OPS;
 }
 
-int ble_client_reg_notify_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int ble_client_reg_notify_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     tls_bt_status_t ret;
     struct tls_hostif *hif = tls_get_hostif();
@@ -5304,7 +5475,8 @@ end_tag:
     return (ret == TLS_BT_STATUS_SUCCESS) ? 0 : -CMD_ERR_OPS;
 }
 
-int ble_client_dereg_notify_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int ble_client_dereg_notify_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     tls_bt_status_t ret;
     struct tls_hostif *hif = tls_get_hostif();
@@ -5324,7 +5496,8 @@ end_tag:
     return (ret == TLS_BT_STATUS_SUCCESS) ? 0 : -CMD_ERR_OPS;
 }
 
-int ble_client_access_characteristic_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int ble_client_access_characteristic_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     tls_bt_status_t ret;
     struct tls_hostif *hif = tls_get_hostif();
@@ -5350,7 +5523,8 @@ end_tag:
     return (ret == TLS_BT_STATUS_SUCCESS) ? 0 : -CMD_ERR_OPS;
 }
 
-int ble_client_disconnect_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int ble_client_disconnect_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     tls_bt_status_t ret;
     struct tls_hostif *hif = tls_get_hostif();
@@ -5369,7 +5543,8 @@ end_tag:
     return (ret == TLS_BT_STATUS_SUCCESS) ? 0 : -CMD_ERR_OPS;
 }
 
-int ble_client_destory_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int ble_client_destory_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     tls_bt_status_t ret;
     struct tls_hostif *hif = tls_get_hostif();
@@ -5389,7 +5564,8 @@ end_tag:
     return (ret == TLS_BT_STATUS_SUCCESS) ? 0 : -CMD_ERR_OPS;
 }
 
-int ble_client_cfg_mtu_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int ble_client_cfg_mtu_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     tls_bt_status_t ret;
     struct tls_hostif *hif = tls_get_hostif();
@@ -5410,7 +5586,8 @@ end_tag:
 
 #endif
 
-int cpu_clock_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int cpu_clock_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     u8 div = (u8)cmd->width.freq;
     if (set_opt) {
@@ -5426,7 +5603,8 @@ int cpu_clock_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *c
     return 0;
 }
 
-int set_token_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
+int set_token_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     return;
 }
@@ -5571,7 +5749,9 @@ static struct tls_cmd_t  at_ri_cmd_tbl[] = {
     { "BTSLEEP", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 1, 0, bt_sleep_proc},
     { "BLETPS", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, TWO, 0, ble_tx_power_set_proc},
     { "BLETPG", HOSTIF_CMD_NOP, ATCMD_OP_NULL | ATCMD_OP_QU | RICMD_OP_GET, 1, 0, ble_tx_power_get_proc},
-    { "BTTXPOW", HOSTIF_CMD_NOP, ATCMD_OP_NULL | ATCMD_OP_EQ | ATCMD_OP_EP | ATCMD_OP_QU | RICMD_OP_GET | RICMD_OP_SET, TWO, 0, bt_tx_power_proc},
+    { "BTTXPOW", HOSTIF_CMD_NOP, ATCMD_OP_NULL | ATCMD_OP_EQ | ATCMD_OP_EP | ATCMD_OP_QU
+    | RICMD_OP_GET | RICMD_OP_SET, TWO, 0, bt_tx_power_proc},
+
     { "BTTEST", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 1, 0, bt_test_mode_proc},
     { "BTRF", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 1, 0, bt_rf_mode_proc},
 #if (WM_BTA_AV_SINK_INCLUDED == CFG_ON)
@@ -5597,7 +5777,8 @@ static struct tls_cmd_t  at_ri_cmd_tbl[] = {
     { "BLEADV", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 1, 0, ble_adv_proc},
     { "BLEADATA", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, TWO, 0, ble_adv_data_proc},
     { "BLESCRSP", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, TWO, 0, ble_scan_rsp_proc},
-    { "BLEAPRM", HOSTIF_CMD_NOP, ATCMD_OP_NULL | ATCMD_OP_EQ | ATCMD_OP_EP | ATCMD_OP_QU | RICMD_OP_SET | RICMD_OP_SET, FIVE, 0, ble_adv_param_proc},
+    { "BLEAPRM", HOSTIF_CMD_NOP, ATCMD_OP_NULL | ATCMD_OP_EQ | ATCMD_OP_EP | ATCMD_OP_QU | RICMD_OP_SET
+    | RICMD_OP_SET, FIVE, 0, ble_adv_param_proc},
     { "BLESCPRM", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, THREE, 0, ble_scan_param_proc},
     { "BLESFLT", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 1, 0, ble_scan_filter_proc},
     { "BLESCAN", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 1, 0, ble_scan_proc},
@@ -5641,7 +5822,8 @@ static struct tls_cmd_t  at_ri_cmd_tbl[] = {
     { NULL, HOSTIF_CMD_NOP, 0, 0 , 0, NULL},
 };
 
-int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD_PARAMS_UNION *cmd) {
+int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD_PARAMS_UNION *cmd)
+{
     if (strcmp("QMAC", at_name) == 0 || strcmp("QVER", at_name) == 0 || strcmp("&HWV", at_name) == 0 ||
        strcmp("&LPTSTP", at_name) == 0 || strcmp("&LPTSTT", at_name) == 0 || strcmp("&LPRSTP", at_name) == 0 ||
        strcmp("&LPRSTT", at_name) == 0 || strcmp("&LPRFPS", at_name) == 0 || strcmp("&LPSTPT", at_name) == 0 ||
@@ -5654,9 +5836,8 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
 #endif
        ) {
         ;
-    }
 #if TLS_CONFIG_AT_CMD
-    else if ((strcmp("Z", at_name) == 0) || (strcmp("E", at_name) == 0) || (strcmp("RSTF", at_name) == 0) ||
+    } else if ((strcmp("Z", at_name) == 0) || (strcmp("E", at_name) == 0) || (strcmp("RSTF", at_name) == 0) ||
         (strcmp("PMTF", at_name) == 0) || (strcmp("IOC", at_name) == 0)  ||
         (strcmp("LKSTT", at_name) == 0) || (strcmp("CNTPARAM", at_name) == 0)
 #if (WM_BLE_INCLUDED == CFG_ON) || (WM_BT_INCLUDED == CFG_ON)
@@ -5710,8 +5891,7 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
         cmd->scanparam.scantimes = 0;
         cmd->scanparam.chlist = 0;
 
-        switch(tok->arg_found)
-        {
+        switch(tok->arg_found) {
             case THREE:
                 ret = string_to_uint(tok->arg[TWO], &value);
                 if (ret)
@@ -5738,7 +5918,7 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
 #if TLS_CONFIG_AP
               || strcmp("APSSID", at_name) == 0
 #endif
-             ) {
+    ) {
         int ret=0;
         u8 *tmpssid;
         if (tok->arg_found > 1)
@@ -5770,7 +5950,7 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
 #if TLS_CONFIG_AP
     ||(strcmp("APENCRY", at_name) == 0)
 #endif
-             ) {
+    ) {
         int ret = 0;
         u32 param;
         if (tok->arg_found > 1)
@@ -5821,7 +6001,8 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
             if (ret)
                 return -CMD_ERR_INV_PARAMS;
             cmd->bssid.enable = (u8)params;
-            if (((cmd->bssid.enable == 0) && (tok->arg_found == TWO)) || ((cmd->bssid.enable == 1) && (tok->arg_found == 1)))
+            if (((cmd->bssid.enable == 0) && (tok->arg_found == TWO)) ||
+                ((cmd->bssid.enable == 1) && (tok->arg_found == 1)))
                     return -CMD_ERR_INV_PARAMS;
             if (tok->arg_found == TWO) {
                 len = tok->arg[TWO] - tok->arg[1] - 1;
@@ -5875,8 +6056,9 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
                 return -CMD_ERR_INV_PARAMS;
             cmd->channel_list.channellist = (u16)params;
         }
-    } else if(strcmp("WREG", at_name) == 0 || strcmp("ATLT", at_name) == 0 || strcmp("ATPT", at_name) == 0 ||
-             strcmp("ESPT", at_name) == 0
+    } else if(strcmp("WREG", at_name) == 0 || strcmp("ATLT", at_name) == 0
+             || strcmp("ATPT", at_name) == 0
+             || strcmp("ESPT", at_name) == 0
              || (strcmp("WLEAV", at_name) == 0)) {
         int ret;
         u32 params;
@@ -5918,9 +6100,8 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
             cmd->btctrl.level = (u8)params;
         }
         cmd->btctrl.cmd_mode = tok->cmd_mode;
-    }
 #if TLS_CONFIG_BT
-    else if (strcmp("BTTXPOW", at_name) == 0) {
+    } else if (strcmp("BTTXPOW", at_name) == 0) {
         int ret;
         u32 params;
         if (tok->arg_found > TWO)
@@ -5940,9 +6121,8 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
         if(tok->arg_found != 0)
             return -CMD_ERR_INV_PARAMS;
         cmd->bt.cmd_mode = tok->cmd_mode;
-    }
 #if (WM_BT_INCLUDED == CFG_ON)
-    else if ((strcmp("BTAVS", at_name) == 0)|| (strcmp("BTHFP", at_name) == 0)
+    } else if ((strcmp("BTAVS", at_name) == 0)|| (strcmp("BTHFP", at_name) == 0)
              || (strcmp("BTSPPS", at_name) == 0)|| (strcmp("BTSPPC", at_name) == 0)) {
         int ret = 0; 
         u32 param;
@@ -5979,12 +6159,11 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
         cmd->btname.len = strlen((char *)namestr);
         memcpy(cmd->btname.name, namestr, cmd->btname.len);
         cmd->btname.cmd_mode = tok->cmd_mode;
-    }
-
 #endif
-    else if (
+    } else if (
              (strcmp("BTSLEEP", at_name) == 0) || (strcmp("BTTEST", at_name) == 0)
-             || (strcmp("BLEDS", at_name) == 0)|| (strcmp("BLEDC", at_name) == 0)|| (strcmp("BLEDCMC", at_name) == 0)
+             || (strcmp("BLEDS", at_name) == 0) || (strcmp("BLEDC", at_name) == 0)
+             || (strcmp("BLEDCMC", at_name) == 0)
              || (strcmp("BLESSCM", at_name) == 0)
              || (strcmp("BTRF", at_name) == 0) ) {
         int ret = 0; 
@@ -6089,8 +6268,7 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
         }
         cmd->bleprm.channel_map = (u8)params;
         memset(cmd->bleprm.peer_addr, 0 , ETH_ALEN);
-        switch (tok->arg_found)
-        {
+        switch (tok->arg_found) {
             case EIGHT:
                 if (atcmd_filter_quotation(&tmpmac, (u8 *)tok->arg[SEVEN])) {
                     return -CMD_ERR_INV_PARAMS;
@@ -6492,7 +6670,7 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
         cmd->bleconn.cmd_mode = tok->cmd_mode;
     } else if(strcmp("&BTMAC", at_name) == 0) {
         u8 *tmpmac = NULL;
-        if (tok->arg_found == 1){
+        if (tok->arg_found == 1) {
             if (atcmd_filter_quotation(&tmpmac, (u8 *)tok->arg[0])) {
                 return -CMD_ERR_INV_PARAMS;
             }
@@ -6860,9 +7038,8 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
             }
             cmd->webs.portnum = (u16)params;
         }
-    }
 #if TLS_CONFIG_SOCKET_RAW || TLS_CONFIG_SOCKET_STD
-    else if ((strcmp("ENTM", at_name) == 0) || (strcmp("SKSRCIP", at_name) == 0)) {
+    } else if ((strcmp("ENTM", at_name) == 0) || (strcmp("SKSRCIP", at_name) == 0)) {
         ;
     } else if (strcmp("SKCT", at_name) == 0) {
         struct tls_cmd_socket_t socket;
@@ -7012,7 +7189,7 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
         if (tok->arg_found > 1) {
             return -CMD_ERR_INV_PARAMS;
         }
-        if (tok->arg_found == 1){
+        if (tok->arg_found == 1) {
             err = string_to_uint(tok->arg[0], &params);
             if (err) {
                 return -CMD_ERR_INV_PARAMS;
@@ -7026,10 +7203,9 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
         }
         atcmd_filter_quotation(&ipstr, (u8 *)tok->arg[0]);
         memcpy(cmd->skghbn.ipstr, ipstr, strlen((char *)ipstr));
-    }
 #endif
 #if TLS_CONFIG_HTTP_CLIENT_TASK
-    else if (strcmp("HTTPC", at_name) == 0) {
+    } else if (strcmp("HTTPC", at_name) == 0) {
         int ret, verb;
         u8 * uri;
         if (tok->arg_found != TWO && tok->arg_found != THREE) {
@@ -7065,10 +7241,9 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
         }
         cmd->httpc.url_len = strlen((char *)uri);
         cmd->httpc.url = uri;
-    }
 #endif
 #endif
-    else if (strcmp("&UPDM", at_name) == 0) {
+    } else if (strcmp("&UPDM", at_name) == 0) {
         int ret, mode;
         if (tok->arg_found != 1) {
             return -CMD_ERR_INV_PARAMS;
@@ -7361,7 +7536,8 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
             default:
                 break;
         }
-    } else if (strcmp("&LPRSTR", at_name) == 0 || strcmp("&LPCHRS", at_name) == 0 || strcmp("&LPCHLR", at_name) == 0) {
+    } else if (strcmp("&LPRSTR", at_name) == 0 || strcmp("&LPCHRS", at_name) == 0
+              || strcmp("&LPCHLR", at_name) == 0) {
         int ret;
         if ((tok->arg_found != 1) && (tok->arg_found != TWO)) {
             return -CMD_ERR_INV_PARAMS;
@@ -7472,15 +7648,13 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
                return -CMD_ERR_INV_PARAMS;
             }
         }
-    }
 #if TLS_CONFIG_WIFI_PERF_TEST
-    else if (strcmp("THT", at_name) == 0) {
+    } else if (strcmp("THT", at_name) == 0) {
         cmd->tht.tok = (u32 *)tok;
         return 0;
-    }
 #endif
 #if TLS_CONFIG_WPS 
-    else if (strcmp("WWPS", at_name) == 0) {
+    } else if (strcmp("WWPS", at_name) == 0) {
         if (tok->arg_found > TWO) {
             return -CMD_ERR_INV_PARAMS;
         }
@@ -7501,10 +7675,9 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
                 return -CMD_ERR_INV_PARAMS;
             }
         }
-    }
 #endif
 #if TLS_CONFIG_WIFI_PING_TEST
-    else if (strcmp("PING", at_name) == 0) {
+    } else if (strcmp("PING", at_name) == 0) {
         if (CMD_MODE_UART0_ATCMD == tok->cmd_mode) {
             cmd->ping.src = 0;
         } else {
@@ -7532,9 +7705,8 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
                 return -CMD_ERR_INV_PARAMS;
             }
         }
-    }
 #endif
-    else if (strcmp("SETTOKEN", at_name) == 0) {
+    } else if (strcmp("SETTOKEN", at_name) == 0) {
         int i,j;
         int count = 0;
 
@@ -7557,7 +7729,8 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
     return 0;
 }
 
-int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp, char *res_resp, u32 *res_len) {
+int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp,
+    char *res_resp, u32 *res_len) {
     if (strcmp("QMAC", at_name) == 0 || strcmp("&HWV", at_name) == 0
 #if TLS_CONFIG_AP
        || strcmp("APMAC", at_name) == 0
@@ -7573,9 +7746,8 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
         else {
             *res_len = sprintf(res_resp, "+OK=%s", cmdrsp->tem.offset);
         }
-    }
 #if TLS_CONFIG_AT_CMD
-    else if ((strcmp("Z", at_name) == 0) || (strcmp("E", at_name) == 0) || (strcmp("ENTS", at_name) == 0) ||
+    } else if ((strcmp("Z", at_name) == 0) || (strcmp("E", at_name) == 0) || (strcmp("ENTS", at_name) == 0) ||
         (strcmp("RSTF", at_name) == 0) || (strcmp("PMTF", at_name) == 0) || (strcmp("IOC", at_name) == 0) ||
         (strcmp("WLEAV", at_name) == 0) || (strcmp("AOLM", at_name) == 0) || (strcmp("DDNS", at_name) == 0) ||
         (strcmp("UPNP", at_name) == 0) || (strcmp("DNAME", at_name) == 0) || (strcmp("&DBG", at_name) == 0) ||
@@ -7583,12 +7755,16 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
 #if (WM_BLE_INCLUDED == CFG_ON || WM_BT_INCLUDED == CFG_ON || WM_NIMBLE_INCLUDED == CFG_ON)
         || (strcmp("BTSLEEP", at_name) == 0)
         || (strcmp("BLETPS", at_name) == 0) || (strcmp("BLESSCM", at_name) == 0) || (strcmp("BLESND", at_name) == 0)
-        || (strcmp("BTTEST", at_name) == 0)|| (strcmp("BLEDS", at_name) == 0)|| (strcmp("BLEDC", at_name) == 0) || (strcmp("BLEUM", at_name) == 0)
-        || (strcmp("BLEADV", at_name) == 0) || (strcmp("BLEADATA", at_name) == 0) || (strcmp("BLESCRSP", at_name) == 0)
-        || (strcmp("BLESCPRM", at_name) == 0) || (strcmp("BLESFLT", at_name) == 0) || (strcmp("BLESCAN", at_name) == 0)
-        || (strcmp("BTAVS", at_name) == 0)|| (strcmp("BTHFP", at_name) == 0)|| (strcmp("BTSPPS", at_name) == 0)|| (strcmp("BTSPPC", at_name) == 0)
-        || (strcmp("BTSCM", at_name) == 0) || (strcmp("BLEDMADV", at_name) == 0) || (strcmp("BLEDMSCAN", at_name) == 0) || (strcmp("BTRF", at_name) == 0)
-        ||(strcmp("BTINQUIRY", at_name) == 0)|| (strcmp("BLEDCMC", at_name) == 0)|| (strcmp("BLEHIDS", at_name) == 0)|| (strcmp("BLEHIDU", at_name) == 0)
+        || (strcmp("BTTEST", at_name) == 0)|| (strcmp("BLEDS", at_name) == 0)|| (strcmp("BLEDC", at_name) == 0)
+        || (strcmp("BLEUM", at_name) == 0) || (strcmp("BLEADV", at_name) == 0) || (strcmp("BLEADATA", at_name) == 0)
+        || (strcmp("BLESCRSP", at_name) == 0) || (strcmp("BLESCPRM", at_name) == 0)
+        || (strcmp("BLESFLT", at_name) == 0) || (strcmp("BLESCAN", at_name) == 0)
+        || (strcmp("BTAVS", at_name) == 0)|| (strcmp("BTHFP", at_name) == 0)
+        || (strcmp("BTSPPS", at_name) == 0)|| (strcmp("BTSPPC", at_name) == 0)
+        || (strcmp("BTSCM", at_name) == 0) || (strcmp("BLEDMADV", at_name) == 0)
+        || (strcmp("BLEDMSCAN", at_name) == 0) || (strcmp("BTRF", at_name) == 0)
+        ||(strcmp("BTINQUIRY", at_name) == 0)|| (strcmp("BLEDCMC", at_name) == 0)
+        || (strcmp("BLEHIDS", at_name) == 0)|| (strcmp("BLEHIDU", at_name) == 0)
 #endif
         ) {
         *res_len = atcmd_ok_resp(res_resp);
@@ -7693,7 +7869,8 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
                     *res_len += sprintf(res_resp + (*res_len), "%c", cmdrsp->cntparam_bssid_dis.ssid_key[i]);
                 }
                 *res_len += sprintf(res_resp + *res_len,",");
-                MEMCPY(res_resp + *res_len, cmdrsp->cntparam_bssid_dis.ssid_key + cmdrsp->cntparam_bssid_dis.ssid_len, cmdrsp->cntparam_bssid_dis.key_len);
+                MEMCPY(res_resp + *res_len, cmdrsp->cntparam_bssid_dis.ssid_key 
+                       + cmdrsp->cntparam_bssid_dis.ssid_len, cmdrsp->cntparam_bssid_dis.key_len);
                 *res_len += cmdrsp->cntparam_bssid_dis.key_len;
             }
         }
@@ -7740,9 +7917,8 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
                 cmdrsp->mac.addr[0], cmdrsp->mac.addr[1], cmdrsp->mac.addr[TWO],
                 cmdrsp->mac.addr[THREE], cmdrsp->mac.addr[FOUR], cmdrsp->mac.addr[FIVE]);
         }
-    }
  #if (WM_NIMBLE_INCLUDED == CFG_ON)
-    else if (strcmp("BTEN", at_name) == 0|| strcmp("BTDES", at_name) == 0 ) {
+    } else if (strcmp("BTEN", at_name) == 0|| strcmp("BTDES", at_name) == 0 ) {
         *res_len = atcmd_ok_resp(res_resp);
     } else if (strcmp("&BTNAME", at_name) == 0) {
         if (set_opt) {
@@ -7750,24 +7926,21 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
         } else {
             *res_len = sprintf(res_resp, "+OK=%s", cmdrsp->btname.name);
         }
-    }
-
  #else
-    else if (strcmp("BLECTSV", at_name) == 0 || strcmp("BLECCT", at_name) == 0|| strcmp("BTEN", at_name) == 0
-        || strcmp("BTDES", at_name) == 0  || (strcmp("BLEADDSC", at_name) == 0) 
+    } else if (strcmp("BLECTSV", at_name) == 0 || strcmp("BLECCT", at_name) == 0 || strcmp("BTEN", at_name) == 0
+        || strcmp("BTDES", at_name) == 0  || (strcmp("BLEADDSC", at_name) == 0)
         || (strcmp("BLEADDCH", at_name) == 0) || (strcmp("BLEADESC", at_name) == 0) ||(strcmp("BLESTTSC", at_name) == 0)
-        || (strcmp("BLESTPSC", at_name) == 0) || (strcmp("BLEDELSC", at_name) == 0)|| (strcmp("BLEDESSV", at_name) == 0)
-        || (strcmp("BLESVDIS", at_name) == 0) || (strcmp("BLESIND", at_name) == 0)||(strcmp("BLECMTU", at_name) == 0)
-        || (strcmp("BLESRSP", at_name) == 0) ||(strcmp("BLECDIS", at_name) == 0) ||(strcmp("BLESCONN", at_name) == 0)
+        || (strcmp("BLESTPSC", at_name) == 0) || (strcmp("BLEDELSC", at_name) == 0) || (strcmp("BLEDESSV", at_name) == 0)
+        || (strcmp("BLESVDIS", at_name) == 0) || (strcmp("BLESIND", at_name) == 0) || (strcmp("BLECMTU", at_name) == 0)
+        || (strcmp("BLESRSP", at_name) == 0) || (strcmp("BLECDIS", at_name) == 0) || (strcmp("BLESCONN", at_name) == 0)
         || (strcmp("BLECSSC", at_name) == 0) || (strcmp("BLECRNTY", at_name) == 0) || (strcmp("BLECDNTY", at_name) == 0)
-        || (strcmp("BLECGDB", at_name) == 0) || (strcmp("BLECCONN", at_name) == 0)||(strcmp("BLECACH", at_name) == 0)
+        || (strcmp("BLECGDB", at_name) == 0) || (strcmp("BLECCONN", at_name) == 0) || (strcmp("BLECACH", at_name) == 0)
         ||(strcmp("BLECDES", at_name) == 0) 
         || (strcmp("BLERDRSSI", at_name) == 0) || (strcmp("&BTNAME", at_name) == 0)
         ) {
         *res_len = 0;
-    }
  #endif
-    else if ((strcmp("BTDIAL", at_name) == 0)) {
+    } else if ((strcmp("BTDIAL", at_name) == 0)) {
         *res_len = atcmd_ok_resp(res_resp);
     } else if (strcmp("BLEAPRM", at_name) == 0) {
         if (set_opt) {
@@ -7780,9 +7953,8 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
             cmdrsp->bleprm.peer_addr[0], cmdrsp->bleprm.peer_addr[1], cmdrsp->bleprm.peer_addr[TWO],
             cmdrsp->bleprm.peer_addr[THREE], cmdrsp->bleprm.peer_addr[FOUR], cmdrsp->bleprm.peer_addr[FIVE]);
         }
-    }
 #endif
-    else if (strcmp("WREG", at_name) == 0 || strcmp("ATLT", at_name) == 0 || strcmp("ATPT", at_name) == 0 ||
+    } else if (strcmp("WREG", at_name) == 0 || strcmp("ATLT", at_name) == 0 || strcmp("ATPT", at_name) == 0 ||
              strcmp("ESPT", at_name) == 0) {
         if (set_opt) {
             *res_len = atcmd_ok_resp(res_resp);
@@ -7868,9 +8040,8 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
                 *res_len = sprintf(res_resp, "+OK=%d", cmdrsp->webs.autorun);
             }
         }
-    }
 #if TLS_CONFIG_SOCKET_RAW || TLS_CONFIG_SOCKET_STD
-    else if (strcmp("ENTM", at_name) == 0 || strcmp("SKCLS", at_name) == 0 || strcmp("SKSDF", at_name) == 0) {
+    } else if (strcmp("ENTM", at_name) == 0 || strcmp("SKCLS", at_name) == 0 || strcmp("SKSDF", at_name) == 0) {
         *res_len = atcmd_ok_resp(res_resp);
     } else if (strcmp("SKCT", at_name) == 0) {
         if (set_opt) {
@@ -7948,22 +8119,21 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
             *res_len = sprintf(res_resp, "+OK=%d\n", cmdrsp->skrptm.mode);
         }
     } else if (strcmp("SKSRCIP", at_name) == 0) {
-        *res_len = sprintf(res_resp, "+OK=%d.%d.%d.%d", cmdrsp->sksrcip.ipvalue[0], cmdrsp->sksrcip.ipvalue[1], cmdrsp->sksrcip.ipvalue[TWO], cmdrsp->sksrcip.ipvalue[THREE]);
+        *res_len = sprintf(res_resp, "+OK=%d.%d.%d.%d", cmdrsp->sksrcip.ipvalue[0], cmdrsp->sksrcip.ipvalue[1],
+                           cmdrsp->sksrcip.ipvalue[TWO], cmdrsp->sksrcip.ipvalue[THREE]);
     } else if (strcmp("SKGHBN", at_name) == 0) {
         *res_len = sprintf(res_resp, "+OK=\"%d.%d.%d.%d\"", \
                     cmdrsp->skghbn.h_addr_list[0], cmdrsp->skghbn.h_addr_list[1], \
                     cmdrsp->skghbn.h_addr_list[TWO], cmdrsp->skghbn.h_addr_list[THREE]);
-    }
 #endif
 #if TLS_CONFIG_HTTP_CLIENT_TASK
-    else if (strcmp("HTTPC", at_name) == 0) {
+    } else if (strcmp("HTTPC", at_name) == 0) {
         *res_len = sprintf(res_resp, "+OK=%d", cmdrsp->httpc.psession);
     } else if (strcmp("FWUP", at_name) == 0) {
         *res_len = sprintf(res_resp, "+OK=%d", cmdrsp->httpc.psession);
-    }
 #endif
 #endif
-    else if (strcmp("QVER", at_name) == 0) {
+    } else if (strcmp("QVER", at_name) == 0) {
         *res_len = sprintf(res_resp, "+OK=%c%x.%02x.%02x.%02x%02x,%c%x.%02x.%02x@ %s %s",
                 cmdrsp->ver.hw_ver[0], cmdrsp->ver.hw_ver[1], cmdrsp->ver.hw_ver[TWO],
                 cmdrsp->ver.hw_ver[THREE], cmdrsp->ver.hw_ver[FOUR], cmdrsp->ver.hw_ver[FIVE],
@@ -8037,7 +8207,8 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
                 cmdrsp->txg.tx_gain[TWENTY + NINE], cmdrsp->txg.tx_gain[THIRTY], cmdrsp->txg.tx_gain[THIRTY + 1], \
                 cmdrsp->txg.tx_gain[THIRTY + TWO], cmdrsp->txg.tx_gain[THIRTY + THREE], cmdrsp->txg.tx_gain[THIRTY + FOUR],\
                 cmdrsp->txg.tx_gain[THIRTY + FIVE], cmdrsp->txg.tx_gain[THIRTY + SIX], cmdrsp->txg.tx_gain[THIRTY + SEVEN],\
-                cmdrsp->txg.tx_gain[THIRTY + EIGHT], cmdrsp->txg.tx_gain[THIRTY + NINE], cmdrsp->txg.tx_gain[FORTY], cmdrsp->txg.tx_gain[FORTY + 1],\
+                cmdrsp->txg.tx_gain[THIRTY + EIGHT], cmdrsp->txg.tx_gain[THIRTY + NINE],\
+                cmdrsp->txg.tx_gain[FORTY], cmdrsp->txg.tx_gain[FORTY + 1],\
                 cmdrsp->txg.tx_gain[FORTY + TWO], cmdrsp->txg.tx_gain[FORTY + THREE], cmdrsp->txg.tx_gain[FORTY + FOUR],\
                 cmdrsp->txg.tx_gain[FORTY + FIVE], cmdrsp->txg.tx_gain[FORTY + SIX], cmdrsp->txg.tx_gain[FORTY + SEVEN],\
                 cmdrsp->txg.tx_gain[FORTY + EIGHT], cmdrsp->txg.tx_gain[FORTY + NINE], cmdrsp->txg.tx_gain[FIFTY],\
@@ -8077,7 +8248,8 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
        *res_len = atcmd_ok_resp(res_resp);
     }
     if (strcmp("&TXGG", at_name) == 0) {
-        *res_len = sprintf(res_resp, "+OK=%d,%02x%02x%02x", cmdrsp->txgr.tx_rate, cmdrsp->txgr.txr_gain[0], cmdrsp->txgr.txr_gain[1], cmdrsp->txgr.txr_gain[TWO]);
+        *res_len = sprintf(res_resp, "+OK=%d,%02x%02x%02x", cmdrsp->txgr.tx_rate, cmdrsp->txgr.txr_gain[0],
+                           cmdrsp->txgr.txr_gain[1], cmdrsp->txgr.txr_gain[TWO]);
     }
 
     if (strcmp("&MAC", at_name) == 0) {
@@ -8144,14 +8316,12 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
         } else {
             *res_len = sprintf(res_resp, "+OK=%d", rx_valid);
         }
-    }
 #if TLS_CONFIG_WIFI_PERF_TEST
-    else if (strcmp("THT", at_name) == 0) {
+    } else if (strcmp("THT", at_name) == 0) {
         *res_len = atcmd_ok_resp(res_resp);
-    }
 #endif
 #if TLS_CONFIG_WPS
-    else if (strcmp("WWPS", at_name) == 0) {
+    } else if (strcmp("WWPS", at_name) == 0) {
         if (set_opt) {
             if (cmdrsp->wps.result == 0) {
                 *res_len = atcmd_ok_resp(res_resp);
@@ -8164,21 +8334,18 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
         } else {
             *res_len = atcmd_ok_resp(res_resp);
         }
-    }
 #endif
-    else if (strcmp("CUSTDATA", at_name) == 0) {
+    } else if (strcmp("CUSTDATA", at_name) == 0) {
         *res_len = sprintf(res_resp, "+OK=\"%s\"", cmdrsp->custdata.data);
-    }
 #if TLS_CONFIG_AP
-    else if (strcmp("SLIST", at_name) == 0) {
+    } else if (strcmp("SLIST", at_name) == 0) {
         if (0 == cmdrsp->stalist.sta_num) {
             *res_len = sprintf(res_resp, "+OK=%hhu", cmdrsp->stalist.sta_num);
         } else {
             *res_len = sprintf(res_resp, "+OK=%hhu%s", cmdrsp->stalist.sta_num, cmdrsp->stalist.data);
         }
-    }
 #endif
-    else if (strcmp("PING", at_name) == 0) {
+    } else if (strcmp("PING", at_name) == 0) {
         if (cmdrsp->ping.ext) {
             *res_len = atcmd_ok_resp(res_resp);
         } else {
@@ -8217,9 +8384,8 @@ int ri_parse_func(s16 ri_cmd_id, char *buf, u32 length, union HOSTIF_CMD_PARAMS_
         cmd->updm.src = 1;
     } else if (ri_cmd_id == HOSTIF_CMD_UPDD) {
         cmd->updd.data[0] = 1;    /* 标识是ri指令 */
-    }
 #if TLS_CONFIG_RI_CMD
-    else if(ri_cmd_id == HOSTIF_CMD_WSCAN || ri_cmd_id == HOSTIF_CMD_WJOIN) { 
+    } else if(ri_cmd_id == HOSTIF_CMD_WSCAN || ri_cmd_id == HOSTIF_CMD_WJOIN) { 
         struct tls_hostif *hif = tls_get_hostif();
         if (hif->hostif_mode == HOSTIF_MODE_HSPI) {
             cmd->scanparam.mode = CMD_MODE_HSPI_RICMD;
@@ -8229,9 +8395,8 @@ int ri_parse_func(s16 ri_cmd_id, char *buf, u32 length, union HOSTIF_CMD_PARAMS_
         cmd->scanparam.chlist = 0;
         cmd->scanparam.scantimes = 0;
         cmd->scanparam.switchinterval = 0;
-    }
 #if TLS_CONFIG_SOCKET_RAW || TLS_CONFIG_SOCKET_STD
-    else if(ri_cmd_id == HOSTIF_CMD_SKCT) {
+    } else if(ri_cmd_id == HOSTIF_CMD_SKCT) {
         u8 *p = (u8 *)buf + sizeof(struct tls_hostif_cmd_hdr);
         u32 len= length - sizeof(struct tls_hostif_cmd_hdr);
         int err = CMD_ERR_INV_PARAMS;
@@ -8338,9 +8503,8 @@ int ri_parse_func(s16 ri_cmd_id, char *buf, u32 length, union HOSTIF_CMD_PARAMS_
         cmd->skct.timeout = socket.timeout;
     } else if (ri_cmd_id == HOSTIF_CMD_SKGHBN) {
         cmd->skghbn.ipstr[length - FOUR] = '\0';
-    }
 #endif
-    else if (ri_cmd_id == HOSTIF_CMD_ATRM) {
+    } else if (ri_cmd_id == HOSTIF_CMD_ATRM) {
         struct tls_cmd_socket_t socket;
         u8 *p = (u8 *)buf + sizeof(struct tls_hostif_cmd_hdr);
         u32 len = length - sizeof(struct tls_hostif_cmd_hdr);
@@ -8445,9 +8609,8 @@ int ri_parse_func(s16 ri_cmd_id, char *buf, u32 length, union HOSTIF_CMD_PARAMS_
         if (length == FIVE) {
             cmd->webs.portnum = EIGHTY;
         }
-    }
 #if TLS_CONFIG_HTTP_CLIENT_TASK
-    else if (ri_cmd_id == HOSTIF_CMD_HTTPC || ri_cmd_id == HOSTIF_CMD_FWUP) {
+    } else if (ri_cmd_id == HOSTIF_CMD_HTTPC || ri_cmd_id == HOSTIF_CMD_FWUP) {
         u8 *p = (u8 *)buf + sizeof(struct tls_hostif_cmd_hdr);
         u8 *url = NULL;
         if (cmd->httpc.url_len > TWO_HUNDRED_AND_FIFTY_FIVE) {
@@ -8477,7 +8640,8 @@ int ri_parse_func(s16 ri_cmd_id, char *buf, u32 length, union HOSTIF_CMD_PARAMS_
     return 0;
 }
 
-int ri_format_func(s16 ri_cmd_id, u8 set_opt, u8 update_flash, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp, char *res_resp, u32 *res_len)
+int ri_format_func(s16 ri_cmd_id, u8 set_opt, u8 update_flash, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp,
+    char *res_resp, u32 *res_len)
 {
     if(ri_cmd_id == HOSTIF_CMD_MAC
 #if TLS_CONFIG_AP
@@ -8487,9 +8651,8 @@ int ri_format_func(s16 ri_cmd_id, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
         *res_len = sizeof(struct tls_hostif_cmd_hdr) + SIX;
     } else if(ri_cmd_id == HOSTIF_CMD_VER) {
         *res_len = sizeof(struct tls_hostif_cmd_hdr) + TEN;
-    }
 #if TLS_CONFIG_RI_CMD
-    else if (ri_cmd_id == HOSTIF_CMD_PS || ri_cmd_id == HOSTIF_CMD_DBG || ri_cmd_id == HOSTIF_CMD_UPDP) {
+    } else if (ri_cmd_id == HOSTIF_CMD_PS || ri_cmd_id == HOSTIF_CMD_DBG || ri_cmd_id == HOSTIF_CMD_UPDP) {
         ;
     } else if (ri_cmd_id == HOSTIF_CMD_RESET_FLASH || ri_cmd_id == HOSTIF_CMD_RESET || ri_cmd_id == HOSTIF_CMD_PMTF ||
               ri_cmd_id == HOSTIF_CMD_GPIO || ri_cmd_id == HOSTIF_CMD_WLEAVE || ri_cmd_id == HOSTIF_CMD_WSCAN ||
@@ -8616,12 +8779,12 @@ int ri_format_func(s16 ri_cmd_id, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
             if (cmdrsp->cntparam_bssid_en.bssid_enable) {
                 *res_len = sizeof(struct tls_hostif_cmd_hdr) + EIGHT + cmdrsp->cntparam_bssid_en.key_len;
             } else {
-                *res_len = sizeof(struct tls_hostif_cmd_hdr) + THREE + cmdrsp->cntparam_bssid_dis.ssid_len + cmdrsp->cntparam_bssid_dis.key_len;
+                *res_len = sizeof(struct tls_hostif_cmd_hdr) + THREE + cmdrsp->cntparam_bssid_dis.ssid_len +
+                                  cmdrsp->cntparam_bssid_dis.key_len;
             }
         }
-    }
 #if TLS_CONFIG_SOCKET_RAW || TLS_CONFIG_SOCKET_STD
-    else if (ri_cmd_id == HOSTIF_CMD_SKCT) {
+    } else if (ri_cmd_id == HOSTIF_CMD_SKCT) {
         struct tls_hostif_cmdrsp *cmd_rsp = (struct tls_hostif_cmdrsp *)res_resp;
         cmd_rsp->cmd_hdr.ext = 0x01;
         *res_len = sizeof(struct tls_hostif_cmd_hdr) + 1;
@@ -8647,19 +8810,16 @@ int ri_format_func(s16 ri_cmd_id, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
         struct tls_hostif_cmdrsp *cmd_rsp = (struct tls_hostif_cmdrsp *)res_resp;
         cmd_rsp->cmd_hdr.ext = 0x01;
         *res_len = sizeof(struct tls_hostif_cmd_hdr) + FOUR;
-    }
 
 #endif
 #if TLS_CONFIG_HTTP_CLIENT_TASK
-    else if(ri_cmd_id == HOSTIF_CMD_HTTPC) {
+    } else if(ri_cmd_id == HOSTIF_CMD_HTTPC) {
         ;
-    }
-    else if(ri_cmd_id == HOSTIF_CMD_FWUP) {
+    } else if(ri_cmd_id == HOSTIF_CMD_FWUP) {
         ;
-    }
 #endif
 #endif
-    else if (ri_cmd_id == HOSTIF_CMD_UPDM || ri_cmd_id == HOSTIF_CMD_UPDD ||
+    } else if (ri_cmd_id == HOSTIF_CMD_UPDM || ri_cmd_id == HOSTIF_CMD_UPDD ||
              ri_cmd_id == HOSTIF_CMD_REGW ||  ri_cmd_id == HOSTIF_CMD_RFW ||
              ri_cmd_id == HOSTIF_CMD_FLSW) {
         struct tls_hostif_cmdrsp *cmd_rsp = (struct tls_hostif_cmdrsp *)res_resp;
@@ -8682,28 +8842,25 @@ int ri_format_func(s16 ri_cmd_id, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
         if (!set_opt) {
             *res_len = sizeof(struct tls_hostif_cmd_hdr) + 1 + cmdrsp->custdata.length;
         }
-    }
 #if TLS_CONFIG_WPS
-    else if(ri_cmd_id == HOSTIF_CMD_WPS) {
+    } else if(ri_cmd_id == HOSTIF_CMD_WPS) {
         if (cmdrsp->wps.result == 1) {
             struct tls_hostif_cmdrsp *cmd_rsp = (struct tls_hostif_cmdrsp *)res_resp;
             cmd_rsp->cmd_hdr.ext = 0x01;
             memcpy((u8 *)&cmdrsp->wps.result, (u8 *)&cmdrsp->wps.pin_len, cmdrsp->wps.pin_len + 1);
             *res_len = sizeof(struct tls_hostif_cmd_hdr) + TWO + cmdrsp->custdata.length;
         }
-    }
 #endif
 #if TLS_CONFIG_AP
-    else if(ri_cmd_id == HOSTIF_CMD_STA_LIST) {
+    } else if(ri_cmd_id == HOSTIF_CMD_STA_LIST) {
         if (0 == cmdrsp->stalist.sta_num) {
             *res_len = sizeof(struct tls_hostif_cmd_hdr) + 1 + cmdrsp->stalist.sta_num;
         } else {
             *res_len = sizeof(struct tls_hostif_cmd_hdr) + cmdrsp->stalist.sta_num + strlen((char *)cmdrsp->stalist.data);
         }
-    }
 #endif
 
-    else if (ri_cmd_id == HOSTIF_CMD_TEM) {
+    } else if (ri_cmd_id == HOSTIF_CMD_TEM) {
         *res_len = sizeof(struct tls_hostif_cmd_hdr) + strlen((char *)cmdrsp->mac.addr);
     } else {
         return CMD_ERR_UNSUPP;
@@ -8737,7 +8894,8 @@ int atcmd_nop_proc(struct tls_atcmd_token_t *tok, char *res_resp, u32 *res_len)
     return 0;
 }
 
-static int hostif_check_atcmd_opt(u8 op, u8 arg_found, u8 opt_flag, u8 arg_len, u8 *set_opt, u8 *update_flash) {
+static int hostif_check_atcmd_opt(u8 op, u8 arg_found, u8 opt_flag, u8 arg_len,
+    u8 *set_opt, u8 *update_flash) {
     u8 r = opt_flag&op;
     if (r == 0) {
         return -CMD_ERR_UNSUPP;
@@ -8910,7 +9068,8 @@ int tls_hostif_atcmd_exec(struct tls_atcmd_token_t *tok,
             goto err;
         }
 
-        err = hostif_check_atcmd_opt(tok->op, tok->arg_found, match->op_flag, match->at_arg_len, &set_opt, &update_flash);
+        err = hostif_check_atcmd_opt(tok->op, tok->arg_found, match->op_flag,
+                                     match->at_arg_len, &set_opt, &update_flash);
         if (err) {
             goto err;
         }
@@ -8960,7 +9119,8 @@ int ricmd_default_proc(char *buf, u32 length, int err,
     struct tls_hostif_cmd *cmd = (struct tls_hostif_cmd *)buf;
 
     /* if cmd is not suppost, return this cmd and err code  */
-    tls_hostif_fill_cmdrsp_hdr(cmdrsp, cmd->cmd_hdr.code, err, ((err || (cmd->cmd_hdr.ext & 0x1)) ? 0 : 1));
+    tls_hostif_fill_cmdrsp_hdr(cmdrsp, cmd->cmd_hdr.code, err,
+                               ((err || (cmd->cmd_hdr.ext & 0x1)) ? 0 : 1));
     *cmdrsp_size = sizeof(struct tls_hostif_cmd_hdr);
 #endif
     return 0;
