@@ -87,7 +87,6 @@ extern void *tls_wl_init(u8 *tx_gain, u8 *mac_addr, u8 *hwver);
 extern int wpa_supplicant_init(u8 *mac_addr);
 extern void tls_sys_auto_mode_run(void);
 extern void UserMain(void);
-extern void tls_bt_entry();
 
 void task_start (void *data);
 
@@ -278,7 +277,7 @@ void task_start (void *data)
 #endif
     UserMain();
 
-    extern void OHOS_SystemInit();
+    extern void OHOS_SystemInit(void);
     OHOS_SystemInit();
 
     for (;;) {
