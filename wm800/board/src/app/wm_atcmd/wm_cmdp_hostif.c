@@ -6392,7 +6392,7 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
             return -CMD_ERR_INV_PARAMS;
         }
         cmd->blesc.uuid = (u16)params;
-        ret = string_to_uint(tok->arg[3], &params);
+        ret = string_to_uint(tok->arg[THREE], &params);
         if (ret) {
             return -CMD_ERR_INV_PARAMS;
         }
@@ -7050,7 +7050,7 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
         u8 *ipstr = NULL;
         struct hostent* HostEntry;
 
-        if ((tok->arg_found != 4) && (tok->arg_found != FIVE)) {
+        if ((tok->arg_found != FOUR) && (tok->arg_found != FIVE)) {
             return -CMD_ERR_INV_PARAMS;
         }
         do {

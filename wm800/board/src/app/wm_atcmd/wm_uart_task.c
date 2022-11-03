@@ -13,19 +13,14 @@
  * limitations under the License.
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
-#include "wm_uart_task.h"
 #include "wm_debug.h"
 #include "wm_regs.h"
 #include "wm_params.h"
 #include "wm_fwup.h"
+#include "wm_uart_task.h"
 #if (GCC_COMPILE==1)
 #include "wm_cmdp_hostif_gcc.h"
 #else
-#include "wm_cmdp_hostif.h"
 #endif
 #include "wm_irq.h"
 #include "utils.h"
@@ -58,7 +53,7 @@ struct tls_uart uart_st[TWO];
 static u32 uart1_delaytime = 0;
 #endif
 
-#define UART_NET_SEND_DATA_SIZE      256  //512
+#define UART_NET_SEND_DATA_SIZE      256  // 512
 
 struct uart_tx_msg {
     struct tls_uart *uart;
@@ -66,13 +61,13 @@ struct uart_tx_msg {
 };
 
 extern void tls_uart_set_fc_status(int uart_no,
-                                   TLS_UART_FLOW_CTRL_MODE_T status);
+    TLS_UART_FLOW_CTRL_MODE_T status);
 extern void tls_set_uart_rx_status(int uart_no, int status);
 extern int tls_uart_fill_buf(struct tls_uart_port *port, char *buf, u32 count);
 extern void tls_uart_tx_chars_start(struct tls_uart_port *port);
 extern void tls_uart_free_tx_sent_data(struct tls_uart_port *port);
 extern void tls_uart_tx_callback_register(u16 uart_no,
-                                          s16(*tx_callback) (struct tls_uart_port *port));
+    s16(*tx_callback) (struct tls_uart_port *port));
 
 void uart_rx_timeout_handler(void *arg);
 void uart_rx(struct tls_uart *uart);
@@ -101,7 +96,7 @@ static void uart_tx_socket_finish_callback(void *arg)
 
 extern struct task_parameter wl_task_param_hostif;
 static void uart_send_tx_msg(u8 hostif_mode, struct tls_hostif_tx_msg *tx_msg,
-                             bool is_event)
+    bool is_event)
 {
     struct uart_tx_msg *tx_data = NULL;
     if (tx_msg == NULL)
@@ -330,9 +325,8 @@ s16 tls_uart1_task_rx_cb(u16 len, void *p)
                                TLS_UART_FLOW_CTRL_NONE);
     }
 
-    if (tls_wl_task_callback_static
-        (&wl_task_param_hostif, (start_routine) uart_rx, uart, 0,
-         TLS_MSG_ID_UART1_RX)) {
+    if (tls_wl_task_callback_static(&wl_task_param_hostif, (start_routine) uart_rx,
+                                    uart, 0, TLS_MSG_ID_UART1_RX)) {
         return WM_FAILED;
     }
     return WM_SUCCESS;
@@ -369,7 +363,6 @@ static u8 *find_atcmd_eol(u8 * src, u32 len)
     u8 *q = NULL;
     p = memchr(src, '\r', len);
     q = memchr(src, '\n', len);
-
     if (p && q) {
         if ((p - q) > 1) {
             return q;
@@ -385,11 +378,9 @@ static u8 *find_atcmd_eol(u8 * src, u32 len)
         }
         return NULL;
     }
-
     if (p) {
         return p;
     }
-
     if (q) {
         return q;
     }
@@ -521,9 +512,8 @@ static void parse_atcmd_line(struct tls_uart *uart)
                 if (uart->uart_port->uart_no == TLS_UART_0) {
                     tls_uart0_task_rx_cb(CIRC_CNT(recv->head, recv->tail, TLS_UART_RX_BUF_SIZE), NULL);
                 } else {
-                    tls_uart1_task_rx_cb(CIRC_CNT
-                                         (recv->head, recv->tail,
-                                          TLS_UART_RX_BUF_SIZE), NULL);
+                    tls_uart1_task_rx_cb(CIRC_CNT(recv->head, recv->tail,
+                                         TLS_UART_RX_BUF_SIZE), NULL);
                 }
                 break;
             }
@@ -591,7 +581,6 @@ RESENDBUF:
                     break;
                 }
             }
-
         }
         while (err == ERR_MEM);
     }
@@ -679,7 +668,7 @@ static int cache_tcp_recv(struct tls_hostif_tx_msg *tx_msg)
     return copylen;
 }
 
- /*　
+ /* 
  * 处理流程说明：
  * 首先判断上次的同步帧是否已经处理完成，如果已经处理结束，
  *          则检查缓存head指向的字节，判断是否是0xAA(SYN_FLAG)，
