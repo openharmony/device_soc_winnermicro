@@ -51,7 +51,7 @@
 /* ri data format type definition */
 #define PACKET_TYPE_DATA      0
 #define PACKET_TYPE_RI_CMD    1
-#define PACKET_TYPE_AT_CMD    2 
+#define PACKET_TYPE_AT_CMD    2
 
 #define HOSTCMD_SYN      0xAA
 
@@ -152,7 +152,7 @@
 #define HOSTIF_EVENT_TCP_CONN          0xE8
 #define HOSTIF_EVENT_TCP_JOIN          0xE9
 #define HOSTIF_EVENT_TCP_DIS           0xEA
-#define HOSTIF_EVENT_TX_ERR            0xEB 
+#define HOSTIF_EVENT_TX_ERR            0xEB
 
 #define ATCMD_OP_NULL       1
 #define ATCMD_OP_EQ         2
@@ -541,7 +541,7 @@ typedef struct _HOSTIF_CMD_PARAMS_UPDM {
 typedef struct _HOSTIF_CMD_PARAMS_UPDD {
     u16     size;
     u8      data[1];
-}__attribute__((packed))HOSTIF_CMD_PARAMS_UPDD; 
+}__attribute__((packed))HOSTIF_CMD_PARAMS_UPDD;
 
 typedef struct _HOSTIF_CMD_PARAMS_ONESHOT {
     u8      status;
@@ -969,7 +969,7 @@ typedef struct _HOSTIF_CMDRSP_PARAMS_NIP {
     u8      nm[4];
     u8      gw[4];
     u8      dns[4];
-}__attribute__((packed))HOSTIF_CMDRSP_PARAMS_NIP; 
+}__attribute__((packed))HOSTIF_CMDRSP_PARAMS_NIP;
 
 typedef struct _HOSTIF_CMDRSP_PARAMS_ATM {
     u8      mode;
@@ -1137,9 +1137,9 @@ typedef struct _HOSTIF_CMDRSP_PARAMS_TXG {
     u8      tx_gain[TX_GAIN_LEN];
 }__attribute__((packed))HOSTIF_CMDRSP_PARAMS_TXG;
  typedef struct _HOSTIF_CMDRSP_PARAMS_TXGR {
-     u8      tx_rate;
-         u8      txr_gain[3];
- }__attribute__((packed))HOSTIF_CMDRSP_PARAMS_TXGR;
+    u8      tx_rate;
+    u8      txr_gain[3];
+}__attribute__((packed))HOSTIF_CMDRSP_PARAMS_TXGR;
 
 typedef struct _HOSTIF_CMDRSP_PARAMS_SPIF {
     u8      mode;
@@ -1375,8 +1375,8 @@ struct tls_cmd_t {
     u8  op_flag;
     u8  at_arg_len;
     u16 ri_set_len;
-    int (*proc_func)(u8 set_opt, u8 update_flash, 
-        union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp);
+    int (*proc_func)(u8 set_opt, u8 update_flash,
+                     union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp);
 };
 
 typedef void  (*hostif_send_tx_msg_callback)(u8 hostif_mode, struct tls_hostif_tx_msg *tx_msg, bool is_event);
@@ -1430,16 +1430,15 @@ struct tls_hostif *tls_get_hostif(void);
 struct tls_hostif_tx_msg *tls_hostif_get_tx_msg(void);
 int tls_hostif_process_cmdrsp(u8 hostif_type, char *cmdrsp, u32 cmdrsp_size);
 void tls_hostif_fill_hdr(struct tls_hostif *hif,
-        struct tls_hostif_hdr *hdr,
-        u8 type, u16 length, u8 flag, u8 dest_addr, u8 chk);
+    struct tls_hostif_hdr *hdr, u8 type, u16 length, u8 flag, u8 dest_addr, u8 chk);
 
 void tls_hostif_fill_cmdrsp_hdr(struct tls_hostif_cmdrsp *cmdrsp,
-        u8 code, u8 err, u8 ext);
+    u8 code, u8 err, u8 ext);
 int tls_hostif_hdr_check(u8 *buf, u32 length);
 int tls_hostif_cmd_handler(u8 cmd_type, char *buf, u32 length);
 int tls_hostif_send_event_init_cmplt(void);
 int tls_hostif_send_event_scan_cmplt(struct tls_scan_bss_t *scan_res,
-        enum tls_cmd_mode cmd_mode);
+    enum tls_cmd_mode cmd_mode);
 
 int tls_hostif_send_event_linkdown(void);
 int tls_hostif_send_event_sta_join(void);
@@ -1459,7 +1458,7 @@ int tls_hostif_create_default_socket(void);
 int tls_hostif_close_default_socket(void);
 struct tls_uart_circ_buf *tls_hostif_get_recvmit(int socket_num);
 int tls_cmd_create_socket(struct tls_cmd_socket_t *skt,
-        enum tls_cmd_mode cmd_mode);
+    enum tls_cmd_mode cmd_mode);
 int tls_cmd_close_socket(u8 skt_num);
 int tls_cmd_get_socket_status(u8 socket, u8 *buf, u32 bufsize);
 int tls_cmd_get_socket_state(u8 socket, u8 *state, struct tls_skt_status_ext_t *skt_ext);
@@ -1474,9 +1473,8 @@ int atcmd_ok_resp(char *buf);
 int atcmd_nop_proc(struct tls_atcmd_token_t *tok, char *res_resp, u32 *res_len);
 
 int tls_atcmd_parse(struct tls_atcmd_token_t *tok, char *buf, u32 len);
-int tls_hostif_atcmd_exec(
-        struct tls_atcmd_token_t *tok,
-        char *res_rsp, u32 *res_len);
+int tls_hostif_atcmd_exec(struct tls_atcmd_token_t *tok,
+    char *res_rsp, u32 *res_len);
 int atcmd_filter_quotation(u8 **keyInfo, u8 *inbuf);
 int tls_hostif_ricmd_exec(char *buf, u32 length, char *cmdrsp_buf, u32 *cmdrsp_size);
 void free_tx_msg_buffer(struct tls_hostif_tx_msg *tx_msg);
@@ -1485,30 +1483,30 @@ void free_tx_msg_buffer(struct tls_hostif_tx_msg *tx_msg);
 /*************************************************************************** 
 * Function: tls_rmms_start
 * Description: Start remote manager server.
-* 
+*
 * Input:  None
-* 
+*
 * Output: None
-* 
+*
 * Return: The rmms error code:
 *             RMMS_ERR_SUCCESS - No error
 *             RMMS_ERR_MEM - Out of memory
 *             RMMS_ERR_LINKDOWN - The NIF is inactive
-* 
+*
 * Date : 2015-7-20
 ****************************************************************************/
 s8 tls_rmms_start(void);
 
-/*************************************************************************** 
+/***************************************************************************
 * Function: tls_rmms_stop
 * Description: Disable remote manager server.
-* 
+*
 * Input:  None
-* 
+*
 * Output: None
-* 
+*
 * Return: None
-* 
+*
 * Date : 2015-7-20
 ****************************************************************************/
 void tls_rmms_stop(void);
