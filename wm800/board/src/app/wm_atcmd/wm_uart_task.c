@@ -62,9 +62,6 @@ struct uart_tx_msg {
 
 extern void tls_uart_set_fc_status(int uart_no,
     TLS_UART_FLOW_CTRL_MODE_T status);
-extern void tls_set_uart_rx_status(int uart_no, int status);
-extern int tls_uart_fill_buf(struct tls_uart_port *port, char *buf, u32 count);
-extern void tls_uart_tx_chars_start(struct tls_uart_port *port);
 extern void tls_uart_free_tx_sent_data(struct tls_uart_port *port);
 extern void tls_uart_tx_callback_register(u16 uart_no,
     s16(*tx_callback) (struct tls_uart_port *port));
@@ -72,12 +69,6 @@ extern void tls_uart_tx_callback_register(u16 uart_no,
 void uart_rx_timeout_handler(void *arg);
 void uart_rx(struct tls_uart *uart);
 void uart_tx(struct uart_tx_msg *tx_data);
-#if TLS_CONFIG_CMD_USE_RAW_SOCKET
-extern struct tls_uart_circ_buf *sockrecvmit[TLS_MAX_NETCONN_NUM];
-#else
-extern struct tls_uart_circ_buf *sockrecvmit[MEMP_NUM_NETCONN];
-extern fd_set fdatsockets;
-#endif
 static void uart_tx_event_finish_callback(void *arg)
 {
     if (arg)
@@ -207,12 +198,7 @@ void tls_uart_init(void)
     struct tls_param_uart uart_cfg;
 
     memset(uart_st, 0, TWO * sizeof(struct tls_uart));
-#if TLS_CONFIG_CMD_USE_RAW_SOCKET
-    memset(sockrecvmit, 0, TLS_MAX_NETCONN_NUM);
-#else
-    memset(sockrecvmit, 0, MEMP_NUM_NETCONN);
-    FD_ZERO(&fdatsockets);
-#endif
+
     /* init socket config */
     tls_cmd_init_socket_cfg();
     tls_cmd_register_set_uart0_mode(uart_set_uart0_mode);
@@ -510,10 +496,11 @@ static void parse_atcmd_line(struct tls_uart *uart)
             atcmd_start = NULL;
             if (CIRC_CNT(recv->head, recv->tail, TLS_UART_RX_BUF_SIZE) > 0) {
                 if (uart->uart_port->uart_no == TLS_UART_0) {
-                    tls_uart0_task_rx_cb(CIRC_CNT(recv->head, recv->tail, TLS_UART_RX_BUF_SIZE), NULL);
+                    tls_uart0_task_rx_cb(CIRC_CNT(recv->head, recv->tail, TLS_UART_RX_BUF_SIZE),
+                                         NULL);
                 } else {
-                    tls_uart1_task_rx_cb(CIRC_CNT(recv->head, recv->tail,
-                                         TLS_UART_RX_BUF_SIZE), NULL);
+                    tls_uart1_task_rx_cb(CIRC_CNT(recv->head, recv->tail, TLS_UART_RX_BUF_SIZE),
+                                         NULL);
                 }
                 break;
             }
@@ -522,99 +509,6 @@ static void parse_atcmd_line(struct tls_uart *uart)
         }
     }
 }
-
-#if TLS_CONFIG_SOCKET_RAW || TLS_CONFIG_SOCKET_STD
-char uart_net_send_data[UART_NET_SEND_DATA_SIZE];
-
-void uart_net_send(struct tls_uart *uart, u32 head, u32 tail, int count)
-{
-    struct tls_uart_circ_buf *recv = &uart->uart_port->recv;
-    int buflen;
-    int bufcopylen = 0;
-    struct tls_hostif_socket_info skt_info;
-    u8 def_socket;
-    int err = 0;
-    int remaincount = count;
-    static u16 printfFreq = 0;
-
-RESENDBUF:
-    if (remaincount >= UART_NET_SEND_DATA_SIZE) {
-        buflen = UART_NET_SEND_DATA_SIZE;
-        remaincount = remaincount - UART_NET_SEND_DATA_SIZE;
-    } else {
-        buflen = remaincount;
-        remaincount = 0;
-    }
-    if ((tail + buflen) > TLS_UART_RX_BUF_SIZE) {
-        bufcopylen = (TLS_UART_RX_BUF_SIZE - tail);
-        MEMCPY(uart_net_send_data, (u8 *)recv->buf + tail, bufcopylen);
-        MEMCPY(uart_net_send_data + bufcopylen, (u8 *)recv->buf, buflen - bufcopylen);
-    } else {
-        MEMCPY(uart_net_send_data, (u8 *)recv->buf + tail, buflen);
-    }
-    def_socket = tls_cmd_get_default_socket();
-#if TLS_CONFIG_CMD_USE_RAW_SOCKET
-    if (def_socket)
-#endif
-    {
-        skt_info.socket = def_socket;
-        do {
-            err = tls_hostif_send_data(&skt_info, uart_net_send_data, buflen);
-            if (ERR_VAL == err) {
-                printf("\nsocket err val\n");
-                tls_set_uart_rx_status(uart->uart_port->uart_no, TLS_UART_RX_DISABLE);
-                tls_wl_task_untimeout(&wl_task_param_hostif, uart_rx_timeout_handler, uart);
-                tls_wl_task_add_timeout(&wl_task_param_hostif, uart1_delaytime, uart_rx_timeout_handler, uart);
-                return;
-            }
-
-            if (err == ERR_MEM) {
-                if (TLS_UART_FLOW_CTRL_HARDWARE == uart->uart_port->fcStatus &&
-                    TLS_UART_FLOW_CTRL_HARDWARE == uart->uart_port->opts.flow_ctrl) {
-                    tls_os_time_delay(TEN);
-                    continue;
-                } else {
-                    printfFreq ++;
-                    if (printfFreq % FIFTY == 0) {
-                        printf("ERR_MEM\r\n");
-                    }
-                    break;
-                }
-            }
-        }
-        while (err == ERR_MEM);
-    }
-    recv->tail = (recv->tail + buflen) & (TLS_UART_RX_BUF_SIZE - 1);
-    if (uart->cmd_mode == UART_ATSND_MODE) {
-        if (remaincount > 0) {
-            tail = recv->tail;
-            goto RESENDBUF;
-        }
-    } else {
-        if (remaincount >= UART_NET_SEND_DATA_SIZE) {
-            tail = recv->tail;
-            goto RESENDBUF;
-        }
-    }
-
-    buflen = remaincount;
-    if (buflen) {
-        tls_wl_task_untimeout(&wl_task_param_hostif, uart_rx_timeout_handler, uart);
-        tls_wl_task_add_timeout(&wl_task_param_hostif, uart1_delaytime, uart_rx_timeout_handler, uart);
-    }
-
-    if (TLS_UART_FLOW_CTRL_HARDWARE == uart->uart_port->fcStatus &&
-        TLS_UART_FLOW_CTRL_HARDWARE == uart->uart_port->opts.flow_ctrl) {
-        buflen = CIRC_SPACE(recv->head, recv->tail, TLS_UART_RX_BUF_SIZE);
-        if (buflen > TLS_UART_RX_BUF_SIZE / TWO) {
-            tls_set_uart_rx_status(uart->uart_port->uart_no, TLS_UART_RX_ENABLE);
-        } else {
-            tls_wl_task_untimeout(&wl_task_param_hostif, uart_rx_timeout_handler, uart);
-            tls_wl_task_add_timeout(&wl_task_param_hostif, uart1_delaytime, uart_rx_timeout_handler, uart);
-        }
-    }
-}
-#endif
 
 static int cache_tcp_recv(struct tls_hostif_tx_msg *tx_msg)
 {
@@ -854,27 +748,8 @@ void uart_rx(struct tls_uart *uart)
     u8 len = 0;
     char *cmd_rsp = NULL;
 
-#if TLS_CONFIG_SOCKET_RAW || TLS_CONFIG_SOCKET_STD
-    if (uart->cmd_mode == UART_TRANS_MODE) {
-        data_cnt = CIRC_CNT(recv->head, recv->tail, TLS_UART_RX_BUF_SIZE);
-        if (data_cnt >= UART_NET_SEND_DATA_SIZE) {
-            send_data = 1;
-            tls_wl_task_untimeout(&wl_task_param_hostif, uart_rx_timeout_handler, uart);
-        } else {
-            tls_wl_task_untimeout(&wl_task_param_hostif, uart_rx_timeout_handler, uart);
-            tls_wl_task_add_timeout(&wl_task_param_hostif, uart1_delaytime, uart_rx_timeout_handler, uart);
-        }
-
-        if (send_data) {
-            uart_net_send(uart, recv->head, recv->tail, data_cnt);
-        }
-    } else
-#endif /* TLS_CONFIG_SOCKET_RAW */
     if (uart->cmd_mode == UART_ATCMD_MODE) {
         if (uart->uart_port->plus_char_cnt == THREE) {
-#if TLS_CONFIG_SOCKET_RAW || TLS_CONFIG_SOCKET_STD
-            tls_wl_task_untimeout(&wl_task_param_hostif, uart_rx_timeout_handler, uart);
-#endif
             cmd_rsp = tls_mem_alloc(strlen("+OK!!\r\n\r\n") + 1);
             if (!cmd_rsp) {
                 return;
@@ -891,20 +766,6 @@ void uart_rx(struct tls_uart *uart)
         uart_fwup_send(uart);
     } else if (uart->cmd_mode == UART_RICMD_MODE) {
         parse_ricmd_line(uart);
-#if TLS_CONFIG_SOCKET_RAW || TLS_CONFIG_SOCKET_STD
-    } else if (UART_ATSND_MODE == uart->cmd_mode) {
-        data_cnt = CIRC_CNT(recv->head, recv->tail, TLS_UART_RX_BUF_SIZE);
-        if (data_cnt >= uart->sksnd_cnt) {
-            send_data = 1;
-        } else {
-            return;
-        }
-        if (send_data) {
-            uart_net_send(uart, recv->head, recv->tail, uart->sksnd_cnt);
-        }
-
-        uart->cmd_mode = UART_ATCMD_MODE;
-#endif
     } else {
     }
 }
