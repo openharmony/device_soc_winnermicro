@@ -56,7 +56,7 @@ struct pbuf {
     u16_t len;
 
     /** pbuf_type as u8_t instead of enum to save space */
-    u8_t /*pbuf_type*/ type;
+    u8_t type;
 
     /** misc flags */
     u8_t flags;
@@ -113,7 +113,7 @@ typedef err_t (*socket_recv_fn)(u8 skt_num, struct pbuf *p, err_t err);
 *
 * @param[in] port          source port
 *
-* @param[in] err           An error code if there has been an error receiving, always be ERR_OK 
+* @param[in] err           An error code if there has been an error receiving, always be ERR_OK
 *                                    when cs mode is udp.
 *
 * @retval            The return value is only valid for UDP receive, for udp it means nothing.
@@ -163,8 +163,8 @@ typedef err_t (*socket_poll_fn)(u8 skt_num);
 typedef err_t (*socket_accept_fn)(u8 skt_num, err_t err);
 
 /**
-* @brief This Function prototype for socket state changed callback functions. Called when socket
-*                   the sockte's state changed.
+* @brief This Function prototype for socket state changed callback functions.
+*             Called when socket the sockte's state changed.
 *
 * @param[in] skt_num   Is the socket number that returned by tls_socket_create function.
 *
@@ -196,7 +196,7 @@ typedef enum {
     ERR_USE        = -8,
     /** Already connecting.      */
     ERR_ALREADY    = -9,
-    /** Conn already established.*/
+    /** Conn already established. */
     ERR_ISCONN     = -10,
     /** Not connected.           */
     ERR_CONN       = -11,
@@ -217,7 +217,7 @@ enum tls_socket_protocol {
     SOCKET_PROTO_UDP,     /* UDP Protocol   */
 };
 
-enum tls_socket_cs_mode{
+enum tls_socket_cs_mode {
     SOCKET_CS_MODE_CLIENT,    /* Client mode    */
     SOCKET_CS_MODE_SERVER,    /* Server mode   */
 };
@@ -225,11 +225,13 @@ enum tls_socket_cs_mode{
 struct tls_socket_desc {
     enum tls_socket_cs_mode cs_mode;              /* Server mode  or Client mode, Only for tcp protocol is valid */
     enum tls_socket_protocol protocol;            /* TCP Protocol or UDP Protocol  */
-    ip_addr_t  ip_addr;  /* Remote ip address, for tcp client mode is remote server's ip address; for tcp server mode can be any address. */
-                                                  /*          for udp is remote server's ip address */
-    u16 port;            /* port, for tcp client mode is remote server's port; for tcp server mode is local listen port .
-                          for udp is remote server's port */
-    u16 localport;       /* local port, for udp and tcp client is local listen port, for tcp server means nothing, tcp server always listen at port */
+    ip_addr_t  ip_addr;  /* Remote ip address, for tcp client mode is remote server's ip address;
+                           for tcp server mode can be any address. */
+                         /* for udp is remote server's ip address */
+    u16 port;            /* port, for tcp client mode is remote server's port;
+                          for tcp server mode is local listen port. for udp is remote server's port */
+    u16 localport;       /* local port, for udp and tcp client is local listen port,
+                           for tcp server means nothing, tcp server always listen at port */
     char host_name[32];                           /* remote host name, not support for now  */
     u8  host_len;                                 /* the length of host name   */
     u32 timeout;                                  /* poll timeout, not implemented for now   */
@@ -239,7 +241,7 @@ struct tls_socket_desc {
     socket_poll_fn pollf;                         /* a pointer to socket_poll_fn  */
     socket_accept_fn acceptf;                     /* a pointer to socket_accept_fn   */
     socket_state_changed_fn state_changed;        /* a pointer to socket_state_changed_fn   */
-    socket_recv_ip_rpt_fn recvwithipf;            /*recv skt info report*/
+    socket_recv_ip_rpt_fn recvwithipf;            /* recv skt info report */
 };
 
 /**
@@ -253,22 +255,8 @@ struct tls_socket_desc {
 int tls_socket_create(struct tls_socket_desc * skd);
 
 /**
-* @brief This function is called by your application code to send data by the socket.
-*
-* @param[in] skt_num      Is the socket number that returned by tls_socket_create function.
-*
-* @param[in] pdata          Is a pointer to the data which need to be send by the socket.
-*
-* @param[in] len              The data's length.
-*
-* @retval     ERR_OK    If send data successfully.
-*              negative number   If an error was detected.
-*/
-int tls_socket_send(u8 skt_num, void *pdata, u16 len);
-
-/**
-* @brief This function is called by your application code to close the socket, and the related resources would be released.
-*
+* @brief This function is called by your application code to close the socket,
+*        and the related resources would be released.
 * @param[in] skt_num      Is the socket number that returned by tls_socket_create function.
 *
 * @retval     ERR_OK    If close socket successfully.
@@ -294,32 +282,14 @@ struct tls_skt_status_t {
 *
 * @param[in] skt_num      Is the socket number that returned by tls_socket_create function.
 *
-* @param[in] buf          Is a pointer to the data contains the socket status, if the socket is server, also contains it's client's status.
-*
+* @param[in] buf          Is a pointer to the data contains the socket status, if the socket is server,
+*                         also contains it's client's status.
 * @param[in] len          The buf's length. At least, the len should be bigger than sizeof(struct tls_skt_status_t).
 *
 * @retval         ERR_OK    If send data successfully.
 *              negative number   If an error was detected.
 */
 int tls_socket_get_status(u8 skt_num, u8 *buf, u32 bufsize);
-
-/**
-* @brief This function is called by your application code to send data by udp socket.
-*
-* @param[in] localport         This function will search all created sockets, if there is a socket whose localport equals this value and it's protocol is udp,
-*                                          then send the data by this socket, otherwise, nothing to send.
-*
-* @param[in] ip_addr          Is the remote ip address.
-*
-* @param[in] port               Is the remote port which upd send to.
-*
-* @param[in] pdata             Is a pointer to the data which need to be send by the socket.
-*
-* @param[in] len              The data's length.
-* @retval         ERR_OK    If send data successfully.
-*              negative number   If an error was detected.
-*/
-int tls_socket_udp_sendto(u16 localport, u8 *ip_addr, u16 port, void *pdata, u16 len);
 
 /**
  * @ingroup pbuf
@@ -365,8 +335,8 @@ typedef enum {
     /** pbuf data is stored in ROM, i.e. struct pbuf and its payload are located in
       totally different memory areas. Since it points to ROM, payload does not
       have to be copied when queued for transmission. */
-  PBUF_ROM,
-  /** pbuf comes from the pbuf pool. Much like PBUF_ROM but payload might change
+    PBUF_ROM,
+    /** pbuf comes from the pbuf pool. Much like PBUF_ROM but payload might change
       so it has to be duplicated when queued before transmitting, depending on
       who has a 'ref' to it. */
     PBUF_REF,
@@ -398,8 +368,8 @@ struct pbuf *pbuf_alloc(pbuf_layer l, u16_t length, pbuf_type type);
 /**
 * @brief This Function for release the buffer that you receive within the socket_recv_fn callback function.
 *                   Attention please: If you return ERR_OK in the socket_recv_fn callback function, you must call this
-*                                            function to release the buffer by yourself. Otherwise, the buffer do not need be 
-*                                            released by your code.
+*                   function to release the buffer by yourself. Otherwise, the buffer do not need be 
+*                   released by your code.
 *
 * @param[in] p       The buffer you received in the socket_recv_fn callback function.
 *
@@ -407,20 +377,5 @@ struct pbuf *pbuf_alloc(pbuf_layer l, u16_t length, pbuf_type type);
 */
 u8 pbuf_free(struct pbuf *p);
 
-/**
-* @brief This Function for copy (part of) the contents of a packet buffer to an application supplied buffer.
-*
-* @param[in] p     the pbuf from which to copy data.
-*
-* @param[in] dataptr   the application supplied buffer
-*
-* @param[in] len      length of data to copy (dataptr must be big enough). No more 
-*                                than buf->tot_len will be copied, irrespective of len
-*
-* @param[in] offset   offset into the packet buffer from where to begin copying len bytes
-*
-* @retval  The number of bytes copied, or 0 on failure
-*/
-u16_t pbuf_copy_partial(const struct pbuf *p, void *dataptr, u16_t len, u16_t offset);
 #endif
 
