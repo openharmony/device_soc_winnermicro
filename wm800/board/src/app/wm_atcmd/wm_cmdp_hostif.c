@@ -84,108 +84,7 @@ const u8 SysCreatedTime[] = __TIME__;
 #include "wm_uart.h"
 #include "wm_sockets.h"
 
-#if (WM_BT_INCLUDED == CFG_ON || WM_BLE_INCLUDED == CFG_ON || WM_NIMBLE_INCLUDED == CFG_ON)
-#include "wm_bt.h"
-
-#if (WM_NIMBLE_INCLUDED == CFG_ON)
-#else
-#include "wm_ble.h"
-#include "wm_ble_gatt.h"
-#endif
-extern tls_bt_status_t enable_bt_test_mode(tls_bt_hci_if_t *p_hci_if);
-extern tls_bt_status_t exit_bt_test_mode();
-
-
-#if (WM_NIMBLE_INCLUDED == CFG_ON)
-extern int tls_at_bt_enable(int uart_no, tls_bt_log_level_t log_level);
-extern int tls_at_bt_destroy(void);
-#else
-extern int tls_at_bt_enable(int uart_no, tls_bt_log_level_t log_level,
-    tls_bt_host_callback_t at_callback_ptr);
-extern int tls_at_bt_destroy(void);
-extern int tls_at_bt_cleanup_host(void);
-#endif
-
-extern void tls_rf_bt_mode(uint8_t mode);
-#if (WM_BT_INCLUDED == CFG_ON)
-extern int demo_bt_scan_mode(int type);
-extern int demo_bt_inquiry(int type);
-extern int demo_bt_app_on();
-extern int demo_bt_app_off();
-
-#endif
-
-#if (WM_BTA_AV_SINK_INCLUDED == CFG_ON)
-extern tls_bt_status_t tls_bt_enable_a2dp_sink();
-extern tls_bt_status_t tls_bt_disable_a2dp_sink();
-#endif
-
-#if (WM_BTA_HFP_HSP_INCLUDED == CFG_ON)
-extern tls_bt_status_t tls_bt_enable_hfp_client();
-extern tls_bt_status_t tls_bt_disable_hfp_client();
-extern tls_bt_status_t tls_bt_dial_number(const char* number);
-#endif
-
-#if (WM_BTA_SPPS_INCLUDED == CFG_ON)
-extern tls_bt_status_t tls_bt_enable_spp_server();
-extern tls_bt_status_t tls_bt_disable_spp_server();
-#endif
-
-#if (WM_BTA_SPPC_INCLUDED == CFG_ON)
-extern tls_bt_status_t tls_bt_enable_spp_client();
-extern tls_bt_status_t tls_bt_disable_spp_client();
-#endif
-
-#endif
-
-#if (WM_BLE_INCLUDED == CFG_ON || WM_NIMBLE_INCLUDED == CFG_ON)
-extern int tls_ble_client_demo_api_init(tls_ble_output_func_ptr output_func_ptr);
-extern int tls_ble_client_demo_api_deinit();
-extern int tls_ble_server_demo_api_init(tls_ble_output_func_ptr output_func_ptr);
-extern int tls_ble_server_demo_api_deinit();
-extern int tls_ble_client_multi_conn_demo_api_init();
-extern int tls_ble_client_multi_conn_demo_api_deinit();
-extern int tls_ble_uart_init(tls_ble_uart_mode_t mode, uint8_t uart_id, tls_uart_options_t *p_hci_if);
-extern int tls_ble_uart_deinit(tls_ble_uart_mode_t mode, uint8_t uart_id);
-extern int tls_ble_demo_adv(uint8_t type);
-extern int tls_ble_demo_scan(uint8_t start);
-#if (WM_NIMBLE_INCLUDED == CFG_ON)
-extern int tls_ble_server_demo_hid_init();
-extern int tls_ble_server_demo_hid_deinit();
-extern int tls_ble_server_hid_uart_init();
-extern int tls_ble_server_hid_uart_deinit();
-#endif
-#endif
-
-extern u32 rf_spi_read(u32 reg);
-extern void rf_spi_write(u32 reg);
 #define RFR_REG_MAX_NUM (28)
-
-extern u8* ieee80211_get_tx_gain(void);
-extern u8 *wpa_supplicant_get_mac(void);
-extern void wpa_supplicant_set_mac(u8 *mac);
-#if TLS_CONFIG_AP
-extern u8 *hostapd_get_mac(void);
-#endif
-extern void tls_wifi_get_oneshot_customdata(u8 *data);
-
-#if TLS_CONFIG_CMD_USE_RAW_SOCKET
-extern u32 tls_net_get_sourceip(void);
-extern void tls_net_set_sourceip(u32 ipvalue);
-#else
-static u32 source_ip = 0;
-#endif
-
-extern void wm_cmdp_oneshot_status_event(u8 status);
-extern int wm_cmdp_oneshot_task_init(void);
-extern int wm_cmdp_oneshot_task_del(void);
-extern void tls_set_hspi_fwup_mode(u8 ifenable);
-
-extern void wm_rf_set_channel(u16 chan, int channel_type);
-extern int t_http_fwup(char *url);
-extern int adc_temp(void);
-
-extern void CreateThroughputTask(void);
 
 struct tls_hostif g_hostif;
 struct tls_hostif *tls_get_hostif(void)
@@ -2246,51 +2145,6 @@ int lkstt_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
     return 0;
 }
 
-int entm_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
-    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
-{
-    u16 rx_fifocnt;
-    u8 ch;
-    int i;
-#if TLS_CONFIG_UART
-    cmd_set_uart1_mode_callback callback;
-    struct tls_uart_port *uart1_port;
-    cmd_get_uart1_port_callback port_callback;
-    extern void tls_uart_rx_disable(struct tls_uart_port *port);
-    extern void tls_uart_rx_enable(struct tls_uart_port *port);
-
-    port_callback = tls_cmd_get_uart1_port();
-    if (port_callback != NULL) {
-        port_callback(&uart1_port);
-    }
-    if (!uart1_port) {
-        return -CMD_ERR_NOT_ALLOW;
-    }
-    callback = tls_cmd_get_set_uart1_mode();
-    if (callback != NULL) {
-        callback(UART_TRANS_MODE);
-    }
-
-    tls_irq_disable(uart1_port->uart_irq_no);
-    tls_uart_rx_disable(uart1_port);
-    /* read all data from uart rx fifo */
-    rx_fifocnt = (uart1_port->regs->UR_FIFOS >> SIX) & 0x3F;
-    for (i = 0; i < rx_fifocnt; i++) {
-        ch = (u8)uart1_port->regs->UR_RXW;
-    }
-
-    (void)ch;
-
-    /* reset uart rx ring buffer */
-    uart1_port->recv.tail = uart1_port->recv.head;
-
-    tls_uart_rx_enable(uart1_port);
-    tls_irq_enable(uart1_port->uart_irq_no);
-#endif
-
-    return 0;
-}
-
 int skct_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
     union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
@@ -3126,29 +2980,6 @@ int oneshot_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd
     }
 
     return ret ? -CMD_ERR_OPS : 0;
-}
-
-int updp_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
-    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
-{
-    if (set_opt) {
-        if (cmd->updp.mode > 1) {
-            return -CMD_ERR_INV_PARAMS;
-        }
-        if (cmd->updp.mode == 1) {
-            extern struct tls_sys_param user_default_param;
-            extern int tls_param_load_user(struct tls_sys_param *param);
-            struct tls_sys_param *param = &user_default_param;
-
-            tls_param_set_updp_mode(cmd->updp.mode);
-            tls_param_load_user(param);
-        } else {
-            tls_param_set_updp_mode(0);
-            tls_param_save_user_default();
-        }
-    }
-
-    return 0;
 }
 
 #if TLS_CONFIG_HTTP_CLIENT_TASK
@@ -4105,27 +3936,6 @@ int lprsr_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
 {
     return 0;
 }
-
-extern int tls_tx_wave_start(u32 freq, u32 dividend);
-int tls_tx_sin(u8 set_opt, u8 update_flah, union HOSTIF_CMD_PARAMS_UNION *cmd,
-    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
-{
-    int ret = -1;
-    ret = tls_tx_wave_start(cmd->width.freq, cmd->width.dividend);
-
-    return ret ? -CMD_ERR_OPS : 0;
-}
-
-extern int tls_rx_data_from_adc(u32 datalen, char showtouart);
-int tls_rx_wave(u8 set_opt, u8 update_flah, union HOSTIF_CMD_PARAMS_UNION *cmd,
-    union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
-{
-    int ret = -1;
-    ret = tls_rx_data_from_adc(cmd->rxsin.rxlen, cmd->rxsin.isprint);
-
-    return ret;
-}
-
 
 int tls_tx_lo_proc(u8 set_opt, u8 update_flah, union HOSTIF_CMD_PARAMS_UNION *cmd,
     union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
@@ -5624,7 +5434,6 @@ static struct tls_cmd_t  at_ri_cmd_tbl[] = {
     { "WSCAN", HOSTIF_CMD_WSCAN, 0x13, 0, 0, wscan_proc},
 #if TLS_CONFIG_SOCKET_RAW || TLS_CONFIG_SOCKET_STD
     { "LKSTT", HOSTIF_CMD_LINK_STATUS, 0x19, 0, 0, lkstt_proc},
-    { "ENTM", HOSTIF_CMD_NOP, 0x1, 0, 0, entm_proc},
     { "SKCT", HOSTIF_CMD_SKCT, 0x22, FOUR, SIX, skct_proc},
     { "SKSTT", HOSTIF_CMD_SKSTT, 0x22, 1, 1, skstt_proc},
     { "SKCLS", HOSTIF_CMD_SKCLOSE, 0x22, 1, 1, skcls_proc},
@@ -5672,7 +5481,6 @@ static struct tls_cmd_t  at_ri_cmd_tbl[] = {
     { "CMDM", HOSTIF_CMD_CMDM, 0x7F, 1, 1, cmdm_proc},
     { "PASS", HOSTIF_CMD_PASS, 0x7F, 1, SEVEN, pass_proc},
     { "ONESHOT", HOSTIF_CMD_ONESHOT, 0x7F, 1, 1, oneshot_proc},
-    { "&UPDP", HOSTIF_CMD_UPDP, 0x22, 1, 1, updp_proc},
 #if TLS_CONFIG_HTTP_CLIENT_TASK
     { "FWUP", HOSTIF_CMD_FWUP, 0x22, 1, 0, fwup_proc},
 #endif
@@ -5732,8 +5540,6 @@ static struct tls_cmd_t  at_ri_cmd_tbl[] = {
     { "WWPS", HOSTIF_CMD_WPS, 0x7F, 1, 1, wwps_proc},
 #endif
     { "CUSTDATA", HOSTIF_CMD_CUSTDATA, 0x19, 0, 0, custdata_proc},
-    { "WIDTH", HOSTIF_CMD_NOP, 0x2, TWO, 0, tls_tx_sin},
-    { "&RXSIN", HOSTIF_CMD_NOP, 0x2, TWO, 0, tls_rx_wave},
     { "TXLO", HOSTIF_CMD_NOP, 0x7F, 1,  0,  tls_tx_lo_proc},
     { "TXIQ", HOSTIF_CMD_NOP, 0x7F, TWO,  0,  tls_tx_iq_mismatch_proc},
     { "FREQ", HOSTIF_CMD_NOP, 0x7F, 1,  0,  tls_freq_error_proc},
@@ -7300,8 +7106,8 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
                 for (i = 0; i < cmdrsp->cntparam_bssid_dis.ssid_len; i++) {
                     *res_len += sprintf(res_resp + (*res_len), "%c", cmdrsp->cntparam_bssid_dis.ssid_key[i]);
                 }
-                *res_len += sprintf(res_resp + *res_len,",");
-                MEMCPY(res_resp + *res_len, cmdrsp->cntparam_bssid_dis.ssid_key 
+                *res_len += sprintf(res_resp + *res_len, ",");
+                MEMCPY(res_resp + *res_len, cmdrsp->cntparam_bssid_dis.ssid_key
                        + cmdrsp->cntparam_bssid_dis.ssid_len, cmdrsp->cntparam_bssid_dis.key_len);
                 *res_len += cmdrsp->cntparam_bssid_dis.key_len;
             }
