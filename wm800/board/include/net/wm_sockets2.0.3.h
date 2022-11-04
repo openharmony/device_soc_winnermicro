@@ -77,7 +77,6 @@ struct in6_addr {
     to the IPv6 loopback address. */
 #define IN6ADDR_LOOPBACK_INIT {{{0, 0, 0, PP_HTONL(1)}}}
 /** This variable is initialized by the system to contain the wildcard IPv6 address. */
-extern const struct in6_addr in6addr_any;
 
 #if TLS_CONFIG_IPV4
 /** members are in network byte order */
@@ -441,60 +440,6 @@ struct timeval {
 };
 #endif /* LWIP_TIMEVAL_PRIVATE */
 
-int accept(int s, struct sockaddr *addr, socklen_t *addrlen);
-
-int bind(int s, const struct sockaddr *name, socklen_t namelen);
-
-int shutdown(int s, int how);
-
-int closesocket(int s);
-
-int connect(int s, const struct sockaddr *name, socklen_t namelen);
-
-int getsockname(int s, struct sockaddr *name, socklen_t *namelen);
-
-int getpeername(int s, struct sockaddr *name, socklen_t *namelen);
-
-int setsockopt(int s, int level, int optname, const void *optval, socklen_t optlen);
-
-int getsockopt(int s, int level, int optname, void *optval, socklen_t *optlen);
-
-int listen(int s, int backlog);
-
-int recv(int s, void *mem, size_t len, int flags);
-
-int recv_ext(int s, void *mem, size_t len);
-
-int recvfrom(int s, void *mem, size_t len, int flags,
-             struct sockaddr *from, socklen_t *fromlen);
-
-int send(int s, const void *data, size_t size, int flags);
-
-int send_ext(int s, const void *data, size_t size);
-
-int sendto(int s, const void *data, size_t size, int flags,
-           const struct sockaddr *to, socklen_t tolen);
-
-int socket(int domain, int type, int protocol);
-
-int select(int maxfdp1, fd_set *readset, fd_set *writeset, fd_set *exceptset,
-           struct timeval *timeout);
-
-int ioctlsocket(int s, long cmd, void *argp);
-
-int fcntl(int s, int cmd, int val);
-
-struct hostent* gethostbyname(const char *name);
-
-/** @ingroup socket */
-#define read(s, mem, len)                          recv_ext(s, mem, len)
-/** @ingroup socket */
-#define write(s, dataptr, len)                     send_ext(s, dataptr, len)
-/** @ingroup socket */
-#define close(s)                                   closesocket(s)
-/** @ingroup socket */
-#define ioctl(s, cmd, argp)                        ioctlsocket(s, cmd, argp)
-
 u32_t ipaddr_addr(const char *cp);
 
 #ifdef htonl
@@ -539,16 +484,6 @@ struct ip4_addr {
  * operate both on ip4_addr_t as well as on ip4_addr_p_t. */
 typedef struct ip4_addr ip4_addr_t;
 
-/** Set an IP address given by the four byte-parts */
-#define IP4_ADDR(ipaddr, a, b, c, d)  (ipaddr)->addr = PP_HTONL(LWIP_MAKEU32(a, b, c, d))
-
-/** MEMCPY-like copying of IP addresses where addresses are known to be
- * 16-bit-aligned if the port is correctly configured (so a port could define
- * this to copying 2 u16_t's) - no NULL-pointer-checking needed. */
-#ifndef IPADDR2_COPY
-#define IPADDR2_COPY(dest, src) SMEMCPY(dest, src, sizeof(ip4_addr_t))
-#endif
-
 #define IP4ADDR_STRLEN_MAX  16
 
 /** For backwards compatibility */
@@ -559,14 +494,6 @@ int ip4addr_aton(const char *cp, ip4_addr_t *addr);
 /** returns ptr to static buffer; not reentrant! */
 char *ip4addr_ntoa(const ip4_addr_t *addr);
 char *ip4addr_ntoa_r(const ip4_addr_t *addr, char *buf, int buflen);
-
-/** directly map this to the lwip internal functions */
-#define inet_addr(cp)                   ipaddr_addr(cp)
-#define inet_aton(cp, addr)             ip4addr_aton(cp, (ip4_addr_t*)addr)
-#define inet_ntoa(addr)                 ipaddr_ntoa((ip_addr_t*)&(addr))
-#define inet_ntoa(addr)                 ipaddr_ntoa((ip_addr_t*)&(addr))
-#define inet_ntoa(addr)                 ipaddr_ntoa((ip_addr_t*)&(addr))
-#define inet_ntoa(addr)                 ipaddr_ntoa((ip_addr_t*)&(addr))
 #endif
 
 /** @ingroup ipaddr
@@ -597,58 +524,24 @@ typedef struct ip_addr {
     u8_t type;
 }ip_addr_t;
 
-extern const ip_addr_t ip_addr_any_type;
-
 int ipaddr_aton(const char *cp, ip_addr_t *addr);
 
 /** @ingroup ipaddr */
 #define IPADDR_STRLEN_MAX   IP6ADDR_STRLEN_MAX
 
 #else
-#define IP_ADDR_PCB_VERSION_MATCH(addr, pcb)         1
-#define IP_ADDR_PCB_VERSION_MATCH_EXACT(pcb, ipaddr) 1
-
 #if TLS_CONFIG_IPV4
 typedef ip4_addr_t ip_addr_t;
-#define IPADDR4_INIT(u32val)                    { u32val }
-#define IPADDR4_INIT_BYTES(a, b, c, d)             IPADDR4_INIT(PP_HTONL(LWIP_MAKEU32(a, b, c, d)))
-#define IP_IS_V4_VAL(ipaddr)                    1
-#define IP_IS_V6_VAL(ipaddr)                    0
-#define IP_IS_V4(ipaddr)                        1
-#define IP_IS_V6(ipaddr)                        0
-#define IP_IS_ANY_TYPE_VAL(ipaddr)              0
-#define IP_SET_TYPE_VAL(ipaddr, iptype)
-#define IP_SET_TYPE(ipaddr, iptype)
-#define IP_GET_TYPE(ipaddr)                     IPADDR_TYPE_V4
-#define ip_2_ip4(ipaddr)                        (ipaddr)
-#define IP_ADDR4(ipaddr, a, b, c, d)            IP4_ADDR(ipaddr, a, b, c, d)
 
+#define ip_2_ip4(ipaddr)                        (ipaddr)
 #define IPADDR_STRLEN_MAX   IP4ADDR_STRLEN_MAX
 
-#define IP46_ADDR_ANY(type) (IP4_ADDR_ANY)
 #else
 typedef ip6_addr_t ip_addr_t;
-#define IPADDR6_INIT(a, b, c, d)                { { a, b, c, d } }
-#define IPADDR6_INIT_HOST(a, b, c, d)           { { PP_HTONL(a), PP_HTONL(b), PP_HTONL(c), PP_HTONL(d) } }
-#define IP_IS_V4_VAL(ipaddr)                    0
-#define IP_IS_V6_VAL(ipaddr)                    1
-#define IP_IS_V4(ipaddr)                        0
-#define IP_IS_V6(ipaddr)                        1
-#define IP_IS_ANY_TYPE_VAL(ipaddr)              0
-#define IP_SET_TYPE_VAL(ipaddr, iptype)
-#define IP_SET_TYPE(ipaddr, iptype)
-#define IP_GET_TYPE(ipaddr)                     IPADDR_TYPE_V6
-#define ip_2_ip6(ipaddr)                        (ipaddr)
-#define IP_ADDR6(ipaddr, i0, i1, i2, i3)            IP6_ADDR(ipaddr, i0, i1, i2, i3)
-#define IP_ADDR6_HOST(ipaddr, i0, i1, i2, i3)       IP_ADDR6(ipaddr, PP_HTONL(i0), PP_HTONL(i1), PP_HTONL(i2), PP_HTONL(i3))
 
 #define IPADDR_STRLEN_MAX   IP6ADDR_STRLEN_MAX
 
-#define IP46_ADDR_ANY(type) (IP6_ADDR_ANY)
 #endif
 #endif
 
-extern void print_ipaddr(ip_addr_t *ip);
-
-extern struct netif *wm_ip4_route_src(const ip4_addr_t *dest, const ip4_addr_t *src);
 #endif

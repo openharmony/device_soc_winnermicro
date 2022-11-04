@@ -15,8 +15,8 @@
 
 #include <string.h>
 #include "wm_mem.h"
-#include "wm_wl_timers.h"
 #include "wm_wl_task.h"
+#include "wm_wl_timers.h"
 
 struct tls_timeo {
     struct tls_timeo *next;
@@ -124,14 +124,14 @@ void tls_timeout_p(u8 timeo_assigned, u32 msecs, tls_timeout_handler handler, vo
         *timeo = timeout;
     } else {
         for (t = *timeo; t != NULL; t = t->next) {
-          timeout->time -= t->time;
-          if (t->next == NULL || t->next->time > timeout->time) {
-            if (t->next != NULL) {
-              t->next->time -= timeout->time;
-            }
-            timeout->next = t->next;
-            t->next = timeout;
-            break;
+            timeout->time -= t->time;
+            if (t->next == NULL || t->next->time > timeout->time) {
+                if (t->next != NULL) {
+                    t->next->time -= timeout->time;
+                }
+                timeout->next = t->next;
+                t->next = timeout;
+                break;
             }
         }
     }
