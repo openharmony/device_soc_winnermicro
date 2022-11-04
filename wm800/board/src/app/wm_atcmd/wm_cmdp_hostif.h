@@ -210,7 +210,7 @@ typedef __packed struct _HOSTIF_CMD_PARAMS_GPIO {
     u8      num;
     u8      direct;
     u8      status;
-}HOSTIF_CMD_PARAMS_GPIO;
+} HOSTIF_CMD_PARAMS_GPIO;
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_SKCT {
     u32     timeout;
@@ -222,80 +222,80 @@ typedef __packed struct _HOSTIF_CMD_PARAMS_SKCT {
     u8      host_len;
     u16     localport;
     enum tls_cmd_mode mode;
-}HOSTIF_CMD_PARAMS_SKCT;
+} HOSTIF_CMD_PARAMS_SKCT;
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_SKSTT {
     u8      socket;
-}HOSTIF_CMD_PARAMS_SKSTT;
+} HOSTIF_CMD_PARAMS_SKSTT;
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_SKCLOSE {
     u8      socket;
-}HOSTIF_CMD_PARAMS_SKCLOSE;
+} HOSTIF_CMD_PARAMS_SKCLOSE;
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_SKSDF {
     u8      socket;
-}HOSTIF_CMD_PARAMS_SKSDF;
+} HOSTIF_CMD_PARAMS_SKSDF;
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_WPRT {
     u8      type;
-}HOSTIF_CMD_PARAMS_WPRT;
+} HOSTIF_CMD_PARAMS_WPRT;
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_SSID {
     u8      ssid_len;
     u8      ssid[1];
-}HOSTIF_CMD_PARAMS_SSID;
+} HOSTIF_CMD_PARAMS_SSID;
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_KEY {
     u8      format;
     u8      index;
     u8      key_len;
     u8      key[64];
-}HOSTIF_CMD_PARAMS_KEY;
+} HOSTIF_CMD_PARAMS_KEY;
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_ENCRYPT {
     u8      mode;
-}HOSTIF_CMD_PARAMS_ENCRYPT;
+} HOSTIF_CMD_PARAMS_ENCRYPT;
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_BSSID {
     u8      enable;
     u8      bssid[6];
-}HOSTIF_CMD_PARAMS_BSSID;
+} HOSTIF_CMD_PARAMS_BSSID;
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_BRD_SSID {
     u8      enable;
-}HOSTIF_CMD_PARAMS_BRD_SSID;
+} HOSTIF_CMD_PARAMS_BRD_SSID;
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_CHNL {
     u8      enable;
     u8      channel;
-}HOSTIF_CMD_PARAMS_CHNL;
+} HOSTIF_CMD_PARAMS_CHNL;
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_WREG {
     u16     region;
-}HOSTIF_CMD_PARAMS_WREG;
+} HOSTIF_CMD_PARAMS_WREG;
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_WBGR {
     u8      mode;
     u8      rate;
-}HOSTIF_CMD_PARAMS_WBGR;
+} HOSTIF_CMD_PARAMS_WBGR;
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_WATC {
     u8      enable;
-}HOSTIF_CMD_PARAMS_WATC;
+} HOSTIF_CMD_PARAMS_WATC;
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_WPSM {
     u8      enable;
-}HOSTIF_CMD_PARAMS_WPSM;
+} HOSTIF_CMD_PARAMS_WPSM;
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_WARM {
     u8      enable;
-}HOSTIF_CMD_PARAMS_WARM;
+} HOSTIF_CMD_PARAMS_WARM;
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_WPS {
     u8      mode;
     u8      pin_len;
     u8      pin[1];
-}HOSTIF_CMD_PARAMS_WPS;
+} HOSTIF_CMD_PARAMS_WPS;
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_NIP {
     u8      type;
@@ -303,16 +303,16 @@ typedef __packed struct _HOSTIF_CMD_PARAMS_NIP {
     u8      nm[4];
     u8      gw[4];
     u8      dns[4];
-}HOSTIF_CMD_PARAMS_NIP;
+} HOSTIF_CMD_PARAMS_NIP;
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_ATM {
     u8      mode;
-}HOSTIF_CMD_PARAMS_ATM;
+} HOSTIF_CMD_PARAMS_ATM;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_TEM {
     u8      offsetLen;
     u8      offset[8];
-}HOSTIF_CMDRSP_PARAMS_TEM;
+} HOSTIF_CMDRSP_PARAMS_TEM;
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_ATRM {
     u32 timeout;
@@ -323,17 +323,17 @@ typedef __packed struct _HOSTIF_CMD_PARAMS_ATRM {
     char host_name[32];
     u8  host_len;
     u16 localport;
-}HOSTIF_CMD_PARAMS_ATRM;
+} HOSTIF_CMD_PARAMS_ATRM;
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_AOLM {
     u8      enable;
     u8      ssid_len;
     u8      ssid[1];
-}HOSTIF_CMD_PARAMS_AOLM;
+} HOSTIF_CMD_PARAMS_AOLM;
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_PORTM {
     u8      mode;
-}HOSTIF_CMD_PARAMS_PORTM;
+} HOSTIF_CMD_PARAMS_PORTM;
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_UART {
     u8      baud_rate[3];
@@ -341,82 +341,82 @@ typedef __packed struct _HOSTIF_CMD_PARAMS_UART {
     u8      stopbit;
     u8      parity;
     u8      flow_ctrl;
-}HOSTIF_CMD_PARAMS_UART;
+} HOSTIF_CMD_PARAMS_UART;
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_ATLT {
     u16      length;
-}HOSTIF_CMD_PARAMS_ATLT;
+} HOSTIF_CMD_PARAMS_ATLT;
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_DNS {
     u8      length;
     u8      name[1];
-}HOSTIF_CMD_PARAMS_DNS;
+} HOSTIF_CMD_PARAMS_DNS;
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_DDNS {
     u8      enable;
     u8      user_len;
     u8      user[1];
-}HOSTIF_CMD_PARAMS_DDNS;
+} HOSTIF_CMD_PARAMS_DDNS;
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_UPNP {
     u8      enable;
-}HOSTIF_CMD_PARAMS_UPNP;
+} HOSTIF_CMD_PARAMS_UPNP;
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_DNAME {
     u8      length;
     u8      name[1];
-}HOSTIF_CMD_PARAMS_DNAME;
+} HOSTIF_CMD_PARAMS_DNAME;
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_DBG {
     u32      dbg_level;
-}HOSTIF_CMD_PARAMS_DBG;
+} HOSTIF_CMD_PARAMS_DBG;
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_REGR {
     u32      reg_base_addr;
     u8      length;
-}HOSTIF_CMD_PARAMS_REGR;
+} HOSTIF_CMD_PARAMS_REGR;
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_REGW {
     u32      reg_base_addr;
     u8      length;
     u32     v[1];
-}HOSTIF_CMD_PARAMS_REGW;
+} HOSTIF_CMD_PARAMS_REGW;
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_RFR {
     u16      reg_base_addr;
     u8      length;
-}HOSTIF_CMD_PARAMS_RFR;
+} HOSTIF_CMD_PARAMS_RFR;
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_RFW {
     u16      reg_base_addr;
     u8      length;
     u16     v[1];
-}HOSTIF_CMD_PARAMS_RFW;
+} HOSTIF_CMD_PARAMS_RFW;
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_FLSR {
     u32      reg_base_addr;
     u8      length;
-}HOSTIF_CMD_PARAMS_FLSR;
+} HOSTIF_CMD_PARAMS_FLSR;
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_FLSW {
     u32      reg_base_addr;
     u8      length;
     u32     v[1];
-}HOSTIF_CMD_PARAMS_FLSW;
+} HOSTIF_CMD_PARAMS_FLSW;
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_UPDM {
     u8      mode;
     u8      src; /* 标识来自at 0, 还是ri 1 */
-}HOSTIF_CMD_PARAMS_UPDM;
+} HOSTIF_CMD_PARAMS_UPDM;
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_UPDD {
     u16     size;
     u8      data[1];
-}HOSTIF_CMD_PARAMS_UPDD;
+} HOSTIF_CMD_PARAMS_UPDD;
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_ONESHOT {
     u8      status;
-}HOSTIF_CMD_PARAMS_ONESHOT;
+} HOSTIF_CMD_PARAMS_ONESHOT;
 
 typedef __packed struct HOSTIF_CMD_PARAMS_HTTPC {
     u8        verb;
@@ -424,100 +424,100 @@ typedef __packed struct HOSTIF_CMD_PARAMS_HTTPC {
     u16        data_len;
     u8      *url;
     u8      *data;
-}HOSTIF_CMD_PARAMS_HTTPC;
+} HOSTIF_CMD_PARAMS_HTTPC;
 
 typedef __packed struct HOSTIF_CMD_PARAMS_WJOIN {
     enum tls_cmd_mode mode;
-}HOSTIF_CMD_PARAMS_WJOIN;
+} HOSTIF_CMD_PARAMS_WJOIN;
 
 typedef __packed struct HOSTIF_CMD_PARAMS_WSCAN {
     enum tls_cmd_mode mode;
-}HOSTIF_CMD_PARAMS_WSCAN;
+} HOSTIF_CMD_PARAMS_WSCAN;
 
 typedef __packed struct HOSTIF_CMD_PARAMS_SKSND {
     u8      socket;
     u16     size;
-}HOSTIF_CMD_PARAMS_SKSND;
+} HOSTIF_CMD_PARAMS_SKSND;
 
 typedef __packed struct HOSTIF_CMD_PARAMS_SKRCV {
     u8      socket;
     u16     size;
-}HOSTIF_CMD_PARAMS_SKRCV;
+} HOSTIF_CMD_PARAMS_SKRCV;
 
 typedef __packed struct HOSTIF_CMD_PARAMS_SKRPTM {
     u8      mode;
-}HOSTIF_CMD_PARAMS_SKRPTM;
+} HOSTIF_CMD_PARAMS_SKRPTM;
 
 typedef __packed struct HOSTIF_CMD_PARAMS_SKGHBN {
     u8      ipstr[1];
-}HOSTIF_CMD_PARAMS_SKGHBN;
+} HOSTIF_CMD_PARAMS_SKGHBN;
 
 typedef __packed struct HOSTIF_CMD_PARAMS_CHANNEL_LIST {
     u16      channellist;
-}HOSTIF_CMD_PARAMS_CHANNEL_LIST;
+} HOSTIF_CMD_PARAMS_CHANNEL_LIST;
 
 typedef __packed struct HOSTIF_CMD_PARAMS_WARC {
     u8      autoretrycnt;
-}HOSTIF_CMD_PARAMS_WARC;
+} HOSTIF_CMD_PARAMS_WARC;
 
 typedef __packed struct HOSTIF_CMD_PARAMS_ATPT {
     u16      period;
-}HOSTIF_CMD_PARAMS_ATPT;
+} HOSTIF_CMD_PARAMS_ATPT;
 
 typedef __packed struct HOSTIF_CMD_PARAMS_ESPC {
     u8      escapechar;
-}HOSTIF_CMD_PARAMS_ESPC;
+} HOSTIF_CMD_PARAMS_ESPC;
 
 typedef __packed struct HOSTIF_CMD_PARAMS_ESPT {
     u16      escapeperiod;
-}HOSTIF_CMD_PARAMS_ESPT;
+} HOSTIF_CMD_PARAMS_ESPT;
 
 typedef __packed struct HOSTIF_CMD_PARAMS_WEBS {
     u8      autorun;
     u16     portnum;
-}HOSTIF_CMD_PARAMS_WEBS;
+} HOSTIF_CMD_PARAMS_WEBS;
 
 typedef __packed struct HOSTIF_CMD_PARAMS_IOM {
     u8      mode;
-}HOSTIF_CMD_PARAMS_IOM;
+} HOSTIF_CMD_PARAMS_IOM;
 
 typedef __packed struct HOSTIF_CMD_PARAMS_CMDM {
     u8      mode;
-}HOSTIF_CMD_PARAMS_CMDM;
+} HOSTIF_CMD_PARAMS_CMDM;
 
 typedef __packed struct HOSTIF_CMD_PARAMS_PASS {
     u8      length;
     u8      password[1];
-}HOSTIF_CMD_PARAMS_PASS;
+} HOSTIF_CMD_PARAMS_PASS;
 
 typedef __packed struct HOSTIF_CMD_PARAMS_UPDP {
     u8      mode;
-}HOSTIF_CMD_PARAMS_UPDP;
+} HOSTIF_CMD_PARAMS_UPDP;
 
 typedef __packed struct HOSTIF_CMD_PARAMS_TXG {
     u8      tx_gain[TX_GAIN_LEN];
-}HOSTIF_CMD_PARAMS_TXG;
+} HOSTIF_CMD_PARAMS_TXG;
 
 typedef __packed struct HOSTIF_CMD_PARAMS_TXGR{
     u8 tx_rate;
     u8 txr_gain[3];
-}HOSTIF_CMD_PARAMS_TXGR;
+} HOSTIF_CMD_PARAMS_TXGR;
 
 typedef __packed struct HOSTIF_CMD_PARAMS_MAC {
     u8      length;
     u8      macaddr[6];
-}HOSTIF_CMD_PARAMS_MAC;
+} HOSTIF_CMD_PARAMS_MAC;
 
 typedef __packed struct HOSTIF_CMD_PARAMS_SPIF {
     u8      mode;
     u8      len;
     u8      data[1];
-}HOSTIF_CMD_PARAMS_SPIF;
+} HOSTIF_CMD_PARAMS_SPIF;
 
 typedef __packed struct HOSTIF_CMD_PARAMS_LPCHL {
     u8      channel;
     u8      bandwidth;
-}HOSTIF_CMD_PARAMS_LPCHL;
+} HOSTIF_CMD_PARAMS_LPCHL;
 
 typedef __packed struct HOSTIF_CMD_PARAMS_LPTSTR {
     u32      tempcomp;
@@ -528,26 +528,26 @@ typedef __packed struct HOSTIF_CMD_PARAMS_LPTSTR {
     u32      rifs;
     u32      greenfield;
     u32      gimode;
-}HOSTIF_CMD_PARAMS_LPTSTR;
+} HOSTIF_CMD_PARAMS_LPTSTR;
 
 typedef __packed struct HOSTIF_CMD_PARAMS_LPPSTR {
     u32      param;
     u32      start;
-}HOSTIF_CMD_PARAMS_LPPSTR;
+} HOSTIF_CMD_PARAMS_LPPSTR;
 
 typedef __packed struct HOSTIF_CMD_PARAMS_LPPSTP {
     u32      mismatch;
-}HOSTIF_CMD_PARAMS_LPPSTP;
+} HOSTIF_CMD_PARAMS_LPPSTP;
 
 typedef __packed struct HOSTIF_CMD_PARAMS_WIDTH {
     u32      freq;
     u32      dividend;
-}HOSTIF_CMD_PARAMS_WIDTH;
+} HOSTIF_CMD_PARAMS_WIDTH;
 
 typedef __packed struct HOSTIF_CMD_PARAMS_RXSIN {
     u32      rxlen;
     u32         isprint;
-}HOSTIF_CMD_PARAMS_RXSIN;
+} HOSTIF_CMD_PARAMS_RXSIN;
 
 typedef __packed struct HOSTIF_CMD_PARAMS_PING {
     u8     *ip;
@@ -556,28 +556,28 @@ typedef __packed struct HOSTIF_CMD_PARAMS_PING {
     u32    start;
     u32    ext;
     u32    src;
-}HOSTIF_CMD_PARAMS_PING;
+} HOSTIF_CMD_PARAMS_PING;
 
 typedef __packed struct HOSTIF_CMD_PARAMS_THT {
     u32        *tok;
-}HOSTIF_CMD_PARAMS_THT;
+} HOSTIF_CMD_PARAMS_THT;
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_TXLO {
     u32 txlo;
-}HOSTIF_CMD_PARAMS_TXLO;
+} HOSTIF_CMD_PARAMS_TXLO;
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_TXIQ {
     u32 txiqgain;
     u32 txiqphase;
-}HOSTIF_CMD_PARAMS_TXIQ;
+} HOSTIF_CMD_PARAMS_TXIQ;
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_FREQERR {
     int freqerr;
-}HOSTIF_CMD_PARAMS_FREQERR;
+} HOSTIF_CMD_PARAMS_FREQERR;
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_VCGCTRL {
     int vcg;
-}HOSTIF_CMD_PARAMS_VCGCTRL;
+} HOSTIF_CMD_PARAMS_VCGCTRL;
 
 union HOSTIF_CMD_PARAMS_UNION {
     HOSTIF_CMD_PARAMS_PS ps;
@@ -665,12 +665,12 @@ struct tls_hostif_cmd {
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_MAC {
     u8      addr[6];
-}HOSTIF_CMDRSP_PARAMS_MAC; 
+} HOSTIF_CMDRSP_PARAMS_MAC; 
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_VER {
     u8      hw_ver[6];
     u8      fw_ver[4];
-}HOSTIF_CMDRSP_PARAMS_VER; 
+} HOSTIF_CMDRSP_PARAMS_VER; 
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_JOIN {
     u8      bssid[6];
@@ -681,7 +681,7 @@ typedef __packed struct _HOSTIF_CMDRSP_PARAMS_JOIN {
     u8      ssid[32];
     u8      rssi;
     u8      result;
-}HOSTIF_CMDRSP_PARAMS_JOIN;
+} HOSTIF_CMDRSP_PARAMS_JOIN;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_LKSTT {
     u8      status;
@@ -690,11 +690,11 @@ typedef __packed struct _HOSTIF_CMDRSP_PARAMS_LKSTT {
     u8      gw[4];
     u8      dns1[4];
     u8      dns2[4];
-}HOSTIF_CMDRSP_PARAMS_LKSTT;
+} HOSTIF_CMDRSP_PARAMS_LKSTT;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_SKCT {
     u8      socket;
-}HOSTIF_CMDRSP_PARAMS_SKCT;
+} HOSTIF_CMDRSP_PARAMS_SKCT;
 
 __packed struct hostif_cmdrsp_skstt_ext {
     u8      socket;
@@ -707,68 +707,68 @@ __packed struct hostif_cmdrsp_skstt_ext {
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_SKSTT {
     u8      number;
     struct hostif_cmdrsp_skstt_ext ext[1];
-}HOSTIF_CMDRSP_PARAMS_SKSTT;
+} HOSTIF_CMDRSP_PARAMS_SKSTT;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_WPRT {
     u8      type;
-}HOSTIF_CMDRSP_PARAMS_WPRT;
+} HOSTIF_CMDRSP_PARAMS_WPRT;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_SSID {
     u8      ssid_len;
     u8      ssid[1];
-}HOSTIF_CMDRSP_PARAMS_SSID;
+} HOSTIF_CMDRSP_PARAMS_SSID;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_KEY {
     u8      format;
     u8      index;
     u8      key_len;
     u8      key[64];
-}HOSTIF_CMDRSP_PARAMS_KEY;
+} HOSTIF_CMDRSP_PARAMS_KEY;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_ENCRYPT {
     u8      mode;
-}HOSTIF_CMDRSP_PARAMS_ENCRYPT;
+} HOSTIF_CMDRSP_PARAMS_ENCRYPT;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_BSSID {
     u8      enable;
     u8      bssid[6];
-}HOSTIF_CMDRSP_PARAMS_BSSID;
+} HOSTIF_CMDRSP_PARAMS_BSSID;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_BRD_SSID {
     u8      enable;
-}HOSTIF_CMDRSP_PARAMS_BRD_SSID;
+} HOSTIF_CMDRSP_PARAMS_BRD_SSID;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_CHNL {
     u8      enable;
     u8      channel;
-}HOSTIF_CMDRSP_PARAMS_CHNL;
+} HOSTIF_CMDRSP_PARAMS_CHNL;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_WREG {
     u16     region;
-}HOSTIF_CMDRSP_PARAMS_WREG;
+} HOSTIF_CMDRSP_PARAMS_WREG;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_WBGR {
     u8      mode;
     u8      rate;
-}HOSTIF_CMDRSP_PARAMS_WBGR;
+} HOSTIF_CMDRSP_PARAMS_WBGR;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_WATC {
     u8      enable;
-}HOSTIF_CMDRSP_PARAMS_WATC;
+} HOSTIF_CMDRSP_PARAMS_WATC;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_WPSM {
     u8      enable;
-}HOSTIF_CMDRSP_PARAMS_WPSM;
+} HOSTIF_CMDRSP_PARAMS_WPSM;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_WARM {
     u8      enable;
-}HOSTIF_CMDRSP_PARAMS_WARM;
+} HOSTIF_CMDRSP_PARAMS_WARM;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_WPS {
     u8      result;
     u8      pin_len;
     u8      pin[1];
-}HOSTIF_CMDRSP_PARAMS_WPS;
+} HOSTIF_CMDRSP_PARAMS_WPS;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_NIP {
     u8      type;
@@ -776,11 +776,11 @@ typedef __packed struct _HOSTIF_CMDRSP_PARAMS_NIP {
     u8      nm[4];
     u8      gw[4];
     u8      dns[4];
-}HOSTIF_CMDRSP_PARAMS_NIP;
+} HOSTIF_CMDRSP_PARAMS_NIP;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_ATM {
     u8      mode;
-}HOSTIF_CMDRSP_PARAMS_ATM;
+} HOSTIF_CMDRSP_PARAMS_ATM;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_ATRM {
     u32 timeout;
@@ -791,17 +791,17 @@ typedef __packed struct _HOSTIF_CMDRSP_PARAMS_ATRM {
     char host_name[32];
     u8  host_len;
     u16 localport;
-}HOSTIF_CMDRSP_PARAMS_ATRM;
+} HOSTIF_CMDRSP_PARAMS_ATRM;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_AOLM {
     u8      enable;
     u8      ssid_len;
     u8      ssid[1];
-}HOSTIF_CMDRSP_PARAMS_AOLM;
+} HOSTIF_CMDRSP_PARAMS_AOLM;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_PORTM {
     u8      mode;
-}HOSTIF_CMDRSP_PARAMS_PORTM;
+} HOSTIF_CMDRSP_PARAMS_PORTM;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_UART {
     u8      baud_rate[3];
@@ -809,83 +809,83 @@ typedef __packed struct _HOSTIF_CMDRSP_PARAMS_UART {
     u8      stopbit;
     u8      parity;
     u8      flow_ctrl;
-}HOSTIF_CMDRSP_PARAMS_UART;
+} HOSTIF_CMDRSP_PARAMS_UART;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_ATLT {
     u16     length;
-}HOSTIF_CMDRSP_PARAMS_ATLT;
+} HOSTIF_CMDRSP_PARAMS_ATLT;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_DNS {
     u8      length;
     u8      name[1];
-}HOSTIF_CMDRSP_PARAMS_DNS;
+} HOSTIF_CMDRSP_PARAMS_DNS;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_DDNS {
     u8      enable;
     u8      user_len;
     u8      user[1];
-}HOSTIF_CMDRSP_PARAMS_DDNS;
+} HOSTIF_CMDRSP_PARAMS_DDNS;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_UPNP {
     u8      enable;
-}HOSTIF_CMDRSP_PARAMS_UPNP;
+} HOSTIF_CMDRSP_PARAMS_UPNP;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_DNAME {
     u8      length;
     u8      name[1];
-}HOSTIF_CMDRSP_PARAMS_DNAME;
+} HOSTIF_CMDRSP_PARAMS_DNAME;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_DBG {
     u32      dbg_level;
-}HOSTIF_CMDRSP_PARAMS_DBG;
+} HOSTIF_CMDRSP_PARAMS_DBG;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_REGR {
     u8       length;
     u32      value[1];
-}HOSTIF_CMDRSP_PARAMS_REGR;
+} HOSTIF_CMDRSP_PARAMS_REGR;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_RFR {
     u8       length;
     u16      value[1];
-}HOSTIF_CMDRSP_PARAMS_RFR;
+} HOSTIF_CMDRSP_PARAMS_RFR;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_FLSR {
     u8       length;
     u32      value[1];
-}HOSTIF_CMDRSP_PARAMS_FLSR;
+} HOSTIF_CMDRSP_PARAMS_FLSR;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_UPDM {
     u8      mode;
-}HOSTIF_CMDRSP_PARAMS_UPDM;
+} HOSTIF_CMDRSP_PARAMS_UPDM;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_SKSND {
     u16      size;
-}HOSTIF_CMDRSP_PARAMS_SKSND;
+} HOSTIF_CMDRSP_PARAMS_SKSND;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_SKRCV {
     u8      socket;
     u16     size;
-}HOSTIF_CMDRSP_PARAMS_SKRCV;
+} HOSTIF_CMDRSP_PARAMS_SKRCV;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_SKRPTM {
     u8      mode;
-}HOSTIF_CMDRSP_PARAMS_SKRPTM;
+} HOSTIF_CMDRSP_PARAMS_SKRPTM;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_SKSRCIP {
     u8      ipvalue[4];
-}HOSTIF_CMDRSP_PARAMS_SKSRCIP;
+} HOSTIF_CMDRSP_PARAMS_SKSRCIP;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_SKGHBN {
     u8     h_addr_list[4];
-}HOSTIF_CMDRSP_PARAMS_SKGHBN;
+} HOSTIF_CMDRSP_PARAMS_SKGHBN;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_CHANNEL_LIST {
     u16     channellist;
-}HOSTIF_CMDRSP_PARAMS_CHANNEL_LIST;
+} HOSTIF_CMDRSP_PARAMS_CHANNEL_LIST;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_WARC {
     u8     autoretrycnt;
-}HOSTIF_CMDRSP_PARAMS_WARC;
+} HOSTIF_CMDRSP_PARAMS_WARC;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_CNTPARAM_BSSID_DIS {
     u8      bssid_enable;
@@ -903,94 +903,94 @@ typedef __packed struct _HOSTIF_CMDRSP_PARAMS_CNTPARAM_BSSID_EN {
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_ATPT {
     u16     period;
-}HOSTIF_CMDRSP_PARAMS_ATPT;
+} HOSTIF_CMDRSP_PARAMS_ATPT;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_ESPC {
     u8     escapechar;
-}HOSTIF_CMDRSP_PARAMS_ESPC;
+} HOSTIF_CMDRSP_PARAMS_ESPC;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_ESPT {
     u16     escapeperiod;
-}HOSTIF_CMDRSP_PARAMS_ESPT;
+} HOSTIF_CMDRSP_PARAMS_ESPT;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_WEBS {
     u8     autorun;
     u16    portnum;
-}HOSTIF_CMDRSP_PARAMS_WEBS;
+} HOSTIF_CMDRSP_PARAMS_WEBS;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_IOM {
     u8     mode;
-}HOSTIF_CMDRSP_PARAMS_IOM;
+} HOSTIF_CMDRSP_PARAMS_IOM;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_CMDM {
     u8     mode;
-}HOSTIF_CMDRSP_PARAMS_CMDM;
+} HOSTIF_CMDRSP_PARAMS_CMDM;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_PASS {
     u8     length;
     u8     password[1];
-}HOSTIF_CMDRSP_PARAMS_PASS;
+} HOSTIF_CMDRSP_PARAMS_PASS;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_ONESHOT {
     u8     status;
-}HOSTIF_CMDRSP_PARAMS_ONESHOT;
+} HOSTIF_CMDRSP_PARAMS_ONESHOT;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_HTTPC {
     u32     psession;
-}HOSTIF_CMDRSP_PARAMS_HTTPC;
+} HOSTIF_CMDRSP_PARAMS_HTTPC;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_TXG {
     u8      tx_gain[TX_GAIN_LEN];
-}HOSTIF_CMDRSP_PARAMS_TXG;
+} HOSTIF_CMDRSP_PARAMS_TXG;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_TXGR {
     u8      tx_rate;
     u8      txr_gain[3];
-}HOSTIF_CMDRSP_PARAMS_TXGR;
+} HOSTIF_CMDRSP_PARAMS_TXGR;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_SPIF {
     u8      mode;
     u8      len;
     u8      data[1];
-}HOSTIF_CMDRSP_PARAMS_SPIF;
+} HOSTIF_CMDRSP_PARAMS_SPIF;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_LPCHL {
     u8      channel;
-}HOSTIF_CMDRSP_PARAMS_LPCHL;
+} HOSTIF_CMDRSP_PARAMS_LPCHL;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_CUSTDATA {
     u8      length;
     u8      data[65];
-}HOSTIF_CMDRSP_PARAMS_CUSTDATA;
+} HOSTIF_CMDRSP_PARAMS_CUSTDATA;
 
 #if TLS_CONFIG_AP
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_STALIST {
     u8      sta_num;
     u8      data[320];
-}HOSTIF_CMDRSP_PARAMS_STALIST;
+} HOSTIF_CMDRSP_PARAMS_STALIST;
 #endif
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_TXLO {
     u32 txlo;
-}HOSTIF_CMDRSP_PARAMS_TXLO;
+} HOSTIF_CMDRSP_PARAMS_TXLO;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_TXIQ {
     u32 txiqgain;
     u32 txiqphase;
-}HOSTIF_CMDRSP_PARAMS_TXIQ;
+} HOSTIF_CMDRSP_PARAMS_TXIQ;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_FREQERR {
     int freqerr;
-}HOSTIF_CMDRSP_PARAMS_FREQERR;
+} HOSTIF_CMDRSP_PARAMS_FREQERR;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_VCGCTRL {
     int vcg;
-}HOSTIF_CMDRSP_PARAMS_VCGCTRL;
+} HOSTIF_CMDRSP_PARAMS_VCGCTRL;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_PING {
     u32      ext;
     u32      ttl;
-}HOSTIF_CMDRSP_PARAMS_PING;
+} HOSTIF_CMDRSP_PARAMS_PING;
 
 union HOSTIF_CMDRSP_PARAMS_UNION {
     HOSTIF_CMDRSP_PARAMS_MAC mac;
@@ -1073,7 +1073,7 @@ struct tls_hostif_cmdrsp {
 typedef __packed struct _HOSTIF_EVENT_PARAMS_SCAN_RES {
     u8 num;
     u8 data[1];
-}HOSTIF_EVENT_PARAMS_SCAN_RES;
+} HOSTIF_EVENT_PARAMS_SCAN_RES;
 
 typedef __packed struct _HOSTIF_EVENT_PARAMS_JOIN_RES {
     u8 res;
@@ -1083,20 +1083,20 @@ typedef __packed struct _HOSTIF_EVENT_PARAMS_JOIN_RES {
     u8 energy;
     u8 ssid_len;
     u8 ssid[1];
-}HOSTIF_EVENT_PARAMS_JOIN_RES;
+} HOSTIF_EVENT_PARAMS_JOIN_RES;
 
 typedef __packed struct _HOSTIF_EVENT_PARAMS_TCP_CONN {
     u8 socket;
     u8 res;
-}HOSTIF_EVENT_PARAMS_TCP_CONN;
+} HOSTIF_EVENT_PARAMS_TCP_CONN;
 
 typedef __packed struct _HOSTIF_EVENT_PARAMS_TCP_JOIN {
     u8 socket;
-}HOSTIF_EVENT_PARAMS_TCP_JOIN;
+} HOSTIF_EVENT_PARAMS_TCP_JOIN;
 
 typedef __packed struct _HOSTIF_EVENT_PARAMS_TCP_DIS {
     u8 socket;
-}HOSTIF_EVENT_PARAMS_TCP_DIS;
+} HOSTIF_EVENT_PARAMS_TCP_DIS;
 
 struct tls_hostif_event {
     struct tls_hostif_hdr hdr;
@@ -1108,7 +1108,7 @@ struct tls_hostif_event {
         HOSTIF_EVENT_PARAMS_TCP_CONN tcp_conn;
         HOSTIF_EVENT_PARAMS_TCP_JOIN tcp_join;
         HOSTIF_EVENT_PARAMS_TCP_DIS tcp_dis;
-   }params;
+    }params;
 };
 
 struct tls_hostif_data {
@@ -1133,24 +1133,24 @@ struct tls_hostif_tx_msg {
         struct msg_event_info {
             char  *buf;
             u16 buflen;
-       } msg_event;
+        } msg_event;
         struct msg_cmdrsp_info {
             char *buf;
             u16 buflen;
-       } msg_cmdrsp;
+        } msg_cmdrsp;
         struct msg_tcp_info {
             void *p;
             u8 sock;
-       } msg_tcp;
+        } msg_tcp;
         struct msg_udp_info {
             void *p;
             u8 sock;
             u16 port;
             u16 localport;
             ip_addr_t ip_addr;
-       } msg_udp;
-   } u;
-}; 
+        } msg_udp;
+    } u;
+};
 
 #define HOSTIF_TX_MSG_TYPE_EVENT       0
 #define HOSTIF_TX_MSG_TYPE_CMDRSP      1
@@ -1176,7 +1176,8 @@ struct tls_cmd_t {
     u8  op_flag;
     u8  at_arg_len;
     u16 ri_set_len;
-    int (* proc_func)(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd, union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp);
+    int (* proc_func)(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
+                      union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp);
 };
 
 typedef void (*hostif_send_tx_msg_callback)(u8 hostif_mode, struct tls_hostif_tx_msg *tx_msg, bool is_event);
@@ -1231,8 +1232,6 @@ struct rmms_msg {
 struct tls_hostif *tls_get_hostif(void);
 struct tls_hostif_tx_msg *tls_hostif_get_tx_msg(void);
 int tls_hostif_process_cmdrsp(u8 hostif_type, char *cmdrsp, u32 cmdrsp_size);
-void tls_hostif_fill_hdr(struct tls_hostif *hif,
-    struct tls_hostif_hdr *hdr, u8 type, u16 length, u8 flag, u8 dest_addr, u8 chk);
 
 void tls_hostif_fill_cmdrsp_hdr(struct tls_hostif_cmdrsp *cmdrsp,
     u8 code, u8 err, u8 ext);
@@ -1258,7 +1257,7 @@ int tls_hostif_set_net_status_callback(void);
 int tls_hostif_send_data(struct tls_hostif_socket_info *skt_info, char *buf, u32 buflen);
 int tls_hostif_create_default_socket(void);
 int tls_hostif_close_default_socket(void);
-struct tls_uart_circ_buf * tls_hostif_get_recvmit(int socket_num);
+struct tls_uart_circ_buf *tls_hostif_get_recvmit(int socket_num);
 int tls_cmd_create_socket(struct tls_cmd_socket_t *skt,
     enum tls_cmd_mode cmd_mode);
 int tls_cmd_close_socket(u8 skt_num);
@@ -1286,11 +1285,11 @@ void free_tx_msg_buffer(struct tls_hostif_tx_msg *tx_msg);
 /*************************************************************************** 
 * Function: tls_rmms_start
 * Description: Start remote manager server.
-* 
+*
 * Input:  None
-* 
+*
 * Output: None
-* 
+*
 * Return: The rmms error code:
 *             RMMS_ERR_SUCCESS - No error
 *             RMMS_ERR_MEM - Out of memory
@@ -1303,13 +1302,13 @@ s8 tls_rmms_start(void);
 /*************************************************************************** 
 * Function: tls_rmms_stop
 * Description: Disable remote manager server.
-* 
+*
 * Input:  None
-* 
+*
 * Output: None
-* 
+*
 * Return: None
-* 
+*
 * Date : 2015-7-20
 ****************************************************************************/
 void tls_rmms_stop(void);
