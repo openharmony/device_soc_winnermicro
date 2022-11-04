@@ -47,13 +47,14 @@ const void * const tls_null_pointer = (void *)0;
 s8 tls_mbox_new(tls_mbox_t *mbox, int size)
 {
     s8 err;
+    int mbox_size;
     tls_os_status_t status;
 
     if (size == 0) {
-        size = TEN;
+        mbox_size = TEN;
     }
 
-    status = tls_os_queue_create(mbox, size);
+    status = tls_os_queue_create(mbox, mbox_size);
     if (status == TLS_OS_SUCCESS) {
         err = TLS_OS_SUCCESS;
     } else {
@@ -97,10 +98,10 @@ int tls_mbox_valid(tls_mbox_t mbox)
 void tls_mbox_post(tls_mbox_t mbox, void *msg)
 {
     u8 err;
-    u8 i=0;
-
+    u8 i = 0;
+    
     if (msg == NULL) {
-        msg = (void*)tls_null_pointer;
+        msg = (void *)tls_null_pointer;
     }
 
     /* try 10 times */
@@ -130,7 +131,7 @@ s8 tls_mbox_trypost(tls_mbox_t mbox, void *msg)
     u8 err;
 
     if (msg == NULL) {
-        msg = (void*)tls_null_pointer;
+        msg = (void *)tls_null_pointer;
     }
 
     err = tls_os_queue_send(mbox, msg, 0);
@@ -166,19 +167,17 @@ u32 tls_arch_mbox_fetch(tls_mbox_t mbox, void **msg, u32 timeout)
 
     tick_start = tls_os_get_time();
     err = tls_os_queue_receive(mbox, msg, 0, in_timeout);
-    if (err != TLS_OS_SUCCESS ) {
+    if (err != TLS_OS_SUCCESS) {
         ucos_timeout = SYS_ARCH_TIMEOUT;
         return ucos_timeout;
     }
     tick_stop = tls_os_get_time();
-
     /* Take care of wrap-around. */
     if (tick_stop >= tick_start) {
         tick_elapsed = tick_stop - tick_start;
     } else {
         tick_elapsed = 0xFFFFFFFF - tick_start + tick_stop;
     }
-
 
     return tick_elapsed * ONE_THOUSAND/HZ;
 }
