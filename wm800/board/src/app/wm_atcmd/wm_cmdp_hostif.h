@@ -128,7 +128,6 @@
 #define HOSTIF_CMD_AP_WBGR             0x6F
 #define HOSTIF_CMD_STA_LIST            0x70
 
-
 #define HOSTIF_CMD_DBG                 0xF0
 #define HOSTIF_CMD_REGR                0xF1
 #define HOSTIF_CMD_REGW                0xF2
@@ -175,7 +174,7 @@ struct tls_hostif_hdr {
     u8      seq_num;
     u8      flag;
     u8      dest_addr;
-    u8      chk; 
+    u8      chk;
 };
 
 struct tls_hostif_cmd_hdr {
@@ -406,7 +405,7 @@ typedef __packed struct _HOSTIF_CMD_PARAMS_FLSW {
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_UPDM {
     u8      mode;
-    u8      src; /* 标识来自at 0, 还是ri 1 */
+    u8      src; /* 鏍囪瘑鏉ヨ嚜at 0, 杩樻槸ri 1 */
 } HOSTIF_CMD_PARAMS_UPDM;
 
 typedef __packed struct _HOSTIF_CMD_PARAMS_UPDD {
@@ -665,7 +664,7 @@ struct tls_hostif_cmd {
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_MAC {
     u8      addr[6];
-} HOSTIF_CMDRSP_PARAMS_MAC; 
+} HOSTIF_CMDRSP_PARAMS_MAC;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_VER {
     u8      hw_ver[6];
@@ -1166,7 +1165,7 @@ struct tls_atcmd_token_t {
     char   name[ATCMD_NAME_MAX_LEN];
     u32   op;
     char  *arg[ATCMD_MAX_ARG];
-    u32   arg_found; 
+    u32   arg_found;
     enum  tls_cmd_mode cmd_mode;
 };
 
@@ -1299,7 +1298,7 @@ void free_tx_msg_buffer(struct tls_hostif_tx_msg *tx_msg);
 ****************************************************************************/
 s8 tls_rmms_start(void);
 
-/*************************************************************************** 
+/***************************************************************************
 * Function: tls_rmms_stop
 * Description: Disable remote manager server.
 *

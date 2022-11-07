@@ -234,7 +234,7 @@ err_t tls_netif_remove_status_event(tls_netif_status_event_fn event_fn);
  * @retval         pointer of netif
  *
  * @note           None
- */ 
+ */
 struct netif *tls_get_netif(void);
 
 #if TLS_CONFIG_AP
@@ -345,7 +345,7 @@ void tls_rmms_stop(void);
 err_t tls_netif2_set_up(void);
 
 /**
- * @brief          This function is used to bring down an interface for APSTA, disabling 
+ * @brief          This function is used to bring down an interface for APSTA, disabling
                    any traffic processing
  *
  * @param[in]      None

@@ -1,14 +1,17 @@
-/**************************************************************************
- * File Name                   : tls_cmdp_hostif.h
- * Author                      :
- * Version                     :
- * Date                        :
- * Description                 :
+/*
+ * Copyright (c) 2022 Winner Microelectronics Co., Ltd. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Copyright (c) 2014 Winner Microelectronics Co., Ltd. 
- * All rights reserved.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- ***************************************************************************/
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 
 #ifndef TLS_CMDP_HOSTIF_H
@@ -535,7 +538,7 @@ typedef struct _HOSTIF_CMD_PARAMS_FLSW {
 
 typedef struct _HOSTIF_CMD_PARAMS_UPDM {
     u8      mode;
-    u8      src;    /* 标识来自at 0, 还是ri 1 */
+    u8      src;    /* 鏍囪瘑鏉ヨ嚜at 0, 杩樻槸ri 1 */
 }__attribute__((packed))HOSTIF_CMD_PARAMS_UPDM;
 
 typedef struct _HOSTIF_CMD_PARAMS_UPDD {
