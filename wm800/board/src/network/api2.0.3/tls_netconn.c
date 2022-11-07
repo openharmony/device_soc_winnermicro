@@ -463,7 +463,7 @@ static void do_close_connect(void *ctx)
                     }
                 }
 
-                while(i-- > 0) {
+                while(i-- > 0){
                     net_tcp_close_connect(sktNums[i]);
                 }
             }
@@ -511,9 +511,7 @@ int tls_socket_close(u8 socket)
         TLS_DBGPRT_ERR("skt num=%d\n", socket);
         return -1;
     }
-
     conn = tls_net_get_socket(socket);
-
     if (conn == NULL || TRUE != conn->used) {
         TLS_DBGPRT_ERR("conn==%x,used=%d\n", (u32)conn, conn->used);
         return -1;

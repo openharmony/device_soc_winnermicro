@@ -227,7 +227,7 @@ void tls_uart_init(void)
     tls_cmd_register_set_uart1_mode(uart_set_uart1_mode);
     tls_cmd_register_set_uart1_sock_param(uart_set_uart1_sock_param);
     if (hif->hostif_mode == HOSTIF_MODE_UART1_HS) {
-        /* ¸ù¾Ýflash¶ÁÈ¡µÄ²ÎÊýÅäÖÃ´®¿Ú¼Ä´æÆ÷ */
+        /* æ ¹æ®flashè¯»å–çš„å‚æ•°é…ç½®ä¸²å£å¯„å­˜å™¨ */
         uart_opts.baudrate = uart_cfg.baudrate;
         uart_opts.charlength = TLS_UART_CHSIZE_8BIT;
         uart_opts.flow_ctrl = (enum TLS_UART_FLOW_CTRL_MODE) uart_cfg.flow;
@@ -266,7 +266,7 @@ void tls_uart_init(void)
         } else
 #endif /* TLS_CONFIG_SOCKET_RAW */
         {
-            uart->cmd_mode = UART_ATCMD_MODE;   // Ö¸ÁîÄ£Ê½¹Ø±ÕÁ÷¿Ø
+            uart->cmd_mode = UART_ATCMD_MODE;   // æŒ‡ä»¤æ¨¡å¼å…³é—­æµæŽ§
             tls_uart_set_fc_status(uart->uart_port->uart_no,
                                    TLS_UART_FLOW_CTRL_NONE);
         }
@@ -563,12 +563,12 @@ static int cache_tcp_recv(struct tls_hostif_tx_msg *tx_msg)
 }
 
  /*
- * ´¦ÀíÁ÷³ÌËµÃ÷£º
- * Ê×ÏÈÅÐ¶ÏÉÏ´ÎµÄÍ¬²½Ö¡ÊÇ·ñÒÑ¾­´¦ÀíÍê³É£¬Èç¹ûÒÑ¾­´¦Àí½áÊø£¬
- *          Ôò¼ì²é»º´æheadÖ¸ÏòµÄ×Ö½Ú£¬ÅÐ¶ÏÊÇ·ñÊÇ0xAA(SYN_FLAG)£¬
- *          Èç¹ûÊÇ£¬Ôò¼ì²é»º´æµÄ³¤¶ÈÊÇ·ñ´óÓÚµÈÓÚ8£¬Èç¹û²»ÊÇ
- *          Ôò·µ»Ø£¬Èç¹ûÊÇ£¬ÔòÌáÈ¡×Ö½Ú±ê¼ÇºÍ³¤¶ÈÐÅÏ¢£¬Ð£ÑéÐÅÏ¢£¬
- *          ¼ÆËãÐ£ÑéºÍ£¬¼ì²éÐ£ÑéÖµÊÇ·ñÆ¥Åä£¬
+ * å¤„ç†æµç¨‹è¯´æ˜Žï¼š
+ * é¦–å…ˆåˆ¤æ–­ä¸Šæ¬¡çš„åŒæ­¥å¸§æ˜¯å¦å·²ç»å¤„ç†å®Œæˆï¼Œå¦‚æžœå·²ç»å¤„ç†ç»“æŸï¼Œ
+ *          åˆ™æ£€æŸ¥ç¼“å­˜headæŒ‡å‘çš„å­—èŠ‚ï¼Œåˆ¤æ–­æ˜¯å¦æ˜¯0xAA(SYN_FLAG)ï¼Œ
+ *          å¦‚æžœæ˜¯ï¼Œåˆ™æ£€æŸ¥ç¼“å­˜çš„é•¿åº¦æ˜¯å¦å¤§äºŽç­‰äºŽ8ï¼Œå¦‚æžœä¸æ˜¯
+ *          åˆ™è¿”å›žï¼Œå¦‚æžœæ˜¯ï¼Œåˆ™æå–å­—èŠ‚æ ‡è®°å’Œé•¿åº¦ä¿¡æ¯ï¼Œæ ¡éªŒä¿¡æ¯ï¼Œ
+ *          è®¡ç®—æ ¡éªŒå’Œï¼Œæ£€æŸ¥æ ¡éªŒå€¼æ˜¯å¦åŒ¹é…ï¼Œ
  */
 static int ricmd_handle_sync(struct tls_uart *uart, struct tls_uart_circ_buf *recv)
 {
@@ -636,7 +636,7 @@ void parse_ricmd_line(struct tls_uart *uart)
             else
                 procbytes = numbytes;
         } else {
-            /* Ã»ÓÐÐèÒª´¦ÀíµÄÊý¾Ý(µÚÒ»¸ö×Ö·û²»ÊÇSYNC_FLAG)£¬¶øÇÒÒÔÇ°µÄ°üÒÑ¾­´¦ÀíÍê³É */
+            /* æ²¡æœ‰éœ€è¦å¤„ç†çš„æ•°æ®(ç¬¬ä¸€ä¸ªå­—ç¬¦ä¸æ˜¯SYNC_FLAG)ï¼Œè€Œä¸”ä»¥å‰çš„åŒ…å·²ç»å¤„ç†å®Œæˆ */
             procbytes = skip_count;
         }
         recv->head = (recv->head + procbytes) & (TLS_UART_RX_BUF_SIZE - 1);

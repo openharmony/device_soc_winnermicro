@@ -260,7 +260,7 @@ int tls_hostif_process_cmdrsp(u8 hostif_type, char *cmdrsp, u32 cmdrsp_size)
             tx_msg->u.msg_cmdrsp.buflen = cmdrsp_size;
 
             if (hif->uart_send_tx_msg_callback != NULL) {
-                while(tx_msg->u.msg_cmdrsp.buflen > remain_len) {
+                while(tx_msg->u.msg_cmdrsp.buflen > remain_len){
                     if (hostif_type == HOSTIF_MODE_UART0) {
                         remain_len = tls_uart_tx_remain_len(&uart_port[0]);
                     } else {
@@ -924,7 +924,6 @@ int tls_hostif_init(void)
                               SIXTY * HZ,  /* 60 seconds */
                               TRUE,
                               NULL);
-
     if (!err) {
         tls_os_timer_start(hif->tx_timer);
     }
@@ -2875,7 +2874,7 @@ int spif_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
 /******************************************************************
 * Description:    For litepoint init
 
-* Format:
+* Format:    none
 
 * Argument:    none
 
@@ -3051,7 +3050,7 @@ int lprstt_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
 * Format:        AT+&LPPSTR=<init_param>,<flag_start><CR>
             +OK<CR><LF><CR><LF>
 
-* Argument:    hex init_param: flag_start: 
+* Argument:    hex init_param: flag_start:
 
 * Author:     kevin 2014-03-14
 ******************************************************************/
@@ -3081,7 +3080,7 @@ int lppstp_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
 /******************************************************************
 * Description:    For litepoint test, setting the parameter of RF
 
-* Format:        AT+&LPRFPS=< rftype ><size><CR>[data stream] 
+* Format:        AT+&LPRFPS=< rftype ><size><CR>[data stream]
             +OK=<CR><LF><CR><LF>
 
 * Argument:    ftype£∫rf¿‡–Õ 0£∫2230£ª1£∫2829£ª2£∫HEDrf
@@ -3203,7 +3202,7 @@ int lpragc_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
 * Format:        AT+&LPRSR [=?]<CR>
             +OK[=valid,rcpi,snr]<CR><LF><CR><LF>
 
-* Argument:
+* Argument:    none
 
 * Author:     kevin 2014-03-14
 ******************************************************************/
@@ -3265,10 +3264,9 @@ int tls_rf_vcg_ctrl_proc(u8 set_opt, u8 update_flah, union HOSTIF_CMD_PARAMS_UNI
 
 #if TLS_CONFIG_WIFI_PERF_TEST
 /******************************************************************
-* Description:
-As server: TEST UDP & TCP RX
-AT+THT=Ss,-i=1
-AT+THT=Ss
+* Description:  As server: TEST UDP & TCP RX
+                AT+THT=Ss,-i=1
+                AT+THT=Ss
 
 As client: None
 UDP TX:  AT+THT=Cc,192.168.1.100, UDP, -b=10K,-t=10,-i=1
@@ -3438,7 +3436,7 @@ int cpu_state_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *c
     union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     csi_vic_set_wakeup_irq(UART0_IRQn);
-    switch(cmd->width.freq) {
+    switch(cmd->width.freq){
         case 0:
             __WAIT();
             break;
@@ -3652,7 +3650,7 @@ int bt_spp_server_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNIO
     if (cmd->bt.cmd == 1) {
         ret = tls_bt_enable_spp_server();
     } else if (cmd->bt.cmd == 0) {
-       ret = tls_bt_disable_spp_server();
+        ret = tls_bt_disable_spp_server();
     }
     return (ret == TLS_BT_STATUS_SUCCESS) ? 0 : -CMD_ERR_OPS;
 }
@@ -3816,10 +3814,10 @@ static struct tls_cmd_t  at_ri_cmd_tbl[] = {
     { "WWPS", HOSTIF_CMD_WPS, 0x7F, 1, 1, wwps_proc},
 #endif
     { "CUSTDATA", HOSTIF_CMD_CUSTDATA, 0x19, 0, 0, custdata_proc},
-    { "TXLO", HOSTIF_CMD_NOP, 0x7F, 1,  0,  tls_tx_lo_proc},
-    { "TXIQ", HOSTIF_CMD_NOP, 0x7F, TWO,  0,  tls_tx_iq_mismatch_proc},
-    { "FREQ", HOSTIF_CMD_NOP, 0x7F, 1,  0,  tls_freq_error_proc},
-    { "VCG",    HOSTIF_CMD_NOP, 0x7F, 1, 0 , tls_rf_vcg_ctrl_proc},
+    { "TXLO", HOSTIF_CMD_NOP, 0x7F, 1, 0, tls_tx_lo_proc},
+    { "TXIQ", HOSTIF_CMD_NOP, 0x7F, TWO, 0, tls_tx_iq_mismatch_proc},
+    { "FREQ", HOSTIF_CMD_NOP, 0x7F, 1, 0, tls_freq_error_proc},
+    { "VCG",    HOSTIF_CMD_NOP, 0x7F, 1, 0, tls_rf_vcg_ctrl_proc},
     { "&LPTPD", HOSTIF_CMD_NOP, 0x7F, 1, 0, tls_lptperiod_proc},
     { "STDBY", HOSTIF_CMD_NOP, 0x1, 0, 0, stand_by_power_down},
     { "CPUSTA", HOSTIF_CMD_NOP, 0x2, 1, 0, cpu_state_proc},
@@ -3834,8 +3832,8 @@ static struct tls_cmd_t  at_ri_cmd_tbl[] = {
     { "BTSLEEP", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 1, 0, bt_sleep_proc},
     { "BLETPS", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, TWO, 0, ble_tx_power_set_proc},
     { "BLETPG", HOSTIF_CMD_NOP, ATCMD_OP_NULL | ATCMD_OP_QU | RICMD_OP_GET, 1, 0, ble_tx_power_get_proc},
-    { "BTTXPOW", HOSTIF_CMD_NOP, ATCMD_OP_NULL | ATCMD_OP_EQ | ATCMD_OP_EP | ATCMD_OP_QU
-                 | RICMD_OP_GET | RICMD_OP_SET, TWO, 0, bt_tx_power_proc},
+    { "BTTXPOW", HOSTIF_CMD_NOP, ATCMD_OP_NULL | ATCMD_OP_EQ | ATCMD_OP_EP | ATCMD_OP_QU |
+                 RICMD_OP_GET | RICMD_OP_SET, TWO, 0, bt_tx_power_proc},
 
     { "BTTEST", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 1, 0, bt_test_mode_proc},
     { "BTRF", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 1, 0, bt_rf_mode_proc},
@@ -3879,9 +3877,9 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
     } else if ((strcmp("Z", at_name) == 0) || (strcmp("E", at_name) == 0) || (strcmp("RSTF", at_name) == 0) ||
         (strcmp("PMTF", at_name) == 0) || (strcmp("IOC", at_name) == 0)  ||
         (strcmp("LKSTT", at_name) == 0) || (strcmp("CNTPARAM", at_name) == 0)
-#if (WM_BLE_INCLUDED == CFG_ON) || (WM_BT_INCLUDED == CFG_ON)
+    #if (WM_BLE_INCLUDED == CFG_ON) || (WM_BT_INCLUDED == CFG_ON)
         || (strcmp("BTCTRLGS", at_name) == 0)
-#endif
+    #endif
         ) {
             ;
     } else if (strcmp("ENTS", at_name) == 0) {
@@ -3917,7 +3915,7 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
                 break;
             }
             cmd->ps.wake_time = (u16)params;
-        }while(0);
+        } while(0);
         if (err)
             return -CMD_ERR_INV_PARAMS;
     } else if (strcmp("WJOIN", at_name) == 0) {
@@ -3986,9 +3984,9 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
     (strcmp("WARM", at_name) == 0) || (strcmp("ATM", at_name) == 0) || (strcmp("PORTM", at_name) == 0) ||
     (strcmp("IOM", at_name) == 0) || (strcmp("CMDM", at_name) == 0) || (strcmp("ONESHOT", at_name) == 0) ||
     (strcmp("&UPDP", at_name) == 0)
-#if TLS_CONFIG_AP
+    #if TLS_CONFIG_AP
     ||(strcmp("APENCRY", at_name) == 0)
-#endif
+    #endif
     ) {
         int ret = 0;
         u32 param;
@@ -4575,8 +4573,7 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
     } else if (strcmp("TEM", at_name) == 0) {
         if (set_opt) {
             *res_len = atcmd_ok_resp(res_resp);
-        }
-        else {
+        } else {
             *res_len = sprintf(res_resp, "+OK=%s", cmdrsp->tem.offset);
         }
 #if TLS_CONFIG_AT_CMD
@@ -4622,9 +4619,9 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
     (strcmp("WATC", at_name) == 0) || (strcmp("WPSM", at_name) == 0) || (strcmp("WARC", at_name) == 0) ||
     (strcmp("WARM", at_name) == 0) || (strcmp("ATM", at_name) == 0) || (strcmp("PORTM", at_name) == 0) ||
     (strcmp("IOM", at_name) == 0) || (strcmp("CMDM", at_name) == 0) || (strcmp("ONESHOT", at_name) == 0)
-#if TLS_CONFIG_AP
+    #if TLS_CONFIG_AP
         ||(strcmp("APENCRY", at_name) == 0)
-#endif
+    #endif
     ) {
         if (set_opt) {
             *res_len = atcmd_ok_resp(res_resp);
@@ -4790,7 +4787,7 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
         if (set_opt) {
             *res_len = atcmd_ok_resp(res_resp);
         } else {
-            *res_len = sprintf(res_resp, "+OK=%02x%02x%02x%02x%02x%02x", 
+            *res_len = sprintf(res_resp, "+OK=%02x%02x%02x%02x%02x%02x",
                 cmdrsp->mac.addr[0], cmdrsp->mac.addr[1], cmdrsp->mac.addr[TWO],
                 cmdrsp->mac.addr[THREE], cmdrsp->mac.addr[FOUR], cmdrsp->mac.addr[FIVE]);
         }
@@ -5233,7 +5230,7 @@ int tls_atcmd_parse(struct tls_atcmd_token_t *tok, char *buf, u32 len)
         tok->arg_found = 0;
         return 0;
     } else {
-        /* format : at+wprt=0 
+        /* format : at+wprt=0
          *          at+skct=0,0,192.168.1.4,80 */
         if ((c - buf) > (ATCMD_NAME_MAX_LEN - 1)) {
             return -CMD_ERR_UNSUPP;

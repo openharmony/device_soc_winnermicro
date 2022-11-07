@@ -98,8 +98,8 @@ struct tls_cmd_connect_t {
     u8 encrypt;
     u8 ssid_len;
     u8 ssid[32];
-    u8 rssi;  /* 只取值，不取符号 */
-    u8 res;   /* 1: 返回参数, 0: 没有参数 */
+    u8 rssi;  /* 鍙彇鍊硷紝涓嶅彇绗﹀彿 */
+    u8 res;   /* 1: 杩斿洖鍙傛暟, 0: 娌℃湁鍙傛暟 */
 };
 
 struct tls_cmd_link_status_t {
