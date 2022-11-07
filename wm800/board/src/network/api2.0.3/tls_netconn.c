@@ -463,7 +463,7 @@ static void do_close_connect(void *ctx)
                     }
                 }
 
-                while(i-- > 0){
+                while(i-- > 0) {
                     net_tcp_close_connect(sktNums[i]);
                 }
             }
