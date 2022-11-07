@@ -19,10 +19,10 @@ kernel_module(module_name) {
     "fwup/wm_fwup.c",
     "mem/wm_mem.c",
     "params/wm_param.c",
-    "utils/utils.c",
-    "task/wm_wl_task.c",
     "task/wm_wl_mbox.c",
+    "task/wm_wl_task.c",
     "task/wm_wl_timers.c",
+    "utils/utils.c",
   ]
   include_dirs = []
 }
