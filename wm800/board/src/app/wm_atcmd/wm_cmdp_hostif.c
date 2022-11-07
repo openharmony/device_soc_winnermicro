@@ -3436,7 +3436,7 @@ int cpu_state_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *c
     union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     csi_vic_set_wakeup_irq(UART0_IRQn);
-    switch(cmd->width.freq) {
+    switch (cmd->width.freq) {
         case 0:
             __WAIT();
             break;
@@ -3863,12 +3863,7 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
         strcmp("&LPTSTP", at_name) == 0 || strcmp("&LPTSTT", at_name) == 0 || strcmp("&LPRSTP", at_name) == 0 ||
         strcmp("&LPRSTT", at_name) == 0 || strcmp("&LPRFPS", at_name) == 0 || strcmp("&LPSTPT", at_name) == 0 ||
         strcmp("&LPSTPR", at_name) == 0 || strcmp("&LPRAGC", at_name) == 0 || strcmp("&LPRSR", at_name) == 0 ||
-        strcmp("CUSTDATA", at_name) == 0 || strcmp("STDBY", at_name) == 0
-#if TLS_CONFIG_AP
-        || strcmp("APMAC", at_name) == 0 ||
-        strcmp("APLKSTT", at_name) == 0 || strcmp("SLIST", at_name) == 0
-#endif
-       ) {
+        strcmp("CUSTDATA", at_name) == 0 || strcmp("STDBY", at_name) == 0) {
         ;
 #if TLS_CONFIG_AT_CMD
     } else if ((strcmp("Z", at_name) == 0) || (strcmp("E", at_name) == 0) || (strcmp("RSTF", at_name) == 0) ||
@@ -4607,11 +4602,7 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
     } else if ((strcmp("WPRT", at_name) == 0) || (strcmp("ENCRY", at_name) == 0) || (strcmp("BRDSSID", at_name) == 0) ||
                (strcmp("WATC", at_name) == 0) || (strcmp("WPSM", at_name) == 0) || (strcmp("WARC", at_name) == 0) ||
                (strcmp("WARM", at_name) == 0) || (strcmp("ATM", at_name) == 0) || (strcmp("PORTM", at_name) == 0) ||
-               (strcmp("IOM", at_name) == 0) || (strcmp("CMDM", at_name) == 0) || (strcmp("ONESHOT", at_name) == 0)
-#if TLS_CONFIG_AP
-               || (strcmp("APENCRY", at_name) == 0)
-#endif
-    ) {
+               (strcmp("IOM", at_name) == 0) || (strcmp("CMDM", at_name) == 0) || (strcmp("ONESHOT", at_name) == 0)) {
         if (set_opt) {
             *res_len = atcmd_ok_resp(res_resp);
         } else {
