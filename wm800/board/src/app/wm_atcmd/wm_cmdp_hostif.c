@@ -260,8 +260,7 @@ int tls_hostif_process_cmdrsp(u8 hostif_type, char *cmdrsp, u32 cmdrsp_size)
             tx_msg->u.msg_cmdrsp.buflen = cmdrsp_size;
 
             if (hif->uart_send_tx_msg_callback != NULL) {
-                while(tx_msg->u.msg_cmdrsp.buflen > remain_len)
-                {
+                while(tx_msg->u.msg_cmdrsp.buflen > remain_len) {
                     if (hostif_type == HOSTIF_MODE_UART0) {
                         remain_len = tls_uart_tx_remain_len(&uart_port[0]);
                     } else {
@@ -3834,7 +3833,7 @@ static struct tls_cmd_t  at_ri_cmd_tbl[] = {
     { "BLETPS", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, TWO, 0, ble_tx_power_set_proc},
     { "BLETPG", HOSTIF_CMD_NOP, ATCMD_OP_NULL | ATCMD_OP_QU | RICMD_OP_GET, 1, 0, ble_tx_power_get_proc},
     { "BTTXPOW", HOSTIF_CMD_NOP, ATCMD_OP_NULL | ATCMD_OP_EQ | ATCMD_OP_EP | ATCMD_OP_QU |
-                 RICMD_OP_GET | RICMD_OP_SET, TWO, 0, bt_tx_power_proc},
+    RICMD_OP_GET | RICMD_OP_SET, TWO, 0, bt_tx_power_proc},
 
     { "BTTEST", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 1, 0, bt_test_mode_proc},
     { "BTRF", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 1, 0, bt_rf_mode_proc},
@@ -3870,18 +3869,14 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
         strcmp("CUSTDATA", at_name) == 0 || strcmp("STDBY", at_name) == 0
 #if TLS_CONFIG_AP
         || strcmp("APMAC", at_name) == 0 ||
-        strcmp("APLKSTT", at_name) == 0 ||  strcmp("SLIST", at_name) == 0
+        strcmp("APLKSTT", at_name) == 0 || strcmp("SLIST", at_name) == 0
 #endif
        ) {
         ;
 #if TLS_CONFIG_AT_CMD
     } else if ((strcmp("Z", at_name) == 0) || (strcmp("E", at_name) == 0) || (strcmp("RSTF", at_name) == 0) ||
-        (strcmp("PMTF", at_name) == 0) || (strcmp("IOC", at_name) == 0)  ||
-        (strcmp("LKSTT", at_name) == 0) || (strcmp("CNTPARAM", at_name) == 0)
-    #if (WM_BLE_INCLUDED == CFG_ON) || (WM_BT_INCLUDED == CFG_ON)
-        || (strcmp("BTCTRLGS", at_name) == 0)
-    #endif
-        ) {
+               (strcmp("PMTF", at_name) == 0) || (strcmp("IOC", at_name) == 0)  ||
+               (strcmp("LKSTT", at_name) == 0) || (strcmp("CNTPARAM", at_name) == 0)) {
             ;
     } else if (strcmp("ENTS", at_name) == 0) {
         int err = 0, ret = 0;
@@ -3916,7 +3911,7 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
                 break;
             }
             cmd->ps.wake_time = (u16)params;
-        }while(0);
+        } while(0);
         if (err)
             return -CMD_ERR_INV_PARAMS;
     } else if (strcmp("WJOIN", at_name) == 0) {
@@ -3981,14 +3976,10 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
             memcpy(cmd->tem.offset, tmpssid, cmd->tem.offsetLen);
         }
     } else if ((strcmp("WPRT", at_name) == 0) || (strcmp("ENCRY", at_name) == 0) || (strcmp("BRDSSID", at_name) == 0) ||
-    (strcmp("WATC", at_name) == 0) || (strcmp("WPSM", at_name) == 0) || (strcmp("WARC", at_name) == 0) ||
-    (strcmp("WARM", at_name) == 0) || (strcmp("ATM", at_name) == 0) || (strcmp("PORTM", at_name) == 0) ||
-    (strcmp("IOM", at_name) == 0) || (strcmp("CMDM", at_name) == 0) || (strcmp("ONESHOT", at_name) == 0) ||
-    (strcmp("&UPDP", at_name) == 0)
-    #if TLS_CONFIG_AP
-    ||(strcmp("APENCRY", at_name) == 0)
-    #endif
-    ) {
+               (strcmp("WATC", at_name) == 0) || (strcmp("WPSM", at_name) == 0) || (strcmp("WARC", at_name) == 0) ||
+               (strcmp("WARM", at_name) == 0) || (strcmp("ATM", at_name) == 0) || (strcmp("PORTM", at_name) == 0) ||
+               (strcmp("IOM", at_name) == 0) || (strcmp("CMDM", at_name) == 0) || (strcmp("ONESHOT", at_name) == 0) ||
+               (strcmp("&UPDP", at_name) == 0)) {
         int ret = 0;
         u32 param;
         if (tok->arg_found > 1)
@@ -4617,11 +4608,11 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
             *res_len = sprintf(res_resp, "+OK=%s", cmdrsp->ssid.ssid);
         }
     } else if ((strcmp("WPRT", at_name) == 0) || (strcmp("ENCRY", at_name) == 0) || (strcmp("BRDSSID", at_name) == 0) ||
-    (strcmp("WATC", at_name) == 0) || (strcmp("WPSM", at_name) == 0) || (strcmp("WARC", at_name) == 0) ||
-    (strcmp("WARM", at_name) == 0) || (strcmp("ATM", at_name) == 0) || (strcmp("PORTM", at_name) == 0) ||
-    (strcmp("IOM", at_name) == 0) || (strcmp("CMDM", at_name) == 0) || (strcmp("ONESHOT", at_name) == 0)
+               (strcmp("WATC", at_name) == 0) || (strcmp("WPSM", at_name) == 0) || (strcmp("WARC", at_name) == 0) ||
+               (strcmp("WARM", at_name) == 0) || (strcmp("ATM", at_name) == 0) || (strcmp("PORTM", at_name) == 0) ||
+               (strcmp("IOM", at_name) == 0) || (strcmp("CMDM", at_name) == 0) || (strcmp("ONESHOT", at_name) == 0)
     #if TLS_CONFIG_AP
-        ||(strcmp("APENCRY", at_name) == 0)
+        || (strcmp("APENCRY", at_name) == 0)
     #endif
     ) {
         if (set_opt) {
@@ -5263,8 +5254,7 @@ int tls_atcmd_parse(struct tls_atcmd_token_t *tok, char *buf, u32 len)
         if (!end_line) {
             return -CMD_ERR_INV_FMT;
         }
-        while (remain_len > 0)
-        {
+        while (remain_len > 0) {
             comma = get_first_comma(buf, remain_len);
             if (end_line && !comma) {
                 if (tok->arg_found >= (ATCMD_MAX_ARG - 1)) {
@@ -5316,8 +5306,7 @@ int tls_hostif_atcmd_exec(struct tls_atcmd_token_t *tok,
 
     /* look for AT CMD handle table */
     atcmd = at_ri_cmd_tbl;
-    while (atcmd->at_name)
-    {
+    while (atcmd->at_name) {
         if (strcmp(atcmd->at_name, tok->name) == 0) {
             match = atcmd;
             break;
