@@ -14,10 +14,6 @@
 import("//kernel/liteos_m/liteos.gni")
 module_name = get_path_info(rebase_path("."), "name")
 kernel_module(module_name) {
-  sources = [ 
-    "tls_netconn.c",
-  ]
-  include_dirs = [
-    ".",
-  ]
+  sources = [ "tls_netconn.c" ]
+  include_dirs = [ "." ]
 }
