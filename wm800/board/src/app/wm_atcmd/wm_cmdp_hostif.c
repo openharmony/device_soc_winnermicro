@@ -260,7 +260,7 @@ int tls_hostif_process_cmdrsp(u8 hostif_type, char *cmdrsp, u32 cmdrsp_size)
             tx_msg->u.msg_cmdrsp.buflen = cmdrsp_size;
 
             if (hif->uart_send_tx_msg_callback != NULL) {
-                while(tx_msg->u.msg_cmdrsp.buflen > remain_len) {
+                while (tx_msg->u.msg_cmdrsp.buflen > remain_len) {
                     if (hostif_type == HOSTIF_MODE_UART0) {
                         remain_len = tls_uart_tx_remain_len(&uart_port[0]);
                     } else {
@@ -3832,9 +3832,6 @@ static struct tls_cmd_t  at_ri_cmd_tbl[] = {
     { "BTSLEEP", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 1, 0, bt_sleep_proc},
     { "BLETPS", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, TWO, 0, ble_tx_power_set_proc},
     { "BLETPG", HOSTIF_CMD_NOP, ATCMD_OP_NULL | ATCMD_OP_QU | RICMD_OP_GET, 1, 0, ble_tx_power_get_proc},
-    { "BTTXPOW", HOSTIF_CMD_NOP, ATCMD_OP_NULL | ATCMD_OP_EQ | ATCMD_OP_EP | ATCMD_OP_QU |
-    RICMD_OP_GET | RICMD_OP_SET, TWO, 0, bt_tx_power_proc},
-
     { "BTTEST", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 1, 0, bt_test_mode_proc},
     { "BTRF", HOSTIF_CMD_NOP, ATCMD_OP_EQ | ATCMD_OP_EP | RICMD_OP_SET, 1, 0, bt_rf_mode_proc},
 #if (WM_BTA_AV_SINK_INCLUDED == CFG_ON)
@@ -3911,7 +3908,7 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
                 break;
             }
             cmd->ps.wake_time = (u16)params;
-        } while(0);
+        } while (0);
         if (err)
             return -CMD_ERR_INV_PARAMS;
     } else if (strcmp("WJOIN", at_name) == 0) {
@@ -4611,9 +4608,9 @@ int at_format_func(char *at_name, u8 set_opt, u8 update_flash, union HOSTIF_CMDR
                (strcmp("WATC", at_name) == 0) || (strcmp("WPSM", at_name) == 0) || (strcmp("WARC", at_name) == 0) ||
                (strcmp("WARM", at_name) == 0) || (strcmp("ATM", at_name) == 0) || (strcmp("PORTM", at_name) == 0) ||
                (strcmp("IOM", at_name) == 0) || (strcmp("CMDM", at_name) == 0) || (strcmp("ONESHOT", at_name) == 0)
-    #if TLS_CONFIG_AP
-        || (strcmp("APENCRY", at_name) == 0)
-    #endif
+#if TLS_CONFIG_AP
+               || (strcmp("APENCRY", at_name) == 0)
+#endif
     ) {
         if (set_opt) {
             *res_len = atcmd_ok_resp(res_resp);
