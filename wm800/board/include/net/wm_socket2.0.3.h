@@ -70,7 +70,7 @@ struct pbuf {
 };
 
 /**
-* @brief This Function prototype for tcp error callback functions. Called when 
+* @brief This Function prototype for tcp error callback functions. Called when
 *                    receives a RST or is unexpectedly closed for any other reason.
 *                   The corresponding socket is already freed when this callback is called!
 *
@@ -91,7 +91,7 @@ typedef void (*socket_err_fn)(u8 skt_num, err_t err);
 *
 * @param[in] p         The received data (or NULL when the connection has been closed!)
 *
-* @param[in] err       An error code if there has been an error receiving, always be ERR_OK 
+* @param[in] err       An error code if there has been an error receiving, always be ERR_OK
 *                                    when cs mode is udp.
 *
 * @retval           The return value is only valid for tcp receive, for upd it means nothing.
@@ -101,7 +101,7 @@ typedef void (*socket_err_fn)(u8 skt_num, err_t err);
 */
 typedef err_t (*socket_recv_fn)(u8 skt_num, struct pbuf *p, err_t err);
 
-/** 
+/**
 * @brief This Function prototype for socket srce ip callback functions. Called when data has
 *                    been received.
 *
@@ -124,7 +124,7 @@ typedef err_t (*socket_recv_fn)(u8 skt_num, struct pbuf *p, err_t err);
 typedef err_t (*socket_recv_ip_rpt_fn)(u8 skt_num, u16 datalen, u8 *ipsrc, u16 port, err_t err);
 
 /**
-* @brief This Function prototype for tcp connected callback functions. Called when 
+* @brief This Function prototype for tcp connected callback functions. Called when
 *                   connected to the remote side.
 *
 * @param[in] skt_num   Is the socket number that returned by tls_socket_create function.
@@ -252,7 +252,7 @@ struct tls_socket_desc {
 * @retval     ERR_OK    If create socket successfully.
 *              negative number   If an error was detected.
 */
-int tls_socket_create(struct tls_socket_desc * skd);
+int tls_socket_create(struct tls_socket_desc *skd);
 
 /**
 * @brief This function is called by your application code to close the socket,
@@ -330,7 +330,7 @@ typedef enum {
       can be calculated from struct pbuf).
       pbuf_alloc() allocates PBUF_RAM pbufs as unchained pbufs (although that might
       change in future versions).
-      This should be used for all OUTGOING packets (TX).*/
+      This should be used for all OUTGOING packets (TX). */
     PBUF_RAM,
     /** pbuf data is stored in ROM, i.e. struct pbuf and its payload are located in
       totally different memory areas. Since it points to ROM, payload does not
@@ -368,7 +368,7 @@ struct pbuf *pbuf_alloc(pbuf_layer l, u16_t length, pbuf_type type);
 /**
 * @brief This Function for release the buffer that you receive within the socket_recv_fn callback function.
 *                   Attention please: If you return ERR_OK in the socket_recv_fn callback function, you must call this
-*                   function to release the buffer by yourself. Otherwise, the buffer do not need be 
+*                   function to release the buffer by yourself. Otherwise, the buffer do not need be
 *                   released by your code.
 *
 * @param[in] p       The buffer you received in the socket_recv_fn callback function.

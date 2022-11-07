@@ -36,11 +36,6 @@ static void net_tcp_err_cb(void *arg, err_t err);
 static err_t net_tcp_poll_cb(void *arg, struct tcp_pcb *pcb);
 static void net_free_socket(int socketno);
 
-#define BUF_CIRC_CNT_TO_END(head, tail, size) \
-    ({int end = (size) - (tail); \
-      int n = ((head) + end) & ((size)-1); \
-      n < end ? n : end;})
-
 u32 current_src_ip = 0;
 void tls_net_set_sourceip(u32 ipvalue)
 {
@@ -300,55 +295,6 @@ static err_t net_tcp_accept_cb(void *arg, struct tcp_pcb *newpcb, err_t err)
 }
 
 /**
- * Receive callback function for UDP netconns.
- */
-static void net_udp_recv_cb(void *arg, struct udp_pcb *pcb,
-    struct pbuf *p, const ip_addr_t *srcaddr, u16_t port)
-{
-    struct tls_netconn *conn;
-    u32 datalen = 0;
-    int socketno = -1;
-
-    LWIP_UNUSED_ARG(pcb);    /* only used for asserts... */
-    LWIP_ASSERT("recv_udp must have a pcb argument", pcb != NULL);
-    LWIP_ASSERT("recv_udp must have an argument", arg < 0);
-    socketno = (int)arg;
-    conn = tls_net_get_socket(socketno);
-    if (conn == NULL || conn->used != TRUE || pcb == NULL) {
-        TLS_DBGPRT_ERR("\nconn=%x,used=%d\n", (u32)conn, conn->used);
-        if (p != NULL) {
-            pbuf_free(p);
-        }
-        return;
-    }
-    LWIP_ASSERT("recv_udp: recv for wrong pcb!", conn->pcb.udp == pcb);
-    if (conn->skd->recvf != NULL) {
-        datalen = p->tot_len;
-        /* if Address is broadcast, update source IP according to source address and source port according to sender */
-        if ((ip_addr_get_ip4_u32(&conn->addr) == IPADDR_BROADCAST) ||
-            ((ip_addr_get_ip4_u32(&conn->addr) & 0xFF) == 0xFF)) {
-            tls_net_set_sourceip(ip_addr_get_ip4_u32(srcaddr));
-            conn->port = port;
-        } else {
-            tls_net_set_sourceip(ip_addr_get_ip4_u32(&conn->addr));
-        }
-
-        if (conn->skd->recvwithipf != NULL) {
-            conn->skd->recvwithipf(conn->skt_num, datalen, (u8 *)(&(ip_2_ip4(srcaddr)->addr)), port, ERR_OK);
-        }
-
-        conn->skd->recvf(conn->skt_num, p, ERR_OK);
-    } else {
-        if (p) {
-            pbuf_free(p);
-            p = NULL;
-        }
-    }
-
-    return;
-}
-
-/**
  * Start create TCP connection
  */
 static err_t net_tcp_start(struct tls_netconn *conn)
@@ -433,69 +379,6 @@ static void net_do_send(void *ctx)
         sys_sem_signal(&conn->op_completed);
     }
 #endif
-}
-
-/**
- * Send data on a TCP pcb
- */
-static void net_do_write(void *ctx)
-{
-    struct tls_net_msg *net_msg = (struct tls_net_msg *)ctx;
-    struct tls_netconn *conn = NULL;
-    struct tls_netconn *server_conn = NULL;
-    
-    int socketno = -1;
-    socketno = net_msg->skt_no;
-    conn = tls_net_get_socket(socketno);
-    if (conn == NULL ||TRUE != conn->used) {
-        TLS_DBGPRT_ERR("\n conn=%x,used=%d\n", (u32)conn, conn->used);
-#if CONN_SEM_NOT_FREE
-        sys_sem_signal(&conn_op_completed[socketno - 1]);
-#endif
-        return;
-    }
-
-    if (conn->proto == TLS_NETCONN_TCP) {
-#if LWIP_TCP
-        if (conn->state != NETCONN_STATE_CONNECTED) {
-            /* netconn is connecting, closing or in blocking write */
-            net_msg->err = ERR_INPROGRESS;
-        } else if (conn->pcb.tcp != NULL) {
-            conn->write_state = true;
-            net_msg->err = net_skt_tcp_send(net_msg);
-            /* for both cases: if do_writemore was called, don't ACK the APIMSG since do_writemore ACKs it! */
-        } else {
-            net_msg->err = ERR_CONN;
-            TLS_DBGPRT_INFO("==>err=%d\n", net_msg->err);
-        }
-        if (conn->client && conn->idle_time > 0) {
-            TLS_DBGPRT_INFO("conn->skt_num=%d, conn->client=%d\n", conn->skt_num, conn->client);
-            server_conn = get_server_conn(conn);
-            TLS_DBGPRT_INFO("server_conn=%p\n", server_conn);
-            if (server_conn) {
-                conn->idle_time = server_conn->idle_time;
-                TLS_DBGPRT_INFO("update conn->idle_time %d\n", conn->idle_time);
-            }
-        }
-#else /* LWIP_TCP */
-        net_msg->err = ERR_VAL;
-#endif /* LWIP_TCP */
-#if (LWIP_UDP || LWIP_RAW)
-    } else {
-        net_msg->err = ERR_VAL;
-#endif /* (LWIP_UDP || LWIP_RAW) */
-    }
-
-    {
-#if CONN_SEM_NOT_FREE
-    sys_sem_signal(&conn_op_completed[socketno - 1]);
-#else
-    conn = tls_net_get_socket(socketno);
-    if (conn && TRUE == conn->used) {
-        sys_sem_signal(&conn->op_completed);
-    }
-#endif
-    }
 }
 
 static void do_create_connect(void *ctx)

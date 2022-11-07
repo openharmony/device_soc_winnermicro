@@ -129,10 +129,10 @@ typedef unsigned int            UINT32;
 #define HTTP_CLIENT_FLAG_KEEP_ALIVE         0x00000001    // Set the keep alive header
 #define HTTP_CLIENT_FLAG_SEND_CHUNKED       0x00000002    // The outgoing should chunked
 #define HTTP_CLIENT_FLAG_NO_CACHE           0x00000004    // Set the no cache header
-#define HTTP_CLIENT_FLAG_ASYNC              0x00000008    // Currently not implemented 
+#define HTTP_CLIENT_FLAG_ASYNC              0x00000008    // Currently not implemented
 #define HTTP_CLIENT_FLAG_MULTIPART_FORM     0x00000010    // The outgoing should multipart/form-data
 
-// HTTP Type Definitions 
+// HTTP Type Definitions
 typedef UINT32          HTTP_SESSION_HANDLE;
 typedef UINT32          HTTP_CLIENT_SESSION_FLAGS;
 
@@ -155,7 +155,6 @@ typedef enum _HTTP_AUTH_SCHEMA {
     AuthSchemaDigest,
     AuthSchemaKerberos,
     AuthNotSupported
-
 } HTTP_AUTH_SCHEMA;
 
 /** HTTP supported verbs */
@@ -188,7 +187,6 @@ typedef struct _HTTPParameters {
     CHAR*                  UserName;
     CHAR*                  Password;
     HTTP_AUTH_SCHEMA       AuthType;
-
 } HTTPParameters;
 
 #if TLS_CONFIG_HTTP_CLIENT_TASK
@@ -270,7 +268,7 @@ UINT32                  HTTPClientCloseRequest        (HTTP_SESSION_HANDLE *pSes
  *
  * @note           None
  */
-UINT32                  HTTPClientSetAuth             (HTTP_SESSION_HANDLE pSession, HTTP_AUTH_SCHEMA AuthSchema, void *pReserved);
+UINT32    HTTPClientSetAuth    (HTTP_SESSION_HANDLE pSession, HTTP_AUTH_SCHEMA AuthSchema, void *pReserved);
 /**
  * @brief          Sets credentials for the target host
  *
@@ -298,7 +296,8 @@ UINT32                  HTTPClientSetCredentials      (HTTP_SESSION_HANDLE pSess
  *
  * @note           None
  */
-UINT32                  HTTPClientSetProxy            (HTTP_SESSION_HANDLE pSession, CHAR *pProxyName, UINT16 nPort, CHAR *pUserName, CHAR *pPassword);
+UINT32    HTTPClientSetProxy    (HTTP_SESSION_HANDLE pSession, CHAR *pProxyName,
+    UINT16 nPort, CHAR *pUserName, CHAR *pPassword);
 /**
  * @brief          Sets the HTTP verb for the outgoing request
  *
@@ -310,7 +309,7 @@ UINT32                  HTTPClientSetProxy            (HTTP_SESSION_HANDLE pSess
  *
  * @note           None
  */
-UINT32                  HTTPClientSetVerb             (HTTP_SESSION_HANDLE pSession, HTTP_VERB HttpVerb);
+UINT32    HTTPClientSetVerb    (HTTP_SESSION_HANDLE pSession, HTTP_VERB HttpVerb);
 /**
  * @brief          Add headers into the outgoing request
  *
@@ -324,7 +323,8 @@ UINT32                  HTTPClientSetVerb             (HTTP_SESSION_HANDLE pSess
  *
  * @note           None
  */
-UINT32                  HTTPClientAddRequestHeaders   (HTTP_SESSION_HANDLE pSession, CHAR *pHeaderName, CHAR *pHeaderData, BOOL nInsert);
+UINT32    HTTPClientAddRequestHeaders    (HTTP_SESSION_HANDLE pSession,
+    CHAR *pHeaderName, CHAR *pHeaderData, BOOL nInsert);
 /**
  * @brief          This function builds the request headers, performs a DNS resolution,
  *                 opens the connection (if it was not opened yet by a previous request
@@ -346,7 +346,8 @@ UINT32                  HTTPClientAddRequestHeaders   (HTTP_SESSION_HANDLE pSess
  *
  * @note           None
  */
-UINT32                  HTTPClientSendRequest         (HTTP_SESSION_HANDLE pSession, CHAR *pUrl, VOID *pData, UINT32 nDataLength, BOOL TotalLength, UINT32 nTimeout, UINT32 nClientPort);
+UINT32    HTTPClientSendRequest    (HTTP_SESSION_HANDLE pSession, CHAR *pUrl, VOID *pData, UINT32 nDataLength,
+                                    BOOL TotalLength, UINT32 nTimeout, UINT32 nClientPort);
 /**
  * @brief          Write data to the remote server
  *
@@ -360,7 +361,8 @@ UINT32                  HTTPClientSendRequest         (HTTP_SESSION_HANDLE pSess
  *
  * @note           None
  */
-UINT32                  HTTPClientWriteData           (HTTP_SESSION_HANDLE pSession, VOID *pBuffer, UINT32 nBufferLength, UINT32 nTimeout);
+UINT32    HTTPClientWriteData    (HTTP_SESSION_HANDLE pSession, VOID *pBuffer,
+                                  UINT32 nBufferLength, UINT32 nTimeout);
 /**
  * @brief          Receives the response header on the connection and parses it.
  *                 Performs any required authentication.
@@ -374,21 +376,7 @@ UINT32                  HTTPClientWriteData           (HTTP_SESSION_HANDLE pSess
  * @note           None
  */
 UINT32                  HTTPClientRecvResponse        (HTTP_SESSION_HANDLE pSession, UINT32 nTimeout);
-/**
- * @brief          Read data from the server. Parse out the chunks data
- *
- * @param[in]      pSession           HTTP Session handle
- * @param[out]     *pBuffer           A pointer to a buffer that will be filled with the servers response
- * @param[in]      nBytesToRead     The size of the buffer (numbers of bytes to read)
- * @param[in]      nTimeout          Operation timeout in seconds
- * @param[out]     *nBytesRecived    Count of the bytes that were received in this operation
- *
- * @retval         HTTP_CLIENT_SUCCESS     success
- * @retval         other                   failed
- *
- * @note           None
- */
-UINT32                  HTTPClientReadData            (HTTP_SESSION_HANDLE pSession, VOID *pBuffer, UINT32 nBytesToRead, UINT32 nTimeout, UINT32 *nBytesRecived);
+
 /**
  * @brief          Fill the users structure with the session information
  *
@@ -414,7 +402,8 @@ UINT32                  HTTPClientGetInfo             (HTTP_SESSION_HANDLE pSess
  *
  * @note           None
  */
-UINT32                  HTTPClientFindFirstHeader     (HTTP_SESSION_HANDLE pSession, CHAR *pSearchClue,CHAR *pHeaderBuffer, UINT32 *nLength);
+UINT32    HTTPClientFindFirstHeader    (HTTP_SESSION_HANDLE pSession, CHAR *pSearchClue,
+                                        CHAR *pHeaderBuffer, UINT32 *nLength);
 /**
  * @brief          Find the next header.
  *
@@ -427,7 +416,7 @@ UINT32                  HTTPClientFindFirstHeader     (HTTP_SESSION_HANDLE pSess
  *
  * @note           None
  */
-UINT32                  HTTPClientGetNextHeader       (HTTP_SESSION_HANDLE pSession, CHAR *pHeaderBuffer, UINT32 *nLength);
+UINT32    HTTPClientGetNextHeader    (HTTP_SESSION_HANDLE pSession, CHAR *pHeaderBuffer, UINT32 *nLength);
 /**
  * @brief          Terminate a headers search session
  *
@@ -463,7 +452,7 @@ int http_client_task_init(void);
  *
  * @note           None
  */
-int http_client_post(http_client_msg * msg);
+int http_client_post(http_client_msg *msg);
 #endif /* TLS_CONFIG_HTTP_CLIENT_TASK */
 
 /**

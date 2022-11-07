@@ -37,7 +37,7 @@ typedef struct tls_uart {
     u32   cmd_mode;
     u8    inputstate;
     /*
-    * tx callbak, notify user application tx complete, 
+    * tx callbak, notify user application tx complete,
     * user can use it, write new data to uart for transmit
     */
     void (*tx_cb)(struct tls_uart *uart);

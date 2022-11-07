@@ -155,9 +155,9 @@
 #define HOSTIF_EVENT_TX_ERR            0xEB
 
 #define ATCMD_OP_NULL       1
-#define ATCMD_OP_EQ         2    /* = */
-#define ATCMD_OP_EP         4    /* =! , update flash*/
-#define ATCMD_OP_QU         8    /* =? */
+#define ATCMD_OP_EQ         2
+#define ATCMD_OP_EP         4
+#define ATCMD_OP_QU         8
 #define RICMD_OP_GET        16
 #define RICMD_OP_SET        32
 #define RICMD_OP_UF         64
@@ -498,7 +498,7 @@ typedef __packed struct HOSTIF_CMD_PARAMS_TXG {
     u8      tx_gain[TX_GAIN_LEN];
 } HOSTIF_CMD_PARAMS_TXG;
 
-typedef __packed struct HOSTIF_CMD_PARAMS_TXGR{
+typedef __packed struct HOSTIF_CMD_PARAMS_TXGR {
     u8 tx_rate;
     u8 txr_gain[3];
 } HOSTIF_CMD_PARAMS_TXGR;
@@ -670,7 +670,7 @@ typedef __packed struct _HOSTIF_CMDRSP_PARAMS_MAC {
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_VER {
     u8      hw_ver[6];
     u8      fw_ver[4];
-} HOSTIF_CMDRSP_PARAMS_VER; 
+} HOSTIF_CMDRSP_PARAMS_VER;
 
 typedef __packed struct _HOSTIF_CMDRSP_PARAMS_JOIN {
     u8      bssid[6];
@@ -1209,7 +1209,7 @@ struct tls_hostif {
     /* uart at cmd loopback control */
     u8 uart_insdisp;
     u8 reserved[3];
-    /*uart escape*/
+    /* uart escape */
     u8  escape_char;
     u8  escape_reserved;
     u16 escape_pt;
@@ -1282,7 +1282,7 @@ int tls_hostif_ricmd_exec(char *buf, u32 length, char *cmdrsp_buf, u32 *cmdrsp_s
 void free_tx_msg_buffer(struct tls_hostif_tx_msg *tx_msg);
 
 #if TLS_CONFIG_RMMS
-/*************************************************************************** 
+/***************************************************************************
 * Function: tls_rmms_start
 * Description: Start remote manager server.
 *
@@ -1294,7 +1294,7 @@ void free_tx_msg_buffer(struct tls_hostif_tx_msg *tx_msg);
 *             RMMS_ERR_SUCCESS - No error
 *             RMMS_ERR_MEM - Out of memory
 *             RMMS_ERR_LINKDOWN - The NIF is inactive
-* 
+*
 * Date : 2015-7-20
 ****************************************************************************/
 s8 tls_rmms_start(void);

@@ -108,7 +108,7 @@ int tls_ethernet_init(void);
  *
  * @note           None
  */
-struct tls_ethif * tls_netif_get_ethif(void);
+struct tls_ethif *tls_netif_get_ethif(void);
 
 /**
  * @brief          This function is used to set tls_ethif status
@@ -158,8 +158,8 @@ err_t tls_dhcp_stop(void);
  * @note           None
  */
 err_t tls_netif_set_addr(ip_addr_t *ipaddr,
-                        ip_addr_t *netmask,
-                        ip_addr_t *gw);
+                         ip_addr_t *netmask,
+                         ip_addr_t *gw);
 
 /**
  * @brief          This function is used to set dns servers
@@ -171,7 +171,7 @@ err_t tls_netif_set_addr(ip_addr_t *ipaddr,
  * @return         None
  *
  * @note           None
- */ 
+ */
 void tls_netif_dns_setserver(u8 numdns, ip_addr_t *dnsserver);
 
 /**
@@ -197,7 +197,7 @@ err_t tls_netif_set_up(void);
  * @retval         Minus failed
  *
  * @note           None
- */ 
+ */
 err_t tls_netif_set_down(void);
 
 /**
@@ -372,16 +372,17 @@ err_t tls_netif2_set_down(void);
  */
 err_t tls_netif2_set_addr(ip_addr_t *ipaddr,
     ip_addr_t *netmask, ip_addr_t *gw);
-/*************************************************************************** 
+
+/***************************************************************************
 * Function: tls_dhcps_setdns
 * Description: Set dhcp server's dns address.
-* 
+*
 * Input:  numdns:     the index of the DNS server to set must be less than DNS_MAX_SERVERS
-* 
+*
 * Output: None
-* 
+*
 * Return: None
-* 
+*
 * Date : 2015-3-10
 ****************************************************************************/
 /**

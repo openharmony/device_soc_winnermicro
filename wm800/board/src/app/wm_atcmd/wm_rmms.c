@@ -15,8 +15,6 @@
 #include "wm_mem.h"
 #if (GCC_COMPILE == 1)
 #include "wm_cmdp_hostif_gcc.h"
-#else
-#include "wm_cmdp_hostif.h"
 #endif
 #include "wm_wl_task.h"
 #include "wm_rmms.h"
@@ -72,9 +70,10 @@ void RMMS_SendHedAtRsp(struct rmms_msg *Msg)
     ip_addr_t addr;
     u16 port;
 
-    addr.addr = Msg->SrcAddr[0] + (Msg->SrcAddr[1] << EIGHT) + (Msg->SrcAddr[TWO] << SIXTEEN) + (Msg->SrcAddr[THREE] << TWENTY_FOUR);
-    port = Msg->SrcAddr[FOUR] + (Msg->SrcAddr[FIVE] << EIGHT);
+    addr.addr = Msg->SrcAddr[0] + (Msg->SrcAddr[1] << EIGHT) + (Msg->SrcAddr[TWO] << SIXTEEN)
+    + (Msg->SrcAddr[THREE] << TWENTY_FOUR);
 
+    port = Msg->SrcAddr[FOUR] + (Msg->SrcAddr[FIVE] << EIGHT);
     DataLen = strlen((char *)(Msg->CmdStr)) + 1;
     p = pbuf_alloc(PBUF_TRANSPORT, DataLen, PBUF_RAM);
     if (p != NULL) {

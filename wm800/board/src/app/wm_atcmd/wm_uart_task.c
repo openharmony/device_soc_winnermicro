@@ -562,7 +562,7 @@ static int cache_tcp_recv(struct tls_hostif_tx_msg *tx_msg)
     return copylen;
 }
 
- /* 
+ /*
  * 处理流程说明：
  * 首先判断上次的同步帧是否已经处理完成，如果已经处理结束，
  *          则检查缓存head指向的字节，判断是否是0xAA(SYN_FLAG)，

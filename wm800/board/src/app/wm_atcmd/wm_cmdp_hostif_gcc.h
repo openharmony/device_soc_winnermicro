@@ -565,7 +565,7 @@ typedef struct HOSTIF_CMD_PARAMS_WSCAN {
 
 typedef struct HOSTIF_CMD_PARAMS_SKSND {
     u8      socket;
-   u16     size;
+    u16     size;
 }__attribute__((packed))HOSTIF_CMD_PARAMS_SKSND;
 
 typedef struct HOSTIF_CMD_PARAMS_SKRCV {
@@ -1480,7 +1480,7 @@ int tls_hostif_ricmd_exec(char *buf, u32 length, char *cmdrsp_buf, u32 *cmdrsp_s
 void free_tx_msg_buffer(struct tls_hostif_tx_msg *tx_msg);
 
 #if TLS_CONFIG_RMMS
-/*************************************************************************** 
+/***************************************************************************
 * Function: tls_rmms_start
 * Description: Start remote manager server.
 *
