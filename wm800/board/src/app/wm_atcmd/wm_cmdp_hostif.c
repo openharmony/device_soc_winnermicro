@@ -260,7 +260,8 @@ int tls_hostif_process_cmdrsp(u8 hostif_type, char *cmdrsp, u32 cmdrsp_size)
             tx_msg->u.msg_cmdrsp.buflen = cmdrsp_size;
 
             if (hif->uart_send_tx_msg_callback != NULL) {
-                while(tx_msg->u.msg_cmdrsp.buflen > remain_len){
+                while(tx_msg->u.msg_cmdrsp.buflen > remain_len)
+                {
                     if (hostif_type == HOSTIF_MODE_UART0) {
                         remain_len = tls_uart_tx_remain_len(&uart_port[0]);
                     } else {
@@ -2918,9 +2919,9 @@ int lpchl_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
 
 * Argument:    hex <temperaturecompensation>:
                    255-compensation for different temperature;other value-no temperature;
-                <PacketCount>, 0±íÊ¾³¤·¢
-                <PsduLen>,     °ü³¤¶È
-                <TxGain>,      ÔöÒæ£¬Ö±½ÓĞ´µ½Mac bd
+                <PacketCount>, 0ç›ã„§ãšé—€å®å½‚
+                <PsduLen>,     é–å‘´æš±æ´?
+                <TxGain>,      æ¾§ç‚µæ³­é”›å²€æ´¿éºãƒ¥å•“é’ç™•ac bd
                 <DataRate>,
                 S2M = 0x0000,
                 S5M5 = 0x0001,    S11M = 0x0002,    L1M = 0x0003,    L2M = 0x0004,
@@ -2934,7 +2935,7 @@ int lpchl_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
                 [rifs],        1: mac_txbd->ctrl1 |= (1 << 12)
                 [greenfield],  1: mac_txbd->ctrl4 |= (1 << 18)
                 [gimode],      1: mac_txbd->ctrl4 |= (1 << 19)
-                [timedelay]    °ü¼ä¸ôÊ±¼ä£¬µ¥Î»Î¢Ãî£¬16½øÖÆ
+                [timedelay]    é–å‘´æ£¿é—…æ—€æ¤‚é—‚è¾¾ç´é—æ›šç¶…å¯°î†¼î›¾é”›?6æ©æ¶˜åŸ—
 ******************************************************************/
 int lptstr_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
     union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
@@ -2968,7 +2969,7 @@ int tls_lptperiod_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNIO
 * Format:        AT+&LPTSTP<CR>
             +OK<CR><LF><CR><LF>
 
-* Argument:
+* Argument: none
 
 * Author:     kevin 2014-03-13
 ******************************************************************/
@@ -3083,8 +3084,8 @@ int lppstp_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
 * Format:        AT+&LPRFPS=< rftype ><size><CR>[data stream]
             +OK=<CR><LF><CR><LF>
 
-* Argument:    ftype£ºrfÀàĞÍ 0£º2230£»1£º2829£»2£ºHEDrf
-                  data stream ÖĞ°üº¬36¸örf¼Ä´æÆ÷£¬ºÍ28¸öĞÅµÀ¼Ä´æÆ÷
+* Argument:    ftypeé”›æ­³fç»«è¯²ç€· 0é”›?230é”›?é”›?829é”›?é”›æ¬»EDrf
+                  data stream æ¶“î…å¯˜éš?6æ¶“çŒºfç€µå‹«ç“¨é£îŸ’ç´éœ?8æ¶“îƒä¿Šé–¬æ’³ç˜ç€›æ¨ºæ«’
 
 * Author:     kevin 2014-03-14
 ******************************************************************/
@@ -3100,8 +3101,8 @@ int lprfps_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
 * Format:        AT+&LPCHRS =<channel>,< rxcbw ><CR>
             +OK<CR><LF><CR><LF>
 
-* Argument:    channel: ÎŞÏßĞÅµÀºÅ£¬ÓĞĞ§·¶Î§1¡«14
-                    rxcbw: ½ÓÊÕ¶ÔÓ¦ĞÅµÀ´ø¿í0:  20M£»1£º40M
+* Argument:    channel: éƒçŠµåšæ·‡ï¿ äº¾é™å‡¤ç´éˆå¤‹æ™¥é‘¼å†¨æ´¿1é”?4
+                    rxcbw: éºãƒ¦æ•¹ç€µç‘°ç°²æ·‡ï¿ äº¾ç”¯ï¹€î†”0:  20Mé”›?é”›?0M
 
 * Author:     kevin 2014-03-14
 ******************************************************************/
@@ -3117,10 +3118,10 @@ int lpchrs_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *cmd,
 * Format:        AT+&LPTBD =< psdulen >,< txgain >,< datarate >< txcbw >,<gi>,<gf>,< rifs ><CR>
             +OK<CR><LF><CR><LF>
 
-* Argument:    psdulen: Êı¾İ³¤¶È£¬ÓĞĞ§·¶Î§14¡«65535
-            txgain: ·¢ÉäÔöÒæ
-            datarate: Êı¾İÊıÂÊ
-            txcbw: ·¢Éä´ø¿í0:20M;1:40M
+* Argument:    psdulen: éç‰ˆåµé—€å®å®³é”›å±¾æ¹éå £å¯–é¥?4é”?5535
+            txgain: é™æˆçš æ¾§ç‚µæ³­
+            datarate: éç‰ˆåµéæ‰®å·¼
+            txcbw: é™æˆçš ç”¯ï¹€î†”0:20M;1:40M
             gi:  0:normal gi;1:short gi
             gf:  0:no green field;1: green field
             rifs:  0:no rifs;1:rifs
@@ -3436,7 +3437,7 @@ int cpu_state_proc(u8 set_opt, u8 update_flash, union HOSTIF_CMD_PARAMS_UNION *c
     union HOSTIF_CMDRSP_PARAMS_UNION *cmdrsp)
 {
     csi_vic_set_wakeup_irq(UART0_IRQn);
-    switch(cmd->width.freq){
+    switch(cmd->width.freq) {
         case 0:
             __WAIT();
             break;
@@ -3915,7 +3916,7 @@ int at_parse_func(char *at_name, struct tls_atcmd_token_t *tok, union HOSTIF_CMD
                 break;
             }
             cmd->ps.wake_time = (u16)params;
-        } while(0);
+        }while(0);
         if (err)
             return -CMD_ERR_INV_PARAMS;
     } else if (strcmp("WJOIN", at_name) == 0) {
@@ -4899,7 +4900,7 @@ int ri_parse_func(s16 ri_cmd_id, char *buf, u32 length, union HOSTIF_CMD_PARAMS_
     } else if (ri_cmd_id == HOSTIF_CMD_UPDM) {
         cmd->updm.src = 1;
     } else if (ri_cmd_id == HOSTIF_CMD_UPDD) {
-        cmd->updd.data[0] = 1;    /* ±êÊ¶ÊÇriÖ¸Áî */
+        cmd->updd.data[0] = 1;    /* éå›ªç˜‘é„ç—³ié¸å›¦æŠ¤ */
     }
     return 0;
 }
@@ -5262,7 +5263,8 @@ int tls_atcmd_parse(struct tls_atcmd_token_t *tok, char *buf, u32 len)
         if (!end_line) {
             return -CMD_ERR_INV_FMT;
         }
-        while (remain_len > 0) {
+        while (remain_len > 0)
+        {
             comma = get_first_comma(buf, remain_len);
             if (end_line && !comma) {
                 if (tok->arg_found >= (ATCMD_MAX_ARG - 1)) {
@@ -5314,7 +5316,8 @@ int tls_hostif_atcmd_exec(struct tls_atcmd_token_t *tok,
 
     /* look for AT CMD handle table */
     atcmd = at_ri_cmd_tbl;
-    while (atcmd->at_name) {
+    while (atcmd->at_name)
+    {
         if (strcmp(atcmd->at_name, tok->name) == 0) {
             match = atcmd;
             break;
