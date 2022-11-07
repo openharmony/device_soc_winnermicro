@@ -75,13 +75,13 @@ struct tls_net_msg {
 
 #if (RAW_SOCKET_USE_CUSTOM_PBUF)
 struct raw_sk_pbuf_custom {
-  /** 'base class' */
-  struct pbuf_custom pc;
-  /** pointer to the original pbuf that is referenced */
-  struct pbuf *original;
-  /*custom pbuf free function used*/
-  void *conn;
-  void *pcb;
+    /** 'base class' */
+    struct pbuf_custom pc;
+    /** pointer to the original pbuf that is referenced */
+    struct pbuf *original;
+    /* custom pbuf free function used */
+    void *conn;
+    void *pcb;
 };
 #endif
 

@@ -75,7 +75,7 @@ extern const ip_addr_t ip_addr_broadcast;
 /** @ingroup ip4addr */
 #define IP4_ADDR_BROADCAST  (ip_2_ip4(&ip_addr_broadcast))
 
-#endif /* LWIP_IPV4*/
+#endif /* LWIP_IPV4 */
 
 #if LWIP_IPV6
 

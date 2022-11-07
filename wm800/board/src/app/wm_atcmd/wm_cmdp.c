@@ -1040,7 +1040,7 @@ int tls_cmd_get_wps_pin(struct tls_param_wps *wps)
 
 int tls_cmd_get_pass(u8 *password)
 {
-    tls_param_get(TLS_PARAM_ID_PASSWORD, (void *)password,(bool)0);
+    tls_param_get(TLS_PARAM_ID_PASSWORD, (void *)password, (bool)0);
     return 0;
 }
 

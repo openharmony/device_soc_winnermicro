@@ -70,14 +70,6 @@ struct in6_addr {
 /** 255.255.255.255 */
 #define INADDR_BROADCAST    IPADDR_BROADCAST
 
-/** This macro can be used to initialize a variable of type struct in6_addr
-    to the IPv6 wildcard address. */
-#define IN6ADDR_ANY_INIT {{{0, 0, 0, 0}}}
-/** This macro can be used to initialize a variable of type struct in6_addr
-    to the IPv6 loopback address. */
-#define IN6ADDR_LOOPBACK_INIT {{{0, 0, 0, PP_HTONL(1)}}}
-/** This variable is initialized by the system to contain the wildcard IPv6 address. */
-
 #if TLS_CONFIG_IPV4
 /** members are in network byte order */
 struct sockaddr_in {
@@ -304,7 +296,6 @@ typedef struct ipv6_mreq {
  * of these three indications should be set.
  */
 #define IPTOS_TOS_MASK          0x1E
-#define IPTOS_TOS(tos)          ((tos) & IPTOS_TOS_MASK)
 #define IPTOS_LOWDELAY          0x10
 #define IPTOS_THROUGHPUT        0x08
 #define IPTOS_RELIABILITY       0x04
@@ -321,7 +312,6 @@ typedef struct ipv6_mreq {
  * control the access to, and use of, those precedence designations.
  */
 #define IPTOS_PREC_MASK                 0xe0
-#define IPTOS_PREC(tos)                ((tos) & IPTOS_PREC_MASK)
 #define IPTOS_PREC_NETCONTROL           0xe0
 #define IPTOS_PREC_INTERNETCONTROL      0xc0
 #define IPTOS_PREC_CRITIC_ECP           0xa0
@@ -402,22 +392,6 @@ typedef struct ipv6_mreq {
 
 /** Make FD_SETSIZE match NUM_SOCKETS in socket.c */
 #define FD_SETSIZE    MEMP_NUM_NETCONN
-#define FDSETSAFESET(n, code) do { \
-    if (((n) - LWIP_SOCKET_OFFSET < MEMP_NUM_NETCONN) && (((int)(n) - LWIP_SOCKET_OFFSET) >= 0)) { \
-    code;}}while(0)
-#define FDSETSAFEGET(n, code) (((n) - LWIP_SOCKET_OFFSET < MEMP_NUM_NETCONN) &&  \
-                                (((int)(n) - LWIP_SOCKET_OFFSET) >= 0) ? (code) : 0)
-
-#define FD_SET(n, p)  FDSETSAFESET(n, (p)->fd_bits[((n)-LWIP_SOCKET_OFFSET)/8] |= \
-                                  (1 << (((n)-LWIP_SOCKET_OFFSET) & 7)))
-
-#define FD_CLR(n, p)  FDSETSAFESET(n, (p)->fd_bits[((n)-LWIP_SOCKET_OFFSET)/8] &= \
-                                   ~(1 << (((n)-LWIP_SOCKET_OFFSET) & 7)))
-
-#define FD_ISSET(n, p) FDSETSAFEGET(n, (p)->fd_bits[((n)-LWIP_SOCKET_OFFSET)/8] & \
-                                  (1 << (((n)-LWIP_SOCKET_OFFSET) & 7)))
-
-#define FD_ZERO(p)    memset((void*)(p), 0, sizeof(*(p)))
 
 typedef struct fd_set {
     unsigned char fd_bits [(FD_SETSIZE + 7) / 8];
@@ -455,24 +429,6 @@ u32_t ipaddr_addr(const char *cp);
 #undef ntohs
 #endif /* ntohs */
 
-#define htons(n)                ((((n) & 0xff) << 8) | (((n) & 0xff00) >> 8))
-#define htonl(n)                ((((n) & 0xff) << 24) | \
-                                (((n) & 0xff00) << 8) | \
-                                (((n) & 0xff0000UL) >> 8) | \
-                                (((n) & 0xff000000UL) >> 24))
-#define ntohs(n)                 htons(n)
-#define ntohl(n)                 htonl(n)
-
-/** Create u32_t value from bytes */
-#define LWIP_MAKEU32(a, b, c, d)   (((u32_t)((a) & 0xff) << 24) | \
-                                ((u32_t)((b) & 0xff) << 16) | \
-                                ((u32_t)((c) & 0xff) << 8)  | \
-                                (u32_t)((d) & 0xff))
-#define PP_HTONL(x) ((((x) & 0x000000ffUL) << 24) | \
-                    (((x) & 0x0000ff00UL) <<  8) | \
-                    (((x) & 0x00ff0000UL) >>  8) | \
-                    (((x) & 0xff000000UL) >> 24))
-
 #if TLS_CONFIG_IPV4
 /** This is the aligned version of ip4_addr_t,
    used as local variable, on the stack, etc. */
@@ -485,9 +441,6 @@ struct ip4_addr {
 typedef struct ip4_addr ip4_addr_t;
 
 #define IP4ADDR_STRLEN_MAX  16
-
-/** For backwards compatibility */
-#define ip_ntoa(ipaddr)  ipaddr_ntoa(ipaddr)
 
 u32_t ipaddr_addr(const char *cp);
 int ip4addr_aton(const char *cp, ip4_addr_t *addr);
@@ -533,7 +486,6 @@ int ipaddr_aton(const char *cp, ip_addr_t *addr);
 #if TLS_CONFIG_IPV4
 typedef ip4_addr_t ip_addr_t;
 
-#define ip_2_ip4(ipaddr)                        (ipaddr)
 #define IPADDR_STRLEN_MAX   IP4ADDR_STRLEN_MAX
 
 #else
