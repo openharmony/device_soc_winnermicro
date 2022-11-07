@@ -14,13 +14,11 @@
 import("//kernel/liteos_m/liteos.gni")
 module_name = get_path_info(rebase_path("."), "name")
 kernel_module(module_name) {
-  sources = [ 
+  sources = [
     "wm_cmdp.c",
     "wm_cmdp_hostif.c",
     "wm_rmms.c",
     "wm_uart_task.c",
   ]
-  include_dirs = [
-    ".",
-  ]
+  include_dirs = [ "." ]
 }
