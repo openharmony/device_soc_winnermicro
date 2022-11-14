@@ -21,6 +21,8 @@ if (ohos_kernel_type == "liteos_m") {
       "wifi",
       "components\fs",
       "components\utils",
+      "app\wm_atcmd",
+      "network\api2.0.3",
     ]
   }
 }
