@@ -14,15 +14,6 @@
 import("//kernel/liteos_m/liteos.gni")
 module_name = get_path_info(rebase_path("."), "name")
 kernel_module(module_name) {
-  sources = [
-    "crypto/wm_crypto_hard.c",
-    "fwup/wm_fwup.c",
-    "mem/wm_mem.c",
-    "params/wm_param.c",
-    "task/wm_wl_mbox.c",
-    "task/wm_wl_task.c",
-    "task/wm_wl_timers.c",
-    "utils/utils.c",
-  ]
-  include_dirs = []
+  sources = [ "tls_netconn.c" ]
+  include_dirs = [ "." ]
 }

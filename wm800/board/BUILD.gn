@@ -51,6 +51,7 @@ if (ohos_kernel_type == "liteos_m") {
       "include/os",
       "include/platform",
       "include/wifi",
+      "include/app",
       "platform/common/params",
       "platform/drivers/spi",
       "platform/inc",
