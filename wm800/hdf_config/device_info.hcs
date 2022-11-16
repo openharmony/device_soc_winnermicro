@@ -63,20 +63,20 @@ root {
                 }
             }
             device_uart :: device {
-                /*uart0 :: deviceNode {
+                uart0 :: deviceNode {
                     policy = 1;
                     priority = 40;
                     moduleName = "W800_UART_MODULE_HDF";
                     serviceName = "HDF_PLATFORM_UART_0";
                     deviceMatchAttr = "uart0_config";
-                }*/
-                uart1 :: deviceNode {
+                }
+                /*uart1 :: deviceNode {
                     policy = 1;
                     priority = 50;
                     moduleName = "W800_UART_MODULE_HDF";
                     serviceName = "HDF_PLATFORM_UART_1";
                     deviceMatchAttr = "uart1_config";
-                }
+                }*/
             }
             device_spi :: device {
                 device0 :: deviceNode {
