@@ -1483,9 +1483,6 @@ static int _vsnprintf(out_fct_type out, char* buffer, const size_t maxlen, const
         }
     }
 
-    // termination
-    out_tmp((char)0, buffer, idx < maxlen ? idx : maxlen - 1U, maxlen);
-
     // return written chars without terminating \0
     return (int)idx;
 }
