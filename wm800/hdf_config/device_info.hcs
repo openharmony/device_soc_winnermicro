@@ -9,7 +9,7 @@ root {
                 template deviceNode {
                     policy = 0;
                     priority = 100;
-                    preload = 0;
+                    preload = 2;
                     permission = 0664;
                     moduleName = "";
                     serviceName = "";
@@ -20,7 +20,7 @@ root {
         platform :: host {
             hostName = "platform_host";
             priority = 50;
-/*            device_gpio :: device {
+            device_gpio :: device {
                 gpio0 :: deviceNode {
                     policy = 0;
                     priority = 45;
@@ -70,13 +70,13 @@ root {
                     serviceName = "HDF_PLATFORM_UART_0";
                     deviceMatchAttr = "uart0_config";
                 }
-                uart1 :: deviceNode {
+               /* uart1 :: deviceNode {
                     policy = 1;
                     priority = 50;
                     moduleName = "W800_UART_MODULE_HDF";
                     serviceName = "HDF_PLATFORM_UART_1";
                     deviceMatchAttr = "uart1_config";
-                }
+                } */
             }
             device_spi :: device {
                 device0 :: deviceNode {
@@ -87,9 +87,9 @@ root {
                     serviceName = "HDF_PLATFORM_SPI_0";
                     deviceMatchAttr = "spi0_config";
                 }
-            } */
+            } 
         }
-/*        misc :: host {
+        misc :: host {
             hostName = "misc_host";
             priority = 50;
             fs :: device {
@@ -100,6 +100,6 @@ root {
                     deviceMatchAttr = "littlefs_config";
                 }
             }
-        } */
+        }
     }
 }
