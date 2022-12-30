@@ -16,7 +16,7 @@ import("//drivers/hdf_core/adapter/khdf/liteos_m/hdf.gni")
 hdf_driver("fs") {
   sources = [
     "wm_fs_init.c",
-    "wm_littlefs.c",
+    #"wm_littlefs.c",
   ]
   include_dirs = [ "." ]
 
