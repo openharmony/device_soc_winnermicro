@@ -27,8 +27,9 @@
 
 
 #define LFS_CFG_READ_SIZE       1
+#define LFS_CFG_AHEAD_SIZE      16
 #define LFS_CFG_PROG_SIZE       256
-#define LFS_CFG_BLOCK_SIZE       256
+#define LFS_CFG_BLOCK_SIZE      256
 #define LFS_CFG_CACHE_SIZE      1024
 #define LFS_CFG_BLOCK_CYCLES    500
 
@@ -41,21 +42,18 @@ static struct fs_cfg fs[LOSCFG_LFS_MAX_MOUNT_SIZE] = {0};
 
 static int lfs_flash_block_read(int partition, UINT32 * offset, void *buffer, UINT32 size)
 {
-	/*printf("rr part:%d  addr:0x%x buffer 0x%x size:%d\n",partition,*offset,buffer,size);  */
     tls_fls_read(*offset, buffer, size);
     return 0;
 }
 
 static int lfs_flash_block_prog(int partition, UINT32 * offset, void *buffer, UINT32 size)
 {
-	/*printf("ww part:%d  addr:0x%x buffer 0x%x size:%d\n",partition,*offset,buffer, size);  */
     tls_fls_write(*offset, (void *)buffer, size );
     return 0;
 }
 
 static int lfs_flash_block_erase(int partition,UINT32 offset,UINT32 size)
 {
-	/*printf("ee part:%d  addr:0x%x  size:%d\n",partition,offset,size);  */
     tls_fls_erase(offset/INSIDE_FLS_SECTOR_SIZE);
     return 0;
 }
@@ -103,8 +101,8 @@ static uint32_t FsGetResource(struct fs_cfg *fs, const struct DeviceResourceNode
 static int32_t FsDriverInit(struct HdfDeviceObject *object)
 {
     int ret = HDF_FAILURE;
-	int lfs_space[1] = {0};
-	int lfs_addr[1] = {0};
+    int lfs_space[1] = {0};
+    int lfs_addr[1] = {0};
     if (object == NULL) {
         return HDF_FAILURE;
     }
@@ -122,26 +120,24 @@ static int32_t FsDriverInit(struct HdfDeviceObject *object)
         fs[i].lfs_cfg.readFunc  = lfs_flash_block_read;
         fs[i].lfs_cfg.writeFunc  = lfs_flash_block_prog;
         fs[i].lfs_cfg.eraseFunc = lfs_flash_block_erase;
-        /* fs[i].lfs_cfg.sync  = lfs_flash_block_sync; */
 
         fs[i].lfs_cfg.readSize = LFS_CFG_READ_SIZE;
         fs[i].lfs_cfg.writeSize = LFS_CFG_PROG_SIZE;
         fs[i].lfs_cfg.cacheSize = LFS_CFG_CACHE_SIZE;
-        //fs[i].lfs_cfg.blockSize = 256;
-        fs[i].lfs_cfg.lookaheadSize = 16;
+        fs[i].lfs_cfg.lookaheadSize = LFS_CFG_AHEAD_SIZE;
         fs[i].lfs_cfg.blockCycles = LFS_CFG_BLOCK_CYCLES;
 
-	    lfs_space[0] = fs[i].lfs_cfg.blockSize * fs[i].lfs_cfg.blockCount;
-	    lfs_addr[0] = fs[i].lfs_cfg.partNo * fs[i].lfs_cfg.blockSize + INSIDE_FLS_BASE_ADDR;
-	    fs[i].lfs_cfg.partNo = 0;
-	    ret = LOS_DiskPartition("lfs_dev0", "littlefs", &lfs_space, &lfs_addr, 1);
-	    HDF_LOGI("%s: DiskPartition %s\n", __func__, (ret == 0) ? "succeed" : "failed");
-	    if (ret != 0) {
-	        return -1;
-	    }
+        lfs_space[0] = fs[i].lfs_cfg.blockSize * fs[i].lfs_cfg.blockCount;
+        lfs_addr[0] = fs[i].lfs_cfg.partNo * fs[i].lfs_cfg.blockSize + INSIDE_FLS_BASE_ADDR;
+        fs[i].lfs_cfg.partNo = 0;
+        ret = LOS_DiskPartition("lfs_dev0", "littlefs", &lfs_space, &lfs_addr, 1);
+        HDF_LOGI("%s: DiskPartition %s\n", __func__, (ret == 0) ? "succeed" : "failed");
+        if (ret != 0) {
+            return -1;
+        }
 
         ret = mount(NULL, fs[i].mount_point, "littlefs", 0, &fs[i].lfs_cfg);
-	    HDF_LOGI("FsDriverInit mount ret %d\n", ret);
+        HDF_LOGI("FsDriverInit mount ret %d\n", ret);
         if (!ret) {
             ret = mkdir(fs[i].mount_point, S_IRUSR | S_IWUSR | S_IXUSR);
             HDF_LOGI("%s: mkdir %s %s\n", __func__, fs[i].mount_point, (ret == 0) ? "succeed" : "failed");
