@@ -69,7 +69,7 @@ static char *_path_convert(const char *path)
     }
     memset_s(target_path, len, 0, len);
     int i, j = 0;
-    memcpy_s(target_path, sizeof(target_path), "/data/", 6); // 6:size
+	memcpy(target_path, "/data/", 6);
     j += 6; // 6:byte alignment
     for (i = 0; i < strlen(path); i++) {
         if (path[i] != '/') {
