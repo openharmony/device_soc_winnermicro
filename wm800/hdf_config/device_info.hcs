@@ -9,7 +9,7 @@ root {
                 template deviceNode {
                     policy = 0;
                     priority = 100;
-                    preload = 2;
+                    preload = 0;
                     permission = 0664;
                     moduleName = "";
                     serviceName = "";
