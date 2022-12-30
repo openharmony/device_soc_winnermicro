@@ -48,13 +48,13 @@ static int lfs_flash_block_read(int partition, UINT32 * offset, void *buffer, UI
 
 static int lfs_flash_block_prog(int partition, UINT32 * offset, void *buffer, UINT32 size)
 {
-    tls_fls_write(*offset, (void *)buffer, size );
+    tls_fls_write(*offset, (void *)buffer, size);
     return 0;
 }
 
-static int lfs_flash_block_erase(int partition,UINT32 offset,UINT32 size)
+static int lfs_flash_block_erase(int partition, UINT32 offset,UINT32 size)
 {
-    tls_fls_erase(offset/INSIDE_FLS_SECTOR_SIZE);
+    tls_fls_erase(offset / INSIDE_FLS_SECTOR_SIZE);
     return 0;
 }
 
