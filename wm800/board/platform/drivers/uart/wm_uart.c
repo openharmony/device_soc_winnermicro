@@ -36,6 +36,7 @@
 
 #define RX_CACHE_LIMIT  128
 #define STEP_SIZE       (HR_UART1_BASE_ADDR - HR_UART0_BASE_ADDR)
+#define BUFLEN 2
 
 extern void tls_irq_priority(u8 vec_no, u32 prio);
 void tls_uart_tx_callback_register(u16 uart_no, s16(*tx_callback) (struct tls_uart_port *port));
@@ -1102,6 +1103,23 @@ int tls_uart_dma_off(u16 uart_no)
 {
     uart_port[uart_no].tx_dma_on = FALSE;
     return WM_SUCCESS;
+}
+
+int HiLogWriteInternal(const char *buffer, size_t bufLen)
+{
+    if (!buffer) {
+        return -1;
+    }
+
+    if (bufLen < BUFLEN) {
+        return 0;
+    }
+
+    if (buffer[bufLen - BUFLEN] != '\n') {
+        *((char *)buffer + bufLen - 1) = '\n';
+    }
+
+    return 0;
 }
 
 #endif
