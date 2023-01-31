@@ -1115,7 +1115,7 @@ int HiLogWriteInternal(const char *buffer, size_t bufLen)
         return 0;
     }
 
-    if (buffer[bufLen - 2] != '\n') {
+    if (buffer[bufLen - BUFLEN] != '\n') {
         *((char *)buffer + bufLen - 1) = '\n';
     }
 
