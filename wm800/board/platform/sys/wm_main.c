@@ -53,7 +53,7 @@
 #include "wm_uart.h"
 #include "los_task.h"
 
-#define     TASK_START_STK_SIZE         640     /* Size of each task's stacks (# of WORDs)  */
+#define     TASK_START_STK_SIZE         1024     /* Size of each task's stacks (# of WORDs)  */
 /* If you want to delete main task after it works, you can open this MACRO below */
 #define MAIN_TASK_DELETE_AFTER_START_FTR  0
 #if !TLS_OS_LITEOS
