@@ -66,6 +66,7 @@ if (ohos_kernel_type == "liteos_m") {
       "//drivers/hdf_core/framework/include/platform",
       "//drivers/hdf_core/framework/include/utils",
       "//drivers/hdf_core/adapter/khdf/liteos_m/osal/include",
+      "//drivers/hdf_core/interfaces/inner_api/osal/shared",
       "//commonlibrary/c_utils/base/include",
     ]
   }
