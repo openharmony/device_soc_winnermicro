@@ -28,11 +28,9 @@
 #define __NEED_uint32_t
 #define __NEED_uint64_t
 
+#include <stdbool.h>
 #include <bits/alltypes.h>
 
-#ifdef bool
-#undef bool
-#endif
 #ifdef u8
 #undef u8
 #endif
@@ -73,7 +71,6 @@ typedef unsigned char INT8U;
 #endif
 typedef signed char INT8S;
 
-typedef unsigned char        bool;
 typedef unsigned char        u8;
 typedef signed char          s8;
 typedef unsigned short       u16;
@@ -119,11 +116,6 @@ typedef short  int16;
 #undef uint16
 #endif
 typedef unsigned short  uint16;
-
-#ifdef ULONG
-#undef ULONG
-#endif
-typedef unsigned long ULONG;
 
 #ifdef u8_t
 #undef u8_t
@@ -191,11 +183,8 @@ typedef unsigned int mem_ptr_t;
 #endif
 #define FALSE                    0
 
-#define true                1
-#define false                0
-
-#ifndef NULL
 #ifdef __cplusplus
+#ifndef NULL
 #define NULL 0
 #else
 #define NULL ((void *)0)
