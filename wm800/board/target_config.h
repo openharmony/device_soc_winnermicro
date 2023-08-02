@@ -33,6 +33,7 @@
 #define _TARGET_CONFIG_H
 
 #include <stdint.h>
+#include "wm_regs.h"
 
 #ifdef __cplusplus
 #if __cplusplus

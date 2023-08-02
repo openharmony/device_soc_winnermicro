@@ -20,9 +20,7 @@
 extern "C" {
 #endif
 
-#ifndef bool
-#define bool    unsigned char
-#endif
+#include <stdbool.h>
 
 #ifdef __cplusplus
 }

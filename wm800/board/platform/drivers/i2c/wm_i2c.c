@@ -24,6 +24,7 @@
  *****************************************************************************/
 
 #include "wm_i2c.h"
+#include "stddef.h"
 
 #define I2C_FREQ_MAX            (400000)
 #define I2C_FREQ_MIN            (100000)
