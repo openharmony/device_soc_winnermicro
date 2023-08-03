@@ -28,6 +28,7 @@
  */
 
 /* From w800 sdk */
+#include "stddef.h"
 #include "wm_type_def.h"
 #include "wm_wifi.h"
 #include "wm_params.h"
