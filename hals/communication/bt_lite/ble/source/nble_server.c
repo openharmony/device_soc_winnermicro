@@ -16,8 +16,8 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <stdbool.h>
 
-#include "my_stdbool.h"
 #include "ohos_bt_gatt_server.h"
 
 #include "wm_mem.h"

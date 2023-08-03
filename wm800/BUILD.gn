@@ -59,8 +59,7 @@ if (ohos_kernel_type == "liteos_m") {
       }
       deps += [ "//build/lite:ohos" ]
       deps += [ "//build/lite:product" ]
-      deps +=
-          [ "//base/startup/syspara_lite/frameworks/parameter/src:sysparam" ]
+      deps += [ "//base/startup/init/interfaces/innerkits:libbegetutil" ]
     }
 
     build_ext_component("build_kernel_image") {
