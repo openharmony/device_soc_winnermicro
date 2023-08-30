@@ -26,12 +26,12 @@ kernel_module(module_name) {
     "xt804/libc/liteos/math/copysignl.c",
     "xt804/libc/liteos/math/fabsl.c",
     "xt804/libc/liteos/math/fmod.c",
-    "xt804/libc/liteos/math/fmodl.c",
     "xt804/libc/liteos/math/scalbn.c",
-    "xt804/libc/liteos/math/scalbnl.c",
     "xt804/libc/liteos/stdio/puts.c",
     "xt804/libc/liteos/stdio/sprintf.c",
     "xt804/libc/liteos/stdio/vprintf.c",
+    "//third_party/musl/src/math/fmodl.c",
+    "//third_party/musl/src/math/scalbnl.c",
   ]
   include_dirs = []
 }
