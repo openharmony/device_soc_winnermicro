@@ -15,6 +15,8 @@ import("//kernel/liteos_m/liteos.gni")
 module_name = get_path_info(rebase_path("."), "name")
 kernel_module(module_name) {
   sources = [
+    "//third_party/musl/src/math/fmodl.c",
+    "//third_party/musl/src/math/scalbnl.c",
     "xt804/bsp/board_init.c",
     "xt804/bsp/isr.c",
     "xt804/bsp/startup.S",
@@ -26,9 +28,7 @@ kernel_module(module_name) {
     "xt804/libc/liteos/math/copysignl.c",
     "xt804/libc/liteos/math/fabsl.c",
     "xt804/libc/liteos/math/fmod.c",
-    "xt804/libc/liteos/math/fmodl.c",
     "xt804/libc/liteos/math/scalbn.c",
-    "xt804/libc/liteos/math/scalbnl.c",
     "xt804/libc/liteos/stdio/puts.c",
     "xt804/libc/liteos/stdio/sprintf.c",
     "xt804/libc/liteos/stdio/vprintf.c",
